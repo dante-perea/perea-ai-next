@@ -44,7 +44,7 @@ const IconEnd = () => (
   </svg>
 );
 
-// ─── Main Component ───────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 interface BookingSectionProps {
   ctaLabel?: string;
   trustLine?: string;
@@ -165,6 +165,13 @@ export function BookingSection({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        // Rate limited — show message and auto-reveal Calendly
+        if (res.status === 429 || err.code === "rate_limited") {
+          setErrorMsg(err.error || "Too many calls. Please book a slot directly below.");
+          setState("call-ended"); // shows Calendly immediately
+          setTimeout(() => calendlyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+          return;
+        }
         throw new Error(err.error || "Couldn't connect. Please book a slot below.");
       }
 
@@ -176,7 +183,7 @@ export function BookingSection({
       const client = new RetellWebClient();
       retellClientRef.current = client;
 
-      // ★ THE KEY FIX: Listen for server-side call end
+      // Listen for server-side call end
       client.on("call_ended", () => {
         console.log("[Retell] call_ended event fired — auto-ending");
         endCall("retell-call_ended-event");
