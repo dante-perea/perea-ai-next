@@ -1,29 +1,14 @@
 /*
  * Booking Section — CSS Modules
- * Uses the same LP design token palette as lp.module.css
+ * Tokens inlined to avoid :root scope issues with PostCSS/CSS Modules
  */
-
-:root {
-  --bk-bg:         #f9f9f9;
-  --bk-white:      #ffffff;
-  --bk-ink:        #262626;
-  --bk-muted:      #79716b;
-  --bk-faint:      #a8a29e;
-  --bk-border:     rgba(0,0,0,0.08);
-  --bk-border-s:   rgba(0,0,0,0.14);
-  --bk-accent:     #5B1A7C;
-  --bk-accent-h:   #4A1463;
-  --bk-accent-bg:  rgba(91,26,124,0.08);
-  --bk-ease:       cubic-bezier(0.4,0,0.2,1);
-  --bk-dur:        0.2s;
-}
 
 /* ── WRAPPER ── */
 .section {
   padding: 7rem 0 6rem;
   text-align: center;
-  border-top: 1px solid var(--bk-border);
-  background: var(--bk-bg);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background: #f9f9f9;
 }
 
 .container {
@@ -40,7 +25,7 @@
   gap: 0.5rem;
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--bk-accent);
+  color: #5B1A7C;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 1rem;
@@ -51,7 +36,7 @@
   content: "";
   width: 5px;
   height: 5px;
-  background: var(--bk-accent);
+  background: #5B1A7C;
   border-radius: 50%;
 }
 
@@ -60,7 +45,7 @@
   font-size: clamp(2rem,4vw,3rem);
   font-weight: 500;
   letter-spacing: -0.03em;
-  color: var(--bk-ink);
+  color: #262626;
   line-height: 1.12;
   margin: 0 auto 1rem;
   max-width: 640px;
@@ -68,7 +53,7 @@
 
 .subhead {
   font-size: 1rem;
-  color: var(--bk-muted);
+  color: #79716b;
   max-width: 520px;
   margin: 0 auto 2.5rem;
   line-height: 1.72;
@@ -86,13 +71,13 @@
 
 .proofItem {
   font-size: 0.8rem;
-  color: var(--bk-faint);
+  color: #a8a29e;
   display: flex;
   align-items: center;
   gap: 0.35rem;
 }
 
-.proofItem strong { color: var(--bk-muted); font-weight: 600; }
+.proofItem strong { color: #79716b; font-weight: 600; }
 
 /* ── FORM ── */
 .formWrap {
@@ -100,7 +85,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  animation: fadeUp 0.4s var(--bk-ease);
+  animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 
 @keyframes fadeUp {
@@ -125,19 +110,19 @@
 .input {
   width: 100%;
   padding: 0.78rem 1rem;
-  border: 1.5px solid var(--bk-border-s);
+  border: 1.5px solid rgba(0,0,0,0.14);
   border-radius: 8px;
   font-size: 0.92rem;
-  color: var(--bk-ink);
-  background: var(--bk-white);
+  color: #262626;
+  background: #ffffff;
   font-family: inherit;
-  transition: border-color var(--bk-dur) var(--bk-ease), box-shadow var(--bk-dur) var(--bk-ease);
+  transition: border-color 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);
   outline: none;
 }
 
-.input::placeholder { color: var(--bk-faint); }
+.input::placeholder { color: #a8a29e; }
 .input:focus {
-  border-color: var(--bk-accent);
+  border-color: #5B1A7C;
   box-shadow: 0 0 0 3px rgba(91,26,124,0.07);
 }
 
@@ -155,7 +140,7 @@
 
 .btn {
   width: 100%;
-  background: var(--bk-accent);
+  background: #5B1A7C;
   color: white;
   border: none;
   padding: 0.88rem 1.5rem;
@@ -169,11 +154,11 @@
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 1px 4px rgba(91,26,124,0.25), 0 4px 18px rgba(91,26,124,0.12);
-  transition: background var(--bk-dur) var(--bk-ease), box-shadow var(--bk-dur) var(--bk-ease), transform 0.15s;
+  transition: background 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.15s;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--bk-accent-h);
+  background: #4A1463;
   box-shadow: 0 2px 8px rgba(91,26,124,0.3), 0 10px 28px rgba(91,26,124,0.15);
   transform: translateY(-1px);
 }
@@ -197,7 +182,7 @@
   justify-content: center;
   gap: 0.4rem;
   font-size: 0.76rem;
-  color: var(--bk-faint);
+  color: #a8a29e;
   margin-top: 0.6rem;
 }
 
@@ -205,13 +190,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: var(--bk-accent-bg);
+  background: rgba(91,26,124,0.08);
   border: 1px solid rgba(91,26,124,0.15);
   border-radius: 999px;
   padding: 0.22rem 0.6rem;
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--bk-accent);
+  color: #5B1A7C;
 }
 
 /* ── CALLING STATE ── */
@@ -220,7 +205,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  animation: fadeUp 0.4s var(--bk-ease);
+  animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 
 .callingBanner {
@@ -279,7 +264,7 @@
   align-items: center;
   gap: 1rem;
   font-size: 0.78rem;
-  color: var(--bk-faint);
+  color: #a8a29e;
   font-weight: 500;
   width: 100%;
   max-width: 560px;
@@ -291,15 +276,15 @@
   content: "";
   flex: 1;
   height: 1px;
-  background: var(--bk-border);
+  background: rgba(0,0,0,0.08);
 }
 
 /* ── CALENDLY EMBED ── */
 .calendlyWrap {
   width: 100%;
   max-width: 900px;
-  background: var(--bk-white);
-  border: 1px solid var(--bk-border-s);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.14);
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0,0,0,0.03), 0 16px 48px rgba(0,0,0,0.07);
@@ -318,7 +303,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  animation: fadeUp 0.4s var(--bk-ease);
+  animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
   max-width: 480px;
   margin: 0 auto;
 }
@@ -340,12 +325,12 @@
   font-size: 1.5rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: var(--bk-ink);
+  color: #262626;
 }
 
 .bookedDesc {
   font-size: 0.92rem;
-  color: var(--bk-muted);
+  color: #79716b;
   line-height: 1.65;
   text-align: center;
 }
@@ -355,8 +340,8 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 1.1rem 1.5rem;
-  background: var(--bk-white);
-  border: 1px solid var(--bk-border);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 10px;
   width: 100%;
 }
@@ -366,10 +351,10 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 0.85rem;
-  color: var(--bk-muted);
+  color: #79716b;
 }
 
-.bookedDetail svg { color: var(--bk-accent); flex-shrink: 0; }
+.bookedDetail svg { color: #5B1A7C; flex-shrink: 0; }
 
 /* ── ERROR ── */
 .errorWrap {
@@ -382,7 +367,7 @@
   border: 1px solid #fecaca;
   border-radius: 10px;
   max-width: 420px;
-  animation: fadeUp 0.3s var(--bk-ease);
+  animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
 .errorTitle { font-size: 0.9rem; font-weight: 600; color: #991b1b; }
