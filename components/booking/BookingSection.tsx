@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./booking.module.css";
 
-// Calendly scheduling URL (pre-populated with lead info via query params)
 const CALENDLY_BASE_URL = "https://calendly.com/dante-perea/30min";
 
-type State = "idle" | "submitting" | "calling" | "booked" | "error";
+type State = "idle" | "submitting" | "connecting" | "in-call" | "call-ended" | "booked" | "error";
 
 interface FormData {
   name: string;
   email: string;
-  phone: string;
 }
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
-const IconPhone = () => (
+const IconMic = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V13a1 1 0 01-1 1h-2C7.82 14 2 8.18 2 5V3z"/>
+    <rect x="5" y="1" width="6" height="9" rx="3"/>
+    <path d="M2 8a6 6 0 0 0 12 0"/>
+    <line x1="8" y1="14" x2="8" y2="16"/>
+    <line x1="5" y1="16" x2="11" y2="16"/>
   </svg>
 );
 
@@ -48,6 +49,42 @@ const IconTime = () => (
   </svg>
 );
 
+const IconEnd = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <path d="M2 14L14 2M14 14L2 2"/>
+  </svg>
+);
+
+// ─── Web Call Hook ────────────────────────────────────────────────────────────
+function useRetellWebCall() {
+  const clientRef = useRef<{ startCall: (opts: { accessToken: string }) => Promise<void>; stopCall: () => void } | null>(null);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
+
+  useEffect(() => {
+    // Dynamically import Retell Web SDK
+    import("retell-client-js-sdk")
+      .then(({ RetellWebClient }) => {
+        clientRef.current = new RetellWebClient();
+        setSdkLoaded(true);
+      })
+      .catch(() => {
+        // SDK not available — will use fallback
+        setSdkLoaded(true);
+      });
+  }, []);
+
+  const startCall = useCallback(async (accessToken: string) => {
+    if (!clientRef.current) throw new Error("SDK not loaded");
+    await clientRef.current.startCall({ accessToken });
+  }, []);
+
+  const stopCall = useCallback(() => {
+    clientRef.current?.stopCall();
+  }, []);
+
+  return { startCall, stopCall, sdkLoaded, hasClient: !!clientRef.current };
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 interface BookingSectionProps {
   ctaLabel?: string;
@@ -55,49 +92,51 @@ interface BookingSectionProps {
 }
 
 export function BookingSection({
-  ctaLabel = "Get my free discovery call",
+  ctaLabel = "Talk to Aria — our AI consultant",
   trustLine = "50+ businesses transformed · No commitment",
 }: BookingSectionProps) {
   const [state, setState] = useState<State>("idle");
-  const [form, setForm] = useState<FormData>({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState<FormData>({ name: "", email: "" });
   const [errorMsg, setErrorMsg] = useState("");
-  const [isBooked, setIsBooked] = useState(false);
   const calendlyRef = useRef<HTMLDivElement>(null);
+  const { startCall, stopCall, sdkLoaded } = useRetellWebCall();
 
-  // ── Listen for Calendly booking events ──────────────────────────────────
+  // ── Calendly booking detection ───────────────────────────────────────────
   useEffect(() => {
-    function handleCalendlyEvent(e: MessageEvent) {
+    function onCalendly(e: MessageEvent) {
       if (e.data?.event === "calendly.event_scheduled") {
-        setIsBooked(true);
+        stopCall();
         setState("booked");
       }
     }
-    window.addEventListener("message", handleCalendlyEvent);
-    return () => window.removeEventListener("message", handleCalendlyEvent);
-  }, []);
+    window.addEventListener("message", onCalendly);
+    return () => window.removeEventListener("message", onCalendly);
+  }, [stopCall]);
 
-  // ── Load Calendly widget script when needed ──────────────────────────────
+  // ── Load Calendly widget script ──────────────────────────────────────────
   useEffect(() => {
-    if (state !== "calling") return;
-    if (document.getElementById("calendly-widget-script")) return;
-
+    if (state !== "call-ended" && state !== "in-call") return;
+    if (document.getElementById("calendly-script")) return;
     const script = document.createElement("script");
-    script.id = "calendly-widget-script";
+    script.id = "calendly-script";
     script.src = "https://assets.calendly.com/assets/external/widget.js";
     script.async = true;
     document.body.appendChild(script);
   }, [state]);
 
-  // ── Form submission ──────────────────────────────────────────────────────
+  // ── Form submit — get token + start web call ─────────────────────────────
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email || !form.phone) return;
+    if (!form.name || !form.email) return;
 
     setState("submitting");
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/trigger-call", {
+      // Request mic permission first for better UX
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      const res = await fetch("/api/web-call-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -105,37 +144,43 @@ export function BookingSection({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-
-        // For international / plan-limitation errors: skip to calendar instead of erroring
-        if (
-          err.code === "international_not_supported" ||
-          err.code === "missing_api_key"
-        ) {
-          // Show calling UI with a note, and reveal the calendar immediately
-          setErrorMsg(err.error || "Phone call unavailable. Please book a slot directly below.");
-          setState("calling"); // still shows Calendly embed
-          setTimeout(() => {
-            calendlyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 300);
-          return;
-        }
-
-        throw new Error(err.error || "Something went wrong. Please try again or book directly below.");
+        throw new Error(err.error || "Couldn't start the call. Please book a slot below.");
       }
 
-      setState("calling");
+      const { accessToken } = await res.json();
 
-      // Scroll to the Calendly embed after a brief pause
+      setState("connecting");
+
+      // Start the Retell web call
+      await startCall(accessToken);
+      setState("in-call");
+
+      // Scroll to Calendly after call starts — available if they want to book
       setTimeout(() => {
         calendlyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 600);
+      }, 2000);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Failed to initiate call. Please try again.");
+      // Mic permission denied or other error
+      const msg = err instanceof Error ? err.message : "Something went wrong.";
+      if (msg.toLowerCase().includes("permission") || msg.toLowerCase().includes("denied") || msg.toLowerCase().includes("notallowed")) {
+        setErrorMsg("Microphone access was denied. Please allow mic access in your browser and try again, or book a slot below.");
+      } else {
+        setErrorMsg(msg);
+      }
       setState("error");
     }
   }
 
-  // ── Build Calendly URL with prefill ─────────────────────────────────────
+  // ── End call manually ────────────────────────────────────────────────────
+  function handleEndCall() {
+    stopCall();
+    setState("call-ended");
+    setTimeout(() => {
+      calendlyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+  }
+
+  // ── Calendly URL ─────────────────────────────────────────────────────────
   const calendlyUrl = `${CALENDLY_BASE_URL}?name=${encodeURIComponent(form.name)}&email=${encodeURIComponent(form.email)}&hide_gdpr_banner=1`;
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -148,21 +193,25 @@ export function BookingSection({
         <h2 className={styles.headline}>
           {state === "booked"
             ? "You're all set 🎉"
+            : state === "in-call"
+            ? "You're speaking with Aria"
             : "Stop exploring AI. Start using it."}
         </h2>
         <p className={styles.subhead}>
-          {state === "calling"
-            ? "Aria from Perea.AI is calling you now. She'll introduce herself and ask a few quick questions. Or skip ahead and book directly below."
+          {state === "in-call"
+            ? "Aria from Perea.AI is listening. She'll ask a few quick questions about your business — this takes about 4 minutes."
+            : state === "call-ended"
+            ? "Thanks for speaking with Aria. Pick a time for your full discovery call below."
             : state === "booked"
             ? "Your discovery call is booked. Check your email for a Google Meet link and the details."
-            : "Book a free 60-minute discovery call. An AI assistant will call you in 30 seconds to understand your needs — then connect you with the right consultant."}
+            : "Have a quick 4-minute conversation with Aria, our AI consultant, right in your browser. Then book your discovery call with a human consultant."}
         </p>
 
         {/* Social proof */}
         {(state === "idle" || state === "error") && (
           <div className={styles.proofRow}>
             <div className={styles.proofItem}><span>✓</span> <strong>50+</strong> businesses transformed</div>
-            <div className={styles.proofItem}><span>⏱</span> 60-min call · No commitment</div>
+            <div className={styles.proofItem}><span>🌍</span> Works from any country</div>
             <div className={styles.proofItem}><span>🔒</span> Fixed price · IP stays yours</div>
           </div>
         )}
@@ -191,44 +240,32 @@ export function BookingSection({
                   disabled={state === "submitting"}
                 />
               </div>
-              <div className={styles.phoneWrap}>
-                <span className={styles.phoneFlag}>🌍</span>
-                <input
-                  className={styles.input}
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
-                  required
-                  value={form.phone}
-                  onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                  disabled={state === "submitting"}
-                />
-              </div>
               <button
                 type="submit"
                 className={styles.btn}
-                disabled={state === "submitting"}
+                disabled={state === "submitting" || !sdkLoaded}
               >
                 {state === "submitting" ? (
                   <><span className={styles.btnSpinner} /> Connecting...</>
                 ) : (
-                  <><IconPhone /> {ctaLabel}</>
+                  <><IconMic /> {ctaLabel}</>
                 )}
               </button>
               <div className={styles.trustLine}>
                 <span className={styles.aiBadge}>
                   <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1.5 4.5l2 2L7.5 2"/></svg>
-                  AI calls you in &lt;30s
+                  Browser mic · No phone needed
                 </span>
-                No credit card · No pitch deck
+                Works from any country · No credit card
               </div>
             </form>
 
-            {/* Error message */}
+            {/* Error + Calendly fallback */}
             {state === "error" && (
               <div className={styles.errorWrap} style={{ marginTop: "1rem" }}>
-                <div className={styles.errorTitle}>Call couldn&apos;t be initiated</div>
+                <div className={styles.errorTitle}>Couldn&apos;t connect</div>
                 <div className={styles.errorDesc}>
-                  {errorMsg || "Something went wrong. Please try again or book directly on Calendly."}
+                  {errorMsg || "Something went wrong. Book a slot directly below."}
                 </div>
                 <button className={styles.retryBtn} onClick={() => setState("idle")}>
                   Try again
@@ -238,39 +275,57 @@ export function BookingSection({
           </div>
         )}
 
-        {/* ── CALLING STATE ── */}
-        {state === "calling" && !isBooked && (
-          <div className={styles.callingWrap} ref={calendlyRef}>
-
-            {/* Calling banner — adapts if call couldn't go through */}
-            <div className={styles.callingBanner} style={errorMsg ? { background: "#fff7ed", borderColor: "#fdba74" } : {}}>
-              <div className={styles.callingPulse} style={errorMsg ? { background: "#f97316" } : {}} />
+        {/* ── CONNECTING ── */}
+        {state === "connecting" && (
+          <div className={styles.callingWrap}>
+            <div className={styles.callingBanner}>
+              <div className={styles.callingPulse} />
               <div>
-                {errorMsg ? (
-                  <>
-                    <div className={styles.callingTitle} style={{ color: "#9a3412" }}>
-                      📅 Pick a time directly
-                    </div>
-                    <div className={styles.callingDesc} style={{ color: "#9a3412" }}>
-                      {errorMsg} Select any available slot in the calendar below.
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.callingTitle}>📞 Aria is calling {form.name.split(" ")[0]}...</div>
-                    <div className={styles.callingDesc}>
-                      She&apos;ll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
-                      Can&apos;t take the call right now? Book a time slot directly below.
-                    </div>
-                  </>
-                )}
+                <div className={styles.callingTitle}>🎙️ Connecting to Aria...</div>
+                <div className={styles.callingDesc}>
+                  Allow microphone access if prompted. Aria will introduce herself in a moment.
+                </div>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Divider */}
-            <div className={styles.orDivider}>Or pick a time directly</div>
+        {/* ── IN CALL ── */}
+        {state === "in-call" && (
+          <div className={styles.callingWrap} ref={calendlyRef}>
+            <div className={styles.callingBanner}>
+              <div className={styles.callingPulse} />
+              <div style={{ flex: 1 }}>
+                <div className={styles.callingTitle}>🎙️ Live — speaking with Aria</div>
+                <div className={styles.callingDesc}>
+                  She&apos;ll ask about your business and what you&apos;re hoping AI can help with.
+                  Speak naturally — she&apos;ll understand you.
+                </div>
+              </div>
+              <button
+                onClick={handleEndCall}
+                style={{
+                  flexShrink: 0,
+                  background: "#dc2626",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "0.4rem 0.75rem",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.3rem",
+                  fontFamily: "inherit",
+                }}
+              >
+                <IconEnd /> End call
+              </button>
+            </div>
 
-            {/* Calendly inline embed */}
+            <div className={styles.orDivider}>Or book a time directly</div>
+
             <div className={styles.calendlyWrap}>
               <div
                 className="calendly-inline-widget"
@@ -281,29 +336,45 @@ export function BookingSection({
           </div>
         )}
 
-        {/* ── BOOKED STATE ── */}
+        {/* ── CALL ENDED ── */}
+        {state === "call-ended" && (
+          <div className={styles.callingWrap} ref={calendlyRef}>
+            <div className={styles.callingBanner} style={{ background: "#f0fdf4", borderColor: "#c6eac6" }}>
+              <div className={styles.callingPulse} style={{ background: "#22c55e" }} />
+              <div>
+                <div className={styles.callingTitle} style={{ color: "#166534" }}>
+                  ✓ Great chat! Now pick a time for your discovery call.
+                </div>
+                <div className={styles.callingDesc} style={{ color: "#166534" }}>
+                  Our consultant will review Aria&apos;s notes and come prepared. Just grab any slot below.
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.orDivider}>Select your slot</div>
+
+            <div className={styles.calendlyWrap}>
+              <div
+                className="calendly-inline-widget"
+                data-url={calendlyUrl}
+                style={{ width: "100%", height: "680px" }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ── BOOKED ── */}
         {state === "booked" && (
           <div className={styles.bookedWrap}>
-            <div className={styles.bookedIcon}>
-              <IconCheck />
-            </div>
+            <div className={styles.bookedIcon}><IconCheck /></div>
             <div className={styles.bookedTitle}>Discovery call booked!</div>
             <div className={styles.bookedDesc}>
-              Check your email at <strong>{form.email}</strong> for a confirmation with your Google Meet link and call agenda.
+              Check your email at <strong>{form.email}</strong> for your Google Meet link and agenda.
             </div>
             <div className={styles.bookedDetails}>
-              <div className={styles.bookedDetail}>
-                <IconCalendar />
-                60-minute discovery call
-              </div>
-              <div className={styles.bookedDetail}>
-                <IconMeet />
-                Google Meet · link in your email
-              </div>
-              <div className={styles.bookedDetail}>
-                <IconTime />
-                No prep needed · we come briefed
-              </div>
+              <div className={styles.bookedDetail}><IconCalendar /> 60-minute discovery call</div>
+              <div className={styles.bookedDetail}><IconMeet /> Google Meet · link in your email</div>
+              <div className={styles.bookedDetail}><IconTime /> No prep needed · we come briefed</div>
             </div>
           </div>
         )}
