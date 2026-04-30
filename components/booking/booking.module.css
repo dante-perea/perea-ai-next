@@ -1,0 +1,411 @@
+/*
+ * Booking Section — CSS Modules
+ * Uses the same LP design token palette as lp.module.css
+ */
+
+:root {
+  --bk-bg:         #f9f9f9;
+  --bk-white:      #ffffff;
+  --bk-ink:        #262626;
+  --bk-muted:      #79716b;
+  --bk-faint:      #a8a29e;
+  --bk-border:     rgba(0,0,0,0.08);
+  --bk-border-s:   rgba(0,0,0,0.14);
+  --bk-accent:     #5B1A7C;
+  --bk-accent-h:   #4A1463;
+  --bk-accent-bg:  rgba(91,26,124,0.08);
+  --bk-ease:       cubic-bezier(0.4,0,0.2,1);
+  --bk-dur:        0.2s;
+}
+
+/* ── WRAPPER ── */
+.section {
+  padding: 7rem 0 6rem;
+  text-align: center;
+  border-top: 1px solid var(--bk-border);
+  background: var(--bk-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── HEADER ── */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--bk-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: var(--bk-accent);
+  border-radius: 50%;
+}
+
+.headline {
+  font-family: "Google Sans Display","Google Sans",sans-serif;
+  font-size: clamp(2rem,4vw,3rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--bk-ink);
+  line-height: 1.12;
+  margin: 0 auto 1rem;
+  max-width: 640px;
+}
+
+.subhead {
+  font-size: 1rem;
+  color: var(--bk-muted);
+  max-width: 520px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.72;
+}
+
+/* ── SOCIAL PROOF ── */
+.proofRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.proofItem {
+  font-size: 0.8rem;
+  color: var(--bk-faint);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.proofItem strong { color: var(--bk-muted); font-weight: 600; }
+
+/* ── FORM ── */
+.formWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: fadeUp 0.4s var(--bk-ease);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.78rem 1rem;
+  border: 1.5px solid var(--bk-border-s);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--bk-ink);
+  background: var(--bk-white);
+  font-family: inherit;
+  transition: border-color var(--bk-dur) var(--bk-ease), box-shadow var(--bk-dur) var(--bk-ease);
+  outline: none;
+}
+
+.input::placeholder { color: var(--bk-faint); }
+.input:focus {
+  border-color: var(--bk-accent);
+  box-shadow: 0 0 0 3px rgba(91,26,124,0.07);
+}
+
+.phoneWrap { position: relative; }
+.phoneWrap .input { padding-left: 3rem; }
+.phoneFlag {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.btn {
+  width: 100%;
+  background: var(--bk-accent);
+  color: white;
+  border: none;
+  padding: 0.88rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 4px rgba(91,26,124,0.25), 0 4px 18px rgba(91,26,124,0.12);
+  transition: background var(--bk-dur) var(--bk-ease), box-shadow var(--bk-dur) var(--bk-ease), transform 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bk-accent-h);
+  box-shadow: 0 2px 8px rgba(91,26,124,0.3), 0 10px 28px rgba(91,26,124,0.15);
+  transform: translateY(-1px);
+}
+
+.btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+.btnSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.trustLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--bk-faint);
+  margin-top: 0.6rem;
+}
+
+.aiBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--bk-accent-bg);
+  border: 1px solid rgba(91,26,124,0.15);
+  border-radius: 999px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--bk-accent);
+}
+
+/* ── CALLING STATE ── */
+.callingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: fadeUp 0.4s var(--bk-ease);
+}
+
+.callingBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  background: #f0fdf4;
+  border: 1px solid #c6eac6;
+  border-radius: 10px;
+  max-width: 480px;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.callingPulse {
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+  position: relative;
+}
+
+.callingPulse::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(34,197,94,0.25);
+  animation: ripple 1.5s ease infinite;
+}
+
+@keyframes ripple {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.callingTitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #166534;
+  margin-bottom: 0.2rem;
+}
+
+.callingDesc {
+  font-size: 0.82rem;
+  color: #166534;
+  opacity: 0.8;
+  line-height: 1.55;
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: var(--bk-faint);
+  font-weight: 500;
+  width: 100%;
+  max-width: 560px;
+  margin-bottom: 1.5rem;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--bk-border);
+}
+
+/* ── CALENDLY EMBED ── */
+.calendlyWrap {
+  width: 100%;
+  max-width: 900px;
+  background: var(--bk-white);
+  border: 1px solid var(--bk-border-s);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.03), 0 16px 48px rgba(0,0,0,0.07);
+}
+
+.calendlyInner {
+  width: 100%;
+  height: 680px;
+  border: none;
+  display: block;
+}
+
+/* ── BOOKED STATE ── */
+.bookedWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeUp 0.4s var(--bk-ease);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bookedIcon {
+  width: 56px;
+  height: 56px;
+  background: #ecfdf5;
+  border: 2px solid #86efac;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.bookedTitle {
+  font-family: "Google Sans Display","Google Sans",sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--bk-ink);
+}
+
+.bookedDesc {
+  font-size: 0.92rem;
+  color: var(--bk-muted);
+  line-height: 1.65;
+  text-align: center;
+}
+
+.bookedDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem 1.5rem;
+  background: var(--bk-white);
+  border: 1px solid var(--bk-border);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.bookedDetail {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--bk-muted);
+}
+
+.bookedDetail svg { color: var(--bk-accent); flex-shrink: 0; }
+
+/* ── ERROR ── */
+.errorWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  max-width: 420px;
+  animation: fadeUp 0.3s var(--bk-ease);
+}
+
+.errorTitle { font-size: 0.9rem; font-weight: 600; color: #991b1b; }
+.errorDesc  { font-size: 0.82rem; color: #b91c1c; line-height: 1.55; text-align: center; }
+.retryBtn {
+  background: none;
+  border: 1.5px solid #fca5a5;
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #991b1b;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.retryBtn:hover { background: #fff1f1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .section { padding: 5rem 0 4rem; }
+  .container { padding: 0 1.25rem; }
+  .row { grid-template-columns: 1fr; }
+  .calendlyInner { height: 580px; }
+}

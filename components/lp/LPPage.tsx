@@ -10,6 +10,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { LPVariantConfig } from "@/lib/lp-registry";
 import styles from "./lp.module.css";
+import { BookingSection } from "@/components/booking/BookingSection";
 
 // ─── Icons (inline SVG to avoid dependencies) ────────────────────────────────
 const IconDoc = () => (
@@ -540,28 +541,11 @@ export function LPPage({ content, localCTA, trustLine }: LPPageProps) {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className={styles.ctaSection} id="cta">
-        <div className={styles.container}>
-          <div className={styles.reveal}>
-            <div className={`${styles.sectionEyebrow}`} style={{justifyContent:"center"}}>Get Started</div>
-            <h2 className={styles.ctaH2}>
-              {content.ctaBand.headline}
-              <span className={styles.cursor} aria-hidden="true"/>
-            </h2>
-            <p className={styles.ctaBody}>{content.ctaBand.subhead}</p>
-          </div>
-          <div className={`${styles.ctaButtons} ${styles.reveal} ${styles.revealDelay1}`}>
-            <a href={content.cta.href} className={styles.btnCtaPrimary}>{content.ctaBand.buttonLabel}</a>
-            <a href="#services" className={styles.btnCtaGhost}>See our services ↓</a>
-          </div>
-          {trustLine && (
-            <p className={`${styles.reveal} ${styles.revealDelay2}`} style={{marginTop:"1.5rem",fontSize:"0.8rem",color:"var(--lp-ink-faint)",textAlign:"center"}}>
-              {trustLine}
-            </p>
-          )}
-        </div>
-      </section>
+      {/* ── CTA — AI-powered booking flow ── */}
+      <BookingSection
+        ctaLabel={content.ctaBand.buttonLabel}
+        trustLine={trustLine}
+      />
 
       {/* ── FOOTER ── */}
       <footer className={styles.footer}>
