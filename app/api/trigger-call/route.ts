@@ -18,9 +18,11 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.VAPI_PRIVATE_KEY;
     if (!apiKey) {
-      // In dev without key — return a mock success so the UI still works
-      console.warn("[trigger-call] VAPI_PRIVATE_KEY not set — returning mock success");
-      return NextResponse.json({ callId: "mock-call-id", success: true, mock: true });
+      console.error("[trigger-call] VAPI_PRIVATE_KEY env var is not set");
+      return NextResponse.json(
+        { error: "Calling service not configured. Please add VAPI_PRIVATE_KEY to Vercel environment variables.", code: "missing_api_key" },
+        { status: 503 }
+      );
     }
 
     // Trigger VAPI outbound call

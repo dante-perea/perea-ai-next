@@ -105,7 +105,11 @@ export function BookingSection({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Something went wrong");
+        // Surface config errors clearly
+        if (err.code === "missing_api_key") {
+          throw new Error("Calling service not configured yet. Please book a time directly below.");
+        }
+        throw new Error(err.error || "Something went wrong. Please try again or book directly below.");
       }
 
       setState("calling");
@@ -211,7 +215,7 @@ export function BookingSection({
             {/* Error message */}
             {state === "error" && (
               <div className={styles.errorWrap} style={{ marginTop: "1rem" }}>
-                <div className={styles.errorTitle}>Call couldn&apos;t be initiated</div>
+                <div className={styles.errorTitle}>Call couldn't be initiated</div>
                 <div className={styles.errorDesc}>
                   {errorMsg || "Something went wrong. Please try again or book directly on Calendly."}
                 </div>
@@ -233,8 +237,8 @@ export function BookingSection({
               <div>
                 <div className={styles.callingTitle}>📞 Aria is calling {form.name.split(" ")[0]}...</div>
                 <div className={styles.callingDesc}>
-                  She&apos;ll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
-                  Can&apos;t take the call right now? Book a time slot directly below.
+                  She'll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
+                  Can't take the call right now? Book a time slot directly below.
                 </div>
               </div>
             </div>
