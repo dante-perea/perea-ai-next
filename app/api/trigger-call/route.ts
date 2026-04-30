@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (!apiKey) {
       console.error("[trigger-call] VAPI_PRIVATE_KEY env var is not set");
       return NextResponse.json(
-        { error: "Calling service not configured. Please add VAPI_PRIVATE_KEY to Vercel environment variables.", code: "missing_api_key" },
+        { error: "Calling service not configured.", code: "missing_api_key" },
         { status: 503 }
       );
     }
@@ -50,12 +50,28 @@ export async function POST(req: NextRequest) {
     });
 
     if (!vapiRes.ok) {
-      const errText = await vapiRes.text();
-      console.error("[trigger-call] VAPI error:", vapiRes.status, errText);
-      return NextResponse.json(
-        { error: "Failed to initiate call", detail: errText },
-        { status: 502 }
-      );
+      let errBody: { message?: string; error?: string } = {};
+      try { errBody = await vapiRes.json(); } catch { /* ignore */ }
+
+      const rawMsg = errBody.message || errBody.error || "";
+      console.error("[trigger-call] VAPI error:", vapiRes.status, rawMsg);
+
+      // Translate VAPI-specific errors into user-friendly messages
+      let userMsg = "Couldn't start the call. Please book a time slot directly below.";
+      let code = "vapi_error";
+
+      if (rawMsg.toLowerCase().includes("international")) {
+        userMsg = "International calls require an upgraded calling plan. Please book a time slot directly below instead.";
+        code = "international_not_supported";
+      } else if (rawMsg.toLowerCase().includes("invalid") && rawMsg.toLowerCase().includes("number")) {
+        userMsg = "The phone number format looks invalid. Please use the full international format, e.g. +1 555 000 0000.";
+        code = "invalid_number";
+      } else if (vapiRes.status === 401 || vapiRes.status === 403) {
+        userMsg = "Calling service authentication failed. Please contact support.";
+        code = "auth_error";
+      }
+
+      return NextResponse.json({ error: userMsg, code, detail: rawMsg }, { status: 502 });
     }
 
     const data = await vapiRes.json();

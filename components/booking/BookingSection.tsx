@@ -105,10 +105,21 @@ export function BookingSection({
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        // Surface config errors clearly
-        if (err.code === "missing_api_key") {
-          throw new Error("Calling service not configured yet. Please book a time directly below.");
+
+        // For international / plan-limitation errors: skip to calendar instead of erroring
+        if (
+          err.code === "international_not_supported" ||
+          err.code === "missing_api_key"
+        ) {
+          // Show calling UI with a note, and reveal the calendar immediately
+          setErrorMsg(err.error || "Phone call unavailable. Please book a slot directly below.");
+          setState("calling"); // still shows Calendly embed
+          setTimeout(() => {
+            calendlyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 300);
+          return;
         }
+
         throw new Error(err.error || "Something went wrong. Please try again or book directly below.");
       }
 
@@ -136,7 +147,7 @@ export function BookingSection({
         <div className={styles.eyebrow}>Get Started</div>
         <h2 className={styles.headline}>
           {state === "booked"
-            ? "You're all set 🎉"
+            ? "You're all set"
             : "Stop exploring AI. Start using it."}
         </h2>
         <p className={styles.subhead}>
@@ -231,15 +242,28 @@ export function BookingSection({
         {state === "calling" && !isBooked && (
           <div className={styles.callingWrap} ref={calendlyRef}>
 
-            {/* Calling banner */}
-            <div className={styles.callingBanner}>
-              <div className={styles.callingPulse} />
+            {/* Calling banner — adapts if call couldn't go through */}
+            <div className={styles.callingBanner} style={errorMsg ? { background: "#fff7ed", borderColor: "#fdba74" } : {}}>
+              <div className={styles.callingPulse} style={errorMsg ? { background: "#f97316" } : {}} />
               <div>
-                <div className={styles.callingTitle}>📞 Aria is calling {form.name.split(" ")[0]}...</div>
-                <div className={styles.callingDesc}>
-                  She'll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
-                  Can't take the call right now? Book a time slot directly below.
-                </div>
+                {errorMsg ? (
+                  <>
+                    <div className={styles.callingTitle} style={{ color: "#9a3412" }}>
+                      📅 Pick a time directly
+                    </div>
+                    <div className={styles.callingDesc} style={{ color: "#9a3412" }}>
+                      {errorMsg} Select any available slot in the calendar below.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.callingTitle}>📞 Aria is calling {form.name.split(" ")[0]}...</div>
+                    <div className={styles.callingDesc}>
+                      She'll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
+                      Can't take the call right now? Book a time slot directly below.
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
