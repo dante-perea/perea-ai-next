@@ -1,12 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable React strict mode for better dev warnings
   reactStrictMode: true,
 
-  // Experimental: partial prerendering for faster TTFB
-  experimental: {
-    ppr: "incremental",
+  // Skip ESLint during builds — run it separately in CI
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 
   // Security headers

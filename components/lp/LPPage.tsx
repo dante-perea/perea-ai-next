@@ -599,7 +599,7 @@ export function LPPage({ content, localCTA, trustLine }: LPPageProps) {
 }
 
 // ─── Service Panel subcomponent ───────────────────────────────────────────────
-function ServicePanel({ svcKey, active, styles }: { svcKey: SvcKey; active: boolean; styles: Record<string,string> }) {
+function ServicePanel({ svcKey, active, styles }: { svcKey: SvcKey; active: boolean; styles: { readonly [key: string]: string } }) {
   const data: Record<SvcKey, { tag:string; title:string; desc:string; result:string; traceRows: { label:string; text:string; time:string; variant:"trigger"|"normal"|"done" }[] }> = {
     sales: {
       tag:"Sales", title:"Your AI SDR that never sleeps",
@@ -685,7 +685,7 @@ function ServicePanel({ svcKey, active, styles }: { svcKey: SvcKey; active: bool
 
 // ─── Tier Card subcomponent ───────────────────────────────────────────────────
 function TierCard({ styles, name, price, period, features, btnLabel, btnHref, featured, delay }: {
-  styles: Record<string,string>;
+  styles: { readonly [key: string]: string };
   name: string;
   price: ReactNode;
   period: string;
