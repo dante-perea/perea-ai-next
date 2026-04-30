@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// VAPI config — IDs are not secrets, only VAPI_PRIVATE_KEY is
-const VAPI_PHONE_NUMBER_ID = "80540670-a502-4ab9-b928-0520688e39ed";
-const VAPI_ASSISTANT_ID    = "fb21e626-6e15-4326-b303-d0629b7e9b6c";
+// Retell AI config — IDs are not secrets, only RETELL_API_KEY is
+const RETELL_AGENT_ID   = "agent_9c5cf6f9b8f0fa2797dda09c09";
+const RETELL_API_URL    = "https://api.retellai.com/v2/create-phone-call";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,57 +16,66 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const apiKey = process.env.VAPI_PRIVATE_KEY;
+    const apiKey    = process.env.RETELL_API_KEY;
+    const fromNumber = process.env.RETELL_FROM_NUMBER;
+
     if (!apiKey) {
-      console.error("[trigger-call] VAPI_PRIVATE_KEY env var is not set");
+      console.error("[trigger-call] RETELL_API_KEY not set");
       return NextResponse.json(
         { error: "Calling service not configured.", code: "missing_api_key" },
         { status: 503 }
       );
     }
 
-    // Trigger VAPI outbound call
-    const vapiRes = await fetch("https://api.vapi.ai/call", {
+    if (!fromNumber) {
+      console.error("[trigger-call] RETELL_FROM_NUMBER not set");
+      return NextResponse.json(
+        { error: "No outbound phone number configured. Please book a slot directly below.", code: "missing_from_number" },
+        { status: 503 }
+      );
+    }
+
+    // Trigger Retell AI outbound call
+    const retellRes = await fetch(RETELL_API_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        type: "outboundPhoneCall",
-        phoneNumberId: VAPI_PHONE_NUMBER_ID,
-        customer: {
-          number: phone.trim(),
+        from_number: fromNumber,
+        to_number: phone.trim(),
+        override_agent_id: RETELL_AGENT_ID,
+        retell_llm_dynamic_variables: {
           name: name.trim(),
+          email: email.trim(),
         },
-        assistantId: VAPI_ASSISTANT_ID,
-        assistantOverrides: {
-          variableValues: {
-            name: name.trim(),
-            email: email.trim(),
-          },
+        metadata: {
+          name: name.trim(),
+          email: email.trim(),
+          source: "perea-ai-website",
         },
       }),
     });
 
-    if (!vapiRes.ok) {
-      let errBody: { message?: string; error?: string } = {};
-      try { errBody = await vapiRes.json(); } catch { /* ignore */ }
+    if (!retellRes.ok) {
+      let errBody: { error_message?: string; message?: string } = {};
+      try { errBody = await retellRes.json(); } catch { /* ignore */ }
 
-      const rawMsg = errBody.message || errBody.error || "";
-      console.error("[trigger-call] VAPI error:", vapiRes.status, rawMsg);
+      const rawMsg = errBody.error_message || errBody.message || "";
+      console.error("[trigger-call] Retell error:", retellRes.status, rawMsg);
 
-      // Translate VAPI-specific errors into user-friendly messages
+      // Translate known Retell errors into user-friendly messages
       let userMsg = "Couldn't start the call. Please book a time slot directly below.";
-      let code = "vapi_error";
+      let code = "retell_error";
 
-      if (rawMsg.toLowerCase().includes("international")) {
-        userMsg = "International calls require an upgraded calling plan. Please book a time slot directly below instead.";
+      if (rawMsg.toLowerCase().includes("international") || rawMsg.toLowerCase().includes("country")) {
+        userMsg = "International calls require a local number. Please book a time slot directly below.";
         code = "international_not_supported";
       } else if (rawMsg.toLowerCase().includes("invalid") && rawMsg.toLowerCase().includes("number")) {
-        userMsg = "The phone number format looks invalid. Please use the full international format, e.g. +1 555 000 0000.";
+        userMsg = "Invalid phone number format. Please use international format e.g. +971 50 000 0000.";
         code = "invalid_number";
-      } else if (vapiRes.status === 401 || vapiRes.status === 403) {
+      } else if (retellRes.status === 401 || retellRes.status === 403) {
         userMsg = "Calling service authentication failed. Please contact support.";
         code = "auth_error";
       }
@@ -74,10 +83,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: userMsg, code, detail: rawMsg }, { status: 502 });
     }
 
-    const data = await vapiRes.json();
-    console.log("[trigger-call] Call initiated:", data.id);
+    const data = await retellRes.json();
+    console.log("[trigger-call] Retell call initiated:", data.call_id);
 
-    return NextResponse.json({ callId: data.id, success: true });
+    return NextResponse.json({ callId: data.call_id, success: true });
   } catch (err) {
     console.error("[trigger-call] Unexpected error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

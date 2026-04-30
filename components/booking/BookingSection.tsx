@@ -147,7 +147,7 @@ export function BookingSection({
         <div className={styles.eyebrow}>Get Started</div>
         <h2 className={styles.headline}>
           {state === "booked"
-            ? "You're all set"
+            ? "You're all set 🎉"
             : "Stop exploring AI. Start using it."}
         </h2>
         <p className={styles.subhead}>
@@ -226,7 +226,7 @@ export function BookingSection({
             {/* Error message */}
             {state === "error" && (
               <div className={styles.errorWrap} style={{ marginTop: "1rem" }}>
-                <div className={styles.errorTitle}>Call couldn't be initiated</div>
+                <div className={styles.errorTitle}>Call couldn&apos;t be initiated</div>
                 <div className={styles.errorDesc}>
                   {errorMsg || "Something went wrong. Please try again or book directly on Calendly."}
                 </div>
@@ -259,8 +259,8 @@ export function BookingSection({
                   <>
                     <div className={styles.callingTitle}>📞 Aria is calling {form.name.split(" ")[0]}...</div>
                     <div className={styles.callingDesc}>
-                      She'll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
-                      Can't take the call right now? Book a time slot directly below.
+                      She&apos;ll introduce herself from Perea.AI and ask 5 quick questions. The call takes about 4 minutes.
+                      Can&apos;t take the call right now? Book a time slot directly below.
                     </div>
                   </>
                 )}
