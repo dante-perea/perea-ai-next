@@ -9,7 +9,7 @@
  */
 
 import { NextResponse, type NextRequest } from "next/server";
-import { abCookieName, assignVariant, AB_SPLIT } from "./lib/ab";
+import { abCookieName, assignVariant } from "./lib/ab";
 
 export const config = {
   matcher: ["/lp/:slug*"],
@@ -46,6 +46,8 @@ export function middleware(request: NextRequest) {
   }
 
   // ── 2. Geo Header Pass-through ────────────────────────────────────────────
+  // Vercel injects these on their network; we copy them into response headers
+  // so next/headers() can access them in RSC even in local dev via overrides.
   const country = request.headers.get("x-vercel-ip-country") ?? "US";
   const city    = request.headers.get("x-vercel-ip-city") ?? "";
   const region  = request.headers.get("x-vercel-ip-country-region") ?? "";

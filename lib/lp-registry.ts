@@ -1,5 +1,8 @@
 /**
  * LP Registry — single source of truth for all /lp/[slug] landing pages.
+ *
+ * Each entry defines the content, SEO, A/B variants, and which sections
+ * to render. Adding a new LP requires only a new entry here — no new files.
  */
 
 export type LPVariant = "a" | "b";
@@ -23,7 +26,7 @@ export interface LPCtaConfig {
 
 export interface LPHeroConfig {
   eyebrow: string;
-  headline: string;
+  headline: string;       // supports {typewriter} placeholder for animated word
   typewriterWords?: string[];
   subhead: string;
 }
@@ -40,14 +43,21 @@ export interface LPVariantConfig {
 
 export interface LPConfig {
   slug: string;
+  /** SEO */
   title: string;
   description: string;
   ogImage?: string;
+  /** Layout */
   sections: LPSection[];
+  /** Default variant content */
   default: LPVariantConfig;
+  /** Optional B variant — overrides default fields */
   variantB?: Partial<LPVariantConfig>;
+  /** Theme override */
   theme?: "light" | "dark";
 }
+
+// ─── Registry ───────────────────────────────────────────────────────────────
 
 export const LP_REGISTRY: Record<string, LPConfig> = {
 
@@ -137,10 +147,12 @@ export const LP_REGISTRY: Record<string, LPConfig> = {
 
 };
 
+/** Returns the LP config for a slug, or null if not found */
 export function getLPConfig(slug: string): LPConfig | null {
   return LP_REGISTRY[slug] ?? null;
 }
 
+/** Returns variant content, merging B over default when applicable */
 export function getVariantContent(
   config: LPConfig,
   variant: LPVariant

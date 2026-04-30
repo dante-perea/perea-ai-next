@@ -1,5 +1,11 @@
 /**
  * Geo utilities — reads Vercel's edge-injected geo headers server-side.
+ * These headers are available in RSC via next/headers.
+ *
+ * Headers injected by Vercel Edge Network:
+ *   x-vercel-ip-country        ISO 3166-1 alpha-2 (e.g. "US", "GB", "MX")
+ *   x-vercel-ip-city           URL-encoded city name
+ *   x-vercel-ip-country-region Region/state code
  */
 
 export interface GeoData {
@@ -8,6 +14,7 @@ export interface GeoData {
   region: string;
 }
 
+/** Decode Vercel's URL-encoded city names */
 function decodeSafe(val: string | null): string {
   if (!val) return "";
   try {
@@ -17,6 +24,7 @@ function decodeSafe(val: string | null): string {
   }
 }
 
+/** Returns geo info from Vercel headers (RSC only). Falls back to empty strings. */
 export function getGeoFromHeaders(
   headerMap: Map<string, string>
 ): GeoData {
@@ -26,6 +34,8 @@ export function getGeoFromHeaders(
     region:  headerMap.get("x-vercel-ip-country-region") ?? "",
   };
 }
+
+// ─── Localisation helpers ────────────────────────────────────────────────────
 
 const LATAM_COUNTRIES = new Set([
   "MX","CO","AR","CL","PE","VE","EC","BO","PY","UY","CR","PA","DO","SV","GT","HN","NI","CU"
@@ -46,6 +56,7 @@ export function getRegion(country: string): GeoRegion {
   return "other";
 }
 
+/** Returns CTA label localised by region */
 export function getLocalCTA(region: GeoRegion): string {
   switch (region) {
     case "us":    return "Schedule a strategy call →";
@@ -56,6 +67,7 @@ export function getLocalCTA(region: GeoRegion): string {
   }
 }
 
+/** Returns trust tagline localised by region */
 export function getLocalTrustLine(region: GeoRegion): string {
   switch (region) {
     case "eu":    return "GDPR-compliant engagements · EU-based delivery available";

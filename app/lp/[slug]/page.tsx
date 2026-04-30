@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://perea-ai.vercel.app/lp/${slug}`,
       images: config.ogImage
         ? [{ url: config.ogImage }]
-        : [{ url: "/og-default.png", width: 1200, height: 630 }],
+        : [{ url: "/og-default.svg", width: 1200, height: 630 }],
     },
     alternates: {
       canonical: `https://perea-ai.vercel.app/lp/${slug}`,
@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // ─── Static params for ISR pre-rendering ─────────────────────────────────────
 export async function generateStaticParams() {
+  // Pre-render all known slugs at build time
   return [
     { slug: "consultancy" },
     { slug: "sales" },
@@ -47,13 +48,16 @@ export async function generateStaticParams() {
 export default async function LPRoute({ params }: Props) {
   const { slug } = await params;
 
+  // 1. Validate slug
   const config = getLPConfig(slug);
   if (!config) notFound();
 
+  // 2. Resolve A/B variant from cookie (set by Edge Middleware)
   const cookieStore = await cookies();
   const variantCookie = cookieStore.get(abCookieName(slug))?.value;
   const variant = parseVariant(variantCookie);
 
+  // 3. Read geo headers (injected by middleware + Vercel edge)
   const headerStore = await headers();
   const headerMap = new Map<string, string>();
   headerStore.forEach((val, key) => headerMap.set(key, val));
@@ -63,16 +67,15 @@ export default async function LPRoute({ params }: Props) {
   const localCTA = getLocalCTA(region);
   const trustLine = getLocalTrustLine(region);
 
+  // 4. Get variant-specific content
   const content = getVariantContent(config, variant);
 
+  // 5. Track impression (server-side analytics stub)
   await trackImpression({ slug, variant, country: geo.country, city: geo.city });
 
   return (
     <LPPage
-      config={config}
       content={content}
-      variant={variant}
-      geo={geo}
       localCTA={localCTA}
       trustLine={trustLine}
     />

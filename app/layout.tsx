@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   title: {
     default: "Perea.AI — AI Consultancy Done Right",
     template: "%s | Perea.AI",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Perea.AI",
     url: "https://perea-ai.vercel.app",
-    images: [{ url: "/og-default.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
