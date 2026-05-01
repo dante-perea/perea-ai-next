@@ -1,16 +1,15 @@
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-export function GET(request: Request) {
-  const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
-  const proto = request.headers.get("x-forwarded-proto") ?? "https";
-  const origin = `${proto}://${host}`;
+const ORIGIN = "https://www.perea.ai";
+
+export function GET() {
   return Response.json(
     {
-      resource: `${origin}/api/mcp/server`,
-      authorization_servers: [origin],
+      resource: `${ORIGIN}/api/mcp/server`,
+      authorization_servers: [ORIGIN],
       bearer_methods_supported: ["header"],
       resource_name: "Perea Knowledge Base MCP Server",
     },
-    { headers: { "Cache-Control": "no-store" } }
+    { headers: { "Cache-Control": "public, max-age=3600" } }
   );
 }
