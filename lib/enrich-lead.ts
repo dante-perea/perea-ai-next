@@ -1,8 +1,6 @@
 /**
  * Lead enrichment via EnrichLayer (enrichlayer.com)
  *
- * EnrichLayer provides LinkedIn-based company + person data.
- *
  * Company lookup strategy:
  *   email: dante@perea.ai
  *   → domain: perea.ai
@@ -10,9 +8,7 @@
  *   → try:    https://www.linkedin.com/company/perea
  *   → EnrichLayer returns: name, industry, size, website, description, HQ, specialties
  *
- * Person lookup:
- *   Requires a LinkedIn profile URL — skipped for now.
- *
+ * Person lookup: Requires a LinkedIn profile URL (skipped unless provided).
  * Cost: ~1 credit per company lookup.
  * Docs: https://enrichlayer.com/docs
  */
@@ -27,19 +23,30 @@ export interface LeadEnrichment {
   companySize?:        string;
   companyIndustry?:    string;
   companyFounded?:     number;
+  companyFunding?:     string;
   companyLinkedIn?:    string;
   companyDescription?: string;
   companyCity?:        string;
   companyCountry?:     string;
   technologies?:       string[];
 
-  // Person (populated if LinkedIn URL is available)
-  name?:       string;
-  title?:      string;
-  headline?:   string;
-  city?:       string;
-  country?:    string;
+  // Person
+  name?:        string;
+  title?:       string;
+  headline?:    string;
+  city?:        string;
+  country?:     string;
   linkedinUrl?: string;
+}
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 8000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function enrichCompany(
@@ -50,12 +57,9 @@ export async function enrichCompany(
   const linkedinUrl = `https://www.linkedin.com/company/${slug}`;
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${ENRICHLAYER_BASE}/company?url=${encodeURIComponent(linkedinUrl)}`,
-      {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        signal: AbortSignal.timeout(8000),
-      }
+      { headers: { Authorization: `Bearer ${apiKey}` } },
     );
 
     if (!res.ok) return null;
@@ -69,22 +73,24 @@ export async function enrichCompany(
       companySize = `${c.company_size[0]}\u2013${c.company_size[1]} employees`;
     }
 
-    const hq = c.hq;
-    const technologies = Array.isArray(c.specialities) ? c.specialities.slice(0, 8) : undefined;
+    const hq = c.hq as { city?: string; country?: string } | undefined;
+    const technologies = Array.isArray(c.specialities)
+      ? (c.specialities as string[]).slice(0, 8)
+      : undefined;
 
     console.log("[enrich-lead] Company found:", c.name, "|", companySize);
 
     return {
-      companyName:        c.name,
+      companyName:        c.name as string,
       companyDomain:      domain,
-      companyWebsite:     c.website,
+      companyWebsite:     c.website as string | undefined,
       companySize,
-      companyIndustry:    c.industry,
-      companyFounded:     c.founded_year ?? undefined,
+      companyIndustry:    c.industry as string | undefined,
+      companyFounded:     c.founded_year ? Number(c.founded_year) : undefined,
       companyLinkedIn:    linkedinUrl,
-      companyDescription: c.description,
-      companyCity:        hq?.city ?? undefined,
-      companyCountry:     hq?.country ?? undefined,
+      companyDescription: c.description as string | undefined,
+      companyCity:        hq?.city,
+      companyCountry:     hq?.country,
       technologies,
     };
   } catch (err) {
@@ -98,20 +104,20 @@ export async function enrichPerson(
   apiKey: string,
 ): Promise<Partial<LeadEnrichment> | null> {
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${ENRICHLAYER_BASE}/profile?profile_url=${encodeURIComponent(linkedinProfileUrl)}`,
-      { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(8000) }
+      { headers: { Authorization: `Bearer ${apiKey}` } },
     );
     if (!res.ok) return null;
     const p = await res.json();
     if (p.error || !p.full_name) return null;
-    const currentRole = p.experiences?.[0];
+    const currentRole = Array.isArray(p.experiences) ? p.experiences[0] : undefined;
     return {
-      name:        p.full_name,
-      title:       currentRole?.title ?? p.occupation,
-      headline:    p.headline,
-      city:        p.city,
-      country:     p.country_full_name,
+      name:        p.full_name as string,
+      title:       (currentRole as { title?: string } | undefined)?.title ?? p.occupation as string | undefined,
+      headline:    p.headline as string | undefined,
+      city:        p.city as string | undefined,
+      country:     p.country_full_name as string | undefined,
       linkedinUrl: linkedinProfileUrl,
     };
   } catch (err) {
