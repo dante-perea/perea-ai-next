@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listAllFiles } from "@/lib/data-lake/meta";
+import { listAllFiles } from "@/lib/knowledge-base/meta";
 
 export async function GET(): Promise<NextResponse> {
   try {

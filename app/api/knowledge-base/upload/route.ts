@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
-      { error: "BLOB_READ_WRITE_TOKEN is not configured on this environment" },
+      { error: "BLOB_READ_WRITE_TOKEN is not configured" },
       { status: 500 }
     );
   }
@@ -17,7 +17,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
         if (!userId) throw new Error("Unauthorized");
 
         const id = crypto.randomUUID();
@@ -26,6 +26,10 @@ export async function POST(request: Request): Promise<NextResponse> {
         return {
           pathname: `raw/files/${id}-${safeName}`,
           allowOverwrite: true,
+          tokenPayload: JSON.stringify({
+            id,
+            uploadedBy: (sessionClaims?.email as string | undefined) ?? "",
+          }),
         };
       },
       onUploadCompleted: async () => {},

@@ -1,6 +1,6 @@
 import { get } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { findFileById } from "@/lib/data-lake/meta";
+import { findFileById } from "@/lib/knowledge-base/meta";
 
 export async function GET(
   _request: Request,

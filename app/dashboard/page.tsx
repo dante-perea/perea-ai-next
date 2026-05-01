@@ -1,15 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
-import { listAllFiles } from "@/lib/data-lake/meta";
-import { DataLakeClient } from "@/components/data-lake/DataLakeClient";
+import { listAllFiles } from "@/lib/knowledge-base/meta";
+import { KnowledgeBaseClient } from "@/components/knowledge-base/KnowledgeBaseClient";
 
 export const dynamic = "force-dynamic";
 
-export default async function DataLakePage() {
+export default async function DashboardPage() {
   const { sessionClaims } = await auth();
   const email = (sessionClaims?.email as string | undefined) ?? "";
 
   const files = await listAllFiles().catch(() => []);
-  files.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
 
-  return <DataLakeClient files={files} currentUser={email} />;
+  return <KnowledgeBaseClient files={files} currentUser={email} />;
 }

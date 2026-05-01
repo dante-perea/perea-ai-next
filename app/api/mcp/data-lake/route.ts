@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { listAllFiles } from "@/lib/data-lake/meta";
-import type { MpcFileRecord } from "@/lib/data-lake/types";
+import { listAllFiles } from "@/lib/knowledge-base/meta";
+import type { KbFileRecord } from "@/lib/knowledge-base/types";
 
 export async function GET(request: Request): Promise<NextResponse> {
   const secret = process.env.MCP_SECRET;
@@ -12,12 +12,19 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const files = await listAllFiles();
+    const { searchParams } = new URL(request.url);
+    const tag = searchParams.get("tag");
+
+    let files = await listAllFiles();
+    if (tag) files = files.filter((f) => f.tags.includes(tag));
+
     const base = new URL(request.url).origin;
-    const records: MpcFileRecord[] = files.map((f) => ({
+    const records: KbFileRecord[] = files.map((f) => ({
       id: f.id,
       filename: f.filename,
-      url: `${base}/api/data-lake/files/${f.id}/download`,
+      url: `${base}/api/knowledge-base/files/${f.id}/download`,
+      tags: f.tags,
+      uploadedBy: f.uploadedBy,
       uploadedAt: f.uploadedAt,
       size: f.size,
     }));

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { findFileById, deleteFile } from "@/lib/data-lake/meta";
+import { findFileById, deleteFile } from "@/lib/knowledge-base/meta";
 
 export async function DELETE(
   _request: Request,
@@ -10,7 +10,7 @@ export async function DELETE(
     const file = await findFileById(id);
     if (!file) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    await deleteFile(file.blobKey);
+    await deleteFile(file.id, file.blobKey);
     return NextResponse.json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Delete failed";
