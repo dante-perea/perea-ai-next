@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // OAuth discovery — Next.js cannot serve dot-prefixed paths from app/
+  async rewrites() {
+    return [
+      { source: "/.well-known/oauth-protected-resource",  destination: "/api/well-known/oauth-protected-resource" },
+      { source: "/.well-known/oauth-authorization-server", destination: "/api/well-known/oauth-authorization-server" },
+    ];
+  },
+
   // Security headers
   async headers() {
     return [

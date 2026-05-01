@@ -3,21 +3,35 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { get } from "@vercel/blob";
 import { z } from "zod";
 import { findFileById, listAllFiles } from "@/lib/knowledge-base/meta";
+import { verifyAccessToken } from "@/lib/oauth/jwt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function checkAuth(request: Request): Response | null {
+async function checkAuth(request: Request): Promise<Response | null> {
+  const header = request.headers.get("authorization") ?? "";
+
+  // Legacy static secret (backward compat for .mcp.json configs with --header)
   const secret = process.env.MCP_SECRET;
-  if (!secret) return null;
-  const auth = request.headers.get("authorization") ?? "";
-  if (auth !== `Bearer ${secret}`) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (secret && header === `Bearer ${secret}`) return null;
+
+  // OAuth JWT
+  if (header.startsWith("Bearer ")) {
+    try {
+      await verifyAccessToken(header.slice(7));
+      return null;
+    } catch {
+      // fall through to 401
+    }
   }
-  return null;
+
+  return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    status: 401,
+    headers: {
+      "Content-Type": "application/json",
+      "WWW-Authenticate": 'Bearer resource_metadata="https://perea.ai/.well-known/oauth-protected-resource"',
+    },
+  });
 }
 
 function buildServer(): McpServer {
@@ -98,7 +112,7 @@ function buildServer(): McpServer {
 }
 
 async function handle(request: Request): Promise<Response> {
-  const authError = checkAuth(request);
+  const authError = await checkAuth(request);
   if (authError) return authError;
 
   const server = buildServer();
