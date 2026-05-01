@@ -1,113 +1,152 @@
 /**
- * Lead enrichment via Apollo.io
- * Converts an email address into a rich company + person profile.
+ * Lead enrichment via EnrichLayer (enrichlayer.com)
  *
- * Apollo free tier: 50 enrichments/month
- * Paid: $49/mo for 1,000
+ * EnrichLayer provides LinkedIn-based company + person data.
  *
- * If APOLLO_API_KEY is not set, returns null gracefully
- * (the rest of the pipeline still works with transcript-only data).
+ * Company lookup strategy:
+ *   email: dante@perea.ai
+ *   → domain: perea.ai
+ *   → slug:   perea
+ *   → try:    https://www.linkedin.com/company/perea
+ *   → EnrichLayer returns: name, industry, size, website, description, HQ, specialties
+ *
+ * Person lookup:
+ *   Requires a LinkedIn profile URL — skipped for now.
+ *
+ * Cost: ~1 credit per company lookup.
+ * Docs: https://enrichlayer.com/docs
  */
 
+const ENRICHLAYER_BASE = "https://enrichlayer.com/api/v2";
+
 export interface LeadEnrichment {
-  // Person
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-  title?: string;
-  linkedinUrl?: string;
-  city?: string;
-  country?: string;
-
   // Company
-  companyName?: string;
-  companyDomain?: string;
-  companyWebsite?: string;
-  companySize?: string;           // e.g. "11-50"
-  companyIndustry?: string;
-  companyFunding?: string;        // e.g. "Series A"
-  companyFounded?: number;
-  companyLinkedIn?: string;
+  companyName?:        string;
+  companyDomain?:      string;
+  companyWebsite?:     string;
+  companySize?:        string;
+  companyIndustry?:    string;
+  companyFounded?:     number;
+  companyLinkedIn?:    string;
   companyDescription?: string;
+  companyCity?:        string;
+  companyCountry?:     string;
+  technologies?:       string[];
 
-  // Tech stack (if available)
-  technologies?: string[];
+  // Person (populated if LinkedIn URL is available)
+  name?:       string;
+  title?:      string;
+  headline?:   string;
+  city?:       string;
+  country?:    string;
+  linkedinUrl?: string;
 }
 
-export async function enrichLead(email: string): Promise<LeadEnrichment | null> {
-  const apiKey = process.env.APOLLO_API_KEY;
-  if (!apiKey) {
-    console.log("[enrich-lead] APOLLO_API_KEY not set — skipping enrichment");
-    return null;
-  }
+export async function enrichCompany(
+  domain: string,
+  apiKey: string,
+): Promise<Partial<LeadEnrichment> | null> {
+  const slug = domain.split(".")[0].toLowerCase();
+  const linkedinUrl = `https://www.linkedin.com/company/${slug}`;
 
   try {
-    const res = await fetch("https://api.apollo.io/api/v1/people/match", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-        "X-Api-Key": apiKey,
-      },
-      body: JSON.stringify({
-        email,
-        reveal_personal_emails: false,
-        reveal_phone_number: false,
-      }),
-    });
+    const res = await fetch(
+      `${ENRICHLAYER_BASE}/company?url=${encodeURIComponent(linkedinUrl)}`,
+      {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(8000),
+      }
+    );
 
-    if (!res.ok) {
-      console.warn("[enrich-lead] Apollo error:", res.status, await res.text());
-      return null;
+    if (!res.ok) return null;
+    const c = await res.json();
+    if (c.error || c.errors || !c.name) return null;
+
+    let companySize: string | undefined;
+    if (c.company_size_on_linkedin) {
+      companySize = `${c.company_size_on_linkedin.toLocaleString()} employees`;
+    } else if (Array.isArray(c.company_size) && c.company_size.length === 2) {
+      companySize = `${c.company_size[0]}\u2013${c.company_size[1]} employees`;
     }
 
-    const data = await res.json();
-    const person  = data?.person;
-    const org     = person?.organization;
+    const hq = c.hq;
+    const technologies = Array.isArray(c.specialities) ? c.specialities.slice(0, 8) : undefined;
 
-    if (!person) return null;
-
-    // Map funding stage from Apollo's format
-    const fundingMap: Record<string, string> = {
-      seed:      "Seed",
-      series_a:  "Series A",
-      series_b:  "Series B",
-      series_c:  "Series C",
-      ipo:       "Public",
-      bootstrapped: "Bootstrapped",
-    };
+    console.log("[enrich-lead] Company found:", c.name, "|", companySize);
 
     return {
-      name:               person.name,
-      firstName:          person.first_name,
-      lastName:           person.last_name,
-      title:              person.title,
-      linkedinUrl:        person.linkedin_url,
-      city:               person.city,
-      country:            person.country,
-
-      companyName:        org?.name,
-      companyDomain:      org?.primary_domain,
-      companyWebsite:     org?.website_url ?? (org?.primary_domain ? `https://${org.primary_domain}` : undefined),
-      companySize:        org?.employee_count ? formatEmployeeCount(org.employee_count) : undefined,
-      companyIndustry:    org?.industry,
-      companyFunding:     org?.latest_funding_stage ? (fundingMap[org.latest_funding_stage] ?? org.latest_funding_stage) : undefined,
-      companyFounded:     org?.founded_year,
-      companyLinkedIn:    org?.linkedin_url,
-      companyDescription: org?.short_description,
-      technologies:       (org?.technology_names ?? []).slice(0, 8), // top 8
+      companyName:        c.name,
+      companyDomain:      domain,
+      companyWebsite:     c.website,
+      companySize,
+      companyIndustry:    c.industry,
+      companyFounded:     c.founded_year ?? undefined,
+      companyLinkedIn:    linkedinUrl,
+      companyDescription: c.description,
+      companyCity:        hq?.city ?? undefined,
+      companyCountry:     hq?.country ?? undefined,
+      technologies,
     };
   } catch (err) {
-    console.error("[enrich-lead] Unexpected error:", err);
+    console.error("[enrich-lead] Company exception:", err);
     return null;
   }
 }
 
-function formatEmployeeCount(count: number): string {
-  if (count <= 10)   return "1\u201310";
-  if (count <= 50)   return "11\u201350";
-  if (count <= 200)  return "51\u2013200";
-  if (count <= 500)  return "201\u2013500";
-  if (count <= 1000) return "501\u20131,000";
-  return "1,000+";
+export async function enrichPerson(
+  linkedinProfileUrl: string,
+  apiKey: string,
+): Promise<Partial<LeadEnrichment> | null> {
+  try {
+    const res = await fetch(
+      `${ENRICHLAYER_BASE}/profile?profile_url=${encodeURIComponent(linkedinProfileUrl)}`,
+      { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const p = await res.json();
+    if (p.error || !p.full_name) return null;
+    const currentRole = p.experiences?.[0];
+    return {
+      name:        p.full_name,
+      title:       currentRole?.title ?? p.occupation,
+      headline:    p.headline,
+      city:        p.city,
+      country:     p.country_full_name,
+      linkedinUrl: linkedinProfileUrl,
+    };
+  } catch (err) {
+    console.error("[enrich-lead] Person exception:", err);
+    return null;
+  }
+}
+
+export async function enrichLead(
+  email: string,
+  linkedinUrl?: string,
+): Promise<LeadEnrichment | null> {
+  const apiKey = process.env.ENRICHLAYER_API_KEY;
+  if (!apiKey) {
+    console.log("[enrich-lead] ENRICHLAYER_API_KEY not set \u2014 skipping");
+    return null;
+  }
+
+  const domain = email.split("@")[1];
+  if (!domain) return null;
+
+  const [company, person] = await Promise.allSettled([
+    enrichCompany(domain, apiKey),
+    linkedinUrl ? enrichPerson(linkedinUrl, apiKey) : Promise.resolve(null),
+  ]);
+
+  const companyData = company.status === "fulfilled" ? company.value : null;
+  const personData  = person.status  === "fulfilled" ? person.value  : null;
+
+  const merged: LeadEnrichment = {
+    ...(companyData ?? {}),
+    ...(personData  ?? {}),
+    companyDomain: domain,
+  };
+
+  if (!merged.companyName && !merged.name) return null;
+  return merged;
 }
