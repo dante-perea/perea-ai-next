@@ -1,8 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { writeMeta } from "@/lib/data-lake/meta";
-import type { FileMetadata } from "@/lib/data-lake/types";
 
 export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -12,13 +10,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  // Call auth() here — before handleUpload — so Clerk's AsyncLocalStorage
-  // context is guaranteed to be available (it gets lost inside callbacks).
-  const { userId, sessionClaims } = await auth();
+  // Call auth() before handleUpload — Clerk's AsyncLocalStorage context is lost inside callbacks.
+  const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const uploadedBy = (sessionClaims?.email as string | undefined) ?? "";
 
   const body = (await request.json()) as HandleUploadBody;
 
@@ -27,42 +23,20 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        const id = crypto.randomUUID();
+        const { size, id } = clientPayload
+          ? (JSON.parse(clientPayload) as { size: number; id: string })
+          : { size: 0, id: crypto.randomUUID() };
+
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const { size } = clientPayload
-          ? (JSON.parse(clientPayload) as { size: number })
-          : { size: 0 };
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
           allowOverwrite: true,
-          tokenPayload: JSON.stringify({ uploadedBy, id, size }),
+          tokenPayload: JSON.stringify({ id, size }),
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
-          uploadedBy: string;
-          id: string;
-          size: number;
-        };
-
-        const parts = blob.pathname.split("/");
-        const nameWithId = parts[parts.length - 1];
-        const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
-
-        const meta: FileMetadata = {
-          id,
-          filename,
-          blobKey: blob.pathname,
-          blobUrl: blob.url,
-          size: size ?? 0,
-          contentType: blob.contentType,
-          uploadedBy: by,
-          uploadedAt: new Date().toISOString(),
-          tags: [],
-        };
-
-        await writeMeta(blob.pathname, meta);
+      onUploadCompleted: async () => {
+        // Registration is handled client-side via /api/data-lake/register
       },
     });
 

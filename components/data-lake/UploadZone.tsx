@@ -26,16 +26,32 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
     await Promise.allSettled(
       fileList.map(async (file, i) => {
         try {
-          await upload(file.name, file, {
+          const id = crypto.randomUUID();
+
+          const result = await upload(file.name, file, {
             access: "private",
             handleUploadUrl: "/api/data-lake/upload",
-            clientPayload: JSON.stringify({ size: file.size }),
+            clientPayload: JSON.stringify({ size: file.size, id }),
             onUploadProgress: ({ percentage }) => {
               setFiles((prev) =>
                 prev.map((p, idx) => (idx === i ? { ...p, pct: Math.round(percentage) } : p))
               );
             },
           });
+
+          await fetch("/api/data-lake/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id,
+              blobUrl: result.url,
+              blobPathname: result.pathname,
+              contentType: result.contentType,
+              size: file.size,
+              filename: file.name,
+            }),
+          });
+
           setFiles((prev) =>
             prev.map((p, idx) => (idx === i ? { ...p, status: "done", pct: 100 } : p))
           );
@@ -47,8 +63,6 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
       })
     );
 
-    // Give onUploadCompleted callback time to write the .meta.json
-    await new Promise((r) => setTimeout(r, 1500));
     setFiles([]);
     onUploadComplete();
   }
