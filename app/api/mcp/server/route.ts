@@ -29,7 +29,7 @@ async function checkAuth(request: Request): Promise<Response | null> {
     status: 401,
     headers: {
       "Content-Type": "application/json",
-      "WWW-Authenticate": 'Bearer resource_metadata="https://www.perea.ai/api/oauth/resource-metadata"',
+      "WWW-Authenticate": 'Bearer resource_metadata="https://www.perea.ai/api/mcp/resource"',
     },
   });
 }
