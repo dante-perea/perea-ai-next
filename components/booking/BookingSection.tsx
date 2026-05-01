@@ -101,16 +101,7 @@ export function BookingSection({
     return () => window.removeEventListener("message", onCalendly);
   }, [cleanup]);
 
-  // ── Load Calendly widget ─────────────────────────────────────────────────
-  useEffect(() => {
-    if (state !== "call-ended" && state !== "in-call") return;
-    if (document.getElementById("calendly-script")) return;
-    const s = document.createElement("script");
-    s.id  = "calendly-script";
-    s.src = "https://assets.calendly.com/assets/external/widget.js";
-    s.async = true;
-    document.body.appendChild(s);
-  }, [state]);
+  // ── Calendly is now embedded via direct iframe — no script loading needed ──
 
   // ── Page-close / tab-switch safety ──────────────────────────────────────
   useEffect(() => {
@@ -183,7 +174,7 @@ export function BookingSection({
       const client = new RetellWebClient();
       retellClientRef.current = client;
 
-      // Listen for server-side call end
+      // ★ THE KEY FIX: Listen for server-side call end
       client.on("call_ended", () => {
         console.log("[Retell] call_ended event fired — auto-ending");
         endCall("retell-call_ended-event");
@@ -232,8 +223,9 @@ export function BookingSection({
     }
   }
 
-  // ── Calendly URL with prefill ────────────────────────────────────────────
-  const calendlyUrl = `${CALENDLY_BASE_URL}?name=${encodeURIComponent(form.name)}&email=${encodeURIComponent(form.email)}&hide_gdpr_banner=1`;
+  // ── Calendly iframe URL — direct embed, no script dependency ────────────
+  // Uses Calendly's embed_type=Inline which is reliable across all browsers.
+  const calendlyUrl = `${CALENDLY_BASE_URL}?embed_type=Inline&embed_domain=www.perea.ai&name=${encodeURIComponent(form.name)}&email=${encodeURIComponent(form.email)}&hide_gdpr_banner=1&hide_event_type_details=0`;
 
   // ── Format seconds → mm:ss ───────────────────────────────────────────────
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
@@ -387,10 +379,13 @@ export function BookingSection({
 
             <div className={styles.orDivider}>Or book directly while you talk</div>
             <div className={styles.calendlyWrap}>
-              <div
-                className="calendly-inline-widget"
-                data-url={calendlyUrl}
-                style={{ width: "100%", height: "680px" }}
+              <iframe
+                src={calendlyUrl}
+                width="100%"
+                height="680"
+                frameBorder="0"
+                title="Book a discovery call"
+                style={{ display: "block", border: "none" }}
               />
             </div>
           </div>
@@ -412,10 +407,13 @@ export function BookingSection({
             </div>
             <div className={styles.orDivider}>Select your slot</div>
             <div className={styles.calendlyWrap}>
-              <div
-                className="calendly-inline-widget"
-                data-url={calendlyUrl}
-                style={{ width: "100%", height: "680px" }}
+              <iframe
+                src={calendlyUrl}
+                width="100%"
+                height="680"
+                frameBorder="0"
+                title="Book a discovery call"
+                style={{ display: "block", border: "none" }}
               />
             </div>
           </div>
