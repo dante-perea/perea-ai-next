@@ -8,14 +8,6 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // OAuth discovery — Next.js cannot serve dot-prefixed paths from app/
-  async rewrites() {
-    return [
-      { source: "/.well-known/oauth-protected-resource",  destination: "/api/well-known/protected-resource" },
-      { source: "/.well-known/oauth-authorization-server", destination: "/api/well-known/authorization-server" },
-    ];
-  },
-
   // Security headers
   async headers() {
     return [
@@ -25,6 +17,14 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+      {
+        // Well-known OAuth discovery files served from public/ need explicit JSON content-type
+        source: "/.well-known/:path*",
+        headers: [
+          { key: "Content-Type", value: "application/json" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
     ];
