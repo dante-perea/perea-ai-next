@@ -30,6 +30,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       uploadedBy: (sessionClaims?.email as string | undefined) ?? "",
       uploadedAt: new Date().toISOString(),
       tags: [],
+      userId,
+      teamId: null,
     };
 
     await insertFile(meta);

@@ -5,10 +5,10 @@ import { KnowledgeBaseClient } from "@/components/knowledge-base/KnowledgeBaseCl
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const { sessionClaims } = await auth();
+  const { userId, sessionClaims } = await auth();
   const email = (sessionClaims?.email as string | undefined) ?? "";
 
-  const files = await listAllFiles().catch(() => []);
+  const files = userId ? await listAllFiles({ userId }).catch(() => []) : [];
 
   return <KnowledgeBaseClient files={files} currentUser={email} />;
 }

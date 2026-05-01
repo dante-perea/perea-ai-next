@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { updateTags } from "@/lib/knowledge-base/meta";
 
@@ -5,6 +6,11 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { id } = await params;
     const { tags } = (await request.json()) as { tags: string[] };
@@ -13,7 +19,7 @@ export async function PUT(
       return NextResponse.json({ error: "tags must be an array" }, { status: 400 });
     }
 
-    const updated = await updateTags(id, tags.map((t) => t.trim()).filter(Boolean));
+    const updated = await updateTags(id, tags.map((t) => t.trim()).filter(Boolean), { userId });
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     return NextResponse.json(updated);
