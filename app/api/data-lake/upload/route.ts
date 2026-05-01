@@ -19,15 +19,16 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
+        // Auth lives here — same request context, Clerk AsyncLocalStorage is intact
         const { userId, sessionClaims } = await auth();
         if (!userId) throw new Error("Unauthorized");
 
         const uploadedBy = (sessionClaims?.email as string | undefined) ?? "";
-        const { size, id: clientId } = clientPayload
-          ? (JSON.parse(clientPayload) as { size: number; id: string })
-          : { size: 0, id: crypto.randomUUID() };
-        const id = clientId ?? crypto.randomUUID();
+        const id = crypto.randomUUID();
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const { size } = clientPayload
+          ? (JSON.parse(clientPayload) as { size: number })
+          : { size: 0 };
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
@@ -36,35 +37,38 @@ export async function POST(request: Request): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        try {
-          const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
-            uploadedBy: string;
-            id: string;
-            size: number;
-          };
-          const parts = blob.pathname.split("/");
-          const nameWithId = parts[parts.length - 1];
-          const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
-          const meta: FileMetadata = {
-            id,
-            filename,
-            blobKey: blob.pathname,
-            blobUrl: blob.url,
-            size: size ?? 0,
-            contentType: blob.contentType,
-            uploadedBy: by,
-            uploadedAt: new Date().toISOString(),
-            tags: [],
-          };
-          await writeMeta(blob.pathname, meta);
-        } catch (err) {
-          console.error("[onUploadCompleted] failed:", err);
-        }
+        // Called by Vercel's CDN after upload — no Clerk session needed here.
+        // Do NOT wrap in try/catch: errors must propagate so handleUpload returns
+        // 400 and Vercel retries this webhook up to 5 times.
+        const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
+          uploadedBy: string;
+          id: string;
+          size: number;
+        };
+
+        const parts = blob.pathname.split("/");
+        const nameWithId = parts[parts.length - 1];
+        const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
+
+        const meta: FileMetadata = {
+          id,
+          filename,
+          blobKey: blob.pathname,
+          blobUrl: blob.url,
+          size: size ?? 0,
+          contentType: blob.contentType,
+          uploadedBy: by,
+          uploadedAt: new Date().toISOString(),
+          tags: [],
+        };
+
+        await writeMeta(blob.pathname, meta);
       },
     });
 
     return NextResponse.json(jsonResponse);
   } catch (err) {
+    // Returning 400 signals Vercel to retry the onUploadCompleted webhook
     const message = err instanceof Error ? err.message : "Upload failed";
     return NextResponse.json({ error: message }, { status: 400 });
   }
