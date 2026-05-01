@@ -1,24 +1,22 @@
-/**
- * Edge Middleware — runs on Vercel's edge network before any page render.
- *
- * Responsibilities:
- * 1. A/B variant assignment — assigns a sticky cookie per LP slug on first visit.
- * 2. Geo header pass-through — forwards Vercel's geo headers to RSC pages.
- *    (Vercel already injects x-vercel-ip-country etc., but we re-forward them
- *     as custom headers so they're accessible inside generateMetadata too.)
- */
-
-import { NextResponse, type NextRequest } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { abCookieName, assignVariant } from "./lib/ab";
 
+const isDataLake = createRouteMatcher(["/data-lake(.*)", "/api/data-lake(.*)"]);
+
 export const config = {
-  matcher: ["/lp/:slug*"],
+  matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
+  ],
 };
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export default clerkMiddleware(async (auth, request) => {
+  if (isDataLake(request)) {
+    await auth.protect();
+  }
 
-  // Extract slug from /lp/{slug}
+  const { pathname } = request.nextUrl;
   const slugMatch = pathname.match(/^\/lp\/([^/]+)/);
   const slug = slugMatch?.[1];
 
@@ -32,13 +30,12 @@ export function middleware(request: NextRequest) {
     if (!existingVariant) {
       const variant = assignVariant();
       response.cookies.set(cookieName, variant, {
-        maxAge: 60 * 60 * 24 * 30, // 30 days — sticky
+        maxAge: 60 * 60 * 24 * 30,
         sameSite: "lax",
-        httpOnly: false,            // readable client-side for analytics
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         path: `/lp/${slug}`,
       });
-      // Forward as a request header so RSC can read it synchronously
       response.headers.set("x-ab-variant", variant);
     } else {
       response.headers.set("x-ab-variant", existingVariant);
@@ -46,8 +43,6 @@ export function middleware(request: NextRequest) {
   }
 
   // ── 2. Geo Header Pass-through ────────────────────────────────────────────
-  // Vercel injects these on their network; we copy them into response headers
-  // so next/headers() can access them in RSC even in local dev via overrides.
   const country = request.headers.get("x-vercel-ip-country") ?? "US";
   const city    = request.headers.get("x-vercel-ip-city") ?? "";
   const region  = request.headers.get("x-vercel-ip-country-region") ?? "";
@@ -57,4 +52,4 @@ export function middleware(request: NextRequest) {
   response.headers.set("x-geo-region",  region);
 
   return response;
-}
+});
