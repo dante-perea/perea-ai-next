@@ -80,10 +80,10 @@ function Tool({ name, description, params }: { name: string; description: string
 }
 
 export function McpDocs() {
-  const addCommand = `claude mcp add --transport http perea-knowledge-base ${SERVER_URL}`;
+  const addCommand = `claude mcp add --transport http perea-mcp ${SERVER_URL}`;
 
   const mcpJson = JSON.stringify(
-    { mcpServers: { "perea-knowledge-base": { type: "http", url: SERVER_URL } } },
+    { mcpServers: { "perea-mcp": { type: "http", url: SERVER_URL } } },
     null,
     2
   );
