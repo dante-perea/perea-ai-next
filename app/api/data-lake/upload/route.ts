@@ -1,6 +1,8 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { writeMeta } from "@/lib/data-lake/meta";
+import type { FileMetadata } from "@/lib/data-lake/types";
 
 export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -10,12 +12,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  // Call auth() before handleUpload — Clerk's AsyncLocalStorage context is lost inside callbacks.
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const body = (await request.json()) as HandleUploadBody;
 
   try {
@@ -23,20 +19,48 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        const { size, id } = clientPayload
-          ? (JSON.parse(clientPayload) as { size: number; id: string })
-          : { size: 0, id: crypto.randomUUID() };
+        // Auth check lives here — same browser request, AsyncLocalStorage intact
+        const { userId, sessionClaims } = await auth();
+        if (!userId) throw new Error("Unauthorized");
 
+        const uploadedBy = (sessionClaims?.email as string | undefined) ?? "";
+        const id = crypto.randomUUID();
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const { size } = clientPayload
+          ? (JSON.parse(clientPayload) as { size: number })
+          : { size: 0 };
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
           allowOverwrite: true,
-          tokenPayload: JSON.stringify({ id, size }),
+          tokenPayload: JSON.stringify({ uploadedBy, id, size }),
         };
       },
-      onUploadCompleted: async () => {
-        // Registration is handled client-side via /api/data-lake/register
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Called by Vercel's CDN — no Clerk session, but no auth needed here
+        const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
+          uploadedBy: string;
+          id: string;
+          size: number;
+        };
+
+        const parts = blob.pathname.split("/");
+        const nameWithId = parts[parts.length - 1];
+        const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
+
+        const meta: FileMetadata = {
+          id,
+          filename,
+          blobKey: blob.pathname,
+          blobUrl: blob.url,
+          size: size ?? 0,
+          contentType: blob.contentType,
+          uploadedBy: by,
+          uploadedAt: new Date().toISOString(),
+          tags: [],
+        };
+
+        await writeMeta(blob.pathname, meta);
       },
     });
 

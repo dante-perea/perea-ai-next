@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { abCookieName, assignVariant } from "./lib/ab";
 
-const isProtected = createRouteMatcher(["/dashboard(.*)", "/api/data-lake(.*)"]);
+const isProtected = createRouteMatcher(["/dashboard(.*)", "/api/data-lake/files(.*)"]);
 
 export const config = {
   matcher: [
