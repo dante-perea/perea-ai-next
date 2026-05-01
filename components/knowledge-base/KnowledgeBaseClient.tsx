@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { TagSidebar } from "./TagSidebar";
 import { UploadZone } from "./UploadZone";
@@ -16,6 +16,10 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser }: Knowle
   const router = useRouter();
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFiles(initialFiles);
+  }, [initialFiles]);
 
   const allTags = [...new Set(files.flatMap((f) => f.tags))].sort();
 
