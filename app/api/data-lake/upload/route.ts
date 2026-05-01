@@ -5,6 +5,13 @@ import { writeMeta } from "@/lib/data-lake/meta";
 import type { FileMetadata } from "@/lib/data-lake/types";
 
 export async function POST(request: Request): Promise<NextResponse> {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      { error: "BLOB_READ_WRITE_TOKEN is not configured on this environment" },
+      { status: 500 }
+    );
+  }
+
   const body = (await request.json()) as HandleUploadBody;
 
   try {

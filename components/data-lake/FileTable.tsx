@@ -39,7 +39,8 @@ function FileRow({
   const [deleting, setDeleting] = useState(false);
 
   function copyUrl() {
-    navigator.clipboard.writeText(file.blobUrl);
+    const downloadUrl = `${window.location.origin}/api/data-lake/files/${file.id}/download`;
+    navigator.clipboard.writeText(downloadUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
@@ -62,9 +63,7 @@ function FileRow({
       {/* Filename */}
       <td className="py-3 pr-4 pl-4">
         <a
-          href={file.blobUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`/api/data-lake/files/${file.id}/download`}
           className="flex items-center gap-2 font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors"
         >
           <FileIcon contentType={file.contentType} />

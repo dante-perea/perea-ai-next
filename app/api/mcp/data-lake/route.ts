@@ -21,10 +21,11 @@ export async function GET(request: Request): Promise<NextResponse> {
       files = files.filter((f) => f.tags.includes(tag));
     }
 
+    const base = new URL(request.url).origin;
     const records: MpcFileRecord[] = files.map((f) => ({
       id: f.id,
       filename: f.filename,
-      url: f.blobUrl,
+      url: `${base}/api/data-lake/files/${f.id}/download`,
       tags: f.tags,
       uploadedBy: f.uploadedBy,
       uploadedAt: f.uploadedAt,

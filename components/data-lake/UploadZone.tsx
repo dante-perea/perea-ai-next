@@ -27,7 +27,7 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
       fileList.map(async (file, i) => {
         try {
           await upload(file.name, file, {
-            access: "public",
+            access: "private",
             handleUploadUrl: "/api/data-lake/upload",
             clientPayload: JSON.stringify({ size: file.size }),
             onUploadProgress: ({ percentage }) => {
