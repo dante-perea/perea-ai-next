@@ -35,7 +35,6 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
-          allowedContentTypes: ["*"],
           tokenPayload: JSON.stringify({ uploadedBy, id, size }),
         };
       },
