@@ -25,7 +25,9 @@ async function checkAuth(request: Request): Promise<Response | null> {
     }
   }
 
-  const origin = new URL(request.url).origin;
+  const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
   return new Response(JSON.stringify({ error: "Unauthorized" }), {
     status: 401,
     headers: {

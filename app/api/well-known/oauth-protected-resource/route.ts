@@ -1,7 +1,9 @@
 export const dynamic = "force-dynamic";
 
 export function GET(request: Request) {
-  const origin = new URL(request.url).origin;
+  const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
   return Response.json(
     {
       resource: `${origin}/api/mcp/server`,
@@ -9,6 +11,6 @@ export function GET(request: Request) {
       bearer_methods_supported: ["header"],
       resource_name: "Perea Knowledge Base MCP Server",
     },
-    { headers: { "Cache-Control": "public, max-age=3600" } }
+    { headers: { "Cache-Control": "public, max-age=300" } }
   );
 }
