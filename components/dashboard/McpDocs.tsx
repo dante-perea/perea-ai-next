@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const SERVER_URL = "https://perea.ai/api/mcp/server";
+const SERVER_URL = "https://www.perea.ai/api/mcp/server";
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);

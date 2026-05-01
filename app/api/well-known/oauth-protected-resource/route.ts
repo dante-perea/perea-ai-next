@@ -11,6 +11,6 @@ export function GET(request: Request) {
       bearer_methods_supported: ["header"],
       resource_name: "Perea Knowledge Base MCP Server",
     },
-    { headers: { "Cache-Control": "public, max-age=300" } }
+    { headers: { "Cache-Control": "no-store" } }
   );
 }

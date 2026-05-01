@@ -16,6 +16,6 @@ export function GET(request: Request) {
       token_endpoint_auth_methods_supported: ["none"],
       scopes_supported: ["mcp"],
     },
-    { headers: { "Cache-Control": "public, max-age=300" } }
+    { headers: { "Cache-Control": "no-store" } }
   );
 }
