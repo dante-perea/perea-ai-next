@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const ISSUER   = "https://perea.ai";
+const ISSUER   = "https://www.perea.ai";
 const AUDIENCE = "perea-mcp";
 
 function secret(): Uint8Array {
