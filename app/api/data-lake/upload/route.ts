@@ -1,7 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { assertAllowed } from "@/lib/data-lake/auth";
 import { writeMeta } from "@/lib/data-lake/meta";
 import type { FileMetadata } from "@/lib/data-lake/types";
 
@@ -17,8 +16,6 @@ export async function POST(request: Request): Promise<NextResponse> {
         if (!userId) throw new Error("Unauthorized");
 
         const email = sessionClaims?.email as string | undefined ?? "";
-        assertAllowed(email);
-
         const id = crypto.randomUUID();
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
         const { size } = clientPayload ? (JSON.parse(clientPayload) as { size: number }) : { size: 0 };
