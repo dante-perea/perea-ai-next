@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { abCookieName, assignVariant } from "./lib/ab";
 
-const isDataLake = createRouteMatcher(["/data-lake(.*)", "/api/data-lake(.*)"]);
+const isProtected = createRouteMatcher(["/dashboard(.*)", "/api/data-lake(.*)"]);
 
 export const config = {
   matcher: [
@@ -12,7 +12,7 @@ export const config = {
 };
 
 export default clerkMiddleware(async (auth, request) => {
-  if (isDataLake(request)) {
+  if (isProtected(request)) {
     await auth.protect();
   }
 

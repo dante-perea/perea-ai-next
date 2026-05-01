@@ -1,6 +1,6 @@
 import { Show, UserButton } from "@clerk/nextjs";
 
-export default function DataLakeLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <header className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-bg-white)] px-6 py-3">
