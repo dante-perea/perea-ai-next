@@ -1,7 +1,9 @@
+import { NextResponse } from "next/server";
+
 export const dynamic = "force-dynamic";
 
-export function GET() {
-  return Response.json(
+export async function GET(): Promise<NextResponse> {
+  return NextResponse.json(
     {
       resource: "https://www.perea.ai/api/mcp/server",
       authorization_servers: ["https://www.perea.ai"],

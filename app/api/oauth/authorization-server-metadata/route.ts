@@ -1,8 +1,10 @@
+import { NextResponse } from "next/server";
+
 export const dynamic = "force-dynamic";
 
 const ORIGIN = "https://www.perea.ai";
 
-export function GET() {
+export async function GET(): Promise<NextResponse> {
   return Response.json(
     {
       issuer: ORIGIN,
@@ -16,5 +18,5 @@ export function GET() {
       scopes_supported: ["mcp"],
     },
     { headers: { "Cache-Control": "no-store" } }
-  );
+  ) as NextResponse;
 }
