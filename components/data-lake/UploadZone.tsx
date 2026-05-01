@@ -11,6 +11,7 @@ interface FileProgress {
   name: string;
   status: "uploading" | "done" | "error";
   pct: number;
+  error?: string;
 }
 
 export function UploadZone({ onUploadComplete }: UploadZoneProps) {
@@ -26,29 +27,51 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
     await Promise.allSettled(
       fileList.map(async (file, i) => {
         try {
-          await upload(file.name, file, {
+          const id = crypto.randomUUID();
+
+          const result = await upload(file.name, file, {
             access: "private",
             handleUploadUrl: "/api/data-lake/upload",
-            clientPayload: JSON.stringify({ size: file.size }),
+            clientPayload: JSON.stringify({ size: file.size, id }),
             onUploadProgress: ({ percentage }) => {
               setFiles((prev) =>
                 prev.map((p, idx) => (idx === i ? { ...p, pct: Math.round(percentage) } : p))
               );
             },
           });
+
+          // Register metadata synchronously — don't rely on Vercel's server callback
+          const reg = await fetch("/api/data-lake/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id,
+              blobUrl: result.url,
+              blobPathname: result.pathname,
+              contentType: result.contentType,
+              size: file.size,
+              filename: file.name,
+            }),
+          });
+
+          if (!reg.ok) {
+            const { error } = await reg.json() as { error: string };
+            throw new Error(error ?? "Registration failed");
+          }
+
           setFiles((prev) =>
             prev.map((p, idx) => (idx === i ? { ...p, status: "done", pct: 100 } : p))
           );
-        } catch {
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Failed";
           setFiles((prev) =>
-            prev.map((p, idx) => (idx === i ? { ...p, status: "error" } : p))
+            prev.map((p, idx) => (idx === i ? { ...p, status: "error", error: message } : p))
           );
         }
       })
     );
 
-    // Give Vercel's onUploadCompleted callback time to write the .meta.json
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 800));
     setFiles([]);
     onUploadComplete();
   }
@@ -103,7 +126,11 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
                 </span>
                 <span className="min-w-0 flex-1 truncate text-[var(--color-ink-soft)]">{f.name}</span>
                 <span className="shrink-0 text-xs text-[var(--color-ink-faint)]">
-                  {f.status === "uploading" ? `${f.pct}%` : f.status === "done" ? "Done" : "Failed"}
+                  {f.status === "uploading"
+                    ? `${f.pct}%`
+                    : f.status === "done"
+                    ? "Done"
+                    : f.error ?? "Failed"}
                 </span>
               </div>
               {f.status === "uploading" && (

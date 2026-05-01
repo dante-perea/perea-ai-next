@@ -19,16 +19,15 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // Auth check lives here — same browser request, AsyncLocalStorage intact
         const { userId, sessionClaims } = await auth();
         if (!userId) throw new Error("Unauthorized");
 
         const uploadedBy = (sessionClaims?.email as string | undefined) ?? "";
-        const id = crypto.randomUUID();
+        const { size, id: clientId } = clientPayload
+          ? (JSON.parse(clientPayload) as { size: number; id: string })
+          : { size: 0, id: crypto.randomUUID() };
+        const id = clientId ?? crypto.randomUUID();
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const { size } = clientPayload
-          ? (JSON.parse(clientPayload) as { size: number })
-          : { size: 0 };
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
@@ -37,30 +36,30 @@ export async function POST(request: Request): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Called by Vercel's CDN — no Clerk session, but no auth needed here
-        const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
-          uploadedBy: string;
-          id: string;
-          size: number;
-        };
-
-        const parts = blob.pathname.split("/");
-        const nameWithId = parts[parts.length - 1];
-        const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
-
-        const meta: FileMetadata = {
-          id,
-          filename,
-          blobKey: blob.pathname,
-          blobUrl: blob.url,
-          size: size ?? 0,
-          contentType: blob.contentType,
-          uploadedBy: by,
-          uploadedAt: new Date().toISOString(),
-          tags: [],
-        };
-
-        await writeMeta(blob.pathname, meta);
+        try {
+          const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
+            uploadedBy: string;
+            id: string;
+            size: number;
+          };
+          const parts = blob.pathname.split("/");
+          const nameWithId = parts[parts.length - 1];
+          const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
+          const meta: FileMetadata = {
+            id,
+            filename,
+            blobKey: blob.pathname,
+            blobUrl: blob.url,
+            size: size ?? 0,
+            contentType: blob.contentType,
+            uploadedBy: by,
+            uploadedAt: new Date().toISOString(),
+            tags: [],
+          };
+          await writeMeta(blob.pathname, meta);
+        } catch (err) {
+          console.error("[onUploadCompleted] failed:", err);
+        }
       },
     });
 
