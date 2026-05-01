@@ -1,10 +1,11 @@
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export function GET() {
+export function GET(request: Request) {
+  const origin = new URL(request.url).origin;
   return Response.json(
     {
-      resource: "https://perea.ai/api/mcp/server",
-      authorization_servers: ["https://perea.ai"],
+      resource: `${origin}/api/mcp/server`,
+      authorization_servers: [origin],
       bearer_methods_supported: ["header"],
       resource_name: "Perea Knowledge Base MCP Server",
     },

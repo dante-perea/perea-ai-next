@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 
 const ISSUER   = "https://perea.ai";
-const AUDIENCE = "https://perea.ai/api/mcp/server";
+const AUDIENCE = "perea-mcp";
 
 function secret(): Uint8Array {
   const hex = process.env.MCP_JWT_SECRET!;

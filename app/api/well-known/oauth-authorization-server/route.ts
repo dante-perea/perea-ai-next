@@ -1,12 +1,13 @@
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export function GET() {
+export function GET(request: Request) {
+  const origin = new URL(request.url).origin;
   return Response.json(
     {
-      issuer: "https://perea.ai",
-      authorization_endpoint: "https://perea.ai/oauth/authorize",
-      token_endpoint: "https://perea.ai/api/oauth/token",
-      registration_endpoint: "https://perea.ai/api/oauth/register",
+      issuer: origin,
+      authorization_endpoint: `${origin}/oauth/authorize`,
+      token_endpoint: `${origin}/api/oauth/token`,
+      registration_endpoint: `${origin}/api/oauth/register`,
       response_types_supported: ["code"],
       grant_types_supported: ["authorization_code"],
       code_challenge_methods_supported: ["S256"],

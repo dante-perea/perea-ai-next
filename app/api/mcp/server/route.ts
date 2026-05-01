@@ -25,11 +25,12 @@ async function checkAuth(request: Request): Promise<Response | null> {
     }
   }
 
+  const origin = new URL(request.url).origin;
   return new Response(JSON.stringify({ error: "Unauthorized" }), {
     status: 401,
     headers: {
       "Content-Type": "application/json",
-      "WWW-Authenticate": 'Bearer resource_metadata="https://perea.ai/.well-known/oauth-protected-resource"',
+      "WWW-Authenticate": `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource"`,
     },
   });
 }
