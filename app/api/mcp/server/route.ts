@@ -25,14 +25,11 @@ async function checkAuth(request: Request): Promise<Response | null> {
     }
   }
 
-  const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
-  const proto = request.headers.get("x-forwarded-proto") ?? "https";
-  const origin = `${proto}://${host}`;
   return new Response(JSON.stringify({ error: "Unauthorized" }), {
     status: 401,
     headers: {
       "Content-Type": "application/json",
-      "WWW-Authenticate": `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource"`,
+      "WWW-Authenticate": 'Bearer resource_metadata="https://www.perea.ai/api/oauth/resource-metadata"',
     },
   });
 }
