@@ -3,7 +3,6 @@ import { listAllFiles } from "@/lib/data-lake/meta";
 import type { MpcFileRecord } from "@/lib/data-lake/types";
 
 export async function GET(request: Request): Promise<NextResponse> {
-  // Optional bearer token guard
   const secret = process.env.MCP_SECRET;
   if (secret) {
     const auth = request.headers.get("authorization") ?? "";
@@ -13,21 +12,12 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const tag = searchParams.get("tag");
-
-    let files = await listAllFiles();
-    if (tag) {
-      files = files.filter((f) => f.tags.includes(tag));
-    }
-
+    const files = await listAllFiles();
     const base = new URL(request.url).origin;
     const records: MpcFileRecord[] = files.map((f) => ({
       id: f.id,
       filename: f.filename,
       url: `${base}/api/data-lake/files/${f.id}/download`,
-      tags: f.tags,
-      uploadedBy: f.uploadedBy,
       uploadedAt: f.uploadedAt,
       size: f.size,
     }));

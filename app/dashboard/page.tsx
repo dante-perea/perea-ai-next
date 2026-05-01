@@ -8,13 +8,8 @@ export default async function DataLakePage() {
   const { sessionClaims } = await auth();
   const email = (sessionClaims?.email as string | undefined) ?? "";
 
-  let files = await listAllFiles().catch(() => []);
-  // Sort newest first
-  files = files.sort(
-    (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-  );
+  const files = await listAllFiles().catch(() => []);
+  files.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
 
-  const allTags = [...new Set(files.flatMap((f) => f.tags))].sort();
-
-  return <DataLakeClient files={files} allTags={allTags} currentUser={email} />;
+  return <DataLakeClient files={files} currentUser={email} />;
 }

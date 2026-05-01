@@ -1,8 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { writeMeta } from "@/lib/data-lake/meta";
-import type { FileMetadata } from "@/lib/data-lake/types";
 
 export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -18,57 +16,23 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // Auth lives here — same request context, Clerk AsyncLocalStorage is intact
-        const { userId, sessionClaims } = await auth();
+      onBeforeGenerateToken: async (pathname) => {
+        const { userId } = await auth();
         if (!userId) throw new Error("Unauthorized");
 
-        const uploadedBy = (sessionClaims?.email as string | undefined) ?? "";
         const id = crypto.randomUUID();
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const { size } = clientPayload
-          ? (JSON.parse(clientPayload) as { size: number })
-          : { size: 0 };
 
         return {
           pathname: `raw/files/${id}-${safeName}`,
           allowOverwrite: true,
-          tokenPayload: JSON.stringify({ uploadedBy, id, size }),
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Called by Vercel's CDN after upload — no Clerk session needed here.
-        // Do NOT wrap in try/catch: errors must propagate so handleUpload returns
-        // 400 and Vercel retries this webhook up to 5 times.
-        const { uploadedBy: by, id, size } = JSON.parse(tokenPayload ?? "{}") as {
-          uploadedBy: string;
-          id: string;
-          size: number;
-        };
-
-        const parts = blob.pathname.split("/");
-        const nameWithId = parts[parts.length - 1];
-        const filename = nameWithId.replace(/^[0-9a-f-]+-/, "").replace(/_/g, " ");
-
-        const meta: FileMetadata = {
-          id,
-          filename,
-          blobKey: blob.pathname,
-          blobUrl: blob.url,
-          size: size ?? 0,
-          contentType: blob.contentType,
-          uploadedBy: by,
-          uploadedAt: new Date().toISOString(),
-          tags: [],
-        };
-
-        await writeMeta(blob.pathname, meta);
-      },
+      onUploadCompleted: async () => {},
     });
 
     return NextResponse.json(jsonResponse);
   } catch (err) {
-    // Returning 400 signals Vercel to retry the onUploadCompleted webhook
     const message = err instanceof Error ? err.message : "Upload failed";
     return NextResponse.json({ error: message }, { status: 400 });
   }

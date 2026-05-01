@@ -1,45 +1,40 @@
-import { put, del, list } from "@vercel/blob";
+import { del, list } from "@vercel/blob";
 import type { FileMetadata } from "./types";
 
-export function metaKey(blobKey: string): string {
-  return `${blobKey}.meta.json`;
-}
+const UUID_RE = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(.+)$/;
 
-export async function writeMeta(blobKey: string, meta: FileMetadata): Promise<void> {
-  await put(metaKey(blobKey), JSON.stringify(meta), {
-    access: "public",
-    allowOverwrite: true,
-    addRandomSuffix: false,
-    contentType: "application/json",
-  });
-}
-
-export async function readMetaFromUrl(metaUrl: string): Promise<FileMetadata> {
-  const res = await fetch(metaUrl, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to fetch meta: ${metaUrl}`);
-  return res.json() as Promise<FileMetadata>;
+function parseBlobPathname(pathname: string): { id: string; filename: string } {
+  const segment = pathname.split("/").pop() ?? pathname;
+  const match = segment.match(UUID_RE);
+  if (match) {
+    return { id: match[1], filename: match[2].replace(/_/g, " ") };
+  }
+  return { id: segment, filename: segment };
 }
 
 export async function listAllFiles(): Promise<FileMetadata[]> {
-  const allBlobs: string[] = [];
+  const files: FileMetadata[] = [];
   let cursor: string | undefined;
 
-  // Paginate through all blobs (handles >1000)
   do {
     const result = await list({ prefix: "raw/files/", cursor, limit: 1000 });
     for (const blob of result.blobs) {
-      if (blob.pathname.endsWith(".meta.json")) {
-        allBlobs.push(blob.url);
-      }
+      if (blob.pathname.endsWith(".meta.json")) continue;
+      const { id, filename } = parseBlobPathname(blob.pathname);
+      files.push({
+        id,
+        filename,
+        blobKey: blob.pathname,
+        blobUrl: blob.url,
+        size: blob.size,
+        contentType: blob.contentType,
+        uploadedAt: blob.uploadedAt.toISOString(),
+      });
     }
     cursor = result.cursor;
   } while (cursor);
 
-  // Fetch all meta files in parallel
-  const settled = await Promise.allSettled(allBlobs.map(readMetaFromUrl));
-  return settled
-    .filter((r): r is PromiseFulfilledResult<FileMetadata> => r.status === "fulfilled")
-    .map((r) => r.value);
+  return files;
 }
 
 export async function findFileById(id: string): Promise<FileMetadata | null> {
@@ -48,5 +43,5 @@ export async function findFileById(id: string): Promise<FileMetadata | null> {
 }
 
 export async function deleteFile(blobKey: string): Promise<void> {
-  await del([blobKey, metaKey(blobKey)]);
+  await del(blobKey);
 }

@@ -2,52 +2,21 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { TagSidebar } from "./TagSidebar";
 import { UploadZone } from "./UploadZone";
 import { FileTable } from "./FileTable";
 import type { FileMetadata } from "@/lib/data-lake/types";
 
 interface DataLakeClientProps {
   files: FileMetadata[];
-  allTags: string[];
   currentUser: string;
 }
 
-export function DataLakeClient({ files: initialFiles, allTags: initialTags, currentUser }: DataLakeClientProps) {
+export function DataLakeClient({ files: initialFiles, currentUser }: DataLakeClientProps) {
   const router = useRouter();
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const allTags = [...new Set(files.flatMap((f) => f.tags))].sort();
-
-  const visibleFiles =
-    selectedTags.length === 0
-      ? files
-      : files.filter((f) => selectedTags.every((t) => f.tags.includes(t)));
-
-  const handleTagsChange = useCallback(async (id: string, tags: string[]) => {
-    // Optimistic update
-    setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, tags } : f)));
-
-    try {
-      const res = await fetch(`/api/data-lake/files/${id}/tags`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tags }),
-      });
-      if (!res.ok) throw new Error("Failed to update tags");
-      const updated: FileMetadata = await res.json();
-      setFiles((prev) => prev.map((f) => (f.id === id ? updated : f)));
-    } catch {
-      // Revert on failure
-      router.refresh();
-    }
-  }, [router]);
 
   const handleDelete = useCallback(async (id: string) => {
-    // Optimistic update
     setFiles((prev) => prev.filter((f) => f.id !== id));
-
     try {
       const res = await fetch(`/api/data-lake/files/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
@@ -72,27 +41,7 @@ export function DataLakeClient({ files: initialFiles, allTags: initialTags, curr
 
       <UploadZone onUploadComplete={handleUploadComplete} />
 
-      <div className="flex gap-8">
-        <TagSidebar
-          allTags={allTags}
-          selectedTags={selectedTags}
-          files={files}
-          onChange={setSelectedTags}
-        />
-        <div className="min-w-0 flex-1">
-          {selectedTags.length > 0 && (
-            <p className="mb-3 text-sm text-[var(--color-ink-muted)]">
-              Showing {visibleFiles.length} of {files.length} files tagged{" "}
-              {selectedTags.map((t) => `"${t}"`).join(" + ")}
-            </p>
-          )}
-          <FileTable
-            files={visibleFiles}
-            onTagsChange={handleTagsChange}
-            onDelete={handleDelete}
-          />
-        </div>
-      </div>
+      <FileTable files={files} onDelete={handleDelete} />
     </div>
   );
 }
