@@ -16,17 +16,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname) => {
+      onBeforeGenerateToken: async (_pathname, clientPayload) => {
         const { userId, sessionClaims } = await auth();
         if (!userId) throw new Error("Unauthorized");
 
-        const id = crypto.randomUUID();
-        const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const { id } = JSON.parse(clientPayload ?? "{}") as { id?: string };
 
         return {
-          pathname: `users/${userId}/files/${id}-${safeName}`,
-          allowOverwrite: false,
           access: "private",
+          allowOverwrite: false,
           tokenPayload: JSON.stringify({
             id,
             uploadedBy: (sessionClaims?.email as string | undefined) ?? "",

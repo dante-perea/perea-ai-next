@@ -49,7 +49,7 @@ function matchesType(contentType: string, filter: string): boolean {
   return true;
 }
 
-export function KnowledgeBaseClient({ files: initialFiles, currentUser }: KnowledgeBaseClientProps) {
+export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }: KnowledgeBaseClientProps) {
   const router = useRouter();
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
@@ -171,6 +171,7 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser }: Knowle
         <div className="min-w-0 flex-1">
           <UploadZone
             ref={uploadZoneRef}
+            userId={userId}
             onUploadComplete={() => router.refresh()}
           />
 

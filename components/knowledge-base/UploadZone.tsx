@@ -9,6 +9,7 @@ export interface UploadZoneHandle {
 
 interface UploadZoneProps {
   onUploadComplete: () => void;
+  userId: string;
 }
 
 interface FileProgress {
@@ -19,7 +20,7 @@ interface FileProgress {
 }
 
 export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(
-  function UploadZone({ onUploadComplete }, ref) {
+  function UploadZone({ onUploadComplete, userId }, ref) {
   const [dragging, setDragging] = useState(false);
   const [queue, setQueue] = useState<FileProgress[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,8 +38,10 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(
       fileList.map(async (file, i) => {
         try {
           const id = crypto.randomUUID();
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const blobName = `users/${userId}/files/${id}-${safeName}`;
 
-          const result = await upload(file.name, file, {
+          const result = await upload(blobName, file, {
             access: "private",
             handleUploadUrl: "/api/knowledge-base/upload",
             clientPayload: JSON.stringify({ size: file.size, id }),
