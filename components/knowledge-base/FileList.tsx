@@ -6,8 +6,11 @@ import type { FileMetadata } from "@/lib/knowledge-base/types";
 
 interface FileListProps {
   files: FileMetadata[];
-  onTagsChange: (id: string, tags: string[]) => void;
+  onTagsChange?: (id: string, tags: string[]) => void;
   onDelete: (id: string) => void;
+  showUploadedBy?: boolean;
+  currentUserId?: string;
+  canDeleteAny?: boolean;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -83,17 +86,21 @@ function FileRow({
   file,
   onTagsChange,
   onDelete,
+  showUploadedBy,
+  canDelete,
 }: {
   file: FileMetadata;
-  onTagsChange: (tags: string[]) => void;
+  onTagsChange?: (tags: string[]) => void;
   onDelete: () => void;
+  showUploadedBy?: boolean;
+  canDelete?: boolean;
 }) {
   const [tagInput, setTagInput] = useState("");
   const [deleting, setDeleting] = useState(false);
 
   function addTag() {
     const tag = tagInput.trim().toLowerCase();
-    if (!tag || file.tags.includes(tag)) return;
+    if (!tag || file.tags.includes(tag) || !onTagsChange) return;
     onTagsChange([...file.tags, tag]);
     setTagInput("");
   }
@@ -132,6 +139,13 @@ function FileRow({
         {formatDate(file.uploadedAt)}
       </td>
 
+      {/* Uploaded by (team context) */}
+      {showUploadedBy && (
+        <td className="py-3 pr-3 text-xs text-[var(--color-ink-faint)] whitespace-nowrap max-w-[120px] truncate">
+          {file.uploadedBy || file.userId.slice(0, 8)}
+        </td>
+      )}
+
       {/* Tags */}
       <td className="py-3 pr-3">
         <div className="flex flex-wrap items-center gap-1">
@@ -139,16 +153,18 @@ function FileRow({
             <TagChip
               key={tag}
               label={tag}
-              onRemove={() => onTagsChange(file.tags.filter((t) => t !== tag))}
+              onRemove={onTagsChange ? () => onTagsChange(file.tags.filter((t) => t !== tag)) : undefined}
             />
           ))}
-          <input
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
-            placeholder="+ tag"
-            className="w-14 rounded border border-transparent bg-transparent px-1 py-0.5 text-xs text-[var(--color-ink-muted)] placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-border-strong)] focus:outline-none"
-          />
+          {onTagsChange && (
+            <input
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
+              placeholder="+ tag"
+              className="w-14 rounded border border-transparent bg-transparent px-1 py-0.5 text-xs text-[var(--color-ink-muted)] placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-border-strong)] focus:outline-none"
+            />
+          )}
         </div>
       </td>
 
@@ -166,13 +182,15 @@ function FileRow({
           >
             Download
           </a>
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="rounded px-2 py-1 text-xs text-[var(--color-ink-faint)] hover:text-red-500 transition-colors disabled:opacity-40"
-          >
-            {deleting ? "…" : "Delete"}
-          </button>
+          {canDelete !== false && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="rounded px-2 py-1 text-xs text-[var(--color-ink-faint)] hover:text-red-500 transition-colors disabled:opacity-40"
+            >
+              {deleting ? "…" : "Delete"}
+            </button>
+          )}
         </div>
       </td>
     </tr>
@@ -244,7 +262,14 @@ function CopyIcon() {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export function FileList({ files, onTagsChange, onDelete }: FileListProps) {
+export function FileList({
+  files,
+  onTagsChange,
+  onDelete,
+  showUploadedBy,
+  currentUserId,
+  canDeleteAny,
+}: FileListProps) {
   if (files.length === 0) return <EmptyState />;
 
   return (
@@ -257,20 +282,30 @@ export function FileList({ files, onTagsChange, onDelete }: FileListProps) {
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Type</th>
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Size</th>
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Date</th>
+              {showUploadedBy && (
+                <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Uploaded by</th>
+              )}
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Tags</th>
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">ID</th>
               <th className="py-2.5 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]"></th>
             </tr>
           </thead>
           <tbody>
-            {files.map((file) => (
-              <FileRow
-                key={file.id}
-                file={file}
-                onTagsChange={(tags) => onTagsChange(file.id, tags)}
-                onDelete={() => onDelete(file.id)}
-              />
-            ))}
+            {files.map((file) => {
+              const canDelete = canDeleteAny !== false
+                ? true
+                : file.userId === currentUserId; // editor: own files only
+              return (
+                <FileRow
+                  key={file.id}
+                  file={file}
+                  onTagsChange={onTagsChange ? (tags) => onTagsChange(file.id, tags) : undefined}
+                  onDelete={() => onDelete(file.id)}
+                  showUploadedBy={showUploadedBy}
+                  canDelete={canDelete}
+                />
+              );
+            })}
           </tbody>
         </table>
       </div>

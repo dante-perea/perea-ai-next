@@ -38,20 +38,50 @@ function rowToMeta(row: DbRow): FileMetadata {
 }
 
 export async function listAllFiles(ctx: ViewerContext): Promise<FileMetadata[]> {
+  const teamIds = ctx.teamIds ?? [];
+  const rows = teamIds.length > 0
+    ? await sql`
+        SELECT * FROM kb_files
+        WHERE user_id = ${ctx.userId} OR team_id = ANY(${teamIds})
+        ORDER BY uploaded_at DESC
+      ` as DbRow[]
+    : await sql`
+        SELECT * FROM kb_files
+        WHERE user_id = ${ctx.userId}
+        ORDER BY uploaded_at DESC
+      ` as DbRow[];
+  return rows.map(rowToMeta);
+}
+
+export async function listPersonalFiles(ctx: ViewerContext): Promise<FileMetadata[]> {
   const rows = await sql`
     SELECT * FROM kb_files
-    WHERE user_id = ${ctx.userId}
+    WHERE user_id = ${ctx.userId} AND team_id IS NULL
     ORDER BY uploaded_at DESC
   ` as DbRow[];
   return rows.map(rowToMeta);
 }
 
-export async function findFileById(id: string, ctx: ViewerContext): Promise<FileMetadata | null> {
+export async function listTeamFiles(teamId: string): Promise<FileMetadata[]> {
   const rows = await sql`
-    SELECT * FROM kb_files
-    WHERE id = ${id} AND user_id = ${ctx.userId}
-    LIMIT 1
+    SELECT * FROM kb_files WHERE team_id = ${teamId} ORDER BY uploaded_at DESC
   ` as DbRow[];
+  return rows.map(rowToMeta);
+}
+
+export async function findFileById(id: string, ctx: ViewerContext): Promise<FileMetadata | null> {
+  const teamIds = ctx.teamIds ?? [];
+  const rows = teamIds.length > 0
+    ? await sql`
+        SELECT * FROM kb_files
+        WHERE id = ${id} AND (user_id = ${ctx.userId} OR team_id = ANY(${teamIds}))
+        LIMIT 1
+      ` as DbRow[]
+    : await sql`
+        SELECT * FROM kb_files
+        WHERE id = ${id} AND user_id = ${ctx.userId}
+        LIMIT 1
+      ` as DbRow[];
   return rows[0] ? rowToMeta(rows[0]) : null;
 }
 
@@ -68,23 +98,46 @@ export async function insertFile(meta: FileMetadata): Promise<void> {
 }
 
 export async function updateTags(id: string, tags: string[], ctx: ViewerContext): Promise<FileMetadata | null> {
-  const rows = await sql`
-    UPDATE kb_files SET tags = ${tags}
-    WHERE id = ${id} AND user_id = ${ctx.userId}
-    RETURNING *
-  ` as DbRow[];
+  const teamIds = ctx.teamIds ?? [];
+  const rows = teamIds.length > 0
+    ? await sql`
+        UPDATE kb_files SET tags = ${tags}
+        WHERE id = ${id} AND (user_id = ${ctx.userId} OR team_id = ANY(${teamIds}))
+        RETURNING *
+      ` as DbRow[]
+    : await sql`
+        UPDATE kb_files SET tags = ${tags}
+        WHERE id = ${id} AND user_id = ${ctx.userId}
+        RETURNING *
+      ` as DbRow[];
   return rows[0] ? rowToMeta(rows[0]) : null;
 }
 
 export async function deleteFile(id: string, blobKey: string, ctx: ViewerContext): Promise<boolean> {
   const rows = await sql`
-    DELETE FROM kb_files
-    WHERE id = ${id} AND user_id = ${ctx.userId}
-    RETURNING id
+    DELETE FROM kb_files WHERE id = ${id} AND user_id = ${ctx.userId} RETURNING id
   ` as { id: string }[];
   if (rows.length === 0) return false;
   await del(blobKey);
   return true;
+}
+
+export async function deleteTeamFile(id: string, blobKey: string, teamId: string): Promise<boolean> {
+  const rows = await sql`
+    DELETE FROM kb_files WHERE id = ${id} AND team_id = ${teamId} RETURNING id
+  ` as { id: string }[];
+  if (rows.length === 0) return false;
+  await del(blobKey);
+  return true;
+}
+
+export async function deleteTeamFiles(teamId: string): Promise<void> {
+  const rows = await sql`
+    DELETE FROM kb_files WHERE team_id = ${teamId} RETURNING blob_key
+  ` as { blob_key: string }[];
+  if (rows.length > 0) {
+    await Promise.allSettled(rows.map((r) => del(r.blob_key)));
+  }
 }
 
 // Admin-scope helpers — no user filter. Used by machine-level tokens (MCP_SECRET).

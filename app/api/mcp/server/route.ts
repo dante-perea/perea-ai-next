@@ -1,14 +1,17 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { get } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import { z } from "zod";
 import {
   findFileById,
   findFileByIdAdmin,
+  insertFile,
   listAllFiles,
   listAllFilesAdmin,
   type ViewerContext,
 } from "@/lib/knowledge-base/meta";
+import type { FileMetadata } from "@/lib/knowledge-base/types";
+import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 
 export const runtime = "nodejs";
@@ -29,7 +32,8 @@ async function resolveAuth(request: Request): Promise<AuthResult> {
   if (header.startsWith("Bearer ")) {
     try {
       const { sub } = await verifyAccessToken(header.slice(7));
-      return { kind: "user", ctx: { userId: sub } };
+      const teamIds = await getUserTeamIds(sub);
+      return { kind: "user", ctx: { userId: sub, teamIds } };
     } catch {
       // fall through
     }
@@ -71,6 +75,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
             uploadedBy: f.uploadedBy,
             uploadedAt: f.uploadedAt,
             tags: f.tags,
+            teamId: f.teamId,
           })), null, 2),
         }],
       };
@@ -123,6 +128,75 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
             data: Buffer.from(buf).toString("base64"),
           }),
         }],
+      };
+    }
+  );
+
+  server.tool(
+    "upload_file",
+    "Upload a file into the knowledge base. Accepts base64-encoded content. The 'mcp' tag is added automatically for source segregation.",
+    {
+      filename:    z.string().describe("Filename to store, e.g. 'report.pdf'"),
+      contentType: z.string().describe("MIME type, e.g. 'text/plain' or 'application/pdf'"),
+      data:        z.string().describe("Base64-encoded file content"),
+      tags:        z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
+      team:        z.string().optional().describe("Team ID to upload into. Omit for personal KB."),
+    },
+    async ({ filename, contentType, data, tags, team }) => {
+      if (auth.kind !== "user") {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: "upload_file requires user OAuth token, not admin MCP_SECRET." }) }],
+          isError: true,
+        };
+      }
+
+      if (data.length > 5_592_406) {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: "File too large. Max 4 MB." }) }],
+          isError: true,
+        };
+      }
+
+      // Verify team membership and write permission
+      if (team) {
+        const role = await getTeamRole(team, auth.ctx.userId);
+        if (!role) return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Not a member of this team." }) }], isError: true };
+        if (role === "viewer") return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Viewers cannot upload files." }) }], isError: true };
+      }
+
+      const buffer = Buffer.from(data, "base64");
+      const id = crypto.randomUUID();
+      const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const blobName = `users/${auth.ctx.userId}/files/${id}-${safeName}`;
+
+      const blobResult = await put(blobName, buffer, { access: "private", contentType });
+
+      const normalizedTags = [...new Set(["mcp", ...(tags ?? [])])];
+
+      const meta: FileMetadata = {
+        id,
+        filename,
+        blobKey: blobResult.pathname,
+        blobUrl: blobResult.url,
+        size: buffer.byteLength,
+        contentType,
+        uploadedBy: "mcp",
+        uploadedAt: new Date().toISOString(),
+        tags: normalizedTags,
+        userId: auth.ctx.userId,
+        teamId: team ?? null,
+      };
+
+      await insertFile(meta);
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({
+          id,
+          filename,
+          size: meta.size,
+          tags: meta.tags,
+          blobKey: meta.blobKey,
+        }) }],
       };
     }
   );
