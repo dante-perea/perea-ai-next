@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useImperativeHandle, forwardRef } from "react";
 import { upload } from "@vercel/blob/client";
+
+export interface UploadZoneHandle {
+  open: () => void;
+}
 
 interface UploadZoneProps {
   onUploadComplete: () => void;
-  triggerOpen?: boolean;
-  onTriggerHandled?: () => void;
 }
 
 interface FileProgress {
@@ -16,17 +18,15 @@ interface FileProgress {
   error?: string;
 }
 
-export function UploadZone({ onUploadComplete, triggerOpen, onTriggerHandled }: UploadZoneProps) {
+export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(
+  function UploadZone({ onUploadComplete }, ref) {
   const [dragging, setDragging] = useState(false);
   const [queue, setQueue] = useState<FileProgress[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (triggerOpen) {
-      inputRef.current?.click();
-      onTriggerHandled?.();
-    }
-  }, [triggerOpen, onTriggerHandled]);
+  useImperativeHandle(ref, () => ({
+    open: () => inputRef.current?.click(),
+  }));
 
   async function uploadFiles(fileList: File[]) {
     if (!fileList.length) return;
@@ -145,7 +145,7 @@ export function UploadZone({ onUploadComplete, triggerOpen, onTriggerHandled }: 
       )}
     </div>
   );
-}
+});
 
 function StatusIcon({ status }: { status: FileProgress["status"] }) {
   if (status === "done") return <span className="text-sm text-emerald-500">✓</span>;

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FilterSidebar } from "./FilterSidebar";
-import { UploadZone } from "./UploadZone";
+import { UploadZone, type UploadZoneHandle } from "./UploadZone";
 import { FileList } from "./FileList";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 
@@ -51,12 +51,12 @@ function matchesType(contentType: string, filter: string): boolean {
 
 export function KnowledgeBaseClient({ files: initialFiles, currentUser }: KnowledgeBaseClientProps) {
   const router = useRouter();
+  const uploadZoneRef = useRef<UploadZoneHandle>(null);
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [typeFilter, setTypeFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("newest");
-  const [triggerUpload, setTriggerUpload] = useState(false);
 
   useEffect(() => { setFiles(initialFiles); }, [initialFiles]);
 
@@ -107,7 +107,7 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser }: Knowle
           </p>
         </div>
         <button
-          onClick={() => setTriggerUpload(true)}
+          onClick={() => uploadZoneRef.current?.open()}
           className="flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2"
         >
           <UploadIcon />
@@ -170,9 +170,8 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser }: Knowle
 
         <div className="min-w-0 flex-1">
           <UploadZone
+            ref={uploadZoneRef}
             onUploadComplete={() => router.refresh()}
-            triggerOpen={triggerUpload}
-            onTriggerHandled={() => setTriggerUpload(false)}
           />
 
           {hasFilters && (
