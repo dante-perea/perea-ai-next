@@ -137,6 +137,7 @@ async function handle(request: Request): Promise<Response> {
   const server = buildServer(authResult);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
+    enableJsonResponse: true,
   });
   await server.connect(transport);
   const response = await transport.handleRequest(request);
