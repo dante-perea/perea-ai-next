@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FilterSidebar } from "./FilterSidebar";
 import { UploadZone, type UploadZoneHandle } from "./UploadZone";
+import { UrlImport } from "./UrlImport";
 import { FileList } from "./FileList";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 
@@ -169,6 +170,7 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }
         />
 
         <div className="min-w-0 flex-1">
+          <UrlImport onSavedToKb={() => router.refresh()} />
           <UploadZone
             ref={uploadZoneRef}
             userId={userId}
