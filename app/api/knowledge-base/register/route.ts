@@ -10,7 +10,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const { id, blobUrl, blobPathname, contentType, size, filename } =
+    const { id, blobUrl, blobPathname, contentType, size, filename, teamId } =
       (await request.json()) as {
         id: string;
         blobUrl: string;
@@ -18,6 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         contentType: string;
         size: number;
         filename: string;
+        teamId?: string | null;
       };
 
     const meta: FileMetadata = {
@@ -31,7 +32,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       uploadedAt: new Date().toISOString(),
       tags: [],
       userId,
-      teamId: null,
+      teamId: teamId ?? null,
     };
 
     await insertFile(meta);

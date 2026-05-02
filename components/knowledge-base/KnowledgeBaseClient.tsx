@@ -7,11 +7,15 @@ import { FilterSidebar } from "./FilterSidebar";
 import { UploadZone, type UploadZoneHandle } from "./UploadZone";
 import { FileList } from "./FileList";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
+import type { TeamRole } from "@/lib/knowledge-base/teams";
 
 interface KnowledgeBaseClientProps {
   files: FileMetadata[];
   currentUser: string;
   userId: string;
+  teamId: string | null;
+  teamName: string | null;
+  userRole: TeamRole | null;
 }
 
 export type SortKey = "newest" | "oldest" | "name" | "size";
@@ -49,7 +53,14 @@ function matchesType(contentType: string, filter: string): boolean {
   return true;
 }
 
-export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }: KnowledgeBaseClientProps) {
+export function KnowledgeBaseClient({
+  files: initialFiles,
+  currentUser,
+  userId,
+  teamId,
+  teamName,
+  userRole,
+}: KnowledgeBaseClientProps) {
   const router = useRouter();
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
@@ -59,6 +70,10 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }
   const [sortBy, setSortBy] = useState<SortKey>("newest");
 
   useEffect(() => { setFiles(initialFiles); }, [initialFiles]);
+
+  const isTeam = !!teamId;
+  const canWrite = !isTeam || userRole === "owner" || userRole === "editor";
+  const canDeleteAny = !isTeam || userRole === "owner";
 
   const allTags = [...new Set(files.flatMap((f) => f.tags))].sort();
   const totalSize = files.reduce((sum, f) => sum + f.size, 0);
@@ -94,25 +109,31 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }
     } catch { router.refresh(); }
   }, [router]);
 
+  const headingLabel = isTeam ? teamName : "Knowledge Base";
+  const subLabel = isTeam
+    ? `${files.length} ${files.length === 1 ? "file" : "files"} · ${userRole}`
+    : `${files.length} ${files.length === 1 ? "file" : "files"}${totalSize > 0 ? ` · ${formatBytes(totalSize)} stored` : ""}${currentUser ? ` · ${currentUser}` : ""}`;
+
   return (
     <div>
       {/* Page header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">Knowledge Base</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)]">{headingLabel}</h1>
           <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
-            {files.length} {files.length === 1 ? "file" : "files"}
-            {totalSize > 0 && <> · {formatBytes(totalSize)} stored</>}
-            {currentUser && <> · <span className="font-mono text-xs">{currentUser}</span></>}
+            {subLabel}
+            {isTeam && currentUser && <> · <span className="font-mono text-xs">{currentUser}</span></>}
           </p>
         </div>
-        <button
-          onClick={() => uploadZoneRef.current?.open()}
-          className="flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2"
-        >
-          <UploadIcon />
-          Upload Files
-        </button>
+        {canWrite && (
+          <button
+            onClick={() => uploadZoneRef.current?.open()}
+            className="flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2"
+          >
+            <UploadIcon />
+            Upload Files
+          </button>
+        )}
       </div>
 
       {/* Stats bar */}
@@ -169,11 +190,14 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }
         />
 
         <div className="min-w-0 flex-1">
-          <UploadZone
-            ref={uploadZoneRef}
-            userId={userId}
-            onUploadComplete={() => router.refresh()}
-          />
+          {canWrite && (
+            <UploadZone
+              ref={uploadZoneRef}
+              userId={userId}
+              teamId={teamId}
+              onUploadComplete={() => router.refresh()}
+            />
+          )}
 
           {hasFilters && (
             <div className="mb-3 flex items-center gap-2 text-sm text-[var(--color-ink-muted)]">
@@ -189,8 +213,11 @@ export function KnowledgeBaseClient({ files: initialFiles, currentUser, userId }
 
           <FileList
             files={visibleFiles}
-            onTagsChange={handleTagsChange}
+            onTagsChange={canWrite ? handleTagsChange : undefined}
             onDelete={handleDelete}
+            showUploadedBy={isTeam}
+            currentUserId={userId}
+            canDeleteAny={canDeleteAny}
           />
         </div>
       </div>

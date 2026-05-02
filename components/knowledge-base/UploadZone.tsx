@@ -10,6 +10,7 @@ export interface UploadZoneHandle {
 interface UploadZoneProps {
   onUploadComplete: () => void;
   userId: string;
+  teamId?: string | null;
 }
 
 interface FileProgress {
@@ -20,7 +21,7 @@ interface FileProgress {
 }
 
 export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(
-  function UploadZone({ onUploadComplete, userId }, ref) {
+  function UploadZone({ onUploadComplete, userId, teamId }, ref) {
   const [dragging, setDragging] = useState(false);
   const [queue, setQueue] = useState<FileProgress[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +63,7 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(
               contentType: result.contentType,
               size: file.size,
               filename: file.name,
+              teamId: teamId ?? null,
             }),
           });
 
