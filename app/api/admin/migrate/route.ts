@@ -5,17 +5,18 @@ import { sql } from "@/lib/knowledge-base/db";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request): Promise<NextResponse> {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  // Require either matching ADMIN_USER_ID env var or a valid MCP_SECRET header
   const secret = process.env.MCP_SECRET;
   const adminId = process.env.ADMIN_USER_ID;
   const authHeader = request.headers.get("authorization") ?? "";
-  const hasAdminToken = secret && authHeader === `Bearer ${secret}`;
-  const isAdminUser = adminId && userId === adminId;
-  if (!hasAdminToken && !isAdminUser) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Machine-level access via MCP_SECRET bearer token
+  if (secret && authHeader === `Bearer ${secret}`) {
+    // allowed — skip Clerk auth
+  } else {
+    // Fall back to Clerk session + ADMIN_USER_ID check
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!adminId || userId !== adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
