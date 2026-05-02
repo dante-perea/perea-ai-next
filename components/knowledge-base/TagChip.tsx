@@ -12,7 +12,7 @@ export function TagChip({ label, onRemove, onClick, active }: TagChipProps) {
     <span
       onClick={onClick}
       className={[
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors",
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors",
         onClick ? "cursor-pointer" : "",
         active
           ? "bg-[var(--color-accent)] text-white"
@@ -23,7 +23,7 @@ export function TagChip({ label, onRemove, onClick, active }: TagChipProps) {
       {onRemove && (
         <button
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
-          className="ml-0.5 opacity-60 hover:opacity-100 transition-opacity leading-none"
+          className="ml-0.5 leading-none opacity-50 transition-opacity hover:opacity-100"
           aria-label={`Remove tag ${label}`}
         >
           ×
