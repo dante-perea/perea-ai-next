@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listAllFiles } from "@/lib/knowledge-base/meta";
+import { listAllFilesAdmin } from "@/lib/knowledge-base/meta";
 import type { KbFileRecord } from "@/lib/knowledge-base/types";
 
 export async function GET(request: Request): Promise<NextResponse> {
@@ -15,7 +15,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
     const tag = searchParams.get("tag");
 
-    let files = await listAllFiles();
+    let files = await listAllFilesAdmin();
     if (tag) files = files.filter((f) => f.tags.includes(tag));
 
     const base = new URL(request.url).origin;

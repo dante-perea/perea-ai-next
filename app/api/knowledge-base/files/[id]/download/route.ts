@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { get } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { findFileById } from "@/lib/knowledge-base/meta";
@@ -6,9 +7,14 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
 
-  const file = await findFileById(id);
+  const file = await findFileById(id, { userId });
   if (!file) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const result = await get(file.blobUrl, { access: "private" });

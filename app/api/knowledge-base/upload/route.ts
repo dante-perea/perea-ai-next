@@ -24,11 +24,13 @@ export async function POST(request: Request): Promise<NextResponse> {
         const safeName = pathname.replace(/[^a-zA-Z0-9._-]/g, "_");
 
         return {
-          pathname: `raw/files/${id}-${safeName}`,
+          pathname: `users/${userId}/files/${id}-${safeName}`,
           allowOverwrite: true,
+          access: "private",
           tokenPayload: JSON.stringify({
             id,
             uploadedBy: (sessionClaims?.email as string | undefined) ?? "",
+            userId,
           }),
         };
       },

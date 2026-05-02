@@ -8,6 +8,8 @@ export interface FileMetadata {
   uploadedBy: string;
   uploadedAt: string;
   tags: string[];
+  userId: string;
+  teamId: string | null;
 }
 
 export interface KbFileRecord {

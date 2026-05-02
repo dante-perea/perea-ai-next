@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const { userId, sessionClaims } = await auth();
   const email = (sessionClaims?.email as string | undefined) ?? "";
-  const files = await listAllFiles().catch(() => []);
+  const files = userId ? await listAllFiles({ userId }).catch(() => []) : [];
 
   return <KnowledgeBaseClient files={files} currentUser={email} userId={userId ?? ""} />;
 }
