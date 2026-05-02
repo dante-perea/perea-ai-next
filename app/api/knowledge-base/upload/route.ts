@@ -25,7 +25,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         return {
           pathname: `users/${userId}/files/${id}-${safeName}`,
-          allowOverwrite: true,
+          allowOverwrite: false,
           access: "private",
           tokenPayload: JSON.stringify({
             id,

@@ -63,7 +63,7 @@ export async function insertFile(meta: FileMetadata): Promise<void> {
       ${meta.size}, ${meta.contentType}, ${meta.uploadedBy},
       ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId}
     )
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT DO NOTHING
   `;
 }
 
