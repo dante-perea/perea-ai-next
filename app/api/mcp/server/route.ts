@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { get, put } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { z } from "zod";
 import {
   findFileById,
@@ -12,7 +13,7 @@ import {
 } from "@/lib/knowledge-base/meta";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
-import { verifyAccessToken, signAccessToken } from "@/lib/oauth/jwt";
+import { verifyAccessToken } from "@/lib/oauth/jwt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -253,36 +254,42 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         teamId: team ?? null,
       });
 
-      // Mint a short-lived JWT to call our own upload-token endpoint.
-      // Email is not stored in ViewerContext; "mcp" is the established
-      // uploadedBy value for machine-originated uploads in this codebase.
-      const jwt = await signAccessToken(auth.ctx.userId, "mcp");
-
-      const phase1Resp = await fetch(uploadTokenUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${jwt}`,
-        },
-        body: JSON.stringify({
-          type: "blob.generate-client-token",
-          payload: {
-            pathname,
-            callbackUrl: uploadTokenUrl,
-            clientPayload,
-          },
-        }),
+      const serverPayload = JSON.stringify({
+        id,
+        userId: auth.ctx.userId,
+        uploadedBy: "mcp",
+        filename,
+        size: Math.min(size, MAX_UPLOAD_BYTES),
+        tags: tags ?? [],
+        teamId: team ?? null,
       });
 
-      if (!phase1Resp.ok) {
-        const err = await phase1Resp.json().catch(() => ({ error: "Token generation failed" }));
+      const requestBody: HandleUploadBody = {
+        type: "blob.generate-client-token",
+        payload: { pathname, multipart: false, clientPayload },
+      };
+
+      let clientToken: string;
+      try {
+        const result = await handleUpload({
+          body: requestBody,
+          request: new Request(uploadTokenUrl, { method: "POST" }),
+          onBeforeGenerateToken: async () => ({
+            callbackUrl: uploadTokenUrl,
+            allowOverwrite: false,
+            maximumSizeInBytes: MAX_UPLOAD_BYTES,
+            tokenPayload: serverPayload,
+          }),
+          onUploadCompleted: async () => {},
+        });
+        clientToken = (result as { clientToken: string }).clientToken;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Token generation failed";
         return {
-          content: [{ type: "text" as const, text: JSON.stringify(err) }],
+          content: [{ type: "text" as const, text: JSON.stringify({ error: msg }) }],
           isError: true,
         };
       }
-
-      const { clientToken } = await phase1Resp.json() as { clientToken: string };
 
       return {
         content: [{ type: "text" as const, text: JSON.stringify({
