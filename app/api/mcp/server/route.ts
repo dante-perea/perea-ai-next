@@ -12,7 +12,7 @@ import {
 } from "@/lib/knowledge-base/meta";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
-import { verifyAccessToken } from "@/lib/oauth/jwt";
+import { verifyAccessToken, signAccessToken } from "@/lib/oauth/jwt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -196,6 +196,108 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
           size: meta.size,
           tags: meta.tags,
           blobKey: meta.blobKey,
+        }) }],
+      };
+    }
+  );
+
+  // Large-file upload: returns a Vercel Blob client token + instructions for
+  // direct upload, bypassing MCP's base64/payload size limits entirely.
+  // After the upload completes, Vercel Blob calls /api/mcp/upload-token
+  // (phase 2 webhook) which inserts the FileMetadata atomically — no separate
+  // register call needed.
+  server.tool(
+    "get_upload_token",
+    "Get a Vercel Blob client token for uploading a large file (>4 MB) directly to the knowledge base. Returns the token and a curl command to PUT the file. The database registration happens automatically via webhook when the upload completes.",
+    {
+      filename:    z.string().describe("Filename to store, e.g. 'report.pdf'"),
+      contentType: z.string().describe("MIME type, e.g. 'application/pdf'"),
+      size:        z.number().describe("File size in bytes"),
+      tags:        z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
+      team:        z.string().optional().describe("Team ID. Omit for personal KB."),
+    },
+    async ({ filename, contentType, size, tags, team }) => {
+      if (auth.kind !== "user") {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: "get_upload_token requires user OAuth token, not admin MCP_SECRET." }) }],
+          isError: true,
+        };
+      }
+
+      // Fix #3: enforce size cap before issuing a token. The upload-token
+      // endpoint enforces this too via maximumSizeInBytes, but failing here
+      // gives a clear error before making any outbound call.
+      const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
+      if (size > MAX_UPLOAD_BYTES) {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: `File too large. Maximum upload size is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB.` }) }],
+          isError: true,
+        };
+      }
+
+      const id = crypto.randomUUID();
+      const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const pathname = `users/${auth.ctx.userId}/files/${id}-${safeName}`;
+      // Fix #2: NEXT_PUBLIC_* vars are baked in at build time — wrong on preview
+      // deploys. VERCEL_URL is the correct runtime deployment URL on Vercel.
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL
+        ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.perea.ai");
+      const uploadTokenUrl = `${baseUrl}/api/mcp/upload-token`;
+
+      const clientPayload = JSON.stringify({
+        id,
+        filename,
+        size,
+        tags: tags ?? [],
+        teamId: team ?? null,
+      });
+
+      // Mint a short-lived JWT to call our own upload-token endpoint.
+      // Email is not stored in ViewerContext; "mcp" is the established
+      // uploadedBy value for machine-originated uploads in this codebase.
+      const jwt = await signAccessToken(auth.ctx.userId, "mcp");
+
+      const phase1Resp = await fetch(uploadTokenUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          type: "blob.generate-client-token",
+          payload: {
+            pathname,
+            callbackUrl: uploadTokenUrl,
+            clientPayload,
+          },
+        }),
+      });
+
+      if (!phase1Resp.ok) {
+        const err = await phase1Resp.json().catch(() => ({ error: "Token generation failed" }));
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(err) }],
+          isError: true,
+        };
+      }
+
+      const { clientToken } = await phase1Resp.json() as { clientToken: string };
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({
+          id,
+          pathname,
+          clientToken,
+          uploadUrl: "https://blob.vercel-storage.com",
+          curlCommand: [
+            `curl -X PUT "https://blob.vercel-storage.com/${pathname}"`,
+            `  -H "Authorization: Bearer ${clientToken}"`,
+            `  -H "x-api-version: 7"`,
+            `  -H "Content-Type: ${contentType}"`,
+            `  --data-binary @<local-file-path>`,
+          ].join(" \\\n"),
+          note: "After the PUT completes, the file is automatically registered in the knowledge base. No separate step needed.",
         }) }],
       };
     }
