@@ -292,17 +292,21 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         };
       }
 
+      const uploadParams = new URLSearchParams({ pathname });
+      const uploadApiUrl = `https://vercel.com/api/blob/?${uploadParams.toString()}`;
+
       return {
         content: [{ type: "text" as const, text: JSON.stringify({
           id,
           pathname,
           clientToken,
-          uploadUrl: "https://blob.vercel-storage.com",
+          uploadUrl: uploadApiUrl,
           curlCommand: [
-            `curl -X PUT "https://blob.vercel-storage.com/${pathname}"`,
+            `curl -X PUT "${uploadApiUrl}"`,
             `  -H "Authorization: Bearer ${clientToken}"`,
-            `  -H "x-api-version: 7"`,
+            `  -H "x-api-version: 12"`,
             `  -H "Content-Type: ${contentType}"`,
+            `  -H "x-vercel-blob-access: private"`,
             `  --data-binary @<local-file-path>`,
           ].join(" \\\n"),
           note: "After the PUT completes, the file is automatically registered in the knowledge base. No separate step needed.",
