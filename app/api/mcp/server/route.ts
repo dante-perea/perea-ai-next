@@ -275,6 +275,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
           body: requestBody,
           request: new Request(uploadTokenUrl, { method: "POST" }),
           onBeforeGenerateToken: async () => ({
+            access: "private",
             callbackUrl: uploadTokenUrl,
             allowOverwrite: false,
             maximumSizeInBytes: MAX_UPLOAD_BYTES,
