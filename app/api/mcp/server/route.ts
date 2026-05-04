@@ -7,6 +7,7 @@ import {
   findFileById,
   findFileByIdAdmin,
   insertFile,
+  upsertFile,
   listAllFiles,
   listAllFilesAdmin,
   type ViewerContext,
@@ -143,11 +144,20 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
       data:        z.string().describe("Base64-encoded file content"),
       tags:        z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
       team:        z.string().optional().describe("Team ID to upload into. Omit for personal KB."),
+      id:          z.string().optional().describe("Stable file ID for replacement uploads. If omitted, a new UUID is generated."),
+      userId:      z.string().optional().describe("Required when using admin MCP_SECRET auth. Ignored for user OAuth."),
+      overwrite:   z.boolean().optional().describe("Replace an existing file with the same id. Requires a stable id to be passed."),
     },
-    async ({ filename, contentType, data, tags, team }) => {
-      if (auth.kind !== "user") {
+    async ({ filename, contentType, data, tags, team, id: providedId, userId: providedUserId, overwrite }) => {
+      // Resolve effective user ID — user OAuth takes precedence; admin auth requires explicit userId
+      let effectiveUserId: string;
+      if (auth.kind === "user") {
+        effectiveUserId = auth.ctx.userId;
+      } else if (auth.kind === "admin" && providedUserId) {
+        effectiveUserId = providedUserId;
+      } else {
         return {
-          content: [{ type: "text" as const, text: JSON.stringify({ error: "upload_file requires user OAuth token, not admin MCP_SECRET." }) }],
+          content: [{ type: "text" as const, text: JSON.stringify({ error: "upload_file with admin MCP_SECRET requires a userId parameter." }) }],
           isError: true,
         };
       }
@@ -159,19 +169,23 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         };
       }
 
-      // Verify team membership and write permission
-      if (team) {
-        const role = await getTeamRole(team, auth.ctx.userId);
+      if (team && auth.kind === "user") {
+        const role = await getTeamRole(team, effectiveUserId);
         if (!role) return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Not a member of this team." }) }], isError: true };
         if (role === "viewer") return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Viewers cannot upload files." }) }], isError: true };
       }
 
       const buffer = Buffer.from(data, "base64");
-      const id = crypto.randomUUID();
+      const id = providedId ?? crypto.randomUUID();
       const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const blobName = `users/${auth.ctx.userId}/files/${id}-${safeName}`;
+      const blobName = `users/${effectiveUserId}/files/${id}-${safeName}`;
 
-      const blobResult = await put(blobName, buffer, { access: "private", contentType });
+      const blobResult = await put(blobName, buffer, {
+        access: "private",
+        contentType,
+        addRandomSuffix: false,
+        allowOverwrite: overwrite ?? false,
+      });
 
       const normalizedTags = [...new Set(["mcp", ...(tags ?? [])])];
 
@@ -185,11 +199,11 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         uploadedBy: "mcp",
         uploadedAt: new Date().toISOString(),
         tags: normalizedTags,
-        userId: auth.ctx.userId,
+        userId: effectiveUserId,
         teamId: team ?? null,
       };
 
-      await insertFile(meta);
+      await (overwrite ? upsertFile(meta) : insertFile(meta));
 
       return {
         content: [{ type: "text" as const, text: JSON.stringify({

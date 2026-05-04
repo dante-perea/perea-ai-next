@@ -97,6 +97,23 @@ export async function insertFile(meta: FileMetadata): Promise<void> {
   `;
 }
 
+// Upsert by id — replaces blob_url, blob_key, size, and uploaded_at if the record already exists.
+export async function upsertFile(meta: FileMetadata): Promise<void> {
+  await sql`
+    INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id)
+    VALUES (
+      ${meta.id}, ${meta.filename}, ${meta.blobKey}, ${meta.blobUrl},
+      ${meta.size}, ${meta.contentType}, ${meta.uploadedBy},
+      ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId}
+    )
+    ON CONFLICT (id) DO UPDATE
+      SET blob_url    = EXCLUDED.blob_url,
+          blob_key    = EXCLUDED.blob_key,
+          size        = EXCLUDED.size,
+          uploaded_at = EXCLUDED.uploaded_at
+  `;
+}
+
 export async function updateTags(id: string, tags: string[], ctx: ViewerContext): Promise<FileMetadata | null> {
   const teamIds = ctx.teamIds ?? [];
   const rows = teamIds.length > 0
