@@ -8,6 +8,7 @@ import {
   findFileByIdAdmin,
   insertFile,
   upsertFile,
+  updateTags,
   listAllFiles,
   listAllFilesAdmin,
   type ViewerContext,
@@ -399,6 +400,45 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
           size: converted.byteSize,
           tags: normalizedTags,
           blobKey: blobResult.pathname,
+        }) }],
+      };
+    }
+  );
+
+  server.tool(
+    "update_tags",
+    "Update tags on a knowledge base file by ID. Replaces all existing tags. Useful for tagging sessions by topic (e.g. 'unifounder', '999x', 'marketing').",
+    {
+      id:   z.string().describe("File ID to update"),
+      tags: z.array(z.string()).describe("New tags — replaces existing tags entirely"),
+    },
+    async ({ id, tags }) => {
+      let updated: Awaited<ReturnType<typeof updateTags>>;
+      if (auth.kind === "admin") {
+        const file = await findFileByIdAdmin(id);
+        if (!file) {
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify({ error: `Not found: ${id}` }) }],
+            isError: true,
+          };
+        }
+        updated = await updateTags(id, tags, { userId: file.userId });
+      } else {
+        updated = await updateTags(id, tags, auth.ctx);
+      }
+
+      if (!updated) {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: `Not found or not authorized: ${id}` }) }],
+          isError: true,
+        };
+      }
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({
+          id: updated.id,
+          filename: updated.filename,
+          tags: updated.tags,
         }) }],
       };
     }
