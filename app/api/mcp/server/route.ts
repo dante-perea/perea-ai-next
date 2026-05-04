@@ -14,6 +14,7 @@ import {
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
+import { fetchAndConvert, UrlConvertError } from "@/lib/knowledge-base/url-to-md";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -310,6 +311,80 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
             `  --data-binary @<local-file-path>`,
           ].join(" \\\n"),
           note: "After the PUT completes, the file is automatically registered in the knowledge base. No separate step needed.",
+        }) }],
+      };
+    }
+  );
+
+  server.tool(
+    "add_url",
+    "Fetch a public URL, convert it to Markdown, and save it to the knowledge base. Returns the stored file metadata.",
+    {
+      url:  z.string().describe("The public URL to fetch and convert, e.g. 'https://example.com/article'"),
+      tags: z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
+      team: z.string().optional().describe("Team ID to upload into. Omit for personal KB."),
+    },
+    async ({ url, tags, team }) => {
+      if (auth.kind !== "user") {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: "add_url requires user OAuth token, not admin MCP_SECRET." }) }],
+          isError: true,
+        };
+      }
+
+      if (team) {
+        const role = await getTeamRole(team, auth.ctx.userId);
+        if (!role) return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Not a member of this team." }) }], isError: true };
+        if (role === "viewer") return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Viewers cannot upload files." }) }], isError: true };
+      }
+
+      let converted: Awaited<ReturnType<typeof fetchAndConvert>>;
+      try {
+        converted = await fetchAndConvert(url);
+      } catch (err) {
+        const msg = err instanceof UrlConvertError ? err.message : "Failed to fetch or convert URL";
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ error: msg }) }],
+          isError: true,
+        };
+      }
+
+      const id = crypto.randomUUID();
+      const safeName = converted.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const blobPath = `users/${auth.ctx.userId}/files/${id}-${safeName}`;
+
+      const blobResult = await put(blobPath, converted.markdown, {
+        access: "private",
+        contentType: "text/markdown",
+        addRandomSuffix: false,
+      });
+
+      const normalizedTags = [...new Set(["mcp", ...(tags ?? [])])];
+
+      const meta: FileMetadata = {
+        id,
+        filename: converted.filename,
+        blobKey: blobResult.pathname,
+        blobUrl: blobResult.url,
+        size: converted.byteSize,
+        contentType: "text/markdown",
+        uploadedBy: "mcp",
+        uploadedAt: new Date().toISOString(),
+        tags: normalizedTags,
+        userId: auth.ctx.userId,
+        teamId: team ?? null,
+      };
+
+      await insertFile(meta);
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({
+          id,
+          filename: converted.filename,
+          title: converted.title,
+          size: converted.byteSize,
+          tags: normalizedTags,
+          blobKey: blobResult.pathname,
         }) }],
       };
     }
