@@ -40,8 +40,6 @@ export function UrlImport({ onSavedToKb }: UrlImportProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<ConvertResult | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [saveToKb, setSaveToKb] = useState(false);
-
   async function handleConvert() {
     const trimmed = url.trim();
     if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
@@ -58,7 +56,7 @@ export function UrlImport({ onSavedToKb }: UrlImportProps) {
       const res = await fetch("/api/knowledge-base/url-to-md", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: trimmed, saveToKb }),
+        body: JSON.stringify({ url: trimmed, saveToKb: true }),
       });
 
       const data = (await res.json()) as ConvertResult & { error?: string; code?: string };
@@ -105,19 +103,6 @@ export function UrlImport({ onSavedToKb }: UrlImportProps) {
           Convert
         </button>
       </div>
-
-      {/* KB save option */}
-      {status !== "loading" && (
-        <label className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-[var(--color-ink-muted)]">
-          <input
-            type="checkbox"
-            checked={saveToKb}
-            onChange={(e) => setSaveToKb(e.target.checked)}
-            className="rounded border-[var(--color-border)] accent-[var(--color-accent)]"
-          />
-          Add to Knowledge Base
-        </label>
-      )}
 
       {/* Error state */}
       {status === "error" && (
