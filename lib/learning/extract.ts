@@ -132,7 +132,7 @@ Rules:
     const result = await generateText({
       model: gateway("xai/grok-4.3"),
       messages: [{ role: "user", content: prompt }],
-      maxTokens: 1024,
+      maxOutputTokens: 1024,
     });
     text = result.text;
   } catch (err) {

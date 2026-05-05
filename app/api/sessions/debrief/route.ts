@@ -68,7 +68,7 @@ ${snippet}`;
     const result = await generateText({
       model: gateway("openai/gpt-5.4-2026-03-05"),
       messages: [{ role: "user", content: prompt }],
-      maxTokens: 512,
+      maxOutputTokens: 512,
     });
     text = result.text;
   } catch (err) {

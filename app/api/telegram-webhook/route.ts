@@ -56,7 +56,7 @@ Hypothesis: "${hypothesis}"
 Return only valid JSON: { "experiment_type": "...", "aarrr_stage": "..." }`,
         },
       ],
-      maxTokens: 64,
+      maxOutputTokens: 64,
     });
     return JSON.parse(text);
   } catch {

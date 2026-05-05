@@ -149,6 +149,15 @@ export async function getActiveExperiments(): Promise<Experiment[]> {
   }
 }
 
+export async function getAllExperiments(): Promise<Experiment[]> {
+  const db = ghostDb();
+  try {
+    return await db<Experiment[]>`SELECT * FROM experiments ORDER BY started_at DESC`;
+  } finally {
+    await db.end();
+  }
+}
+
 export async function getVelocityStats(): Promise<VelocityStats> {
   const db = ghostDb();
   try {
