@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { updateTags } from "@/lib/knowledge-base/meta";
-import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
+import { getUserTeamIds, checkTeamAccess } from "@/lib/knowledge-base/teams";
 import { findFileById } from "@/lib/knowledge-base/meta";
 
 export async function PUT(
@@ -27,8 +27,8 @@ export async function PUT(
     if (!file) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     if (file.teamId) {
-      const role = await getTeamRole(file.teamId, userId);
-      if (role === "viewer") return NextResponse.json({ error: "Viewers cannot edit tags" }, { status: 403 });
+      const access = await checkTeamAccess(file.teamId, userId, "editor");
+      if (!access.ok) return NextResponse.json({ error: "Viewers cannot edit tags" }, { status: 403 });
     }
 
     const updated = await updateTags(id, tags.map((t) => t.trim()).filter(Boolean), ctx);

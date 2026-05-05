@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getTeamRole, revokeInvite } from "@/lib/knowledge-base/teams";
+import { checkTeamAccess, revokeInvite } from "@/lib/knowledge-base/teams";
 
 type Params = { params: Promise<{ id: string; token: string }> };
 
@@ -10,8 +10,8 @@ export async function DELETE(_request: Request, { params }: Params): Promise<Nex
 
   try {
     const { id: teamId, token } = await params;
-    const role = await getTeamRole(teamId, userId);
-    if (role !== "owner") return NextResponse.json({ error: "Only owners can revoke invites" }, { status: 403 });
+    const access = await checkTeamAccess(teamId, userId, "owner");
+    if (!access.ok) return NextResponse.json({ error: "Only owners can revoke invites" }, { status: 403 });
 
     const revoked = await revokeInvite(token, teamId);
     if (!revoked) return NextResponse.json({ error: "Invite not found or already used" }, { status: 404 });

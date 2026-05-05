@@ -15,7 +15,7 @@ import {
 } from "@/lib/knowledge-base/meta";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 import { detectKnowledgeType, detectKnowledgeTypeFromFilename } from "@/lib/knowledge-base/detect-knowledge-type";
-import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
+import { getUserTeamIds, checkTeamAccess } from "@/lib/knowledge-base/teams";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 import { fetchAndConvert, UrlConvertError } from "@/lib/knowledge-base/url-to-md";
 import {
@@ -180,9 +180,11 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
       }
 
       if (team && auth.kind === "user") {
-        const role = await getTeamRole(team, effectiveUserId);
-        if (!role) return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Not a member of this team." }) }], isError: true };
-        if (role === "viewer") return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Viewers cannot upload files." }) }], isError: true };
+        const access = await checkTeamAccess(team, effectiveUserId, "editor");
+        if (!access.ok) {
+          const error = access.reason === "not_member" ? "Not a member of this team." : "Viewers cannot upload files.";
+          return { content: [{ type: "text" as const, text: JSON.stringify({ error }) }], isError: true };
+        }
       }
 
       const buffer = Buffer.from(data, "base64");
@@ -384,9 +386,11 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
       }
 
       if (team) {
-        const role = await getTeamRole(team, auth.ctx.userId);
-        if (!role) return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Not a member of this team." }) }], isError: true };
-        if (role === "viewer") return { content: [{ type: "text" as const, text: JSON.stringify({ error: "Viewers cannot upload files." }) }], isError: true };
+        const access = await checkTeamAccess(team, auth.ctx.userId, "editor");
+        if (!access.ok) {
+          const error = access.reason === "not_member" ? "Not a member of this team." : "Viewers cannot upload files.";
+          return { content: [{ type: "text" as const, text: JSON.stringify({ error }) }], isError: true };
+        }
       }
 
       let converted: Awaited<ReturnType<typeof fetchAndConvert>>;

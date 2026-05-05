@@ -3,7 +3,7 @@ import { del } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 import { insertFile } from "@/lib/knowledge-base/meta";
-import { getTeamRole } from "@/lib/knowledge-base/teams";
+import { checkTeamAccess } from "@/lib/knowledge-base/teams";
 import type { FileMetadata, KnowledgeType } from "@/lib/knowledge-base/types";
 
 const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
@@ -75,9 +75,9 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         // Team write-permission check before issuing the token
         if (parsed.teamId) {
-          const role = await getTeamRole(parsed.teamId, userId);
-          if (!role) throw new Error("Not a member of this team");
-          if (role === "viewer") throw new Error("Viewers cannot upload files");
+          const access = await checkTeamAccess(parsed.teamId, userId, "editor");
+          if (!access.ok)
+            throw new Error(access.reason === "not_member" ? "Not a member of this team" : "Viewers cannot upload files");
         }
 
         const id = parsed.id ?? crypto.randomUUID();
@@ -131,8 +131,8 @@ export async function POST(request: Request): Promise<NextResponse> {
         // completion. Inserting without this check would land the file in a KB
         // the uploader no longer has write access to.
         if (teamId) {
-          const role = await getTeamRole(teamId, userId);
-          if (!role || role === "viewer") {
+          const access = await checkTeamAccess(teamId, userId, "editor");
+          if (!access.ok) {
             await del(blob.pathname).catch(() => {});
             throw new Error("Team write access revoked before upload completed");
           }

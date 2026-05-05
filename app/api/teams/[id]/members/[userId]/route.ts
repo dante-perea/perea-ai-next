@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getTeamRole, updateMemberRole, removeMember } from "@/lib/knowledge-base/teams";
+import { getTeamRole, checkTeamAccess, updateMemberRole, removeMember } from "@/lib/knowledge-base/teams";
 import type { TeamRole } from "@/lib/knowledge-base/teams";
 
 type Params = { params: Promise<{ id: string; userId: string }> };
@@ -11,8 +11,8 @@ export async function PATCH(request: Request, { params }: Params): Promise<NextR
 
   try {
     const { id: teamId, userId: targetId } = await params;
-    const callerRole = await getTeamRole(teamId, callerId);
-    if (callerRole !== "owner") return NextResponse.json({ error: "Only owners can change roles" }, { status: 403 });
+    const access = await checkTeamAccess(teamId, callerId, "owner");
+    if (!access.ok) return NextResponse.json({ error: "Only owners can change roles" }, { status: 403 });
     if (targetId === callerId) return NextResponse.json({ error: "Cannot change your own role" }, { status: 400 });
 
     const { role } = (await request.json()) as { role?: string };

@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getTeamRole, createInvite, listPendingInvites } from "@/lib/knowledge-base/teams";
+import { checkTeamAccess, createInvite, listPendingInvites } from "@/lib/knowledge-base/teams";
 import type { TeamRole } from "@/lib/knowledge-base/teams";
 
 function getBaseUrl(request: Request): string {
@@ -20,8 +20,8 @@ export async function GET(
 
   try {
     const { id: teamId } = await params;
-    const role = await getTeamRole(teamId, userId);
-    if (role !== "owner") return NextResponse.json({ error: "Only owners can view invites" }, { status: 403 });
+    const access = await checkTeamAccess(teamId, userId, "owner");
+    if (!access.ok) return NextResponse.json({ error: "Only owners can view invites" }, { status: 403 });
 
     const invites = await listPendingInvites(teamId);
     const base = getBaseUrl(request);
@@ -40,8 +40,8 @@ export async function POST(
 
   try {
     const { id: teamId } = await params;
-    const role = await getTeamRole(teamId, userId);
-    if (role !== "owner") return NextResponse.json({ error: "Only owners can invite" }, { status: 403 });
+    const access = await checkTeamAccess(teamId, userId, "owner");
+    if (!access.ok) return NextResponse.json({ error: "Only owners can invite" }, { status: 403 });
 
     const body = (await request.json()) as { role?: string };
     const inviteRole = (body.role ?? "viewer") as Exclude<TeamRole, "owner">;

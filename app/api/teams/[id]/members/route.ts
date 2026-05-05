@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getTeamRole, listTeamMembers } from "@/lib/knowledge-base/teams";
+import { checkTeamAccess, listTeamMembers } from "@/lib/knowledge-base/teams";
 
 export async function GET(
   _request: Request,
@@ -11,8 +11,8 @@ export async function GET(
 
   try {
     const { id: teamId } = await params;
-    const role = await getTeamRole(teamId, userId);
-    if (!role) return NextResponse.json({ error: "Not a member" }, { status: 403 });
+    const access = await checkTeamAccess(teamId, userId, "member");
+    if (!access.ok) return NextResponse.json({ error: "Not a member" }, { status: 403 });
 
     const members = await listTeamMembers(teamId);
     return NextResponse.json(members);

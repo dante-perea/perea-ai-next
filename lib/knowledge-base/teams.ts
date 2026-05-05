@@ -97,6 +97,32 @@ export async function getTeamRole(teamId: string, userId: string): Promise<TeamR
   return rows[0]?.role ?? null;
 }
 
+// ── Authorization helpers ──────────────────────────────���───────────────────
+
+export type MinRole = "member" | "editor" | "owner";
+
+export type TeamAccessResult =
+  | { ok: true; role: TeamRole }
+  | { ok: false; reason: "not_member" | "insufficient_role" };
+
+const ROLE_RANK: Record<TeamRole, number> = { viewer: 0, editor: 1, owner: 2 };
+const MIN_RANK:  Record<MinRole, number>  = { member:  0, editor: 1, owner: 2 };
+
+export function hasMinRole(role: TeamRole, min: MinRole): boolean {
+  return ROLE_RANK[role] >= MIN_RANK[min];
+}
+
+export async function checkTeamAccess(
+  teamId: string,
+  userId: string,
+  min: MinRole,
+): Promise<TeamAccessResult> {
+  const role = await getTeamRole(teamId, userId);
+  if (!role) return { ok: false, reason: "not_member" };
+  if (!hasMinRole(role, min)) return { ok: false, reason: "insufficient_role" };
+  return { ok: true, role };
+}
+
 export async function getUserTeamIds(userId: string): Promise<string[]> {
   const rows = await sql`
     SELECT team_id FROM team_members WHERE user_id = ${userId}
