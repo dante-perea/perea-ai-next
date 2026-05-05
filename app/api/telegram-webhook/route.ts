@@ -1,3 +1,5 @@
+import { generateText } from "ai";
+import { gateway } from "@/lib/ai";
 import { NextResponse } from "next/server";
 import {
   insertSignal,
@@ -39,14 +41,9 @@ async function classifyHypothesis(hypothesis: string): Promise<{
   experiment_type: string;
   aarrr_stage: string;
 }> {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-5.4-2026-03-05",
+  try {
+    const { text } = await generateText({
+      model: gateway("openai/gpt-5.4-2026-03-05"),
       messages: [
         {
           role: "user",
@@ -59,14 +56,9 @@ Hypothesis: "${hypothesis}"
 Return only valid JSON: { "experiment_type": "...", "aarrr_stage": "..." }`,
         },
       ],
-      max_tokens: 64,
-      response_format: { type: "json_object" },
-    }),
-  });
-  if (!res.ok) return { experiment_type: "other", aarrr_stage: "none" };
-  const json = await res.json();
-  try {
-    return JSON.parse(json.choices?.[0]?.message?.content ?? "{}");
+      maxTokens: 64,
+    });
+    return JSON.parse(text);
   } catch {
     return { experiment_type: "other", aarrr_stage: "none" };
   }

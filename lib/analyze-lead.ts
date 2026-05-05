@@ -8,6 +8,8 @@
  *   - Recommended engagement tier (Discovery / Project / Retainer)
  */
 
+import { generateText } from "ai";
+import { gateway } from "./ai";
 import type { LeadEnrichment } from "./enrich-lead";
 
 export interface LeadAnalysis {
@@ -61,12 +63,6 @@ export async function analyzeLead(
   enrichment: LeadEnrichment | null,
   retellSummary?: string,
 ): Promise<LeadAnalysis | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    console.log("[analyze-lead] OPENAI_API_KEY not set — skipping analysis");
-    return null;
-  }
-
   const enrichmentBlock = enrichment
     ? `
 ENRICHMENT DATA:
@@ -90,31 +86,15 @@ ${enrichmentBlock}
 `;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4.1-mini",   // ~$0.002 per brief — very cheap
-        temperature: 0.3,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user",   content: userMessage },
-        ],
-      }),
+    const { text: raw } = await generateText({
+      model: gateway("openai/gpt-4.1-mini"),
+      temperature: 0.3,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user",   content: userMessage },
+      ],
     });
 
-    if (!res.ok) {
-      console.warn("[analyze-lead] OpenAI error:", res.status, await res.text());
-      return null;
-    }
-
-    const data  = await res.json();
-    const raw   = data?.choices?.[0]?.message?.content ?? "";
-
-    // Strip markdown fences if model wraps in ```json
     const cleaned = raw.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
     const parsed  = JSON.parse(cleaned);
 

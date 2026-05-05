@@ -1,5 +1,7 @@
+import { generateText } from "ai";
 import { neon } from "@neondatabase/serverless";
 import { get } from "@vercel/blob";
+import { gateway } from "../ai";
 import {
   getActiveExperiments,
   getVelocityStats,
@@ -125,27 +127,18 @@ Rules:
 - If no hypothesis was tested today, say so honestly in synthesis.
 - next_implied_hypothesis must be specific and falsifiable.`;
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-5.4-2026-03-05",
+  let text: string;
+  try {
+    const result = await generateText({
+      model: gateway("openai/gpt-5.4-2026-03-05"),
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024,
-      response_format: { type: "json_object" },
-    }),
-  });
-
-  if (!res.ok) {
-    console.warn("[extract] OpenAI error:", res.status, await res.text());
+      maxTokens: 1024,
+    });
+    text = result.text;
+  } catch (err) {
+    console.warn("[extract] AI gateway error:", err);
     return { synthesis: "Extraction failed.", validated: [], refuted: [], inconclusive: [], territory: "unknown", next_hypothesis: "" };
   }
-
-  const json = await res.json();
-  const text: string = json.choices?.[0]?.message?.content ?? "{}";
 
   try {
     const parsed = JSON.parse(text.replace(/```json\n?|\n?```/g, "").trim());
