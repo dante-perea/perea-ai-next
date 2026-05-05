@@ -17,6 +17,14 @@ import type { FileMetadata } from "@/lib/knowledge-base/types";
 import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 import { fetchAndConvert, UrlConvertError } from "@/lib/knowledge-base/url-to-md";
+import {
+  createExperiment,
+  markShipped,
+  closeExperiment,
+  insertSignal,
+  getVelocityStats,
+  generateExperimentId,
+} from "@/lib/learning/ghost-db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -441,6 +449,138 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
           tags: updated.tags,
         }) }],
       };
+    }
+  );
+
+  // ── Innovation Loop tools ──────────────────────────────────────────────────
+
+  server.tool(
+    "start_experiment",
+    "Log a new hypothesis to the innovation loop tracker. Call this at the start of a work session when you have a clear hypothesis to test. Returns the experiment ID to use in subsequent calls.",
+    {
+      hypothesis:  z.string().describe("The hypothesis being tested. Format: 'Testing X because Y, expecting Z'"),
+      project_tag: z.string().optional().describe("Project context, e.g. 'perea-ai', 'unifounder', '999x', 'tierra-flint'"),
+      session_id:  z.string().optional().describe("Claude Code session ID (CLAUDE_SESSION_ID) to link this experiment to the current session for accurate learning extraction"),
+    },
+    async ({ hypothesis, project_tag, session_id }) => {
+      try {
+        const id = generateExperimentId();
+        const exp = await createExperiment(id, hypothesis, project_tag, session_id);
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({
+            id: exp.id,
+            hypothesis: exp.hypothesis,
+            project_tag: exp.project_tag,
+            started_at: exp.started_at,
+            message: `Experiment started. Use id '${exp.id}' to ship, log signals, or close the loop.`,
+          }) }],
+        };
+      } catch (err) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+      }
+    }
+  );
+
+  server.tool(
+    "ship_experiment",
+    "Mark an experiment as shipped — something is now in front of real users. Records the timestamp for cycle time calculation.",
+    {
+      id: z.string().describe("Experiment ID returned by start_experiment"),
+    },
+    async ({ id }) => {
+      try {
+        const exp = await markShipped(id);
+        if (!exp) return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Experiment not found or already shipped: ${id}` }) }], isError: true };
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({
+            id: exp.id,
+            shipped_at: exp.shipped_at,
+            message: "Shipped. Now wait for signals from reality before closing the loop.",
+          }) }],
+        };
+      } catch (err) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+      }
+    }
+  );
+
+  server.tool(
+    "log_signal",
+    "Log a real-world signal (user feedback, usage observation, DM, call insight) for an experiment. Use this whenever reality speaks.",
+    {
+      experiment_id: z.string().describe("Experiment ID the signal relates to"),
+      source:        z.string().describe("Signal source: 'dm', 'usage', 'observation', 'call', 'review', 'analytics'"),
+      content:       z.string().describe("What was observed or said — verbatim or paraphrased"),
+    },
+    async ({ experiment_id, source, content }) => {
+      try {
+        const row = await insertSignal(experiment_id, source, content);
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({
+            signal_id: row.id,
+            experiment_id,
+            source,
+            message: "Signal logged.",
+          }) }],
+        };
+      } catch (err) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+      }
+    }
+  );
+
+  server.tool(
+    "close_experiment",
+    "Close the loop on an experiment. Record the outcome (validated/refuted/inconclusive), what reality said, and what to test next.",
+    {
+      id:              z.string().describe("Experiment ID to close"),
+      outcome:         z.enum(["validated", "refuted", "inconclusive"]).describe("What reality showed"),
+      learning:        z.string().describe("One to three sentences: what did reality say? Be specific."),
+      next_hypothesis: z.string().optional().describe("The next hypothesis implied by this result — what to test now?"),
+    },
+    async ({ id, outcome, learning, next_hypothesis }) => {
+      try {
+        const exp = await closeExperiment(id, outcome, learning, next_hypothesis);
+        if (!exp) return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Experiment not found: ${id}` }) }], isError: true };
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({
+            id: exp.id,
+            outcome: exp.outcome,
+            learning: exp.learning,
+            next_hypothesis: exp.next_hypothesis,
+            cycle_hours: exp.shipped_at
+              ? Math.round((new Date(exp.shipped_at).getTime() - new Date(exp.started_at).getTime()) / 36e5 * 10) / 10
+              : null,
+            message: "Loop closed.",
+          }) }],
+        };
+      } catch (err) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+      }
+    }
+  );
+
+  server.tool(
+    "get_velocity",
+    "Get innovation velocity stats: experiments started today, this week, average idea-to-shipped cycle time, and validation rate.",
+    {},
+    async () => {
+      try {
+        const stats = await getVelocityStats();
+        const valRate = stats.validation_rate != null ? `${(stats.validation_rate * 100).toFixed(0)}%` : "—";
+        const avgHours = stats.avg_cycle_hours != null ? `${stats.avg_cycle_hours}h` : "—";
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({
+            velocity_today: stats.velocity_today,
+            velocity_week: stats.velocity_week,
+            avg_cycle_hours: stats.avg_cycle_hours,
+            validation_rate: stats.validation_rate,
+            summary: `This week: ${stats.velocity_week} experiments · ${avgHours} avg cycle · ${valRate} validated`,
+          }) }],
+        };
+      } catch (err) {
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+      }
     }
   );
 
