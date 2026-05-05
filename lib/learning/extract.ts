@@ -72,6 +72,14 @@ export async function getYesterdaySessions(
   return sessions.filter((s) => s.content.length > 100);
 }
 
+export interface ProposedExperiment {
+  hypothesis: string;
+  outcome: "validated" | "refuted" | "inconclusive";
+  learning: string;
+  experiment_type: string;
+  aarrr_stage: string;
+}
+
 export async function extractAndSynthesize(
   sessions: { id: string; content: string }[],
   experiments: Experiment[]
@@ -82,6 +90,7 @@ export async function extractAndSynthesize(
   inconclusive: Record<string, string>[];
   territory: string;
   next_hypothesis: string;
+  proposed_experiments: ProposedExperiment[];
 }> {
   const experimentSummary = experiments.length > 0
     ? experiments.map((e) => `- [${e.id}] ${e.hypothesis} (project: ${e.project_tag ?? "untagged"})`).join("\n")
@@ -116,7 +125,16 @@ Extract a daily learning synthesis. Respond ONLY with valid JSON matching this s
   "refuted": [{ "experiment_id": "matching experiment ID or null", "learning": "what was shown false", "experiment_type": "...", "aarrr_stage": "..." }],
   "inconclusive": [{ "experiment_id": "matching experiment ID or null", "learning": "what is still unclear", "experiment_type": "...", "aarrr_stage": "..." }],
   "next_implied_hypothesis": "the single most important hypothesis to test next, given today's evidence",
-  "synthesis": "3-5 sentence narrative of today's validated learning — what did reality say?"
+  "synthesis": "3-5 sentence narrative of today's validated learning — what did reality say?",
+  "proposed_experiments": [
+    {
+      "hypothesis": "If I [action], then [outcome], because [reason] — one per distinct thing built/tried/shipped",
+      "outcome": "validated | refuted | inconclusive",
+      "learning": "one sentence: what reality showed about this hypothesis",
+      "experiment_type": "product|pricing|messaging|distribution|business_model|gtm|other",
+      "aarrr_stage": "acquisition|activation|retention|referral|revenue|none"
+    }
+  ]
 }
 
 Rules:
@@ -125,7 +143,8 @@ Rules:
 - Only include learnings grounded in the session content. No hallucination.
 - Match learnings to experiment IDs where explicitly relevant. Use null if no match.
 - If no hypothesis was tested today, say so honestly in synthesis.
-- next_implied_hypothesis must be specific and falsifiable.`;
+- next_implied_hypothesis must be specific and falsifiable.
+- proposed_experiments: extract every implicit hypothesis being tested — one per distinct feature, decision, or thing shipped. Must be falsifiable. Outcome based on whether the session shows it worked.`;
 
   let text: string;
   try {
@@ -137,7 +156,7 @@ Rules:
     text = result.text;
   } catch (err) {
     console.warn("[extract] AI gateway error:", err);
-    return { synthesis: "Extraction failed.", validated: [], refuted: [], inconclusive: [], territory: "unknown", next_hypothesis: "" };
+    return { synthesis: "Extraction failed.", validated: [], refuted: [], inconclusive: [], territory: "unknown", next_hypothesis: "", proposed_experiments: [] };
   }
 
   try {
@@ -149,6 +168,7 @@ Rules:
       inconclusive: parsed.inconclusive ?? [],
       territory: parsed.territory ?? "unknown",
       next_hypothesis: parsed.next_implied_hypothesis ?? "",
+      proposed_experiments: parsed.proposed_experiments ?? [],
     };
   } catch {
     return {
@@ -158,6 +178,7 @@ Rules:
       inconclusive: [],
       territory: "unknown",
       next_hypothesis: "",
+      proposed_experiments: [],
     };
   }
 }

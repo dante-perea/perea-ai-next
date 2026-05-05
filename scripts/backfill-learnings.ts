@@ -1,6 +1,12 @@
 import { neon } from "@neondatabase/serverless";
 import { get } from "@vercel/blob";
-import { getAllExperiments, getVelocityStats } from "../lib/learning/ghost-db";
+import {
+  getAllExperiments,
+  getVelocityStats,
+  createExperiment,
+  closeExperiment,
+  generateExperimentId,
+} from "../lib/learning/ghost-db";
 import {
   extractAndSynthesize,
   writeDailyLearning,
@@ -65,7 +71,7 @@ async function main() {
       continue;
     }
 
-    const { synthesis, validated, refuted, inconclusive, territory, next_hypothesis } =
+    const { synthesis, validated, refuted, inconclusive, territory, next_hypothesis, proposed_experiments } =
       await extractAndSynthesize(sessions, experiments);
 
     await writeDailyLearning({
@@ -83,7 +89,22 @@ async function main() {
     });
 
     await writeSignalsFromLearnings(validated, refuted, inconclusive);
-    console.log(`done — ${sessions.length} sessions · ${validated.length}✓ ${refuted.length}✗ ${inconclusive.length}?`);
+
+    // Create retroactive experiment records from AI-inferred hypotheses
+    for (const pe of proposed_experiments) {
+      if (!pe.hypothesis?.trim() || !pe.learning?.trim()) continue;
+      const id = generateExperimentId();
+      await createExperiment(id, pe.hypothesis.trim(), undefined, undefined, {
+        experiment_type: pe.experiment_type,
+        aarrr_stage: pe.aarrr_stage,
+      });
+      const outcome = ["validated", "refuted", "inconclusive"].includes(pe.outcome)
+        ? pe.outcome as "validated" | "refuted" | "inconclusive"
+        : "inconclusive";
+      await closeExperiment(id, outcome, pe.learning.trim());
+    }
+
+    console.log(`done — ${sessions.length} sessions · ${validated.length}✓ ${refuted.length}✗ ${inconclusive.length}? · ${proposed_experiments.length} experiments created`);
 
     await new Promise((r) => setTimeout(r, 1500));
   }
