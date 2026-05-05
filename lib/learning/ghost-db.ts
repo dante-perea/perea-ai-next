@@ -123,14 +123,12 @@ export async function insertSignalsBulk(
   if (signals.length === 0) return;
   const db = ghostDb();
   try {
-    await db`
-      INSERT INTO signals (experiment_id, source, content)
-      SELECT * FROM ${db(signals.map((s) => ({
-        experiment_id: s.experiment_id ?? null,
-        source: s.source,
-        content: s.content,
-      })))}
-    `;
+    for (const s of signals) {
+      await db`
+        INSERT INTO signals (experiment_id, source, content)
+        VALUES (${s.experiment_id ?? null}, ${s.source}, ${s.content})
+      `;
+    }
   } finally {
     await db.end();
   }
