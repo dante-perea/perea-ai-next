@@ -130,7 +130,7 @@ Rules:
   let text: string;
   try {
     const result = await generateText({
-      model: gateway("openai/gpt-5.4-2026-03-05"),
+      model: gateway("xai/grok-4.3"),
       messages: [{ role: "user", content: prompt }],
       maxTokens: 1024,
     });
