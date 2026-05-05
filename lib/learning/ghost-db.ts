@@ -10,6 +10,11 @@ export interface Experiment {
   outcome: string;
   learning: string | null;
   next_hypothesis: string | null;
+  success_criteria: string | null;
+  experiment_type: string | null;
+  aarrr_stage: string | null;
+  parent_experiment_id: string | null;
+  verdict: string | null;
 }
 
 export interface VelocityStats {
@@ -29,13 +34,26 @@ export async function createExperiment(
   id: string,
   hypothesis: string,
   project_tag?: string,
-  session_id?: string
+  session_id?: string,
+  opts?: {
+    success_criteria?: string;
+    experiment_type?: string;
+    aarrr_stage?: string;
+    parent_experiment_id?: string;
+  }
 ): Promise<Experiment> {
   const db = ghostDb();
   try {
     const rows = await db<Experiment[]>`
-      INSERT INTO experiments (id, hypothesis, project_tag, session_id)
-      VALUES (${id}, ${hypothesis}, ${project_tag ?? null}, ${session_id ?? null})
+      INSERT INTO experiments (
+        id, hypothesis, project_tag, session_id,
+        success_criteria, experiment_type, aarrr_stage, parent_experiment_id
+      )
+      VALUES (
+        ${id}, ${hypothesis}, ${project_tag ?? null}, ${session_id ?? null},
+        ${opts?.success_criteria ?? null}, ${opts?.experiment_type ?? null},
+        ${opts?.aarrr_stage ?? null}, ${opts?.parent_experiment_id ?? null}
+      )
       RETURNING *
     `;
     return rows[0];
@@ -183,6 +201,47 @@ export async function getRecentLearnings(limit = 7): Promise<{
       ORDER BY date DESC
       LIMIT ${limit}
     `;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function setSuccessCriteria(id: string, criteria: string): Promise<void> {
+  const db = ghostDb();
+  try {
+    await db`UPDATE experiments SET success_criteria = ${criteria} WHERE id = ${id}`;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function closeWithVerdict(
+  id: string,
+  verdict: "win" | "kill" | "need_more_data",
+  learning: string
+): Promise<Experiment | null> {
+  const outcomeMap = { win: "validated", kill: "refuted", need_more_data: "inconclusive" } as const;
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments
+      SET verdict = ${verdict},
+          outcome = ${outcomeMap[verdict]},
+          learning = ${learning || null},
+          shipped_at = COALESCE(shipped_at, NOW())
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function deleteExperiment(id: string): Promise<void> {
+  const db = ghostDb();
+  try {
+    await db`DELETE FROM experiments WHERE id = ${id}`;
   } finally {
     await db.end();
   }

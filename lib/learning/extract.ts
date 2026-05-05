@@ -90,7 +90,16 @@ export async function extractAndSynthesize(
     .map((s) => `--- SESSION ${s.id} ---\n${s.content.slice(0, 3000)}`)
     .join("\n\n");
 
-  const prompt = `You are a validated learning extractor. You read raw Claude Code sessions and extract explicit or implicit hypotheses that were tested, what reality showed, and what to try next.
+  const prompt = `You are a validated learning extractor for a startup founder. You read working sessions and extract what hypotheses were tested, what reality showed, and what to try next.
+
+Sessions cover ALL startup work — not just code:
+- Pricing: testing a price point, packaging, or payment structure
+- Messaging: testing a headline, CTA, email subject, or value proposition
+- Distribution: testing a channel (DMs, cold email, content, ads, partnerships)
+- Business model: testing a revenue model, ICP definition, or positioning
+- GTM: testing launch strategy, timing, or go-to-market approach
+- Product: testing a feature, flow, onboarding step, or UX decision
+- Code: testing a technical architecture or implementation decision
 
 ACTIVE EXPERIMENTS (ideas being tracked):
 ${experimentSummary}
@@ -101,14 +110,16 @@ ${sessionDigest}
 Extract a daily learning synthesis. Respond ONLY with valid JSON matching this schema:
 {
   "territory": "one-line summary of what domain/project was worked on today",
-  "validated": [{ "experiment_id": "matching experiment ID or null", "learning": "what was confirmed true" }],
-  "refuted": [{ "experiment_id": "matching experiment ID or null", "learning": "what was shown false" }],
-  "inconclusive": [{ "experiment_id": "matching experiment ID or null", "learning": "what is still unclear" }],
+  "validated": [{ "experiment_id": "matching experiment ID or null", "learning": "what was confirmed true", "experiment_type": "product|pricing|messaging|distribution|business_model|gtm|other", "aarrr_stage": "acquisition|activation|retention|referral|revenue|none" }],
+  "refuted": [{ "experiment_id": "matching experiment ID or null", "learning": "what was shown false", "experiment_type": "...", "aarrr_stage": "..." }],
+  "inconclusive": [{ "experiment_id": "matching experiment ID or null", "learning": "what is still unclear", "experiment_type": "...", "aarrr_stage": "..." }],
   "next_implied_hypothesis": "the single most important hypothesis to test next, given today's evidence",
   "synthesis": "3-5 sentence narrative of today's validated learning — what did reality say?"
 }
 
 Rules:
+- Cover ALL domains: pricing, messaging, distribution, GTM, product, code. Not just technical work.
+- The most valuable learnings are: (1) what was rejected and WHY, (2) what surprised the founder.
 - Only include learnings grounded in the session content. No hallucination.
 - Match learnings to experiment IDs where explicitly relevant. Use null if no match.
 - If no hypothesis was tested today, say so honestly in synthesis.

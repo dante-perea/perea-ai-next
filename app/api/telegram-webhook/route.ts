@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
-import { insertSignal, getVelocityStats } from "@/lib/learning/ghost-db";
+import {
+  insertSignal,
+  getVelocityStats,
+  createExperiment,
+  generateExperimentId,
+  setSuccessCriteria,
+  closeWithVerdict,
+  deleteExperiment,
+  getActiveExperiments,
+} from "@/lib/learning/ghost-db";
 
 async function sendTelegram(chatId: number | string, text: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -19,17 +28,51 @@ interface TelegramUpdate {
   };
 }
 
-// /signal <experiment_id> <source> <content...>
-// /velocity
 function parseCommand(text: string): { cmd: string; args: string[] } | null {
   const trimmed = text.trim();
   if (!trimmed.startsWith("/")) return null;
   const parts = trimmed.slice(1).split(/\s+/);
-  return { cmd: parts[0].toLowerCase(), args: parts.slice(1) };
+  return { cmd: parts[0].toLowerCase().replace(/@\S+$/, ""), args: parts.slice(1) };
+}
+
+async function classifyHypothesis(hypothesis: string): Promise<{
+  experiment_type: string;
+  aarrr_stage: string;
+}> {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-5.4-2026-03-05",
+      messages: [
+        {
+          role: "user",
+          content: `Classify this startup hypothesis into experiment_type and aarrr_stage.
+experiment_type: product | pricing | messaging | distribution | business_model | gtm | other
+aarrr_stage: acquisition | activation | retention | referral | revenue | none
+
+Hypothesis: "${hypothesis}"
+
+Return only valid JSON: { "experiment_type": "...", "aarrr_stage": "..." }`,
+        },
+      ],
+      max_tokens: 64,
+      response_format: { type: "json_object" },
+    }),
+  });
+  if (!res.ok) return { experiment_type: "other", aarrr_stage: "none" };
+  const json = await res.json();
+  try {
+    return JSON.parse(json.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return { experiment_type: "other", aarrr_stage: "none" };
+  }
 }
 
 export async function POST(req: Request) {
-  // Verify the request comes from Telegram via secret token header
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
   if (secretToken !== process.env.TELEGRAM_WEBHOOK_SECRET) {
     return NextResponse.json({ ok: false }, { status: 403 });
@@ -49,8 +92,8 @@ export async function POST(req: Request) {
   const parsed = parseCommand(message.text);
   if (!parsed) return NextResponse.json({ ok: true });
 
+  // /signal <experiment_id> <source> <content...>
   if (parsed.cmd === "signal") {
-    // /signal <experiment_id> <source> <content...>
     const [experimentId, source, ...rest] = parsed.args;
     if (!experimentId || !source || rest.length === 0) {
       await sendTelegram(chatId, "Usage: /signal <experiment_id> <source> <content>\nSources: dm, usage, observation, call, review, analytics");
@@ -66,6 +109,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  // /velocity
   if (parsed.cmd === "velocity") {
     try {
       const stats = await getVelocityStats();
@@ -75,6 +119,148 @@ export async function POST(req: Request) {
         chatId,
         `<b>Innovation Velocity (7d)</b>\n\nExperiments: ${stats.velocity_week}\nAvg cycle: ${avgHours}\nValidation rate: ${valRate}\nToday: ${stats.velocity_today} started`
       );
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /start <hypothesis...>
+  if (parsed.cmd === "start") {
+    if (parsed.args.length === 0) {
+      await sendTelegram(chatId, "Usage: /start <hypothesis>\nExample: /start if I DM 10 founders per day, then I get 3 discovery calls, because personal outreach converts higher");
+      return NextResponse.json({ ok: true });
+    }
+    const hypothesis = parsed.args.join(" ");
+    try {
+      const [id, classification] = await Promise.all([
+        Promise.resolve(generateExperimentId()),
+        classifyHypothesis(hypothesis),
+      ]);
+      await createExperiment(id, hypothesis, undefined, undefined, {
+        experiment_type: classification.experiment_type,
+        aarrr_stage: classification.aarrr_stage,
+      });
+      await sendTelegram(
+        chatId,
+        `✓ Experiment started\n<code>${id}</code>\n<i>${classification.experiment_type} · ${classification.aarrr_stage}</i>\n\nWhat does winning look like?\n/criteria ${id} <your success criteria>`
+      );
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /criteria <id> <text...>
+  if (parsed.cmd === "criteria") {
+    const [id, ...rest] = parsed.args;
+    if (!id || rest.length === 0) {
+      await sendTelegram(chatId, "Usage: /criteria <experiment_id> <success criteria>");
+      return NextResponse.json({ ok: true });
+    }
+    const criteria = rest.join(" ");
+    try {
+      await setSuccessCriteria(id, criteria);
+      await sendTelegram(chatId, `✓ Success criteria set for <code>${id}</code>\n"${criteria}"`);
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /skip <id> — discard a debrief-created experiment
+  if (parsed.cmd === "skip") {
+    const [id] = parsed.args;
+    if (!id) {
+      await sendTelegram(chatId, "Usage: /skip <experiment_id>");
+      return NextResponse.json({ ok: true });
+    }
+    try {
+      await deleteExperiment(id);
+      await sendTelegram(chatId, `✓ Discarded <code>${id}</code>`);
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /win <id> <learning...>
+  if (parsed.cmd === "win") {
+    const [id, ...rest] = parsed.args;
+    if (!id || rest.length === 0) {
+      await sendTelegram(chatId, "Usage: /win <experiment_id> <what you learned>");
+      return NextResponse.json({ ok: true });
+    }
+    const learning = rest.join(" ");
+    try {
+      const exp = await closeWithVerdict(id, "win", learning);
+      if (!exp) {
+        await sendTelegram(chatId, `⚠️ Experiment <code>${id}</code> not found`);
+      } else {
+        await sendTelegram(chatId, `✓ WIN — <code>${id}</code>\n"${learning}"`);
+      }
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /kill <id> <learning...>
+  if (parsed.cmd === "kill") {
+    const [id, ...rest] = parsed.args;
+    if (!id || rest.length === 0) {
+      await sendTelegram(chatId, "Usage: /kill <experiment_id> <what you learned>");
+      return NextResponse.json({ ok: true });
+    }
+    const learning = rest.join(" ");
+    try {
+      const exp = await closeWithVerdict(id, "kill", learning);
+      if (!exp) {
+        await sendTelegram(chatId, `⚠️ Experiment <code>${id}</code> not found`);
+      } else {
+        await sendTelegram(chatId, `✓ KILL — <code>${id}</code>\n"${learning}"`);
+      }
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /more <id>
+  if (parsed.cmd === "more") {
+    const [id] = parsed.args;
+    if (!id) {
+      await sendTelegram(chatId, "Usage: /more <experiment_id>");
+      return NextResponse.json({ ok: true });
+    }
+    try {
+      const exp = await closeWithVerdict(id, "need_more_data", "");
+      if (!exp) {
+        await sendTelegram(chatId, `⚠️ Experiment <code>${id}</code> not found`);
+      } else {
+        await sendTelegram(chatId, `✓ Need more data — <code>${id}</code> stays open`);
+      }
+    } catch (err) {
+      await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // /list
+  if (parsed.cmd === "list") {
+    try {
+      const experiments = await getActiveExperiments();
+      if (experiments.length === 0) {
+        await sendTelegram(chatId, "No active experiments. Use /start <hypothesis> to begin.");
+      } else {
+        const lines = ["<b>Active experiments</b>"];
+        experiments.slice(0, 5).forEach((exp) => {
+          const days = Math.floor((Date.now() - new Date(exp.started_at).getTime()) / 86400000);
+          const typeLabel = exp.experiment_type ? ` · ${exp.experiment_type}` : "";
+          lines.push(`\n<code>${exp.id}</code>${typeLabel} (${days}d)\n${exp.hypothesis.slice(0, 80)}${exp.hypothesis.length > 80 ? "…" : ""}`);
+        });
+        await sendTelegram(chatId, lines.join("\n"));
+      }
     } catch (err) {
       await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);
     }
