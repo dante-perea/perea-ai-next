@@ -17,7 +17,7 @@ export async function signAccessToken(sub: string, email: string): Promise<strin
     .setIssuer(ISSUER)
     .setAudience(AUDIENCE)
     .setIssuedAt()
-    .setExpirationTime("1h")
+    .setExpirationTime("7d")
     .sign(secret());
 }
 

@@ -55,7 +55,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   deleteExpiredCodes().catch(() => {});
 
   return NextResponse.json(
-    { access_token, token_type: "Bearer", expires_in: 3600, scope: "mcp" },
+    { access_token, token_type: "Bearer", expires_in: 604800, scope: "mcp" },
     { headers: OK_HEADERS }
   );
 }
