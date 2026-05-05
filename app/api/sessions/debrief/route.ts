@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   createExperiment,
   generateExperimentId,
+  ghostDb,
 } from "@/lib/learning/ghost-db";
 
 async function sendTelegram(text: string): Promise<void> {
@@ -26,6 +27,21 @@ export async function POST(req: Request) {
   const { session_id, content_snippet } = body;
   if (!session_id || !content_snippet) {
     return NextResponse.json({ error: "Missing session_id or content_snippet" }, { status: 400 });
+  }
+
+  // One experiment per session — skip if already processed
+  const db = ghostDb();
+  try {
+    const existing = await db`
+      SELECT id FROM experiments
+      WHERE session_id = ${session_id}
+      LIMIT 1
+    `;
+    if (existing.length > 0) {
+      return NextResponse.json({ skipped: true, reason: "already_processed" });
+    }
+  } finally {
+    await db.end();
   }
 
   const snippet = content_snippet.slice(0, 3000);
