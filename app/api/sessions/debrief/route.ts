@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     await db.end();
   }
 
-  const snippet = content_snippet.slice(0, 3000);
+  const snippet = content_snippet.slice(0, 6000);
 
   const prompt = `You are extracting the hypothesis tested in a founder's work session.
 Sessions cover ALL startup work: pricing, copywriting, distribution, GTM, product decisions, code, customer research.
@@ -68,7 +68,7 @@ ${snippet}`;
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-5.4-2026-03-05",
+      model: "gpt-4.1-mini",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 512,
       response_format: { type: "json_object" },
