@@ -33,6 +33,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       tags: [],
       userId,
       teamId: teamId ?? null,
+      knowledgeType: 'document',
     };
 
     await insertFile(meta);

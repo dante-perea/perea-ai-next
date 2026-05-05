@@ -1,6 +1,6 @@
 import { del } from "@vercel/blob";
 import { sql } from "./db";
-import type { FileMetadata } from "./types";
+import type { FileMetadata, KnowledgeType } from "./types";
 
 export type ViewerContext = {
   userId: string;
@@ -19,6 +19,7 @@ type DbRow = {
   tags: string[];
   user_id: string;
   team_id: string | null;
+  knowledge_type: string;
 };
 
 function rowToMeta(row: DbRow): FileMetadata {
@@ -34,6 +35,7 @@ function rowToMeta(row: DbRow): FileMetadata {
     tags: row.tags ?? [],
     userId: row.user_id,
     teamId: row.team_id ?? null,
+    knowledgeType: (row.knowledge_type ?? 'document') as KnowledgeType,
   };
 }
 
@@ -87,11 +89,12 @@ export async function findFileById(id: string, ctx: ViewerContext): Promise<File
 
 export async function insertFile(meta: FileMetadata): Promise<void> {
   await sql`
-    INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id)
+    INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id, knowledge_type)
     VALUES (
       ${meta.id}, ${meta.filename}, ${meta.blobKey}, ${meta.blobUrl},
       ${meta.size}, ${meta.contentType}, ${meta.uploadedBy},
-      ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId}
+      ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId},
+      ${meta.knowledgeType}
     )
     ON CONFLICT DO NOTHING
   `;
@@ -100,17 +103,19 @@ export async function insertFile(meta: FileMetadata): Promise<void> {
 // Upsert by id — replaces blob_url, blob_key, size, and uploaded_at if the record already exists.
 export async function upsertFile(meta: FileMetadata): Promise<void> {
   await sql`
-    INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id)
+    INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id, knowledge_type)
     VALUES (
       ${meta.id}, ${meta.filename}, ${meta.blobKey}, ${meta.blobUrl},
       ${meta.size}, ${meta.contentType}, ${meta.uploadedBy},
-      ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId}
+      ${meta.uploadedAt}, ${meta.tags}, ${meta.userId}, ${meta.teamId},
+      ${meta.knowledgeType}
     )
     ON CONFLICT (id) DO UPDATE
-      SET blob_url    = EXCLUDED.blob_url,
-          blob_key    = EXCLUDED.blob_key,
-          size        = EXCLUDED.size,
-          uploaded_at = EXCLUDED.uploaded_at
+      SET blob_url       = EXCLUDED.blob_url,
+          blob_key       = EXCLUDED.blob_key,
+          size           = EXCLUDED.size,
+          uploaded_at    = EXCLUDED.uploaded_at,
+          knowledge_type = EXCLUDED.knowledge_type
   `;
 }
 

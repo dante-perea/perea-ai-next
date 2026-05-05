@@ -1,3 +1,5 @@
+export type KnowledgeType = 'knowledge_graph' | 'session' | 'idea_list' | 'document';
+
 export interface FileMetadata {
   id: string;
   filename: string;
@@ -10,6 +12,7 @@ export interface FileMetadata {
   tags: string[];
   userId: string;
   teamId: string | null;
+  knowledgeType: KnowledgeType;
 }
 
 export interface KbFileRecord {

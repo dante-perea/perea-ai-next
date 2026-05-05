@@ -14,6 +14,7 @@ import {
   type ViewerContext,
 } from "@/lib/knowledge-base/meta";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
+import { detectKnowledgeType, detectKnowledgeTypeFromFilename } from "@/lib/knowledge-base/detect-knowledge-type";
 import { getUserTeamIds, getTeamRole } from "@/lib/knowledge-base/teams";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 import { fetchAndConvert, UrlConvertError } from "@/lib/knowledge-base/url-to-md";
@@ -196,7 +197,8 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         allowOverwrite: overwrite ?? false,
       });
 
-      const normalizedTags = [...new Set(["mcp", ...(tags ?? [])])];
+      const knowledgeType = detectKnowledgeType(filename, buffer);
+      const normalizedTags = [...new Set(["mcp", ...(tags ?? []), ...(knowledgeType !== 'document' ? [knowledgeType.replace('_', '-')] : [])])];
 
       const meta: FileMetadata = {
         id,
@@ -210,6 +212,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         tags: normalizedTags,
         userId: effectiveUserId,
         teamId: team ?? null,
+        knowledgeType,
       };
 
       await (overwrite ? upsertFile(meta) : insertFile(meta));
@@ -220,8 +223,30 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
           filename,
           size: meta.size,
           tags: meta.tags,
+          knowledgeType: meta.knowledgeType,
           blobKey: meta.blobKey,
         }) }],
+      };
+    }
+  );
+
+  server.tool(
+    "list_knowledge_graphs",
+    "List all knowledge graph files in the knowledge base (JSON files with nodes + edges structure).",
+    {},
+    async () => {
+      const files = auth.kind === "admin"
+        ? await listAllFilesAdmin()
+        : await listAllFiles(auth.ctx);
+      const graphs = files.filter(f => f.knowledgeType === 'knowledge_graph');
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(graphs.map(f => ({
+          id: f.id,
+          filename: f.filename,
+          size: f.size,
+          tags: f.tags,
+          uploadedAt: f.uploadedAt,
+        }))) }],
       };
     }
   );
@@ -235,13 +260,14 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
     "get_upload_token",
     "Get a Vercel Blob client token for uploading a large file (>4 MB) directly to the knowledge base. Returns the token and a curl command to PUT the file. The database registration happens automatically via webhook when the upload completes.",
     {
-      filename:    z.string().describe("Filename to store, e.g. 'report.pdf'"),
-      contentType: z.string().describe("MIME type, e.g. 'application/pdf'"),
-      size:        z.number().describe("File size in bytes"),
-      tags:        z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
-      team:        z.string().optional().describe("Team ID. Omit for personal KB."),
+      filename:      z.string().describe("Filename to store, e.g. 'report.pdf'"),
+      contentType:   z.string().describe("MIME type, e.g. 'application/pdf'"),
+      size:          z.number().describe("File size in bytes"),
+      tags:          z.array(z.string()).optional().describe("Optional tags. 'mcp' is always added."),
+      team:          z.string().optional().describe("Team ID. Omit for personal KB."),
+      knowledgeType: z.enum(['knowledge_graph', 'session', 'idea_list', 'document']).optional().describe("Semantic type of the file. Auto-detected from filename if omitted."),
     },
-    async ({ filename, contentType, size, tags, team }) => {
+    async ({ filename, contentType, size, tags, team, knowledgeType: hintKnowledgeType }) => {
       if (auth.kind !== "user") {
         return {
           content: [{ type: "text" as const, text: JSON.stringify({ error: "get_upload_token requires user OAuth token, not admin MCP_SECRET." }) }],
@@ -278,6 +304,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         teamId: team ?? null,
       });
 
+      const resolvedKnowledgeType = hintKnowledgeType ?? detectKnowledgeTypeFromFilename(filename);
       const serverPayload = JSON.stringify({
         id,
         userId: auth.ctx.userId,
@@ -286,6 +313,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         size: Math.min(size, MAX_UPLOAD_BYTES),
         tags: tags ?? [],
         teamId: team ?? null,
+        knowledgeType: resolvedKnowledgeType,
       });
 
       const requestBody: HandleUploadBody = {
@@ -396,6 +424,7 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
         tags: normalizedTags,
         userId: auth.ctx.userId,
         teamId: team ?? null,
+        knowledgeType: 'document',
       };
 
       await insertFile(meta);

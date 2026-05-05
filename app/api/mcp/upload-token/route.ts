@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { verifyAccessToken } from "@/lib/oauth/jwt";
 import { insertFile } from "@/lib/knowledge-base/meta";
 import { getTeamRole } from "@/lib/knowledge-base/teams";
-import type { FileMetadata } from "@/lib/knowledge-base/types";
+import type { FileMetadata, KnowledgeType } from "@/lib/knowledge-base/types";
 
 const MAX_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB
 
@@ -26,6 +26,7 @@ interface ServerTokenPayload {
   size: number;
   tags: string[];
   teamId: string | null;
+  knowledgeType?: KnowledgeType;
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -114,7 +115,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         // tokenPayload was set in onBeforeGenerateToken — server-authored,
         // Vercel-signed, client cannot tamper with it.
         const {
-          id, userId, uploadedBy, filename, size, tags, teamId,
+          id, userId, uploadedBy, filename, size, tags, teamId, knowledgeType,
         } = JSON.parse(tokenPayload ?? "{}") as ServerTokenPayload;
 
         // Second-factor path check: the actual blob pathname Vercel stored must
@@ -137,7 +138,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           }
         }
 
-        const normalizedTags = [...new Set(["mcp", ...tags])];
+        const resolvedKnowledgeType = knowledgeType ?? 'document';
+        const normalizedTags = [...new Set(["mcp", ...tags, ...(resolvedKnowledgeType !== 'document' ? [resolvedKnowledgeType.replace('_', '-')] : [])])];
 
         const meta: FileMetadata = {
           id,
@@ -151,6 +153,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           tags: normalizedTags,
           userId,
           teamId,
+          knowledgeType: resolvedKnowledgeType,
         };
 
         // Fix #4: compensating delete if DB insertion fails so the blob doesn't

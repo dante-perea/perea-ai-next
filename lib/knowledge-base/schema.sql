@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS kb_files (
 );
 CREATE INDEX IF NOT EXISTS kb_files_user_id_idx ON kb_files (user_id);
 CREATE INDEX IF NOT EXISTS kb_files_team_id_idx ON kb_files (team_id);
+ALTER TABLE kb_files ADD COLUMN IF NOT EXISTS knowledge_type TEXT NOT NULL DEFAULT 'document';
 
 CREATE TABLE IF NOT EXISTS teams (
   id          TEXT         PRIMARY KEY,
