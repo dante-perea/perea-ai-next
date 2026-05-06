@@ -68,12 +68,13 @@ function formatDate(iso?: string): string {
   const date = new Date(y, Math.max(0, (m || 1) - 1), d || 1, hh || 0, mm || 0);
   if (Number.isNaN(date.valueOf())) return iso;
 
-  const opts: Intl.DateTimeFormatOptions = hasDay
-    ? hasTime
-      ? { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }
-      : { year: "numeric", month: "long", day: "numeric" }
-    : { year: "numeric", month: "long" };
-  return new Intl.DateTimeFormat("es-419", opts).format(date);
+  if (!hasDay) return date.toLocaleString("es-419", { month: "long", year: "numeric" });
+  const day = date.getDate();
+  const month = date.toLocaleString("es-419", { month: "short" }).replace(".", "");
+  const time = hasTime
+    ? ` ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`
+    : "";
+  return `${day} ${month}${time}`;
 }
 
 export default async function ResearchArticleEsPage(
