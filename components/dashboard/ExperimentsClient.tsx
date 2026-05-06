@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import type { Experiment } from "@/lib/learning/ghost-db";
 
 
+const EXPERIMENT_TYPES = ["product", "pricing", "messaging", "distribution", "business_model", "gtm", "other"] as const;
+const AARRR_STAGES = ["acquisition", "activation", "retention", "referral", "revenue", "none"] as const;
+
 interface BacklogItem { title: string; project: string; type: string; priority: string; }
 interface ScrumReport { yesterday: string[]; today: string[]; blockers: string[]; backlog: BacklogItem[]; }
 
