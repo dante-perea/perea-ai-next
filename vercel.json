@@ -3,6 +3,22 @@
     {
       "path": "/api/cron/learning-extract",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/signals/ingest/github",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/signals/ingest/reddit",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/signals/ingest/trends",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/signals/cluster",
+      "schedule": "0 7 * * *"
     }
   ]
 }
