@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import type { Experiment } from "@/lib/learning/ghost-db";
 
 
+interface BacklogItem { title: string; project: string; type: string; priority: string; }
+interface ScrumReport { yesterday: string[]; today: string[]; blockers: string[]; backlog: BacklogItem[]; }
+
 function verdictColor(verdict: string | null, outcome: string): string {
   const v = verdict ?? outcome;
   if (v === "win" || v === "validated") return "text-green-600";
@@ -56,9 +59,10 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
           <p className="text-sm font-medium text-gray-900">{exp.hypothesis}</p>
           <p className="text-xs text-gray-400 mt-1">
             <code className="font-mono">{exp.id}</code>
-            {exp.experiment_type && <span> · {exp.experiment_type}</span>}
-            {exp.aarrr_stage && exp.aarrr_stage !== "none" && <span> · {exp.aarrr_stage}</span>}
             {exp.project_tag && <span> · {exp.project_tag}</span>}
+            {exp.experiment_type && <span> · {exp.experiment_type}</span>}
+            {exp.feature_tag && <span> · {exp.feature_tag}</span>}
+            {exp.aarrr_stage && exp.aarrr_stage !== "none" && <span> · {exp.aarrr_stage}</span>}
             <span> · {new Date(exp.started_at).toLocaleDateString()}</span>
           </p>
           {exp.success_criteria && (
@@ -173,6 +177,33 @@ export function ExperimentsClient({
   validationRate: number | null;
 }) {
   const [active, setActive] = useState(initialActive);
+  const [isStarting, startTransition] = useTransition();
+  const [startupFilter, setStartupFilter] = useState<string | null>(null);
+  const [report, setReport] = useState<ScrumReport | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [isGenerating, startReportTransition] = useTransition();
+
+  const allExperiments = [...active, ...initialClosed];
+  const startups = Array.from(new Set(allExperiments.map((e) => e.project_tag).filter(Boolean))) as string[];
+
+  const filteredActive = startupFilter ? active.filter((e) => e.project_tag === startupFilter) : active;
+  const filteredClosed = startupFilter ? initialClosed.filter((e) => e.project_tag === startupFilter) : initialClosed;
+
+  const [hypothesis, setHypothesis] = useState("");
+  const [successCriteria, setSuccessCriteria] = useState("");
+  const [expType, setExpType] = useState<string>("other");
+  const [aarrr, setAarrr] = useState<string>("none");
+  const [formError, setFormError] = useState("");
+
+  function generateReport() {
+    startReportTransition(async () => {
+      const res = await fetch("/api/experiments/daily-report", { method: "POST" });
+      if (res.ok) {
+        setReport(await res.json());
+        setReportOpen(true);
+      }
+    });
+  }
 
   async function refreshActive() {
     const res = await fetch("/api/experiments");
@@ -184,6 +215,17 @@ export function ExperimentsClient({
 
   return (
     <div className="space-y-10">
+      {/* Daily Report button */}
+      <div className="flex justify-end">
+        <button
+          onClick={generateReport}
+          disabled={isGenerating}
+          className="text-sm px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          {isGenerating ? "Generating…" : "Daily Report"}
+        </button>
+      </div>
+
       {/* Velocity */}
       <div className="grid grid-cols-4 gap-4">
         {[
@@ -199,16 +241,167 @@ export function ExperimentsClient({
         ))}
       </div>
 
+      {/* Daily Report panel */}
+      {reportOpen && report && (
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-blue-900">
+              Daily Scrum &mdash; {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
+            </h2>
+            <button
+              onClick={() => setReportOpen(false)}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Yesterday</h3>
+            <ul className="space-y-1">
+              {report.yesterday.map((item, i) => (
+                <li key={i} className="text-sm text-gray-700">• {item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Today</h3>
+            <ul className="space-y-1">
+              {report.today.map((item, i) => (
+                <li key={i} className="text-sm text-gray-700">• {item}</li>
+              ))}
+            </ul>
+          </section>
+
+          {report.blockers.length > 0 && (
+            <section>
+              <h3 className="text-xs font-semibold text-red-500 uppercase tracking-wide mb-1">Blockers</h3>
+              <ul className="space-y-1">
+                {report.blockers.map((item, i) => (
+                  <li key={i} className="text-sm text-red-700">• {item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Backlog</h3>
+            <div className="space-y-2">
+              {report.backlog.map((item, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm">
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${
+                      item.priority === "high"
+                        ? "bg-red-100 text-red-700"
+                        : item.priority === "medium"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {item.priority}
+                  </span>
+                  <span className="text-gray-700 flex-1">{item.title}</span>
+                  <span className="text-xs text-gray-400 shrink-0">{item.project} · {item.type}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* Start experiment form */}
+      <div>
+        <h2 className="text-lg font-medium text-gray-900 mb-3">Start an experiment</h2>
+        <form onSubmit={startExperiment} className="space-y-3 rounded-xl border border-gray-200 p-4">
+          <div>
+            <label className="text-xs text-gray-500 block mb-1">
+              Hypothesis <span className="text-gray-400">(If I do X, then Y happens, because Z)</span>
+            </label>
+            <textarea
+              value={hypothesis}
+              onChange={(e) => setHypothesis(e.target.value)}
+              placeholder="If I send cold DMs to ICP founders, then I get 3 discovery calls per week, because personal outreach converts higher than cold email"
+              rows={3}
+              className="w-full text-sm border border-gray-200 rounded px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-gray-300"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 block mb-1">
+              I&apos;ll call this validated when <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              value={successCriteria}
+              onChange={(e) => setSuccessCriteria(e.target.value)}
+              placeholder="3 qualified discovery calls booked in 7 days"
+              className="w-full text-sm border border-gray-200 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
+            />
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-xs text-gray-500 block mb-1">Type</label>
+              <select
+                value={expType}
+                onChange={(e) => setExpType(e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded px-2 py-1.5 focus:outline-none"
+              >
+                {EXPERIMENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div className="flex-1">
+              <label className="text-xs text-gray-500 block mb-1">AARRR Stage</label>
+              <select
+                value={aarrr}
+                onChange={(e) => setAarrr(e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded px-2 py-1.5 focus:outline-none"
+              >
+                {AARRR_STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          {formError && <p className="text-xs text-red-500">{formError}</p>}
+          <button
+            type="submit"
+            disabled={isStarting}
+            className="text-sm px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50"
+          >
+            {isStarting ? "Starting…" : "Start Experiment"}
+          </button>
+        </form>
+      </div>
+
+      {/* Startup filter tabs */}
+      {startups.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStartupFilter(null)}
+            className={`text-xs px-3 py-1 rounded-full border ${!startupFilter ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+          >
+            All
+          </button>
+          {startups.map((s) => (
+            <button
+              key={s}
+              onClick={() => setStartupFilter(startupFilter === s ? null : s)}
+              className={`text-xs px-3 py-1 rounded-full border ${startupFilter === s ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Active experiments */}
       <div>
         <h2 className="text-lg font-medium text-gray-900 mb-3">
-          Active experiments ({active.filter((e) => e.outcome === "in_progress").length})
+          Active experiments ({filteredActive.filter((e) => e.outcome === "in_progress").length})
         </h2>
-        {active.length === 0 ? (
+        {filteredActive.length === 0 ? (
           <p className="text-sm text-gray-400 italic">No active experiments yet.</p>
         ) : (
           <div className="space-y-3">
-            {active.map((exp) => (
+            {filteredActive.map((exp) => (
               <ExperimentCard key={exp.id} exp={exp} onAction={refreshActive} />
             ))}
           </div>
@@ -216,13 +409,13 @@ export function ExperimentsClient({
       </div>
 
       {/* Historical experiments */}
-      {initialClosed.length > 0 && (
+      {filteredClosed.length > 0 && (
         <div>
           <h2 className="text-lg font-medium text-gray-900 mb-3">
-            Historical ({initialClosed.length})
+            Historical ({filteredClosed.length})
           </h2>
           <div className="space-y-3">
-            {initialClosed.map((exp) => (
+            {filteredClosed.map((exp) => (
               <ExperimentCard key={exp.id} exp={exp} onAction={() => {}} />
             ))}
           </div>

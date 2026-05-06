@@ -15,6 +15,7 @@ export interface Experiment {
   aarrr_stage: string | null;
   parent_experiment_id: string | null;
   verdict: string | null;
+  feature_tag: string | null;
 }
 
 export interface VelocityStats {
@@ -155,6 +156,24 @@ export async function getClosedExperiments(limit = 50): Promise<Experiment[]> {
       WHERE outcome != 'in_progress'
       ORDER BY started_at DESC
       LIMIT ${limit}
+    `;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function updateExperimentTags(
+  id: string,
+  tags: { project_tag?: string | null; experiment_type?: string | null; feature_tag?: string | null }
+): Promise<void> {
+  const db = ghostDb();
+  try {
+    await db`
+      UPDATE experiments SET
+        project_tag    = COALESCE(${tags.project_tag ?? null}, project_tag),
+        experiment_type = COALESCE(${tags.experiment_type ?? null}, experiment_type),
+        feature_tag    = COALESCE(${tags.feature_tag ?? null}, feature_tag)
+      WHERE id = ${id}
     `;
   } finally {
     await db.end();
