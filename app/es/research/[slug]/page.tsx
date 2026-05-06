@@ -83,28 +83,46 @@ export default async function ResearchArticleEsPage(
   const enUrl = `${SITE_URL}/research/${slug}`;
   const dateStr = formatDate(frontmatter.date);
 
-  const jsonLd = {
+  const jsonLdGraph = {
     "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    headline: frontmatter.title,
-    description: frontmatter.subtitle || frontmatter.description,
-    abstract: frontmatter.subtitle,
-    datePublished: frontmatter.date,
-    dateModified: frontmatter.date,
-    author: (frontmatter.authors || []).map((name) => ({ "@type": "Person", name })),
-    publisher: {
-      "@type": "Organization",
-      name: frontmatter.publication || "perea.ai Research",
-      url: SITE_URL,
-    },
-    inLanguage: "es",
-    license: frontmatter.license,
-    isAccessibleForFree: true,
-    wordCount,
-    timeRequired: `PT${readingTimeMinutes}M`,
-    url,
-    mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    translationOfWork: { "@id": enUrl },
+    "@graph": [
+      {
+        "@type": "ScholarlyArticle",
+        "@id": `${url}#article`,
+        headline: frontmatter.title,
+        description: frontmatter.subtitle || frontmatter.description,
+        abstract: frontmatter.subtitle,
+        datePublished: frontmatter.date,
+        dateModified: frontmatter.date,
+        author: (frontmatter.authors || []).map((name) => ({
+          "@type": "Person",
+          "@id": `${SITE_URL}/#dante-perea`,
+          name,
+        })),
+        publisher: {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: frontmatter.publication || "perea.ai Research",
+          url: SITE_URL,
+        },
+        inLanguage: "es",
+        license: frontmatter.license,
+        isAccessibleForFree: true,
+        wordCount,
+        timeRequired: `PT${readingTimeMinutes}M`,
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        translationOfWork: { "@id": enUrl },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Investigación", item: `${SITE_URL}/es/research` },
+          { "@type": "ListItem", position: 2, name: frontmatter.title, item: url },
+        ],
+      },
+    ],
   };
 
   return (
@@ -184,7 +202,7 @@ export default async function ResearchArticleEsPage(
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
     </div>
   );

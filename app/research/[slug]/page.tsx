@@ -93,26 +93,44 @@ export default async function ResearchArticlePage(
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    headline: frontmatter.title,
-    description: frontmatter.subtitle || frontmatter.description,
-    abstract: frontmatter.subtitle,
-    datePublished: frontmatter.date,
-    dateModified: frontmatter.date,
-    author: (frontmatter.authors || []).map((name) => ({ "@type": "Person", name })),
-    publisher: {
-      "@type": "Organization",
-      name: frontmatter.publication || "perea.ai Research",
-      url: SITE_URL,
-    },
-    inLanguage: "en",
-    license: frontmatter.license,
-    isAccessibleForFree: true,
-    wordCount,
-    timeRequired: `PT${readingTimeMinutes}M`,
-    url,
-    mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    ...(spanishExists ? { workTranslation: { "@id": esUrl } } : {}),
+    "@graph": [
+      {
+        "@type": "ScholarlyArticle",
+        "@id": `${url}#article`,
+        headline: frontmatter.title,
+        description: frontmatter.subtitle || frontmatter.description,
+        abstract: frontmatter.subtitle,
+        datePublished: frontmatter.date,
+        dateModified: frontmatter.date,
+        author: (frontmatter.authors || []).map((name) => ({
+          "@type": "Person",
+          "@id": `${SITE_URL}/#dante-perea`,
+          name,
+        })),
+        publisher: {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          name: frontmatter.publication || "perea.ai Research",
+          url: SITE_URL,
+        },
+        inLanguage: "en",
+        license: frontmatter.license,
+        isAccessibleForFree: true,
+        wordCount,
+        timeRequired: `PT${readingTimeMinutes}M`,
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        ...(spanishExists ? { workTranslation: { "@id": esUrl } } : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Research", item: `${SITE_URL}/research` },
+          { "@type": "ListItem", position: 2, name: frontmatter.title, item: url },
+        ],
+      },
+    ],
   };
 
   return (

@@ -1,25 +1,59 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const SITE_URL = "https://perea.ai";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   title: {
-    default: "Perea.AI — AI Consultancy Done Right",
+    default: "perea.ai Research",
     template: "%s | Perea.AI",
   },
   description:
-    "We help startups and growing businesses deploy practical AI that delivers real results. Fixed-price engagements, senior consultants, measurable outcomes.",
+    "Original research on the agent economy: B2A infrastructure, protocol adoption, vertical playbooks, and benchmarks from real audits. Published by Dante Perea.",
   openGraph: {
     type: "website",
-    siteName: "Perea.AI",
-    url: "https://perea-ai.vercel.app",
+    siteName: "perea.ai Research",
+    url: SITE_URL,
     images: [{ url: "/og-default.svg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     site: "@perea_ai",
   },
-  metadataBase: new URL("https://perea-ai.vercel.app"),
+};
+
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "perea.ai",
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.svg` },
+      sameAs: ["https://twitter.com/perea_ai"],
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#dante-perea`,
+      name: "Dante Perea",
+      url: SITE_URL,
+      worksFor: { "@id": `${SITE_URL}/#organization` },
+      sameAs: ["https://twitter.com/perea_ai"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "perea.ai Research",
+      description:
+        "Original research on the agent economy: B2A infrastructure, protocol adoption, vertical playbooks.",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      inLanguage: ["en", "es"],
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -41,7 +75,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
+      </body>
     </html>
   );
 }
