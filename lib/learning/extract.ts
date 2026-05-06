@@ -188,10 +188,13 @@ export async function writeSignalsFromLearnings(
   refuted: Record<string, string>[],
   inconclusive: Record<string, string>[]
 ): Promise<void> {
+  const validId = (id: string | undefined) =>
+    id && /^exp-\d{4}-\d{2}-\d{2}-[a-z0-9]+$/.test(id) ? id : null;
+
   const signals = [
-    ...validated.map((v) => ({ experiment_id: v.experiment_id ?? null, source: "cron-extract", content: `[validated] ${v.learning}` })),
-    ...refuted.map((v) => ({ experiment_id: v.experiment_id ?? null, source: "cron-extract", content: `[refuted] ${v.learning}` })),
-    ...inconclusive.map((v) => ({ experiment_id: v.experiment_id ?? null, source: "cron-extract", content: `[inconclusive] ${v.learning}` })),
+    ...validated.map((v) => ({ experiment_id: validId(v.experiment_id), source: "cron-extract", content: `[validated] ${v.learning}` })),
+    ...refuted.map((v) => ({ experiment_id: validId(v.experiment_id), source: "cron-extract", content: `[refuted] ${v.learning}` })),
+    ...inconclusive.map((v) => ({ experiment_id: validId(v.experiment_id), source: "cron-extract", content: `[inconclusive] ${v.learning}` })),
   ].filter((s) => s.content.length > 15);
   await insertSignalsBulk(signals);
 }

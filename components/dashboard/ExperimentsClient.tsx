@@ -159,6 +159,7 @@ function formatRate(r: number | null): string {
 
 export function ExperimentsClient({
   initialActive,
+  initialClosed,
   learnings,
   velocityToday,
   velocityWeek,
@@ -166,6 +167,7 @@ export function ExperimentsClient({
   validationRate,
 }: {
   initialActive: Experiment[];
+  initialClosed: Experiment[];
   learnings: RecentLearning[];
   velocityToday: number;
   velocityWeek: number;
@@ -312,6 +314,20 @@ export function ExperimentsClient({
           </div>
         )}
       </div>
+
+      {/* Historical experiments */}
+      {initialClosed.length > 0 && (
+        <div>
+          <h2 className="text-lg font-medium text-gray-900 mb-3">
+            Historical ({initialClosed.length})
+          </h2>
+          <div className="space-y-3">
+            {initialClosed.map((exp) => (
+              <ExperimentCard key={exp.id} exp={exp} onAction={() => {}} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent synthesis */}
       <div>

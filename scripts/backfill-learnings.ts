@@ -11,7 +11,10 @@ import {
   extractAndSynthesize,
   writeDailyLearning,
   writeSignalsFromLearnings,
+  type ProposedExperiment,
 } from "../lib/learning/extract";
+
+const BATCH_SIZE = 20;
 
 async function readBlob(blobUrl: string): Promise<string> {
   const result = await get(blobUrl, { access: "private" });
@@ -64,49 +67,85 @@ async function main() {
   console.log(`Loaded ${experiments.length} experiments.\n`);
 
   for (const date of dates) {
-    process.stdout.write(`${date}... `);
+    console.log(`\n${date}`);
     const sessions = await getSessionsForDate(date);
     if (sessions.length === 0) {
-      console.log("no readable sessions, skipping.");
+      console.log("  no readable sessions, skipping.");
       continue;
     }
 
-    const { synthesis, validated, refuted, inconclusive, territory, next_hypothesis, proposed_experiments } =
-      await extractAndSynthesize(sessions, experiments);
+    // Split into batches
+    const batches: typeof sessions[] = [];
+    for (let i = 0; i < sessions.length; i += BATCH_SIZE) {
+      batches.push(sessions.slice(i, i + BATCH_SIZE));
+    }
+    console.log(`  ${sessions.length} sessions → ${batches.length} batches of ${BATCH_SIZE}`);
+
+    let primarySynthesis = "";
+    let primaryTerritory = "unknown";
+    let primaryNextHypothesis = "";
+    let allValidated: Record<string, string>[] = [];
+    let allRefuted: Record<string, string>[] = [];
+    let allInconclusive: Record<string, string>[] = [];
+    const allProposed: ProposedExperiment[] = [];
+
+    for (let b = 0; b < batches.length; b++) {
+      process.stdout.write(`  batch ${b + 1}/${batches.length}... `);
+      const result = await extractAndSynthesize(batches[b], experiments);
+
+      if (b === 0) {
+        primarySynthesis = result.synthesis;
+        primaryTerritory = result.territory;
+        primaryNextHypothesis = result.next_hypothesis;
+      }
+      allValidated = allValidated.concat(result.validated);
+      allRefuted = allRefuted.concat(result.refuted);
+      allInconclusive = allInconclusive.concat(result.inconclusive);
+      allProposed.push(...result.proposed_experiments);
+
+      console.log(`${result.proposed_experiments.length} experiments extracted`);
+      await new Promise((r) => setTimeout(r, 1200));
+    }
 
     await writeDailyLearning({
       date,
-      territory,
-      validated,
-      refuted,
-      inconclusive,
+      territory: primaryTerritory,
+      validated: allValidated,
+      refuted: allRefuted,
+      inconclusive: allInconclusive,
       velocity_today: stats.velocity_today,
       velocity_week: stats.velocity_week,
       avg_cycle_hours: stats.avg_cycle_hours,
       validation_rate: stats.validation_rate,
-      next_implied_hypothesis: next_hypothesis,
-      raw_synthesis: synthesis,
+      next_implied_hypothesis: primaryNextHypothesis,
+      raw_synthesis: primarySynthesis,
     });
 
-    await writeSignalsFromLearnings(validated, refuted, inconclusive);
+    await writeSignalsFromLearnings(allValidated, allRefuted, allInconclusive);
 
-    // Create retroactive experiment records from AI-inferred hypotheses
-    for (const pe of proposed_experiments) {
+    const VALID_TYPES = new Set(["product","pricing","messaging","distribution","business_model","gtm","other"]);
+    const VALID_AARRR = new Set(["acquisition","activation","retention","referral","revenue","none"]);
+
+    let created = 0;
+    for (const pe of allProposed) {
       if (!pe.hypothesis?.trim() || !pe.learning?.trim()) continue;
-      const id = generateExperimentId();
-      await createExperiment(id, pe.hypothesis.trim(), undefined, undefined, {
-        experiment_type: pe.experiment_type,
-        aarrr_stage: pe.aarrr_stage,
-      });
-      const outcome = ["validated", "refuted", "inconclusive"].includes(pe.outcome)
-        ? pe.outcome as "validated" | "refuted" | "inconclusive"
-        : "inconclusive";
-      await closeExperiment(id, outcome, pe.learning.trim());
+      try {
+        const id = generateExperimentId();
+        await createExperiment(id, pe.hypothesis.trim(), undefined, undefined, {
+          experiment_type: VALID_TYPES.has(pe.experiment_type) ? pe.experiment_type : "other",
+          aarrr_stage: VALID_AARRR.has(pe.aarrr_stage) ? pe.aarrr_stage : "none",
+        });
+        const outcome = ["validated", "refuted", "inconclusive"].includes(pe.outcome)
+          ? pe.outcome as "validated" | "refuted" | "inconclusive"
+          : "inconclusive";
+        await closeExperiment(id, outcome, pe.learning.trim());
+        created++;
+      } catch (err) {
+        console.warn(`  skipped experiment (${pe.experiment_type}): ${err instanceof Error ? err.message : err}`);
+      }
     }
 
-    console.log(`done — ${sessions.length} sessions · ${validated.length}✓ ${refuted.length}✗ ${inconclusive.length}? · ${proposed_experiments.length} experiments created`);
-
-    await new Promise((r) => setTimeout(r, 1500));
+    console.log(`  → ${created} experiments created · ${allValidated.length}✓ ${allRefuted.length}✗ ${allInconclusive.length}?`);
   }
 
   console.log("\nBackfill complete.");

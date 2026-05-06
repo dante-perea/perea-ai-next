@@ -147,6 +147,20 @@ export async function getActiveExperiments(): Promise<Experiment[]> {
   }
 }
 
+export async function getClosedExperiments(limit = 50): Promise<Experiment[]> {
+  const db = ghostDb();
+  try {
+    return await db<Experiment[]>`
+      SELECT * FROM experiments
+      WHERE outcome != 'in_progress'
+      ORDER BY started_at DESC
+      LIMIT ${limit}
+    `;
+  } finally {
+    await db.end();
+  }
+}
+
 export async function getAllExperiments(): Promise<Experiment[]> {
   const db = ghostDb();
   try {
