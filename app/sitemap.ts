@@ -5,6 +5,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
 
 // Slugs are known at deploy time — new papers require a redeploy anyway
 const EN_SLUGS = [
+  "agent-incident-postmortem-anthology",
   "agent-memory-production",
   "agent-observability-stack",
   "agent-payment-stack-2026",
@@ -12,10 +13,14 @@ const EN_SLUGS = [
   "agentic-procurement-field-manual",
   "b2a-2026",
   "computer-use-deployment-overhang",
+  "eu-ai-act-2026-procurement-compliance",
   "geo-2026",
   "mcp-server-playbook",
+  "multi-judge-calibration-playbook",
   "pinnacle-gecko-protocol",
   "prompt-injection-defense-2026",
+  "small-language-model-procurement",
+  "state-of-vertical-agents-q3-2026-legal",
 ];
 
 export const dynamic = "force-dynamic";

@@ -34,6 +34,10 @@ All papers are freely accessible. Each is available in English and Latin America
   Lean development protocol for shipping AI-native products with tight feedback loops.
   Spanish: /es/research/pinnacle-gecko-protocol
 
+- [State of Vertical Agents Q3 2026: Legal](/research/state-of-vertical-agents-q3-2026-legal)
+  Deployment state, capability benchmarks, and adoption blockers for AI agents in legal workflows.
+  Spanish: /es/research/state-of-vertical-agents-q3-2026-legal
+
 - [Agent Memory in Production](/research/agent-memory-production)
   Architecture patterns for persistent, queryable agent memory across sessions and tools.
 
@@ -43,8 +47,20 @@ All papers are freely accessible. Each is available in English and Latin America
 - [Agent-Ready API Design: The Contract Layer Beneath MCP](/research/agent-ready-api-design)
   How to design APIs that agents can discover, understand, and call without human mediation.
 
+- [The Agent Incident Postmortem Anthology](/research/agent-incident-postmortem-anthology)
+  Case studies and postmortem frameworks for diagnosing and recovering from agent failures in production.
+
 - [Computer-Use Agents and the Deployment Overhang](/research/computer-use-deployment-overhang)
   Where computer-use agents are deployable today, what's blocking wider adoption, and how to build for it.
+
+- [The EU AI Act 2026: A Procurement Compliance Field Manual](/research/eu-ai-act-2026-procurement-compliance)
+  Practical compliance guide for procurement teams buying or deploying AI systems under the EU AI Act.
+
+- [The Multi-Judge LLM Calibration Playbook](/research/multi-judge-calibration-playbook)
+  How to build, calibrate, and operate multi-judge evaluation pipelines for production LLM systems.
+
+- [The Small-Language-Model Procurement Playbook](/research/small-language-model-procurement)
+  Evaluation framework and decision criteria for procuring small language models for enterprise deployment.
 
 - [Indirect Prompt Injection Defense for Production Agents](/research/prompt-injection-defense-2026)
   Threat model, detection patterns, and architectural mitigations for prompt injection in agentic pipelines.

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T05:59"
 audience: "Founders evaluating vertical-agent market entry. Operators inside legal-tech firms calibrating product strategy. Investors triangulating who wins after the Anthropic Cowork SaaSpocalypse."
 length: "~6,500 words"
 license: "CC BY 4.0"
