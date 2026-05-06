@@ -81,35 +81,29 @@ export default async function ResearchIndexEsPage() {
         </div>
       ) : (
         <section className={styles.indexList}>
-          {papers.map(({ slug, frontmatter }) => (
-            <Link
-              key={slug}
-              href={`/es/research/${slug}`}
-              className={styles.indexCard}
-            >
-              <div className={styles.indexCardDate}>
-                {formatDate(frontmatter.date as string)}
-              </div>
-              <div className={styles.indexCardBody}>
-                <h2 className={styles.indexCardTitle}>
-                  {(frontmatter.title as string) || slug}
-                </h2>
-                {frontmatter.subtitle && (
-                  <p className={styles.indexCardSubtitle}>
-                    {frontmatter.subtitle as string}
-                  </p>
-                )}
-                <div className={styles.indexCardMeta}>
-                  {frontmatter.length && <span>{frontmatter.length as string}</span>}
-                  {frontmatter.status && <span>· {frontmatter.status as string}</span>}
-                  {frontmatter.version && <span>· {frontmatter.version as string}</span>}
+          {papers.map(({ slug, frontmatter: fm }) => {
+            const title = String(fm.title ?? slug);
+            const subtitle = fm.subtitle ? String(fm.subtitle) : undefined;
+            const date = fm.date ? String(fm.date) : undefined;
+            const length = fm.length ? String(fm.length) : undefined;
+            const status = fm.status ? String(fm.status) : undefined;
+            const version = fm.version ? String(fm.version) : undefined;
+            return (
+              <Link key={slug} href={`/es/research/${slug}`} className={styles.indexCard}>
+                <div className={styles.indexCardDate}>{formatDate(date)}</div>
+                <div className={styles.indexCardBody}>
+                  <h2 className={styles.indexCardTitle}>{title}</h2>
+                  {subtitle && <p className={styles.indexCardSubtitle}>{subtitle}</p>}
+                  <div className={styles.indexCardMeta}>
+                    {length && <span>{length}</span>}
+                    {status && <span>· {status}</span>}
+                    {version && <span>· {version}</span>}
+                  </div>
                 </div>
-              </div>
-              <div className={styles.indexCardArrow} aria-hidden>
-                →
-              </div>
-            </Link>
-          ))}
+                <div className={styles.indexCardArrow} aria-hidden>→</div>
+              </Link>
+            );
+          })}
         </section>
       )}
     </div>
