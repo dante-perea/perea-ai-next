@@ -3,8 +3,6 @@
 import { useState, useTransition } from "react";
 import type { Experiment } from "@/lib/learning/ghost-db";
 
-const EXPERIMENT_TYPES = ["product", "pricing", "messaging", "distribution", "business_model", "gtm", "other"] as const;
-const AARRR_STAGES = ["acquisition", "activation", "retention", "referral", "revenue", "none"] as const;
 
 function verdictColor(verdict: string | null, outcome: string): string {
   const v = verdict ?? outcome;
@@ -175,13 +173,6 @@ export function ExperimentsClient({
   validationRate: number | null;
 }) {
   const [active, setActive] = useState(initialActive);
-  const [isStarting, startTransition] = useTransition();
-
-  const [hypothesis, setHypothesis] = useState("");
-  const [successCriteria, setSuccessCriteria] = useState("");
-  const [expType, setExpType] = useState<string>("other");
-  const [aarrr, setAarrr] = useState<string>("none");
-  const [formError, setFormError] = useState("");
 
   async function refreshActive() {
     const res = await fetch("/api/experiments");
@@ -189,36 +180,6 @@ export function ExperimentsClient({
       const data = await res.json();
       setActive(data);
     }
-  }
-
-  async function startExperiment(e: React.FormEvent) {
-    e.preventDefault();
-    setFormError("");
-    if (!hypothesis.trim()) { setFormError("Hypothesis is required."); return; }
-    if (!successCriteria.trim()) { setFormError("Success criteria is required."); return; }
-
-    startTransition(async () => {
-      const res = await fetch("/api/experiments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          hypothesis: hypothesis.trim(),
-          success_criteria: successCriteria.trim(),
-          experiment_type: expType,
-          aarrr_stage: aarrr,
-        }),
-      });
-      if (res.ok) {
-        setHypothesis("");
-        setSuccessCriteria("");
-        setExpType("other");
-        setAarrr("none");
-        await refreshActive();
-      } else {
-        const err = await res.json();
-        setFormError(err.error ?? "Failed to create experiment.");
-      }
-    });
   }
 
   return (
@@ -236,67 +197,6 @@ export function ExperimentsClient({
             <div className="text-xs text-gray-500 mt-1">{label}</div>
           </div>
         ))}
-      </div>
-
-      {/* Start experiment form */}
-      <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-3">Start an experiment</h2>
-        <form onSubmit={startExperiment} className="space-y-3 rounded-xl border border-gray-200 p-4">
-          <div>
-            <label className="text-xs text-gray-500 block mb-1">
-              Hypothesis <span className="text-gray-400">(If I do X, then Y happens, because Z)</span>
-            </label>
-            <textarea
-              value={hypothesis}
-              onChange={(e) => setHypothesis(e.target.value)}
-              placeholder="If I send cold DMs to ICP founders, then I get 3 discovery calls per week, because personal outreach converts higher than cold email"
-              rows={3}
-              className="w-full text-sm border border-gray-200 rounded px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-gray-300"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-gray-500 block mb-1">
-              I&apos;ll call this validated when <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              value={successCriteria}
-              onChange={(e) => setSuccessCriteria(e.target.value)}
-              placeholder="3 qualified discovery calls booked in 7 days"
-              className="w-full text-sm border border-gray-200 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-300"
-            />
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="text-xs text-gray-500 block mb-1">Type</label>
-              <select
-                value={expType}
-                onChange={(e) => setExpType(e.target.value)}
-                className="w-full text-sm border border-gray-200 rounded px-2 py-1.5 focus:outline-none"
-              >
-                {EXPERIMENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            <div className="flex-1">
-              <label className="text-xs text-gray-500 block mb-1">AARRR Stage</label>
-              <select
-                value={aarrr}
-                onChange={(e) => setAarrr(e.target.value)}
-                className="w-full text-sm border border-gray-200 rounded px-2 py-1.5 focus:outline-none"
-              >
-                {AARRR_STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-          </div>
-          {formError && <p className="text-xs text-red-500">{formError}</p>}
-          <button
-            type="submit"
-            disabled={isStarting}
-            className="text-sm px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50"
-          >
-            {isStarting ? "Starting…" : "Start Experiment"}
-          </button>
-        </form>
       </div>
 
       {/* Active experiments */}

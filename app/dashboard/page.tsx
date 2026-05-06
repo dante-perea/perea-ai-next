@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { listPersonalFiles, listTeamFiles } from "@/lib/knowledge-base/meta";
-import { getTeamRole, getTeam } from "@/lib/knowledge-base/teams";
+import { getTeamRole, getTeam, listTeamsForUser } from "@/lib/knowledge-base/teams";
 import { KnowledgeBaseClient } from "@/components/knowledge-base/KnowledgeBaseClient";
 import type { TeamRole } from "@/lib/knowledge-base/teams";
 
@@ -15,6 +15,7 @@ export default async function DashboardPage({
   const { userId, sessionClaims } = await auth();
   const email = (sessionClaims?.email as string | undefined) ?? "";
   const { team: teamId } = await searchParams;
+  const teams = userId ? await listTeamsForUser(userId).catch(() => []) : [];
 
   if (teamId) {
     if (!userId) redirect("/login");
@@ -35,6 +36,7 @@ export default async function DashboardPage({
         teamId={teamId}
         teamName={team.name}
         userRole={role as TeamRole}
+        teams={teams}
       />
     );
   }
@@ -48,6 +50,7 @@ export default async function DashboardPage({
       teamId={null}
       teamName={null}
       userRole={null}
+      teams={teams}
     />
   );
 }

@@ -135,12 +135,41 @@ export async function updateTags(id: string, tags: string[], ctx: ViewerContext)
   return rows[0] ? rowToMeta(rows[0]) : null;
 }
 
+async function isBlobShared(blobKey: string, excludeId: string): Promise<boolean> {
+  const rows = await sql`SELECT 1 FROM kb_files WHERE blob_key = ${blobKey} AND id != ${excludeId} LIMIT 1`;
+  return (rows as unknown[]).length > 0;
+}
+
+export async function copyTagFilesToTeam(tag: string, targetTeamId: string, userId: string): Promise<number> {
+  const rows = await sql`
+    SELECT * FROM kb_files
+    WHERE user_id = ${userId} AND team_id IS NULL AND tags @> ARRAY[${tag}]::text[]
+  ` as DbRow[];
+  if (rows.length === 0) return 0;
+
+  await Promise.all(rows.map((row) => {
+    const newId = crypto.randomUUID();
+    return sql`
+      INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id, knowledge_type)
+      VALUES (
+        ${newId}, ${row.filename}, ${row.blob_key}, ${row.blob_url},
+        ${row.size}, ${row.content_type}, ${row.uploaded_by},
+        ${new Date(row.uploaded_at).toISOString()}, ${row.tags},
+        ${userId}, ${targetTeamId}, ${row.knowledge_type}
+      )
+      ON CONFLICT DO NOTHING
+    `;
+  }));
+
+  return rows.length;
+}
+
 export async function deleteFile(id: string, blobKey: string, ctx: ViewerContext): Promise<boolean> {
   const rows = await sql`
     DELETE FROM kb_files WHERE id = ${id} AND user_id = ${ctx.userId} RETURNING id
   ` as { id: string }[];
   if (rows.length === 0) return false;
-  await del(blobKey);
+  if (!(await isBlobShared(blobKey, id))) await del(blobKey);
   return true;
 }
 
@@ -149,7 +178,7 @@ export async function deleteTeamFile(id: string, blobKey: string, teamId: string
     DELETE FROM kb_files WHERE id = ${id} AND team_id = ${teamId} RETURNING id
   ` as { id: string }[];
   if (rows.length === 0) return false;
-  await del(blobKey);
+  if (!(await isBlobShared(blobKey, id))) await del(blobKey);
   return true;
 }
 
