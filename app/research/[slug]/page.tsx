@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import fs from "node:fs";
-import path from "node:path";
-import { getResearch, listResearch, researchDir } from "@/lib/research";
+import { getResearch, listResearch } from "@/lib/research";
+import { getTranslation } from "@/lib/research-translations";
 import { ReadingProgress } from "@/components/research/ReadingProgress";
 import { StickyTOC } from "@/components/research/StickyTOC";
 import { ShareRow } from "@/components/research/ShareRow";
@@ -17,15 +16,14 @@ export async function generateStaticParams() {
   return listResearch("en").map((p) => ({ slug: p.slug }));
 }
 
-function hasSpanish(slug: string): boolean {
-  return fs.existsSync(path.join(researchDir("es"), `${slug}.md`));
-}
-
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const paper = await getResearch(slug, "en");
+  const [paper, esTranslation] = await Promise.all([
+    getResearch(slug, "en"),
+    getTranslation(slug, "es"),
+  ]);
   if (!paper) return { title: "Research not found" };
 
   const { frontmatter } = paper;
@@ -34,7 +32,7 @@ export async function generateMetadata(
   const esUrl = `${SITE_URL}/es/research/${slug}`;
 
   const alternateLanguages: Record<string, string> = { en: url };
-  if (hasSpanish(slug)) alternateLanguages.es = esUrl;
+  if (esTranslation) alternateLanguages.es = esUrl;
 
   return {
     title: frontmatter.title,
@@ -52,7 +50,7 @@ export async function generateMetadata(
       publishedTime: frontmatter.date,
       authors: frontmatter.authors,
       locale: "en_US",
-      ...(hasSpanish(slug) ? { alternateLocale: ["es_ES"] } : {}),
+      ...(esTranslation ? { alternateLocale: ["es_ES"] } : {}),
     },
     twitter: {
       card: "summary_large_image",
@@ -81,14 +79,17 @@ export default async function ResearchArticlePage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const paper = await getResearch(slug, "en");
+  const [paper, esTranslation] = await Promise.all([
+    getResearch(slug, "en"),
+    getTranslation(slug, "es"),
+  ]);
   if (!paper) notFound();
 
   const { frontmatter, html, toc, readingTimeMinutes, wordCount } = paper;
   const url = `${SITE_URL}/research/${slug}`;
   const esUrl = `${SITE_URL}/es/research/${slug}`;
   const dateStr = formatDate(frontmatter.date);
-  const spanishExists = hasSpanish(slug);
+  const spanishExists = esTranslation !== null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -128,7 +129,7 @@ export default async function ResearchArticlePage(
               <span>Research</span>
             </span>
           </Link>
-          <LangToggle slug={slug} locale="en" />
+          <LangToggle slug={slug} locale="en" hasTranslation={spanishExists} />
         </div>
 
         <div className={styles.heroInner}>

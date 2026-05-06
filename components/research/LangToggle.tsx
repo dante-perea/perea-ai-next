@@ -4,9 +4,12 @@ import styles from "./research.module.css";
 interface Props {
   slug: string;
   locale: "en" | "es";
+  hasTranslation?: boolean;
 }
 
-export function LangToggle({ slug, locale }: Props) {
+export function LangToggle({ slug, locale, hasTranslation = true }: Props) {
+  if (locale === "en" && !hasTranslation) return null;
+
   return (
     <div className={styles.langToggle}>
       <Link
