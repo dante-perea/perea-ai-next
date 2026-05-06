@@ -1,4 +1,4 @@
-import { getResearch, listResearch } from "../lib/research.ts";
+import { getResearch, listResearch } from "../lib/research";
 
 async function main() {
   const list = listResearch();
