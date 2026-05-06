@@ -6,24 +6,66 @@ import { getTranslation, upsertTranslation } from "@/lib/research-translations";
 import fs from "node:fs";
 import path from "node:path";
 
+export const maxDuration = 300;
+
 const WHITEPAPERS_DIR = path.join(process.cwd(), "content", "whitepapers");
 
-function buildPrompt(slug: string, enContent: string): string {
-  return `You are a professional technical translator specializing in AI infrastructure, fintech, and startup content. Translate the following research whitepaper from English to Latin American Spanish (es-419).
+const SYSTEM_PROMPT = `You are a professional technical translator specializing in AI infrastructure, fintech, and startup content.
+Translate from English to Latin American Spanish (es-419).
 
-STRICT RULES:
-- Preserve ALL markdown formatting exactly: headings (#, ##, etc.), bold (**), italic (*), tables, code blocks, lists, footnotes ([^1]), horizontal rules (---), blockquotes (>)
-- Preserve ALL YAML frontmatter fields. Translate only the VALUES of: title, subtitle, description, audience. Keep all other fields (publication, authors, version, status, date, length, license) exactly as-is.
-- Add two new frontmatter fields at the end of the frontmatter block: lang: es  and  translationOf: ${slug}
-- Keep English technical terms in their original form: "agent", "API", "token", "payload", "middleware", "SDK", "stack", "blockchain", "mainnet", "stablecoin", "whitepaper", "settlement", "checkout", "wallet", "protocol"
-- Translate all prose, headings, and non-code content naturally for a Latin American professional audience.
-- Preserve ALL footnote references ([^1], [^2], etc.) and their definitions exactly.
-- Preserve ALL URLs, code snippets, and variable names exactly.
-- Return ONLY the translated markdown. No preamble, no explanation, no markdown code fence.
+RULES:
+- Preserve ALL markdown formatting exactly (headings, bold, italic, tables, code blocks, lists, footnotes, blockquotes, horizontal rules)
+- Keep English technical terms as-is: agent, API, token, payload, middleware, SDK, stack, blockchain, mainnet, stablecoin, whitepaper, settlement, checkout, wallet, protocol
+- Translate all prose, headings, and non-code content naturally for a Latin American professional audience
+- Preserve ALL URLs, code snippets, footnote references ([^1] etc.), and variable names exactly
+- Return ONLY the translated markdown, no preamble, no code fences`;
 
-WHITEPAPER:
----
-${enContent}`;
+const FRONTMATTER_PROMPT = (slug: string) =>
+  `Translate this YAML frontmatter block from English to Latin American Spanish.
+Translate ONLY the values of: title, subtitle, description, audience.
+Keep all other fields (publication, authors, version, status, date, length, license) exactly as-is.
+Add these two fields at the very end of the frontmatter: lang: es\ntranslationOf: ${slug}
+Return ONLY the translated frontmatter block including the --- delimiters, nothing else.`;
+
+/** Split markdown into frontmatter + sections at each top-level heading */
+function splitSections(content: string): { frontmatter: string; sections: string[] } {
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+  const frontmatter = fmMatch ? fmMatch[0] : "";
+  const body = fmMatch ? content.slice(frontmatter.length) : content;
+
+  // Split on top-level headings (# at line start), keeping the heading with its content
+  const raw = body.split(/(?=^# )/m).filter(Boolean);
+  return { frontmatter, sections: raw };
+}
+
+async function translateSection(text: string): Promise<string> {
+  const { text: out } = await generateText({
+    model: gateway("xai/grok-4"),
+    system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: text }],
+    maxOutputTokens: 8192,
+  });
+  return out.trim();
+}
+
+async function translatePaper(slug: string, enContent: string): Promise<string> {
+  const { frontmatter, sections } = splitSections(enContent);
+
+  // Translate frontmatter separately
+  const { text: translatedFm } = await generateText({
+    model: gateway("xai/grok-4"),
+    messages: [{ role: "user", content: `${FRONTMATTER_PROMPT(slug)}\n\n${frontmatter}` }],
+    maxOutputTokens: 1024,
+  });
+
+  // Translate each section in sequence (parallel would hit rate limits)
+  const translatedSections: string[] = [];
+  for (const section of sections) {
+    const out = await translateSection(section);
+    translatedSections.push(out);
+  }
+
+  return [translatedFm.trim(), ...translatedSections].join("\n\n");
 }
 
 export async function POST(
@@ -33,61 +75,63 @@ export async function POST(
   const { slug } = await params;
   const locale = "es";
 
-  // Check if translation already exists
   const existing = await getTranslation(slug, locale);
   if (existing) {
     return NextResponse.json({ slug, locale, status: "exists", chars: existing.length });
   }
 
-  // Read EN source
   const enPath = path.join(WHITEPAPERS_DIR, `${slug}.md`);
   if (!fs.existsSync(enPath)) {
     return NextResponse.json({ error: "Source paper not found" }, { status: 404 });
   }
+
   const enContent = fs.readFileSync(enPath, "utf8");
+  const { frontmatter, sections } = splitSections(enContent);
+  const sectionCount = sections.length;
 
-  // Translate with Grok 4.3 via gateway (runs on Vercel where gateway token is injected)
-  const { text } = await generateText({
-    model: gateway("xai/grok-4"),
-    messages: [{ role: "user", content: buildPrompt(slug, enContent) }],
-    maxOutputTokens: 16000,
-  });
-
-  const translated = text.trim();
+  const translated = await translatePaper(slug, enContent);
   await upsertTranslation(slug, locale, translated);
 
-  return NextResponse.json({ slug, locale, status: "translated", chars: translated.length });
+  return NextResponse.json({
+    slug,
+    locale,
+    status: "translated",
+    chars: translated.length,
+    sections: sectionCount,
+  });
 }
 
-// Translate all papers in one call
-export async function GET() {
-  const papers = listResearch("en");
+// Translate all papers — call GET /api/research/translate/all
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
+
+  // Special slug "all" → translate everything missing
+  const papers = slug === "all" ? listResearch("en") : [{ slug }];
   const results: { slug: string; status: string }[] = [];
 
-  for (const { slug } of papers) {
-    const existing = await getTranslation(slug, "es");
+  for (const { slug: s } of papers) {
+    const existing = await getTranslation(s, "es");
     if (existing) {
-      results.push({ slug, status: "exists" });
+      results.push({ slug: s, status: "exists" });
       continue;
     }
 
-    const enPath = path.join(WHITEPAPERS_DIR, `${slug}.md`);
+    const enPath = path.join(WHITEPAPERS_DIR, `${s}.md`);
     if (!fs.existsSync(enPath)) {
-      results.push({ slug, status: "source_missing" });
+      results.push({ slug: s, status: "source_missing" });
       continue;
     }
 
     try {
       const enContent = fs.readFileSync(enPath, "utf8");
-      const { text } = await generateText({
-        model: gateway("xai/grok-4"),
-        messages: [{ role: "user", content: buildPrompt(slug, enContent) }],
-        maxOutputTokens: 16000,
-      });
-      await upsertTranslation(slug, "es", text.trim());
-      results.push({ slug, status: "translated" });
+      const translated = await translatePaper(s, enContent);
+      await upsertTranslation(s, "es", translated);
+      results.push({ slug: s, status: "translated", chars: translated.length } as never);
     } catch (err) {
-      results.push({ slug, status: `error: ${err instanceof Error ? err.message : String(err)}` });
+      results.push({ slug: s, status: `error: ${err instanceof Error ? err.message : String(err)}` });
     }
   }
 
