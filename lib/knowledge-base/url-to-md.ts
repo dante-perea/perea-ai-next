@@ -1,6 +1,7 @@
 import Exa from "exa-js";
 
-const exa = new Exa(process.env.EXA_API_KEY!);
+let _exa: Exa | undefined;
+const getExa = () => (_exa ??= new Exa(process.env.EXA_API_KEY!));
 
 export class UrlConvertError extends Error {
   constructor(
@@ -40,7 +41,7 @@ export async function fetchAndConvert(rawUrl: string): Promise<{
 
   let page: { title: string | null; url: string; text?: string } | undefined;
   try {
-    const response = await exa.getContents([url.href], {
+    const response = await getExa().getContents([url.href], {
       text: { maxCharacters: 20000 },
     });
     page = response.results[0] as typeof page;
