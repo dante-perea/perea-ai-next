@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05-07T10:00"
+date: "2026-05-07T00:17"
 audience: "B2B founders, CMOs, RevOps and demand-gen leaders, CPOs and procurement directors, sales engineering, vendor evaluation teams, anyone selling to enterprises whose buyers now arrive pre-shortlisted by an LLM"
 length: "~10,000 words"
 license: "CC BY 4.0"

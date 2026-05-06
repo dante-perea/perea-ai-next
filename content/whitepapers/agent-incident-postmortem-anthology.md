@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05-07T10:00"
+date: "2026-05-07T05:28"
 audience: "ML platform engineers, SRE leads, agent ops teams running agents in production who need a runtime-control playbook before the next incident."
 length: "~6,000 words"
 license: "CC BY 4.0"

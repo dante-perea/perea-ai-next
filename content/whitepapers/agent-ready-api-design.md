@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05-07T10:00"
+date: "2026-05-07T03:26"
 audience: "API designers, platform engineers, and SaaS founders building public APIs that AI agents will discover, call, and rely on across releases"
 length: "~6,000 words"
 license: "CC BY 4.0"

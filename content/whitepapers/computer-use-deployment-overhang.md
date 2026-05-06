@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05-07T10:00"
+date: "2026-05-07T02:57"
 audience: "Platform leads, applied-AI teams, and security engineers evaluating computer-use agents (Anthropic Claude Computer Use, OpenAI Operator/Atlas/GPT-5.4, Google Project Mariner, Browserbase Stagehand) for production rollout"
 length: "~6,200 words"
 license: "CC BY 4.0"

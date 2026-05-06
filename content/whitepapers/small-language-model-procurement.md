@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05-07T10:00"
+date: "2026-05-07T04:58"
 audience: "B2B procurement leaders, CIOs, ML platform engineers, and engineering managers evaluating frontier-vs-SLM tradeoffs at production scale."
 length: "~5,500 words"
 license: "CC BY 4.0"
