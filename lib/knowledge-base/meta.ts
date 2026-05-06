@@ -153,9 +153,9 @@ export async function copyTagFilesToTeam(tag: string, targetTeamId: string, user
       INSERT INTO kb_files (id, filename, blob_key, blob_url, size, content_type, uploaded_by, uploaded_at, tags, user_id, team_id, knowledge_type)
       VALUES (
         ${newId}, ${row.filename}, ${row.blob_key}, ${row.blob_url},
-        ${row.size}, ${row.content_type}, ${row.uploaded_by},
+        ${row.size}, ${row.content_type}, ${row.uploaded_by ?? userId},
         ${new Date(row.uploaded_at).toISOString()}, ${row.tags},
-        ${userId}, ${targetTeamId}, ${row.knowledge_type}
+        ${userId}, ${targetTeamId}, ${row.knowledge_type ?? 'document'}
       )
       ON CONFLICT DO NOTHING
     `;

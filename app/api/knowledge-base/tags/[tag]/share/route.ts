@@ -24,7 +24,8 @@ export async function POST(
     const copied = await copyTagFilesToTeam(decodedTag, teamId, userId);
     return NextResponse.json({ copied });
   } catch (err) {
-    console.error("[share-tag] copyTagFilesToTeam failed:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[share-tag] copyTagFilesToTeam failed:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
