@@ -118,20 +118,20 @@ export default async function ResearchArticlePage(
     <div className={styles.shell}>
       <ReadingProgress />
 
-      {/* Hero — logo inside dark container */}
+      {/* Hero — logo + toggle row at hero level, content inside heroInner */}
       <header className={styles.hero}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroBrand}>
-            <Link href="/research" className={styles.navBrand}>
-              <span className={styles.navBrandMark}>P</span>
-              <span className={styles.navBrandLabel}>
-                <span className={styles.navBrandSmall}>perea.ai</span>
-                <span>Research</span>
-              </span>
-            </Link>
-            <LangToggle slug={slug} locale="en" hasTranslation={spanishExists} />
-          </div>
+        <div className={styles.heroBrand}>
+          <Link href="/research" className={styles.navBrand}>
+            <span className={styles.navBrandMark}>P</span>
+            <span className={styles.navBrandLabel}>
+              <span className={styles.navBrandSmall}>perea.ai</span>
+              <span>Research</span>
+            </span>
+          </Link>
+          <LangToggle slug={slug} locale="en" />
+        </div>
 
+        <div className={styles.heroInner}>
           <div className={styles.heroEyebrow}>
             {frontmatter.publication || "perea.ai Research"}
             {frontmatter.version ? ` · ${frontmatter.version}` : ""}

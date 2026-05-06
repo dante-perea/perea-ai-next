@@ -4,26 +4,20 @@ import styles from "./research.module.css";
 interface Props {
   slug: string;
   locale: "en" | "es";
-  hasTranslation: boolean;
 }
 
-export function LangToggle({ slug, locale, hasTranslation }: Props) {
-  if (!hasTranslation) return null;
-
-  const enHref = `/research/${slug}`;
-  const esHref = `/es/research/${slug}`;
-
+export function LangToggle({ slug, locale }: Props) {
   return (
     <div className={styles.langToggle}>
       <Link
-        href={enHref}
+        href={`/research/${slug}`}
         className={`${styles.langOption} ${locale === "en" ? styles.langOptionActive : ""}`}
       >
         EN
       </Link>
       <span className={styles.langDivider}>·</span>
       <Link
-        href={esHref}
+        href={`/es/research/${slug}`}
         className={`${styles.langOption} ${locale === "es" ? styles.langOptionActive : ""}`}
       >
         ES

@@ -112,18 +112,18 @@ export default async function ResearchArticleEsPage(
       <ReadingProgress />
 
       <header className={styles.hero}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroBrand}>
-            <Link href="/research" className={styles.navBrand}>
-              <span className={styles.navBrandMark}>P</span>
-              <span className={styles.navBrandLabel}>
-                <span className={styles.navBrandSmall}>perea.ai</span>
-                <span>Research</span>
-              </span>
-            </Link>
-            <LangToggle slug={slug} locale="es" hasTranslation={true} />
-          </div>
+        <div className={styles.heroBrand}>
+          <Link href="/research" className={styles.navBrand}>
+            <span className={styles.navBrandMark}>P</span>
+            <span className={styles.navBrandLabel}>
+              <span className={styles.navBrandSmall}>perea.ai</span>
+              <span>Research</span>
+            </span>
+          </Link>
+          <LangToggle slug={slug} locale="es" />
+        </div>
 
+        <div className={styles.heroInner}>
           <div className={styles.heroEyebrow}>
             {frontmatter.publication || "perea.ai Research"}
             {frontmatter.version ? ` · ${frontmatter.version}` : ""}

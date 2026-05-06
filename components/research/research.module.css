@@ -60,11 +60,11 @@
   align-items: center;
 }
 
-/* Brand row inside dark hero (article page) — wider than heroInner so it
-   aligns with the outer layout gutters, not the narrow prose column */
+/* Brand row inside dark hero — no top margin, space below separates from content */
 .heroBrand {
   max-width: 1280px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto;
+  margin-bottom: 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -148,7 +148,7 @@
     radial-gradient(ellipse 60% 40% at 10% 100%, rgba(255, 255, 255, 0.06) 0%, transparent 60%),
     linear-gradient(180deg, #0e0d10 0%, #1a1622 100%);
   color: #f4f1ea;
-  padding: 6rem 1.5rem 5rem;
+  padding: 2rem 1.5rem 5rem;
   position: relative;
   overflow: hidden;
 }
