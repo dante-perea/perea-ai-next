@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "Engineering leaders, agent platform architects, ML/LLM ops practitioners, founders shipping production agents — anyone who has watched their LLM bill scale faster than their understanding of what their agents are doing"
 length: "~6,500 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "B2B procurement leaders, compliance officers, CIOs, and procurement counsel buying agent-powered SaaS into the EU before 2 August 2026."
 length: "~6,000 words"
 license: "CC BY 4.0"

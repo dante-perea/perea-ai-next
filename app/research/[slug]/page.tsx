@@ -62,15 +62,21 @@ export async function generateMetadata(
 
 function formatDate(iso?: string): string {
   if (!iso) return "";
-  const parts = iso.split("-");
-  const date = new Date(
-    Number(parts[0] || "0"),
-    Math.max(0, Number(parts[1] || "1") - 1),
-    Number(parts[2] || "1")
-  );
+  const hasTime = iso.includes("T");
+  const datePart = iso.split("T")[0];
+  const segments = datePart.split("-");
+  const hasDay = segments.length >= 3;
+
+  // Parse without UTC shift by using local date constructor
+  const [y, m, d] = segments.map(Number);
+  const [hh, mm] = hasTime ? (iso.split("T")[1] || "").split(":").map(Number) : [0, 0];
+  const date = new Date(y, Math.max(0, (m || 1) - 1), d || 1, hh || 0, mm || 0);
   if (Number.isNaN(date.valueOf())) return iso;
-  const opts: Intl.DateTimeFormatOptions = parts.length >= 3
-    ? { year: "numeric", month: "long", day: "numeric" }
+
+  const opts: Intl.DateTimeFormatOptions = hasDay
+    ? hasTime
+      ? { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }
+      : { year: "numeric", month: "long", day: "numeric" }
     : { year: "numeric", month: "long" };
   return new Intl.DateTimeFormat("en-US", opts).format(date);
 }

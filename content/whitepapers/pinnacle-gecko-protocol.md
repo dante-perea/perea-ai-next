@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "Founders, builders, and operators compressing their iteration cycle to minutes"
 length: "~3,400 words"
 license: "CC BY 4.0"

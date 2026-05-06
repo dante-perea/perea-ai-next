@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "ML engineers, evaluation leads, and eval-platform users (Braintrust, LangSmith, Phoenix, DeepEval) running LLM-as-a-judge in production who have outgrown majority-vote-of-three."
 length: "~5,500 words"
 license: "CC BY 4.0"

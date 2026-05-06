@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "SaaS founders, engineering leaders, and product owners shipping an MCP server in 2026"
 length: "~9,200 words"
 license: "CC BY 4.0"

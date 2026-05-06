@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "Platform engineers, infra leads, and applied-AI teams shipping multi-session agents that need to remember users, projects, and tool experiences across days, weeks, and months"
 length: "~6,800 words"
 license: "CC BY 4.0"

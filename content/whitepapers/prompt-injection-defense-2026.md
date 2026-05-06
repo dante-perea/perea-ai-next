@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:00"
 audience: "Heads of security, CISOs, platform-engineering leads, and applied-AI engineers shipping production agents with tool, memory, or filesystem access"
 length: "~9,000 words"
 license: "CC BY 4.0"
