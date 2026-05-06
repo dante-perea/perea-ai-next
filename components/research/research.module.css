@@ -50,25 +50,13 @@
   transition: width 60ms linear;
 }
 
-/* ── NAV ───────────────────────────────────────────────────────────────── */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(247, 245, 240, 0.85);
-  backdrop-filter: saturate(180%) blur(14px);
-  -webkit-backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid var(--r-rule);
-}
-
-.navInner {
+/* ── LOGO MARK (header removed; logo retained at top of page) ─────────── */
+.brandStrip {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1.5rem;
-  height: 56px;
+  padding: 1.75rem 1.5rem 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .navBrand {

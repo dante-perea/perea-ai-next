@@ -104,29 +104,16 @@ export default async function ResearchArticlePage(
     <div className={styles.shell}>
       <ReadingProgress />
 
-      {/* Nav */}
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link href="/research" className={styles.navBrand}>
-            <span className={styles.navBrandMark}>P</span>
-            <span className={styles.navBrandLabel}>
-              <span className={styles.navBrandSmall}>perea.ai</span>
-              <span>Research</span>
-            </span>
-          </Link>
-          <div className={styles.navLinks}>
-            <Link href="/research" className={styles.navLink}>
-              All papers
-            </Link>
-            <Link href="/" className={styles.navLink}>
-              perea.ai
-            </Link>
-            <Link href="/audit" className={styles.navLink}>
-              Free B2A audit
-            </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Logo (header removed) */}
+      <div className={styles.brandStrip}>
+        <Link href="/research" className={styles.navBrand}>
+          <span className={styles.navBrandMark}>P</span>
+          <span className={styles.navBrandLabel}>
+            <span className={styles.navBrandSmall}>perea.ai</span>
+            <span>Research</span>
+          </span>
+        </Link>
+      </div>
 
       {/* Hero */}
       <header className={styles.hero}>
