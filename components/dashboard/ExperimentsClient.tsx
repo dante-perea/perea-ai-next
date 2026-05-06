@@ -3,8 +3,6 @@
 import { useState, useTransition } from "react";
 import type { Experiment } from "@/lib/learning/ghost-db";
 
-const EXPERIMENT_TYPES = ["product", "pricing", "messaging", "distribution", "business_model", "gtm", "other"] as const;
-const AARRR_STAGES = ["acquisition", "activation", "retention", "referral", "revenue", "none"] as const;
 
 interface BacklogItem { title: string; project: string; type: string; priority: string; }
 interface ScrumReport { yesterday: string[]; today: string[]; blockers: string[]; backlog: BacklogItem[]; }
@@ -213,36 +211,6 @@ export function ExperimentsClient({
       const data = await res.json();
       setActive(data);
     }
-  }
-
-  async function startExperiment(e: React.FormEvent) {
-    e.preventDefault();
-    setFormError("");
-    if (!hypothesis.trim()) { setFormError("Hypothesis is required."); return; }
-    if (!successCriteria.trim()) { setFormError("Success criteria is required."); return; }
-
-    startTransition(async () => {
-      const res = await fetch("/api/experiments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          hypothesis: hypothesis.trim(),
-          success_criteria: successCriteria.trim(),
-          experiment_type: expType,
-          aarrr_stage: aarrr,
-        }),
-      });
-      if (res.ok) {
-        setHypothesis("");
-        setSuccessCriteria("");
-        setExpType("other");
-        setAarrr("none");
-        await refreshActive();
-      } else {
-        const err = await res.json();
-        setFormError(err.error ?? "Failed to create experiment.");
-      }
-    });
   }
 
   return (

@@ -8,7 +8,7 @@ import { UploadZone, type UploadZoneHandle } from "./UploadZone";
 import { UrlImport } from "./UrlImport";
 import { FileList } from "./FileList";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
-import type { TeamRole } from "@/lib/knowledge-base/teams";
+import type { TeamRole, Team } from "@/lib/knowledge-base/teams";
 
 interface KnowledgeBaseClientProps {
   files: FileMetadata[];
@@ -17,6 +17,7 @@ interface KnowledgeBaseClientProps {
   teamId: string | null;
   teamName: string | null;
   userRole: TeamRole | null;
+  teams: (Team & { role: TeamRole })[];
 }
 
 export type SortKey = "newest" | "oldest" | "name" | "size";
@@ -61,6 +62,7 @@ export function KnowledgeBaseClient({
   teamId,
   teamName,
   userRole,
+  teams,
 }: KnowledgeBaseClientProps) {
   const router = useRouter();
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
@@ -69,6 +71,10 @@ export function KnowledgeBaseClient({
   const [typeFilter, setTypeFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("newest");
+  const [shareTag, setShareTag] = useState<string | null>(null);
+  const [shareTeamId, setShareTeamId] = useState("");
+  const [shareStatus, setShareStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [shareCopied, setShareCopied] = useState(0);
 
   useEffect(() => { setFiles(initialFiles); }, [initialFiles]);
 
@@ -102,6 +108,32 @@ export function KnowledgeBaseClient({
       setFiles((prev) => prev.map((f) => (f.id === id ? updated : f)));
     } catch { router.refresh(); }
   }, [router]);
+
+  const shareableTeams = teams.filter((t) => t.id !== teamId && (t.role === "owner" || t.role === "editor"));
+
+  function openShareModal(tag: string) {
+    setShareTag(tag);
+    setShareTeamId(shareableTeams[0]?.id ?? "");
+    setShareStatus("idle");
+    setShareCopied(0);
+  }
+
+  async function handleShare() {
+    if (!shareTag || !shareTeamId) return;
+    setShareStatus("loading");
+    try {
+      const res = await fetch(
+        `/api/knowledge-base/tags/${encodeURIComponent(shareTag)}/share`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ teamId: shareTeamId }) },
+      );
+      if (!res.ok) throw new Error();
+      const { copied } = await res.json();
+      setShareCopied(copied);
+      setShareStatus("done");
+    } catch {
+      setShareStatus("error");
+    }
+  }
 
   const handleDelete = useCallback(async (id: string) => {
     setFiles((prev) => prev.filter((f) => f.id !== id));
@@ -188,6 +220,7 @@ export function KnowledgeBaseClient({
           typeFilter={typeFilter}
           onTagsChange={setSelectedTags}
           onTypeChange={setTypeFilter}
+          onShareTag={!isTeam && shareableTeams.length > 0 ? openShareModal : undefined}
         />
 
         <div className="min-w-0 flex-1">
@@ -225,6 +258,62 @@ export function KnowledgeBaseClient({
           />
         </div>
       </div>
+
+      {/* Share tag modal */}
+      {shareTag !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-white)] p-6 shadow-xl">
+            {shareStatus === "done" ? (
+              <>
+                <p className="text-sm text-[var(--color-ink)]">
+                  {shareCopied} {shareCopied === 1 ? "file" : "files"} copied to{" "}
+                  <span className="font-semibold">{teams.find((t) => t.id === shareTeamId)?.name}</span>.
+                </p>
+                <button
+                  onClick={() => setShareTag(null)}
+                  className="mt-4 w-full rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white"
+                >
+                  Done
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 className="mb-4 text-base font-semibold text-[var(--color-ink)]">
+                  Share &ldquo;{shareTag}&rdquo; files with a team
+                </h2>
+                <label className="mb-1 block text-xs text-[var(--color-ink-muted)]">Team</label>
+                <select
+                  value={shareTeamId}
+                  onChange={(e) => setShareTeamId(e.target.value)}
+                  className="mb-4 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-white)] px-3 py-2 text-sm text-[var(--color-ink)] focus:outline-none"
+                >
+                  {shareableTeams.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+                {shareStatus === "error" && (
+                  <p className="mb-3 text-xs text-red-500">Something went wrong. Try again.</p>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    disabled={shareStatus === "loading" || !shareTeamId}
+                    className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                  >
+                    {shareStatus === "loading" ? "Copying…" : "Copy to team"}
+                  </button>
+                  <button
+                    onClick={() => setShareTag(null)}
+                    className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-ink-muted)]"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

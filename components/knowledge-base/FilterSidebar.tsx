@@ -23,9 +23,10 @@ interface FilterSidebarProps {
   typeFilter: string;
   onTagsChange: (tags: string[]) => void;
   onTypeChange: (type: string) => void;
+  onShareTag?: (tag: string) => void;
 }
 
-export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTagsChange, onTypeChange }: FilterSidebarProps) {
+export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTagsChange, onTypeChange, onShareTag }: FilterSidebarProps) {
   const typeCounts = TYPE_GROUPS.reduce<Record<TypeGroup, number>>((acc, t) => {
     acc[t] = files.filter((f) => getTypeGroup(f.contentType) === t).length;
     return acc;
@@ -73,16 +74,39 @@ export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTags
 
         {/* Tags */}
         {allTags.length > 0 && (
-          <div className="space-y-0.5">
-            <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Tags</p>
-            {allTags.map((tag) => (
-              <button key={tag} onClick={() => toggleTag(tag)} className={btn(selectedTags.includes(tag))}>
-                <span className="truncate">{tag}</span>
-                <span className="ml-1 shrink-0 text-xs text-[var(--color-ink-faint)]">
-                  {files.filter((f) => f.tags.includes(tag)).length}
-                </span>
-              </button>
-            ))}
+          <div>
+            <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Tags</p>
+            <div className="flex flex-wrap gap-1.5">
+              {allTags.map((tag) => {
+                const count = files.filter((f) => f.tags.includes(tag)).length;
+                const isActive = selectedTags.includes(tag);
+                return (
+                  <div key={tag} className="group relative">
+                    <button
+                      onClick={() => toggleTag(tag)}
+                      className={[
+                        "flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors",
+                        isActive
+                          ? "bg-[var(--color-accent-bg)] font-semibold text-[var(--color-accent)]"
+                          : "bg-[var(--color-bg-card)] text-[var(--color-ink-soft)] hover:bg-[var(--color-border)]",
+                      ].join(" ")}
+                    >
+                      <span className="max-w-[72px] truncate">{tag}</span>
+                      <span className="text-[10px] opacity-50">{count}</span>
+                    </button>
+                    {onShareTag && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onShareTag(tag); }}
+                        className="absolute -right-1 -top-1 hidden h-4 w-4 items-center justify-center rounded-full bg-[var(--color-accent)] text-white group-hover:flex"
+                        title={`Share "${tag}" files with a team`}
+                      >
+                        <ShareIcon />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -97,6 +121,14 @@ function btn(active: boolean): string {
       ? "bg-[var(--color-accent-bg)] font-semibold text-[var(--color-accent)]"
       : "text-[var(--color-ink-soft)] hover:bg-[var(--color-bg-card)]",
   ].join(" ");
+}
+
+function ShareIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
+    </svg>
+  );
 }
 
 function TypeDot({ type }: { type: TypeGroup }) {
