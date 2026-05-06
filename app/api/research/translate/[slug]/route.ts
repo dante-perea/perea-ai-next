@@ -40,7 +40,7 @@ function splitSections(content: string): { frontmatter: string; sections: string
 
 async function translateSection(text: string): Promise<string> {
   const { text: out } = await generateText({
-    model: gateway("xai/grok-4"),
+    model: gateway("openai/gpt-4o"),
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: text }],
     maxOutputTokens: 8192,
@@ -51,21 +51,17 @@ async function translateSection(text: string): Promise<string> {
 async function translatePaper(slug: string, enContent: string): Promise<string> {
   const { frontmatter, sections } = splitSections(enContent);
 
-  // Translate frontmatter separately
-  const { text: translatedFm } = await generateText({
-    model: gateway("xai/grok-4"),
-    messages: [{ role: "user", content: `${FRONTMATTER_PROMPT(slug)}\n\n${frontmatter}` }],
-    maxOutputTokens: 1024,
-  });
+  // Translate frontmatter + all sections in parallel
+  const [translatedFm, ...translatedSections] = await Promise.all([
+    generateText({
+      model: gateway("openai/gpt-4o"),
+      messages: [{ role: "user", content: `${FRONTMATTER_PROMPT(slug)}\n\n${frontmatter}` }],
+      maxOutputTokens: 1024,
+    }).then((r) => r.text.trim()),
+    ...sections.map((section) => translateSection(section)),
+  ]);
 
-  // Translate each section in sequence (parallel would hit rate limits)
-  const translatedSections: string[] = [];
-  for (const section of sections) {
-    const out = await translateSection(section);
-    translatedSections.push(out);
-  }
-
-  return [translatedFm.trim(), ...translatedSections].join("\n\n");
+  return [translatedFm, ...translatedSections].join("\n\n");
 }
 
 export async function POST(
