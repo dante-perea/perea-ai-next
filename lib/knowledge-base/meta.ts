@@ -143,7 +143,7 @@ async function isBlobShared(blobKey: string, excludeId: string): Promise<boolean
 export async function copyTagFilesToTeam(tag: string, targetTeamId: string, userId: string): Promise<number> {
   const rows = await sql`
     SELECT * FROM kb_files
-    WHERE user_id = ${userId} AND team_id IS NULL AND tags @> ARRAY[${tag}]::text[]
+    WHERE user_id = ${userId} AND team_id IS NULL AND ${tag} = ANY(tags)
   ` as DbRow[];
   if (rows.length === 0) return 0;
 

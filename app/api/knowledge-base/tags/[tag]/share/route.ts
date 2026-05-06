@@ -20,6 +20,11 @@ export async function POST(
   const access = await checkTeamAccess(teamId, userId, "editor");
   if (!access.ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const copied = await copyTagFilesToTeam(decodedTag, teamId, userId);
-  return NextResponse.json({ copied });
+  try {
+    const copied = await copyTagFilesToTeam(decodedTag, teamId, userId);
+    return NextResponse.json({ copied });
+  } catch (err) {
+    console.error("[share-tag] copyTagFilesToTeam failed:", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
 }
