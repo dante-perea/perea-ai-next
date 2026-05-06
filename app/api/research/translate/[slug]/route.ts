@@ -57,7 +57,12 @@ async function translatePaper(slug: string, enContent: string): Promise<string> 
       model: gateway("xai/grok-4.3"),
       messages: [{ role: "user", content: `${FRONTMATTER_PROMPT(slug)}\n\n${frontmatter}` }],
       maxOutputTokens: 1024,
-    }).then((r) => r.text.trim()),
+    }).then((r) => {
+      const t = r.text.trim();
+      // Strip any LLM preamble before the --- delimiter
+      const idx = t.indexOf("---");
+      return idx > 0 ? t.slice(idx) : t;
+    }),
     ...sections.map((section) => translateSection(section)),
   ]);
 

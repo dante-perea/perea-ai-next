@@ -127,8 +127,11 @@ export async function getResearch(slug: string, locale = "en"): Promise<Research
 
   if (locale !== "en") {
     // Check Neon DB first, fall back to filesystem
-    const dbContent = await getTranslation(slug, locale).catch(() => null);
+    let dbContent = await getTranslation(slug, locale).catch(() => null);
     if (dbContent) {
+      // Strip any LLM preamble before the YAML frontmatter delimiter
+      const fmIdx = dbContent.indexOf("---");
+      if (fmIdx > 0) dbContent = dbContent.slice(fmIdx);
       raw = dbContent;
     } else {
       const filePath = path.join(researchDir(locale), `${slug}.md`);
