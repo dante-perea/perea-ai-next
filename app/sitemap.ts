@@ -1,13 +1,26 @@
 import type { MetadataRoute } from "next";
-import { listResearch } from "@/lib/research";
 import { listTranslatedSlugs } from "@/lib/research-translations";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
 
+// Slugs are known at deploy time — new papers require a redeploy anyway
+const EN_SLUGS = [
+  "agent-memory-production",
+  "agent-observability-stack",
+  "agent-payment-stack-2026",
+  "agent-ready-api-design",
+  "agentic-procurement-field-manual",
+  "b2a-2026",
+  "computer-use-deployment-overhang",
+  "geo-2026",
+  "mcp-server-playbook",
+  "pinnacle-gecko-protocol",
+  "prompt-injection-defense-2026",
+];
+
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const papers = listResearch("en");
   const esSlugs = await listTranslatedSlugs("es").catch(() => [] as string[]);
   const esSlugSet = new Set(esSlugs);
 
@@ -17,15 +30,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/es/research`, changeFrequency: "weekly", priority: 0.8 },
   ];
 
-  for (const { slug, frontmatter } of papers) {
-    const lastMod = frontmatter.date ? new Date(frontmatter.date) : new Date();
+  for (const slug of EN_SLUGS) {
     const hasEs = esSlugSet.has(slug);
     const enUrl = `${SITE_URL}/research/${slug}`;
     const esUrl = `${SITE_URL}/es/research/${slug}`;
 
     entries.push({
       url: enUrl,
-      lastModified: lastMod,
       changeFrequency: "monthly",
       priority: 0.8,
       ...(hasEs ? { alternates: { languages: { en: enUrl, es: esUrl } } } : {}),
@@ -34,7 +45,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (hasEs) {
       entries.push({
         url: esUrl,
-        lastModified: lastMod,
         changeFrequency: "monthly",
         priority: 0.7,
         alternates: { languages: { en: enUrl, es: esUrl } },
