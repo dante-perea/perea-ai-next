@@ -1,4 +1,5 @@
 import { neon } from "@neondatabase/serverless";
+import matter from "gray-matter";
 
 function sql() {
   return neon((process.env.POSTGRES_URL ?? process.env.DATABASE_URL)!);
@@ -31,4 +32,26 @@ export async function listTranslatedSlugs(locale: string): Promise<string[]> {
     SELECT slug FROM research_translations WHERE locale = ${locale} ORDER BY created_at DESC
   ` as { slug: string }[];
   return rows.map((r) => r.slug);
+}
+
+export async function listTranslationsWithFrontmatter(
+  locale: string
+): Promise<{ slug: string; frontmatter: Record<string, unknown> }[]> {
+  const db = sql();
+  const rows = await db`
+    SELECT slug, markdown FROM research_translations
+    WHERE locale = ${locale}
+    ORDER BY created_at DESC
+  ` as { slug: string; markdown: string }[];
+
+  return rows
+    .map(({ slug, markdown }) => {
+      const { data } = matter(markdown);
+      return { slug, frontmatter: data };
+    })
+    .sort((a, b) =>
+      ((b.frontmatter.date as string) || "").localeCompare(
+        (a.frontmatter.date as string) || ""
+      )
+    );
 }
