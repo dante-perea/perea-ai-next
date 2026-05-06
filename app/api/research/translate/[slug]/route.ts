@@ -70,14 +70,15 @@ async function translatePaper(slug: string, enContent: string): Promise<string> 
 }
 
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
   const locale = "es";
+  const force = new URL(req.url).searchParams.get("force") === "true";
 
   const existing = await getTranslation(slug, locale);
-  if (existing) {
+  if (existing && !force) {
     return NextResponse.json({ slug, locale, status: "exists", chars: existing.length });
   }
 
