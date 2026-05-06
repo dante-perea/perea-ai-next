@@ -157,7 +157,7 @@ export async function copyTagFilesToTeam(tag: string, targetTeamId: string, user
         ${new Date(row.uploaded_at).toISOString()}, ${row.tags},
         ${userId}, ${targetTeamId}, ${row.knowledge_type ?? 'document'}
       )
-      ON CONFLICT DO NOTHING
+      ON CONFLICT (blob_key, COALESCE(team_id, '')) DO NOTHING
     `;
   }
 

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS kb_files (
   id           TEXT         PRIMARY KEY,
   filename     TEXT         NOT NULL,
-  blob_key     TEXT         NOT NULL UNIQUE,
+  blob_key     TEXT         NOT NULL,
   blob_url     TEXT         NOT NULL,
   size         BIGINT       NOT NULL,
   content_type TEXT         NOT NULL,
@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS kb_files (
 );
 CREATE INDEX IF NOT EXISTS kb_files_user_id_idx ON kb_files (user_id);
 CREATE INDEX IF NOT EXISTS kb_files_team_id_idx ON kb_files (team_id);
+-- scoped uniqueness: same blob can exist in personal + each team separately
+CREATE UNIQUE INDEX IF NOT EXISTS kb_files_blob_key_scope_idx
+  ON kb_files (blob_key, COALESCE(team_id, ''));
 ALTER TABLE kb_files ADD COLUMN IF NOT EXISTS knowledge_type TEXT NOT NULL DEFAULT 'document';
 
 CREATE TABLE IF NOT EXISTS teams (
