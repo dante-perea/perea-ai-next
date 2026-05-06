@@ -6,6 +6,9 @@ import type { Experiment } from "@/lib/learning/ghost-db";
 const EXPERIMENT_TYPES = ["product", "pricing", "messaging", "distribution", "business_model", "gtm", "other"] as const;
 const AARRR_STAGES = ["acquisition", "activation", "retention", "referral", "revenue", "none"] as const;
 
+interface BacklogItem { title: string; project: string; type: string; priority: string; }
+interface ScrumReport { yesterday: string[]; today: string[]; blockers: string[]; backlog: BacklogItem[]; }
+
 function verdictColor(verdict: string | null, outcome: string): string {
   const v = verdict ?? outcome;
   if (v === "win" || v === "validated") return "text-green-600";
@@ -178,6 +181,9 @@ export function ExperimentsClient({
   const [active, setActive] = useState(initialActive);
   const [isStarting, startTransition] = useTransition();
   const [startupFilter, setStartupFilter] = useState<string | null>(null);
+  const [report, setReport] = useState<ScrumReport | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [isGenerating, startReportTransition] = useTransition();
 
   const allExperiments = [...active, ...initialClosed];
   const startups = Array.from(new Set(allExperiments.map((e) => e.project_tag).filter(Boolean))) as string[];
@@ -190,6 +196,16 @@ export function ExperimentsClient({
   const [expType, setExpType] = useState<string>("other");
   const [aarrr, setAarrr] = useState<string>("none");
   const [formError, setFormError] = useState("");
+
+  function generateReport() {
+    startReportTransition(async () => {
+      const res = await fetch("/api/experiments/daily-report", { method: "POST" });
+      if (res.ok) {
+        setReport(await res.json());
+        setReportOpen(true);
+      }
+    });
+  }
 
   async function refreshActive() {
     const res = await fetch("/api/experiments");
@@ -231,6 +247,17 @@ export function ExperimentsClient({
 
   return (
     <div className="space-y-10">
+      {/* Daily Report button */}
+      <div className="flex justify-end">
+        <button
+          onClick={generateReport}
+          disabled={isGenerating}
+          className="text-sm px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          {isGenerating ? "Generating…" : "Daily Report"}
+        </button>
+      </div>
+
       {/* Velocity */}
       <div className="grid grid-cols-4 gap-4">
         {[
@@ -245,6 +272,75 @@ export function ExperimentsClient({
           </div>
         ))}
       </div>
+
+      {/* Daily Report panel */}
+      {reportOpen && report && (
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-blue-900">
+              Daily Scrum &mdash; {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
+            </h2>
+            <button
+              onClick={() => setReportOpen(false)}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Yesterday</h3>
+            <ul className="space-y-1">
+              {report.yesterday.map((item, i) => (
+                <li key={i} className="text-sm text-gray-700">• {item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Today</h3>
+            <ul className="space-y-1">
+              {report.today.map((item, i) => (
+                <li key={i} className="text-sm text-gray-700">• {item}</li>
+              ))}
+            </ul>
+          </section>
+
+          {report.blockers.length > 0 && (
+            <section>
+              <h3 className="text-xs font-semibold text-red-500 uppercase tracking-wide mb-1">Blockers</h3>
+              <ul className="space-y-1">
+                {report.blockers.map((item, i) => (
+                  <li key={i} className="text-sm text-red-700">• {item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Backlog</h3>
+            <div className="space-y-2">
+              {report.backlog.map((item, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm">
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded font-medium shrink-0 ${
+                      item.priority === "high"
+                        ? "bg-red-100 text-red-700"
+                        : item.priority === "medium"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {item.priority}
+                  </span>
+                  <span className="text-gray-700 flex-1">{item.title}</span>
+                  <span className="text-xs text-gray-400 shrink-0">{item.project} · {item.type}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* Start experiment form */}
       <div>
