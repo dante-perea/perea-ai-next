@@ -40,7 +40,7 @@ function splitSections(content: string): { frontmatter: string; sections: string
 
 async function translateSection(text: string): Promise<string> {
   const { text: out } = await generateText({
-    model: gateway("openai/gpt-4o"),
+    model: gateway("xai/grok-4.3"),
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: text }],
     maxOutputTokens: 8192,
@@ -54,7 +54,7 @@ async function translatePaper(slug: string, enContent: string): Promise<string> 
   // Translate frontmatter + all sections in parallel
   const [translatedFm, ...translatedSections] = await Promise.all([
     generateText({
-      model: gateway("openai/gpt-4o"),
+      model: gateway("xai/grok-4.3"),
       messages: [{ role: "user", content: `${FRONTMATTER_PROMPT(slug)}\n\n${frontmatter}` }],
       maxOutputTokens: 1024,
     }).then((r) => r.text.trim()),
