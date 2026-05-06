@@ -58,9 +58,10 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
           <p className="text-sm font-medium text-gray-900">{exp.hypothesis}</p>
           <p className="text-xs text-gray-400 mt-1">
             <code className="font-mono">{exp.id}</code>
-            {exp.experiment_type && <span> · {exp.experiment_type}</span>}
-            {exp.aarrr_stage && exp.aarrr_stage !== "none" && <span> · {exp.aarrr_stage}</span>}
             {exp.project_tag && <span> · {exp.project_tag}</span>}
+            {exp.experiment_type && <span> · {exp.experiment_type}</span>}
+            {exp.feature_tag && <span> · {exp.feature_tag}</span>}
+            {exp.aarrr_stage && exp.aarrr_stage !== "none" && <span> · {exp.aarrr_stage}</span>}
             <span> · {new Date(exp.started_at).toLocaleDateString()}</span>
           </p>
           {exp.success_criteria && (
@@ -176,6 +177,13 @@ export function ExperimentsClient({
 }) {
   const [active, setActive] = useState(initialActive);
   const [isStarting, startTransition] = useTransition();
+  const [startupFilter, setStartupFilter] = useState<string | null>(null);
+
+  const allExperiments = [...active, ...initialClosed];
+  const startups = Array.from(new Set(allExperiments.map((e) => e.project_tag).filter(Boolean))) as string[];
+
+  const filteredActive = startupFilter ? active.filter((e) => e.project_tag === startupFilter) : active;
+  const filteredClosed = startupFilter ? initialClosed.filter((e) => e.project_tag === startupFilter) : initialClosed;
 
   const [hypothesis, setHypothesis] = useState("");
   const [successCriteria, setSuccessCriteria] = useState("");
@@ -299,16 +307,37 @@ export function ExperimentsClient({
         </form>
       </div>
 
+      {/* Startup filter tabs */}
+      {startups.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStartupFilter(null)}
+            className={`text-xs px-3 py-1 rounded-full border ${!startupFilter ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+          >
+            All
+          </button>
+          {startups.map((s) => (
+            <button
+              key={s}
+              onClick={() => setStartupFilter(startupFilter === s ? null : s)}
+              className={`text-xs px-3 py-1 rounded-full border ${startupFilter === s ? "bg-gray-900 text-white border-gray-900" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Active experiments */}
       <div>
         <h2 className="text-lg font-medium text-gray-900 mb-3">
-          Active experiments ({active.filter((e) => e.outcome === "in_progress").length})
+          Active experiments ({filteredActive.filter((e) => e.outcome === "in_progress").length})
         </h2>
-        {active.length === 0 ? (
+        {filteredActive.length === 0 ? (
           <p className="text-sm text-gray-400 italic">No active experiments yet.</p>
         ) : (
           <div className="space-y-3">
-            {active.map((exp) => (
+            {filteredActive.map((exp) => (
               <ExperimentCard key={exp.id} exp={exp} onAction={refreshActive} />
             ))}
           </div>
@@ -316,13 +345,13 @@ export function ExperimentsClient({
       </div>
 
       {/* Historical experiments */}
-      {initialClosed.length > 0 && (
+      {filteredClosed.length > 0 && (
         <div>
           <h2 className="text-lg font-medium text-gray-900 mb-3">
-            Historical ({initialClosed.length})
+            Historical ({filteredClosed.length})
           </h2>
           <div className="space-y-3">
-            {initialClosed.map((exp) => (
+            {filteredClosed.map((exp) => (
               <ExperimentCard key={exp.id} exp={exp} onAction={() => {}} />
             ))}
           </div>
