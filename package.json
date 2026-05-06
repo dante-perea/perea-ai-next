@@ -8,7 +8,8 @@
     "start": "NODE_OPTIONS=--no-experimental-webstorage next start",
     "lint": "next lint",
     "backfill": "tsx scripts/backfill-learnings.ts",
-    "tag": "tsx --env-file=.env.local scripts/tag-experiments.ts"
+    "tag": "tsx --env-file=.env.local scripts/tag-experiments.ts",
+    "translate": "tsx --env-file=.env.local scripts/translate-whitepapers.ts"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^2",
@@ -29,6 +30,7 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.95.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^20",
     "@types/react": "^19",

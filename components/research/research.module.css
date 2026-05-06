@@ -50,13 +50,38 @@
   transition: width 60ms linear;
 }
 
-/* ── LOGO MARK (header removed; logo retained at top of page) ─────────── */
+/* ── LOGO MARK (inside hero) ───────────────────────────────────────────── */
+/* Legacy strip kept for index page (light bg) */
 .brandStrip {
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.75rem 1.5rem 0;
   display: flex;
   align-items: center;
+}
+
+/* Brand row inside dark hero (article page) — wider than heroInner so it
+   aligns with the outer layout gutters, not the narrow prose column */
+.heroBrand {
+  max-width: 1280px;
+  margin: 0 auto 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heroBrand .navBrand {
+  color: rgba(244, 241, 234, 0.9);
+}
+
+.heroBrand .navBrandMark {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(244, 241, 234, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.heroBrand .navBrandSmall {
+  color: rgba(244, 241, 234, 0.45);
 }
 
 .navBrand {
@@ -220,6 +245,41 @@
   font-size: 0.92rem;
   font-weight: 500;
   color: #e8e3d6;
+}
+
+/* ── LANG TOGGLE ───────────────────────────────────────────────────────── */
+.langToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+.langOption {
+  font-family: var(--r-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(244, 241, 234, 0.5);
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.langOption:hover {
+  color: rgba(244, 241, 234, 0.85);
+}
+
+.langOptionActive {
+  color: rgba(244, 241, 234, 0.95);
+  font-weight: 600;
+}
+
+.langDivider {
+  color: rgba(244, 241, 234, 0.25);
+  font-size: 0.7rem;
 }
 
 /* ── LAYOUT (TOC + ARTICLE) ────────────────────────────────────────────── */

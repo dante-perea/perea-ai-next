@@ -2,8 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { Marked } from "marked";
+import { getTranslation, listTranslatedSlugs } from "./research-translations";
 
 const RESEARCH_DIR = path.join(process.cwd(), "content", "whitepapers");
+
+export function researchDir(locale = "en"): string {
+  return locale === "en" ? RESEARCH_DIR : path.join(RESEARCH_DIR, locale);
+}
 
 export interface ResearchFrontmatter {
   title: string;
@@ -117,11 +122,24 @@ function buildMarked(toc: ResearchTocItem[]) {
   return m;
 }
 
-export async function getResearch(slug: string): Promise<ResearchPaper | null> {
-  const filePath = path.join(RESEARCH_DIR, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return null;
+export async function getResearch(slug: string, locale = "en"): Promise<ResearchPaper | null> {
+  let raw: string;
 
-  const raw = fs.readFileSync(filePath, "utf8");
+  if (locale !== "en") {
+    // Check Neon DB first, fall back to filesystem
+    const dbContent = await getTranslation(slug, locale).catch(() => null);
+    if (dbContent) {
+      raw = dbContent;
+    } else {
+      const filePath = path.join(researchDir(locale), `${slug}.md`);
+      if (!fs.existsSync(filePath)) return null;
+      raw = fs.readFileSync(filePath, "utf8");
+    }
+  } else {
+    const filePath = path.join(researchDir("en"), `${slug}.md`);
+    if (!fs.existsSync(filePath)) return null;
+    raw = fs.readFileSync(filePath, "utf8");
+  }
   const { data, content } = matter(raw);
   const toc: ResearchTocItem[] = [];
   const m = buildMarked(toc);
@@ -140,16 +158,26 @@ export async function getResearch(slug: string): Promise<ResearchPaper | null> {
   };
 }
 
-export function listResearch(): { slug: string; frontmatter: ResearchFrontmatter }[] {
-  if (!fs.existsSync(RESEARCH_DIR)) return [];
+export function listResearch(locale = "en"): { slug: string; frontmatter: ResearchFrontmatter }[] {
+  const dir = researchDir(locale);
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(RESEARCH_DIR)
+    .readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .map((file) => {
       const slug = file.replace(/\.md$/, "");
-      const raw = fs.readFileSync(path.join(RESEARCH_DIR, file), "utf8");
+      const raw = fs.readFileSync(path.join(dir, file), "utf8");
       const { data } = matter(raw);
       return { slug, frontmatter: data as ResearchFrontmatter };
     })
     .sort((a, b) => (b.frontmatter.date || "").localeCompare(a.frontmatter.date || ""));
+}
+
+export function listResearchSlugs(locale = "en"): string[] {
+  return listResearch(locale).map((p) => p.slug);
+}
+
+// For ES pages: slugs from DB (translations generated on Vercel)
+export async function listTranslatedResearchSlugs(locale: string): Promise<string[]> {
+  return listTranslatedSlugs(locale).catch(() => []);
 }

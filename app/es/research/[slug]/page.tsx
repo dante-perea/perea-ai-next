@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import fs from "node:fs";
-import path from "node:path";
-import { getResearch, listResearch, researchDir } from "@/lib/research";
+import { getResearch, listTranslatedResearchSlugs } from "@/lib/research";
 import { ReadingProgress } from "@/components/research/ReadingProgress";
 import { StickyTOC } from "@/components/research/StickyTOC";
 import { ShareRow } from "@/components/research/ShareRow";
@@ -13,35 +11,31 @@ import styles from "@/components/research/research.module.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
 
-export async function generateStaticParams() {
-  return listResearch("en").map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
-function hasSpanish(slug: string): boolean {
-  return fs.existsSync(path.join(researchDir("es"), `${slug}.md`));
+export async function generateStaticParams() {
+  const slugs = await listTranslatedResearchSlugs("es");
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const paper = await getResearch(slug, "en");
-  if (!paper) return { title: "Research not found" };
+  const paper = await getResearch(slug, "es");
+  if (!paper) return { title: "Investigación no encontrada" };
 
   const { frontmatter } = paper;
   const description = frontmatter.subtitle || frontmatter.description || "";
-  const url = `${SITE_URL}/research/${slug}`;
-  const esUrl = `${SITE_URL}/es/research/${slug}`;
-
-  const alternateLanguages: Record<string, string> = { en: url };
-  if (hasSpanish(slug)) alternateLanguages.es = esUrl;
+  const url = `${SITE_URL}/es/research/${slug}`;
+  const enUrl = `${SITE_URL}/research/${slug}`;
 
   return {
     title: frontmatter.title,
     description,
     alternates: {
       canonical: url,
-      languages: alternateLanguages,
+      languages: { en: enUrl, es: url },
     },
     openGraph: {
       title: frontmatter.title,
@@ -51,8 +45,8 @@ export async function generateMetadata(
       siteName: "perea.ai Research",
       publishedTime: frontmatter.date,
       authors: frontmatter.authors,
-      locale: "en_US",
-      ...(hasSpanish(slug) ? { alternateLocale: ["es_ES"] } : {}),
+      locale: "es_ES",
+      alternateLocale: ["en_US"],
     },
     twitter: {
       card: "summary_large_image",
@@ -74,21 +68,20 @@ function formatDate(iso?: string): string {
   const opts: Intl.DateTimeFormatOptions = parts.length >= 3
     ? { year: "numeric", month: "long", day: "numeric" }
     : { year: "numeric", month: "long" };
-  return new Intl.DateTimeFormat("en-US", opts).format(date);
+  return new Intl.DateTimeFormat("es-419", opts).format(date);
 }
 
-export default async function ResearchArticlePage(
+export default async function ResearchArticleEsPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const paper = await getResearch(slug, "en");
+  const paper = await getResearch(slug, "es");
   if (!paper) notFound();
 
   const { frontmatter, html, toc, readingTimeMinutes, wordCount } = paper;
-  const url = `${SITE_URL}/research/${slug}`;
-  const esUrl = `${SITE_URL}/es/research/${slug}`;
+  const url = `${SITE_URL}/es/research/${slug}`;
+  const enUrl = `${SITE_URL}/research/${slug}`;
   const dateStr = formatDate(frontmatter.date);
-  const spanishExists = hasSpanish(slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -104,21 +97,20 @@ export default async function ResearchArticlePage(
       name: frontmatter.publication || "perea.ai Research",
       url: SITE_URL,
     },
-    inLanguage: "en",
+    inLanguage: "es",
     license: frontmatter.license,
     isAccessibleForFree: true,
     wordCount,
     timeRequired: `PT${readingTimeMinutes}M`,
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    ...(spanishExists ? { workTranslation: { "@id": esUrl } } : {}),
+    translationOfWork: { "@id": enUrl },
   };
 
   return (
     <div className={styles.shell}>
       <ReadingProgress />
 
-      {/* Hero — logo inside dark container */}
       <header className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.heroBrand}>
@@ -129,7 +121,7 @@ export default async function ResearchArticlePage(
                 <span>Research</span>
               </span>
             </Link>
-            <LangToggle slug={slug} locale="en" hasTranslation={spanishExists} />
+            <LangToggle slug={slug} locale="es" hasTranslation={true} />
           </div>
 
           <div className={styles.heroEyebrow}>
@@ -144,31 +136,31 @@ export default async function ResearchArticlePage(
           <div className={styles.heroMeta}>
             {frontmatter.authors && frontmatter.authors.length > 0 && (
               <div className={styles.heroMetaItem}>
-                <span className={styles.heroMetaLabel}>Author</span>
+                <span className={styles.heroMetaLabel}>Autor</span>
                 <span className={styles.heroMetaValue}>{frontmatter.authors.join(", ")}</span>
               </div>
             )}
             {dateStr && (
               <div className={styles.heroMetaItem}>
-                <span className={styles.heroMetaLabel}>Published</span>
+                <span className={styles.heroMetaLabel}>Publicado</span>
                 <span className={styles.heroMetaValue}>{dateStr}</span>
               </div>
             )}
             <div className={styles.heroMetaItem}>
-              <span className={styles.heroMetaLabel}>Length</span>
+              <span className={styles.heroMetaLabel}>Extensión</span>
               <span className={styles.heroMetaValue}>
-                {wordCount.toLocaleString()} words · {readingTimeMinutes} min read
+                {wordCount.toLocaleString("es")} palabras · {readingTimeMinutes} min
               </span>
             </div>
             {frontmatter.audience && (
               <div className={styles.heroMetaItem}>
-                <span className={styles.heroMetaLabel}>Audience</span>
+                <span className={styles.heroMetaLabel}>Audiencia</span>
                 <span className={styles.heroMetaValue}>{frontmatter.audience}</span>
               </div>
             )}
             {frontmatter.license && (
               <div className={styles.heroMetaItem}>
-                <span className={styles.heroMetaLabel}>License</span>
+                <span className={styles.heroMetaLabel}>Licencia</span>
                 <span className={styles.heroMetaValue}>{frontmatter.license}</span>
               </div>
             )}
@@ -176,7 +168,6 @@ export default async function ResearchArticlePage(
         </div>
       </header>
 
-      {/* Article */}
       <main className={styles.layout}>
         <StickyTOC items={toc} />
         <div>
