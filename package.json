@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NODE_OPTIONS=--no-experimental-webstorage next dev --turbopack",
+    "build": "NODE_OPTIONS=--no-experimental-webstorage next build",
+    "start": "NODE_OPTIONS=--no-experimental-webstorage next start",
     "lint": "next lint",
     "backfill": "tsx scripts/backfill-learnings.ts",
     "tag": "tsx --env-file=.env.local scripts/tag-experiments.ts"
@@ -18,7 +18,9 @@
     "@vercel/blob": "^2.3.3",
     "ai": "^5",
     "exa-js": "^2.12.1",
+    "gray-matter": "^4.0.3",
     "jose": "^6.2.3",
+    "marked": "^18.0.3",
     "next": "15.3.8",
     "postgres": "^3.4.9",
     "react": "^19.0.0",
