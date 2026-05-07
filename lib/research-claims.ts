@@ -283,6 +283,79 @@ const PROPERTY_MGMT_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stblaw\.com(\/|$)/i,
 ];
 
+// 1099 Freelance Finance vertical primary surfaces (vendor corporate sites + government + press release distributors + investor relations)
+const FREELANCE_FINANCE_PRIMARY_PATTERNS: RegExp[] = [
+  // Government primary (federal + state)
+  /(^|\.)irs\.gov(\/|$)/i,
+  /(^|\.)eitc\.irs\.gov(\/|$)/i,
+  /(^|\.)ftb\.ca\.gov(\/|$)/i,
+  /(^|\.)labor\.ca\.gov(\/|$)/i,
+  /(^|\.)courts\.ca\.gov(\/|$)/i,
+  /(^|\.)sec\.gov(\/|$)/i,
+  /(^|\.)mass\.gov(\/|$)/i,
+  /(^|\.)senate\.gov(\/|$)/i,
+  /(^|\.)cassidy\.senate\.gov(\/|$)/i,
+  /(^|\.)ballotpedia\.org(\/|$)/i,
+  // Press release distribution networks (primary because they republish corporate filings verbatim)
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+  /(^|\.)prweb\.com(\/|$)/i,
+  /(^|\.)einpresswire\.com(\/|$)/i,
+  // Vendor corporate sites — Solo Operating System cohort
+  /(^|\.)lettuce\.co(\/|$)/i,
+  /(^|\.)collective\.com(\/|$)/i,
+  /(^|\.)found\.com(\/|$)/i,
+  /(^|\.)hurdlr\.com(\/|$)/i,
+  /(^|\.)tight\.co(\/|$)/i,
+  /(^|\.)bonsai\.is(\/|$)/i,
+  /(^|\.)honeybook\.com(\/|$)/i,
+  /(^|\.)lili\.co(\/|$)/i,
+  // Vendor corporate sites — Tax-reserve cohort
+  /(^|\.)keepertax\.com(\/|$)/i,
+  /(^|\.)flyfin\.tax(\/|$)/i,
+  /(^|\.)bluej\.com(\/|$)/i,
+  /(^|\.)carry\.com(\/|$)/i,
+  // Vendor corporate sites — Bookkeeping cohort
+  /(^|\.)pilot\.com(\/|$)/i,
+  /(^|\.)bench\.co(\/|$)/i,
+  /(^|\.)truewind\.ai(\/|$)/i,
+  /(^|\.)zeni\.ai(\/|$)/i,
+  /(^|\.)digits\.com(\/|$)/i,
+  /(^|\.)burklandassociates\.com(\/|$)/i,
+  /(^|\.)burkland\.business(\/|$)/i,
+  /(^|\.)kruzeconsulting\.com(\/|$)/i,
+  // Vendor corporate sites — Marketplace 1099 issuers
+  /(^|\.)upwork\.com(\/|$)/i,
+  /(^|\.)investors\.upwork\.com(\/|$)/i,
+  /(^|\.)fiverr\.com(\/|$)/i,
+  /(^|\.)investors\.fiverr\.com(\/|$)/i,
+  /(^|\.)toptal\.com(\/|$)/i,
+  /(^|\.)usebraintrust\.com(\/|$)/i,
+  // Vendor corporate sites — Portable benefits cohort
+  /(^|\.)stridehealth\.com(\/|$)/i,
+  /(^|\.)mastercard\.stridehealth\.com(\/|$)/i,
+  /(^|\.)stridebenefits\.com(\/|$)/i,
+  /(^|\.)catch\.co(\/|$)/i,
+  /(^|\.)opolis\.co(\/|$)/i,
+  /(^|\.)anglehealth\.org(\/|$)/i,
+  /(^|\.)1099workers\.com(\/|$)/i,
+  /(^|\.)beanstalk\.stridehealth\.com(\/|$)/i,
+  /(^|\.)jobble\.stridehealth\.com(\/|$)/i,
+  // Vendor corporate sites — Retirement
+  /(^|\.)gusto\.com(\/|$)/i,
+  /(^|\.)guideline\.com(\/|$)/i,
+  /(^|\.)forusall\.com(\/|$)/i,
+  // Workforce-research primary sources (large-N annual surveys treated as primary)
+  /(^|\.)mbopartners\.com(\/|$)/i,
+  // Marketplace acquirer primary sources
+  /(^|\.)zoom\.us(\/|$)/i,
+  /(^|\.)blog\.zoom\.us(\/|$)/i,
+  /(^|\.)quickbooks\.intuit\.com(\/|$)/i,
+  /(^|\.)intuit\.com(\/|$)/i,
+  /(^|\.)employer\.com(\/|$)/i,
+];
+
 const SECONDARY_PATTERNS: RegExp[] = [
   // Tier-1 general business + tech press
   /(^|\.)bloomberg\.com(\/|$)/i,
@@ -391,6 +464,63 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)iris\.vc(\/|$)/i,
   // Reuters wire syndication (MarketScreener carries Reuters wires)
   /(^|\.)marketscreener\.com(\/|$)/i,
+  // 1099 freelance finance vertical secondary press + analysts
+  /(^|\.)avalara\.com(\/|$)/i,
+  /(^|\.)www1\.avalara\.com(\/|$)/i,
+  /(^|\.)investopedia\.com(\/|$)/i,
+  /(^|\.)cpapracticeadvisor\.com(\/|$)/i,
+  /(^|\.)withum\.com(\/|$)/i,
+  /(^|\.)finsmes\.com(\/|$)/i,
+  /(^|\.)betakit\.com(\/|$)/i,
+  /(^|\.)fintechfutures\.com(\/|$)/i,
+  /(^|\.)theaiinsider\.tech(\/|$)/i,
+  /(^|\.)techcompanynews\.com(\/|$)/i,
+  /(^|\.)thepaypers\.com(\/|$)/i,
+  /(^|\.)techstartups\.com(\/|$)/i,
+  /(^|\.)statista\.com(\/|$)/i,
+  /(^|\.)messari\.io(\/|$)/i,
+  /(^|\.)gate\.io(\/|$)/i,
+  /(^|\.)seedtable\.com(\/|$)/i,
+  /(^|\.)wbur\.org(\/|$)/i,
+  /(^|\.)bostonglobe\.com(\/|$)/i,
+  /(^|\.)nbcboston\.com(\/|$)/i,
+  /(^|\.)boston\.com(\/|$)/i,
+  /(^|\.)commonwealthbeacon\.org(\/|$)/i,
+  /(^|\.)reason\.org(\/|$)/i,
+  /(^|\.)secondtalent\.com(\/|$)/i,
+  /(^|\.)finanzwire\.com(\/|$)/i,
+  /(^|\.)accesswire\.com(\/|$)/i,
+  /(^|\.)bestaitoolsforfinance\.com(\/|$)/i,
+  /(^|\.)last10k\.com(\/|$)/i,
+  /(^|\.)eaglerockcfo\.com(\/|$)/i,
+  /(^|\.)tax1099\.com(\/|$)/i,
+  /(^|\.)formpros\.com(\/|$)/i,
+  /(^|\.)trpsumner\.com(\/|$)/i,
+  /(^|\.)seilersingleton\.com(\/|$)/i,
+  /(^|\.)en\.wikipedia\.org(\/|$)/i,
+  /(^|\.)wikipedia\.org(\/|$)/i,
+  /(^|\.)cspa\.tufts\.edu(\/|$)/i,
+  /(^|\.)bankingdive\.com(\/|$)/i,
+  /(^|\.)pymnts\.com(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)wagehourblog\.com(\/|$)/i,
+  /(^|\.)nolo\.com(\/|$)/i,
+  /(^|\.)boomtax\.com(\/|$)/i,
+  /(^|\.)serendiblaw\.com(\/|$)/i,
+  /(^|\.)401kspecialistmag\.com(\/|$)/i,
+  /(^|\.)startuphub\.ai(\/|$)/i,
+  /(^|\.)reqodata\.com(\/|$)/i,
+  /(^|\.)rocketreach\.co(\/|$)/i,
+  /(^|\.)at\.linkedin\.com(\/|$)/i,
+  /(^|\.)blog\.dustyhotz\.io(\/|$)/i,
+  /(^|\.)everlance\.com(\/|$)/i,
+  /(^|\.)onehealthplus\.com(\/|$)/i,
+  /(^|\.)ten99health\.com(\/|$)/i,
+  /(^|\.)freelancersunion\.org(\/|$)/i,
+  /(^|\.)blog\.freelancersunion\.org(\/|$)/i,
+  /(^|\.)sacra\.com(\/|$)/i,
+  /(^|\.)alphatax\.com(\/|$)/i,
+  /(^|\.)bluedun\.com(\/|$)/i,
   // Inc Magazine + Fast Company + Business Insider tier business press
   /(^|\.)inc\.com(\/|$)/i,
   /(^|\.)fastcompany\.com(\/|$)/i,
@@ -562,6 +692,9 @@ export function classifyTier(
   }
   for (const re of MENTAL_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `mental-health primary: ${domain}` };
+  }
+  for (const re of FREELANCE_FINANCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `freelance-finance primary: ${domain}` };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
