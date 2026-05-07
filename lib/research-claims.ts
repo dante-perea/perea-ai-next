@@ -356,6 +356,110 @@ const FREELANCE_FINANCE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)employer\.com(\/|$)/i,
 ];
 
+const PORTABLE_BENEFITS_LEGISLATION_PRIMARY_PATTERNS: RegExp[] = [
+  // Federal legislative + regulatory
+  /(^|\.)congress\.gov(\/|$)/i,
+  /(^|\.)govinfo\.gov(\/|$)/i,
+  /(^|\.)federalregister\.gov(\/|$)/i,
+  /(^|\.)docs\.house\.gov(\/|$)/i,
+  /(^|\.)edworkforce\.house\.gov(\/|$)/i,
+  /(^|\.)help\.senate\.gov(\/|$)/i,
+  /(^|\.)senate\.gov(\/|$)/i,
+  /(^|\.)house\.gov(\/|$)/i,
+  /(^|\.)scott\.senate\.gov(\/|$)/i,
+  /(^|\.)cassidy\.senate\.gov(\/|$)/i,
+  /(^|\.)paul\.senate\.gov(\/|$)/i,
+  /(^|\.)sanders\.senate\.gov(\/|$)/i,
+  /(^|\.)kiley\.house\.gov(\/|$)/i,
+  /(^|\.)cloudfront\.net(\/|$)/i,
+  // State legislatures
+  /(^|\.)le\.utah\.gov(\/|$)/i,
+  /(^|\.)senate\.utah\.gov(\/|$)/i,
+  /(^|\.)capitol\.tn\.gov(\/|$)/i,
+  /(^|\.)wapp\.capitol\.tn\.gov(\/|$)/i,
+  /(^|\.)tnsenategop\.com(\/|$)/i,
+  /(^|\.)ilga\.gov(\/|$)/i,
+  /(^|\.)nj\.gov(\/|$)/i,
+  // State AGs / mass.gov
+  /(^|\.)mass\.gov(\/|$)/i,
+  // Vendor corporate sites (rideshare/delivery platforms operating portable-benefits programs)
+  /(^|\.)lyft\.com(\/|$)/i,
+  /(^|\.)help\.lyft\.com(\/|$)/i,
+  /(^|\.)doordash\.com(\/|$)/i,
+  /(^|\.)about\.doordash\.com(\/|$)/i,
+  /(^|\.)help\.doordash\.com(\/|$)/i,
+  /(^|\.)shipt\.com(\/|$)/i,
+  /(^|\.)corporate\.shipt\.com(\/|$)/i,
+  /(^|\.)stridehealth\.com(\/|$)/i,
+  /(^|\.)blog\.stridehealth\.com(\/|$)/i,
+  /(^|\.)support\.stridehealth\.com(\/|$)/i,
+  /(^|\.)mahealthfund\.stridehealth\.com(\/|$)/i,
+  // Advocacy coalitions (treat as primary for self-published positions)
+  /(^|\.)illinoisdriversalliance\.org(\/|$)/i,
+  /(^|\.)yesformassdrivers\.org(\/|$)/i,
+];
+
+const PORTABLE_BENEFITS_LEGISLATION_SECONDARY_PATTERNS: RegExp[] = [
+  // Research firms / think tanks
+  /(^|\.)mercatus\.org(\/|$)/i,
+  /(^|\.)epi\.org(\/|$)/i,
+  /(^|\.)nelp\.org(\/|$)/i,
+  /(^|\.)libertas\.institute(\/|$)/i,
+  /(^|\.)ndpanalytics\.com(\/|$)/i,
+  // Legal / professional services commentary
+  /(^|\.)fisherphillips\.com(\/|$)/i,
+  /(^|\.)pietragallo\.com(\/|$)/i,
+  /(^|\.)khlawfirm\.com(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)littler\.com(\/|$)/i,
+  /(^|\.)independentcontractorcompliance\.com(\/|$)/i,
+  /(^|\.)whoismyemployee\.com(\/|$)/i,
+  /(^|\.)vensure\.com(\/|$)/i,
+  // Specialty benefits + retirement industry publications
+  /(^|\.)plansponsor\.com(\/|$)/i,
+  /(^|\.)psca\.org(\/|$)/i,
+  /(^|\.)benefitslink\.com(\/|$)/i,
+  /(^|\.)benefitspro\.com(\/|$)/i,
+  /(^|\.)hrdive\.com(\/|$)/i,
+  /(^|\.)ascensus\.com(\/|$)/i,
+  /(^|\.)asppa-net\.org(\/|$)/i,
+  /(^|\.)pensionpolicyinternational\.com(\/|$)/i,
+  // Bill tracking + legislative aggregators
+  /(^|\.)govtrack\.us(\/|$)/i,
+  /(^|\.)trackbill\.com(\/|$)/i,
+  /(^|\.)billtrack50\.com(\/|$)/i,
+  /(^|\.)quiverquant\.com(\/|$)/i,
+  // Tax / accounting trade
+  /(^|\.)tax\.thomsonreuters\.com(\/|$)/i,
+  /(^|\.)thomsonreuters\.com(\/|$)/i,
+  // Regional / progressive trade press
+  /(^|\.)truthout\.org(\/|$)/i,
+  /(^|\.)commondreams\.org(\/|$)/i,
+  /(^|\.)vermontbiz\.com(\/|$)/i,
+  /(^|\.)ny1\.com(\/|$)/i,
+  /(^|\.)redstate\.com(\/|$)/i,
+  /(^|\.)tennessean\.com(\/|$)/i,
+  /(^|\.)aldailynews\.com(\/|$)/i,
+  /(^|\.)slenterprise\.com(\/|$)/i,
+  /(^|\.)kslnewsradio\.com(\/|$)/i,
+  // Chicago / Illinois regional (for IL TNC LRA coverage)
+  /(^|\.)chicago\.suntimes\.com(\/|$)/i,
+  /(^|\.)blockclubchicago\.org(\/|$)/i,
+  /(^|\.)thechicagojournal\.com(\/|$)/i,
+  /(^|\.)journalstandard\.com(\/|$)/i,
+  // NJ / MA regional
+  /(^|\.)wrnjradio\.com(\/|$)/i,
+  /(^|\.)nj1015\.com(\/|$)/i,
+  /(^|\.)wbur\.org(\/|$)/i,
+  // Insurance industry
+  /(^|\.)insurancejournal\.com(\/|$)/i,
+  /(^|\.)certifi\.com(\/|$)/i,
+  // Tier-1 business that already in marketplace patterns but ensuring coverage
+  /(^|\.)fastcompany\.com(\/|$)/i,
+  // Aggregators
+  /(^|\.)ecomwatch\.com(\/|$)/i,
+];
+
 const MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate
   /(^|\.)amazon\.com(\/|$)/i,
@@ -774,6 +878,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-seller-ops primary: ${domain}` };
   }
+  for (const re of PORTABLE_BENEFITS_LEGISLATION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `portable-benefits-legislation primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -781,6 +888,9 @@ export function classifyTier(
   }
   for (const re of MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `marketplace-seller-ops secondary: ${domain}` };
+  }
+  for (const re of PORTABLE_BENEFITS_LEGISLATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `portable-benefits-legislation secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
