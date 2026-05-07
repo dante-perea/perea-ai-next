@@ -196,6 +196,49 @@ const PRIMARY_PATH_FRAGMENTS = [
   "/blob/master/spec",
 ];
 
+// Property-management-vertical primary surfaces (corporate IR + vendor sites + PE/VC firms + REIT/industry bodies)
+const PROPERTY_MGMT_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)appfolio\.com(\/|$)/i,
+  /(^|\.)appfolioinc\.com(\/|$)/i,
+  /(^|\.)ir\.appfolioinc\.com(\/|$)/i,
+  /(^|\.)realpage\.com(\/|$)/i,
+  /(^|\.)yardi\.com(\/|$)/i,
+  /(^|\.)buildium\.com(\/|$)/i,
+  /(^|\.)entrata\.com(\/|$)/i,
+  /(^|\.)mrisoftware\.com(\/|$)/i,
+  /(^|\.)funnelleasing\.com(\/|$)/i,
+  /(^|\.)eliseai\.com(\/|$)/i,
+  /(^|\.)assetliving\.com(\/|$)/i,
+  /(^|\.)smartrent\.com(\/|$)/i,
+  /(^|\.)investors\.smartrent\.com(\/|$)/i,
+  /(^|\.)roofstock\.com(\/|$)/i,
+  /(^|\.)mynd\.co(\/|$)/i,
+  /(^|\.)triconresidential\.com(\/|$)/i,
+  /(^|\.)nmhc\.org(\/|$)/i,
+  /(^|\.)naahq\.org(\/|$)/i,
+  /(^|\.)reit\.com(\/|$)/i,
+  /(^|\.)hud\.gov(\/|$)/i,
+  /(^|\.)epic\.org(\/|$)/i,
+  // PE / VC firms acting as primary owner-side disclosure
+  /(^|\.)thomabravo\.com(\/|$)/i,
+  /(^|\.)silverlake\.com(\/|$)/i,
+  /(^|\.)blackstone\.com(\/|$)/i,
+  /(^|\.)harvestpartners\.com(\/|$)/i,
+  /(^|\.)gipartners\.com(\/|$)/i,
+  /(^|\.)ta\.com(\/|$)/i,
+  /(^|\.)dragoneer\.com(\/|$)/i,
+  /(^|\.)hggc\.com(\/|$)/i,
+  /(^|\.)alphapartners\.com(\/|$)/i,
+  /(^|\.)sapphireventures\.com(\/|$)/i,
+  /(^|\.)ret\.vc(\/|$)/i,
+  /(^|\.)k1capital\.com(\/|$)/i,
+  /(^|\.)sumeru\.com(\/|$)/i,
+  /(^|\.)point72\.com(\/|$)/i,
+  /(^|\.)divcowest\.com(\/|$)/i,
+  /(^|\.)kochind\.com(\/|$)/i,
+  /(^|\.)stblaw\.com(\/|$)/i,
+];
+
 const SECONDARY_PATTERNS: RegExp[] = [
   // Tier-1 general business + tech press
   /(^|\.)bloomberg\.com(\/|$)/i,
@@ -364,6 +407,43 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)abcmoney\.co\.uk(\/|$)/i,
   // VentureBeat
   /(^|\.)venturebeat\.com(\/|$)/i,
+  // Property management trade press
+  /(^|\.)multifamilydive\.com(\/|$)/i,
+  /(^|\.)multifamilyexecutive\.com(\/|$)/i,
+  /(^|\.)multifamilypress\.com(\/|$)/i,
+  /(^|\.)bisnow\.com(\/|$)/i,
+  /(^|\.)yieldpro\.com(\/|$)/i,
+  /(^|\.)housingwire\.com(\/|$)/i,
+  /(^|\.)seniorhousingnews\.com(\/|$)/i,
+  /(^|\.)multifamily\.\w+(\/|$)/i,
+  /(^|\.)multifamilybiz\.com(\/|$)/i,
+  /(^|\.)nareit\.com(\/|$)/i,
+  /(^|\.)builtinnyc\.com(\/|$)/i,
+  /(^|\.)deseret\.com(\/|$)/i,
+  // Funding aggregators (TexAu, Clay, StartupIntros, MergerLinks, GetLatka, Datanyze, iDataLabs, FinLedger, Realty Trends)
+  /(^|\.)texau\.com(\/|$)/i,
+  /(^|\.)clay\.com(\/|$)/i,
+  /(^|\.)startupintros\.com(\/|$)/i,
+  /(^|\.)mergerlinks\.com(\/|$)/i,
+  /(^|\.)app\.mergerlinks\.com(\/|$)/i,
+  /(^|\.)getlatka\.com(\/|$)/i,
+  /(^|\.)datanyze\.com(\/|$)/i,
+  /(^|\.)idatalabs\.com(\/|$)/i,
+  /(^|\.)finledger\.com(\/|$)/i,
+  /(^|\.)realtytrends\.co(\/|$)/i,
+  /(^|\.)privsource\.com(\/|$)/i,
+  /(^|\.)cbinsights\.com(\/|$)/i,
+  // Market research firms (TAM and forecast publishers)
+  /(^|\.)ibisworld\.com(\/|$)/i,
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)technavio\.com(\/|$)/i,
+  /(^|\.)revenuememo\.com(\/|$)/i,
+  // Insurance Journal (regulatory + class-action news)
+  /(^|\.)insurancejournal\.com(\/|$)/i,
+  // Cohen Milstein (plaintiffs' firm; secondary regulatory disclosure)
+  /(^|\.)cohenmilstein\.com(\/|$)/i,
+  /(^|\.)blog\.liebatlaw\.com(\/|$)/i,
 ];
 
 export interface Reference {
@@ -399,6 +479,9 @@ export function classifyTier(
   if (!url || !domain) return { tier: "unknown", reason: "no parseable URL" };
   for (const re of PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `primary domain: ${domain}` };
+  }
+  for (const re of PROPERTY_MGMT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `property-mgmt primary: ${domain}` };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
