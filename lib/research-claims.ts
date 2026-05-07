@@ -121,6 +121,38 @@ const PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)joinpavilion\.com(\/|$)/i,
   /(^|\.)revgenius\.com(\/|$)/i,
   /(^|\.)nucleusresearch\.com(\/|$)/i,
+  // Field service / specialty trade corporate publishers
+  /(^|\.)servicetitan\.com(\/|$)/i,
+  /(^|\.)investors\.servicetitan\.com(\/|$)/i,
+  /(^|\.)housecallpro\.com(\/|$)/i,
+  /(^|\.)getjobber\.com(\/|$)/i,
+  /(^|\.)workiz\.com(\/|$)/i,
+  /(^|\.)workhero\.ai(\/|$)/i,
+  /(^|\.)sitecapture\.com(\/|$)/i,
+  /(^|\.)buildops\.com(\/|$)/i,
+  /(^|\.)servicetrade\.com(\/|$)/i,
+  /(^|\.)fieldedge\.com(\/|$)/i,
+  /(^|\.)fieldroutes\.com(\/|$)/i,
+  /(^|\.)clearent\.com(\/|$)/i,
+  /(^|\.)xplor\.com(\/|$)/i,
+  /(^|\.)xplortechnologies\.com(\/|$)/i,
+  /(^|\.)authoritybrands\.com(\/|$)/i,
+  /(^|\.)chemed\.com(\/|$)/i,
+  /(^|\.)withrebar\.ai(\/|$)/i,
+  // Press wire variant
+  /(^|\.)prweb\.com(\/|$)/i,
+  // PE / VC firms (primary on portfolio company announcements they sponsored)
+  /(^|\.)vistaequitypartners\.com(\/|$)/i,
+  /(^|\.)newviewcapital\.com(\/|$)/i,
+  /(^|\.)summitpartners\.com(\/|$)/i,
+  /(^|\.)mainsailpartners\.com(\/|$)/i,
+  /(^|\.)riversidecompany\.com(\/|$)/i,
+  /(^|\.)frontiergrowth\.com(\/|$)/i,
+  /(^|\.)apax\.com(\/|$)/i,
+  /(^|\.)leadedge\.com(\/|$)/i,
+  /(^|\.)leadedgecapital\.com(\/|$)/i,
+  /(^|\.)kkr\.com(\/|$)/i,
+  /(^|\.)carlyle\.com(\/|$)/i,
 ];
 
 const PRIMARY_PATH_FRAGMENTS = [
@@ -290,6 +322,48 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)thenextweb\.com(\/|$)/i,
   // TechStartups (sector trade press)
   /(^|\.)techstartups\.com(\/|$)/i,
+  // FinSMEs (M&A/funding tracker)
+  /(^|\.)finsmes\.com(\/|$)/i,
+  // Built In (named tech publication)
+  /(^|\.)builtin\.com(\/|$)/i,
+  // LA TechWatch (regional tech press)
+  /(^|\.)latechwatch\.com(\/|$)/i,
+  // The AI Insider (AI publication)
+  /(^|\.)theaiinsider\.tech(\/|$)/i,
+  // Field service / specialty trade vertical press
+  /(^|\.)achrnews\.com(\/|$)/i,
+  /(^|\.)hvac-insider\.com(\/|$)/i,
+  /(^|\.)landscapemanagement\.net(\/|$)/i,
+  /(^|\.)franchisetimes\.com(\/|$)/i,
+  /(^|\.)pctonline\.com(\/|$)/i,
+  /(^|\.)refrigerationschool\.com(\/|$)/i,
+  // Industry research data providers
+  /(^|\.)ibisworld\.com(\/|$)/i,
+  /(^|\.)isg-one\.com(\/|$)/i,
+  /(^|\.)landbase\.com(\/|$)/i,
+  /(^|\.)sacra\.com(\/|$)/i,
+  /(^|\.)getlatka\.com(\/|$)/i,
+  /(^|\.)privsource\.com(\/|$)/i,
+  /(^|\.)ct-acquisitions\.com(\/|$)/i,
+  /(^|\.)home-service-hound\.com(\/|$)/i,
+  /(^|\.)homeservicehound\.com(\/|$)/i,
+  /(^|\.)homeservicemillionaire\.com(\/|$)/i,
+  // Calcalist CTech (tier-1 international tech press)
+  /(^|\.)calcalistech\.com(\/|$)/i,
+  /(^|\.)calcalist\.co\.il(\/|$)/i,
+  // Stock filing aggregators (Reuters wires)
+  /(^|\.)stocktitan\.net(\/|$)/i,
+  /(^|\.)last10k\.com(\/|$)/i,
+  // Canaccord Genuity (financial advisor disclosures)
+  /(^|\.)canaccordgenuity\.com(\/|$)/i,
+  // Financial Post (Canadian Tier-1 trade)
+  /(^|\.)financialpost\.com(\/|$)/i,
+  // The AI Journal
+  /(^|\.)aijourn\.com(\/|$)/i,
+  // ABC Money (UK financial press)
+  /(^|\.)abcmoney\.co\.uk(\/|$)/i,
+  // VentureBeat
+  /(^|\.)venturebeat\.com(\/|$)/i,
 ];
 
 export interface Reference {
