@@ -80,10 +80,11 @@ function formatDate(iso?: string): string {
   if (!hasDay) return date.toLocaleString("en-US", { month: "long", year: "numeric" });
   const day = date.getDate();
   const month = date.toLocaleString("en-US", { month: "short" });
+  const year = date.getFullYear();
   const time = hasTime
     ? ` ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`
     : "";
-  return `${day} ${month}${time}`;
+  return `${day} ${month} ${year}${time}`;
 }
 
 export default async function ResearchArticlePage(
