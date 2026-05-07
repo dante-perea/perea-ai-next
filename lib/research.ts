@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { Marked } from "marked";
+import markedFootnote from "marked-footnote";
 import { getTranslation, listTranslatedSlugs } from "./research-translations";
 
 const RESEARCH_DIR = path.join(process.cwd(), "content", "whitepapers");
@@ -71,6 +72,11 @@ function buildMarked(toc: ResearchTocItem[]) {
     gfm: true,
     breaks: false,
   });
+
+  m.use(markedFootnote({
+    refMarkers: true,
+    description: "References",
+  }));
 
   m.use({
     renderer: {
