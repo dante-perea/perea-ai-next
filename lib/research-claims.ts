@@ -356,6 +356,81 @@ const FREELANCE_FINANCE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)employer\.com(\/|$)/i,
 ];
 
+const MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS: RegExp[] = [
+  // Amazon corporate
+  /(^|\.)amazon\.com(\/|$)/i,
+  /(^|\.)aboutamazon\.com(\/|$)/i,
+  /(^|\.)sellingpartners\.aboutamazon\.com(\/|$)/i,
+  // Shopify corporate
+  /(^|\.)shopify\.com(\/|$)/i,
+  /(^|\.)engineering\.shopify\.com(\/|$)/i,
+  // Etsy corporate
+  /(^|\.)etsy\.com(\/|$)/i,
+  /(^|\.)investors\.etsy\.com(\/|$)/i,
+  // Walmart corporate
+  /(^|\.)walmart\.com(\/|$)/i,
+  /(^|\.)corporate\.walmart\.com(\/|$)/i,
+  /(^|\.)stock\.walmart\.com(\/|$)/i,
+  /(^|\.)marketplace\.walmart\.com(\/|$)/i,
+  // Pattern Group corporate
+  /(^|\.)pattern\.com(\/|$)/i,
+  /(^|\.)investors\.pattern\.com(\/|$)/i,
+  // Aterian corporate
+  /(^|\.)aterian\.io(\/|$)/i,
+  /(^|\.)ir\.aterian\.io(\/|$)/i,
+  // Seller-tools cohort corporate
+  /(^|\.)pacvue\.com(\/|$)/i,
+  /(^|\.)helium10\.com(\/|$)/i,
+  /(^|\.)carbon6\.io(\/|$)/i,
+  /(^|\.)threecolts\.co(\/|$)/i,
+  /(^|\.)channelengine\.com(\/|$)/i,
+  /(^|\.)channable\.com(\/|$)/i,
+  /(^|\.)datahawk\.co(\/|$)/i,
+  // PPC-automation cohort corporate
+  /(^|\.)perpetua\.io(\/|$)/i,
+  /(^|\.)teikametrics\.com(\/|$)/i,
+  // OpenAI / Stripe / Microsoft corporate (already partially in primary, ensuring marketplace coverage)
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)stripe\.com(\/|$)/i,
+];
+
+const MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS: RegExp[] = [
+  // Marketplace-specialty trade press
+  /(^|\.)marketplacepulse\.com(\/|$)/i,
+  /(^|\.)modernretail\.co(\/|$)/i,
+  /(^|\.)digitalcommerce360\.com(\/|$)/i,
+  /(^|\.)retailtouchpoints\.com(\/|$)/i,
+  /(^|\.)retaildive\.com(\/|$)/i,
+  /(^|\.)ecommercebytes\.com(\/|$)/i,
+  /(^|\.)ecommerce-times\.com(\/|$)/i,
+  /(^|\.)emarketer\.com(\/|$)/i,
+  /(^|\.)marketingdive\.com(\/|$)/i,
+  /(^|\.)supermarketnews\.com(\/|$)/i,
+  /(^|\.)marketwatch\.com(\/|$)/i,
+  /(^|\.)thelettertwo\.com(\/|$)/i,
+  /(^|\.)ecomwatch\.com(\/|$)/i,
+  // Specialty Amazon agency / legal commentary
+  /(^|\.)epinium\.com(\/|$)/i,
+  /(^|\.)canopymanagement\.com(\/|$)/i,
+  /(^|\.)paz\.ai(\/|$)/i,
+  /(^|\.)novadata\.io(\/|$)/i,
+  /(^|\.)amazonsellerslawyer\.com(\/|$)/i,
+  /(^|\.)amazonsellers\.attorney(\/|$)/i,
+  /(^|\.)sellersumbrella\.com(\/|$)/i,
+  // SEC-filing aggregators (mirror primary SEC filings — treat as secondary)
+  /(^|\.)last10k\.com(\/|$)/i,
+  /(^|\.)stockadora\.com(\/|$)/i,
+  /(^|\.)capedge\.com(\/|$)/i,
+  /(^|\.)companiesmarketcap\.com(\/|$)/i,
+  // Tax-specialty for marketplace 1099-K context
+  /(^|\.)cpapracticeadvisor\.com(\/|$)/i,
+  /(^|\.)anchin\.com(\/|$)/i,
+  /(^|\.)formpros\.com(\/|$)/i,
+  /(^|\.)collectiblestax\.com(\/|$)/i,
+  // Industry / payments trade
+  /(^|\.)paymentweek\.com(\/|$)/i,
+];
+
 const SECONDARY_PATTERNS: RegExp[] = [
   // Tier-1 general business + tech press
   /(^|\.)bloomberg\.com(\/|$)/i,
@@ -696,10 +771,16 @@ export function classifyTier(
   for (const re of FREELANCE_FINANCE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `freelance-finance primary: ${domain}` };
   }
+  for (const re of MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `marketplace-seller-ops primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
     }
+  }
+  for (const re of MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `marketplace-seller-ops secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
