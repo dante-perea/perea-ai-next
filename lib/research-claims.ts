@@ -89,6 +89,38 @@ const PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)cloud\.google\.com(\/|$)/i,
   /(^|\.)googlecloudpresscorner\.com(\/|$)/i,
   /(^|\.)blogs\.microsoft\.com(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  // Salesforce / HubSpot / Microsoft Dynamics ecosystem corporate publishers
+  /(^|\.)salesforce\.com(\/|$)/i,
+  /(^|\.)investor\.salesforce\.com(\/|$)/i,
+  /(^|\.)hubspot\.com(\/|$)/i,
+  /(^|\.)sforce\.co(\/|$)/i,
+  // Sales / RevOps / CS corporate publishers (primary on their own announcements + product pages)
+  /(^|\.)clari\.com(\/|$)/i,
+  /(^|\.)salesloft\.com(\/|$)/i,
+  /(^|\.)outreach\.io(\/|$)/i,
+  /(^|\.)outreach\.ai(\/|$)/i,
+  /(^|\.)gong\.io(\/|$)/i,
+  /(^|\.)apollo\.io(\/|$)/i,
+  /(^|\.)clay\.com(\/|$)/i,
+  /(^|\.)6sense\.com(\/|$)/i,
+  /(^|\.)regie\.ai(\/|$)/i,
+  /(^|\.)attention\.com(\/|$)/i,
+  /(^|\.)sierra\.ai(\/|$)/i,
+  /(^|\.)11x\.ai(\/|$)/i,
+  /(^|\.)artisan\.co(\/|$)/i,
+  /(^|\.)bardeen\.ai(\/|$)/i,
+  /(^|\.)gainsight\.com(\/|$)/i,
+  /(^|\.)vitally\.io(\/|$)/i,
+  /(^|\.)totango\.com(\/|$)/i,
+  /(^|\.)demandbase\.com(\/|$)/i,
+  /(^|\.)zoominfo\.com(\/|$)/i,
+  /(^|\.)ir\.zoominfo\.com(\/|$)/i,
+  /(^|\.)nooks\.com(\/|$)/i,
+  // Sales / RevOps community + analyst infrastructure
+  /(^|\.)joinpavilion\.com(\/|$)/i,
+  /(^|\.)revgenius\.com(\/|$)/i,
+  /(^|\.)nucleusresearch\.com(\/|$)/i,
 ];
 
 const PRIMARY_PATH_FRAGMENTS = [
@@ -238,6 +270,26 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)notablecap\.com(\/|$)/i,
   /(^|\.)cognitionhub\.com(\/|$)/i,
   /(^|\.)iris\.vc(\/|$)/i,
+  // Reuters wire syndication (MarketScreener carries Reuters wires)
+  /(^|\.)marketscreener\.com(\/|$)/i,
+  // Inc Magazine + Fast Company + Business Insider tier business press
+  /(^|\.)inc\.com(\/|$)/i,
+  /(^|\.)fastcompany\.com(\/|$)/i,
+  // Sales / RevOps / Salesforce trade press
+  /(^|\.)salesforceben\.com(\/|$)/i,
+  /(^|\.)digitalcommerce360\.com(\/|$)/i,
+  // Crunchbase News (in addition to crunchbase.com base)
+  /(^|\.)news\.crunchbase\.com(\/|$)/i,
+  // Spark Capital / VC firm portfolio pages
+  /(^|\.)sparkcapital\.com(\/|$)/i,
+  // Financial-news aggregators that carry primary Reuters/AP wires
+  /(^|\.)inforcapital\.com(\/|$)/i,
+  // Analyst-style sales/GTM blogs (cited at tertiary tier elsewhere; treat as secondary when used for category framing)
+  /(^|\.)gtmlens\.com(\/|$)/i,
+  // The Next Web (tier-1 tech press)
+  /(^|\.)thenextweb\.com(\/|$)/i,
+  // TechStartups (sector trade press)
+  /(^|\.)techstartups\.com(\/|$)/i,
 ];
 
 export interface Reference {
