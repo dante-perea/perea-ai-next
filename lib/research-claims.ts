@@ -66,6 +66,29 @@ const PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)microsoft\.com\/en-us\/research(\/|$)/i,
   /(^|\.)cohere\.com(\/|$)/i,
   /(^|\.)mistral\.ai(\/|$)/i,
+  // Cybersecurity corporate publishers (primary on their own announcements + blog)
+  /(^|\.)crowdstrike\.com(\/|$)/i,
+  /(^|\.)paloaltonetworks\.com(\/|$)/i,
+  /(^|\.)wiz\.io(\/|$)/i,
+  /(^|\.)lumu\.io(\/|$)/i,
+  /(^|\.)securonix\.com(\/|$)/i,
+  /(^|\.)torq\.io(\/|$)/i,
+  /(^|\.)cisco\.com(\/|$)/i,
+  /(^|\.)sentinelone\.com(\/|$)/i,
+  /(^|\.)drata\.com(\/|$)/i,
+  /(^|\.)chainguard\.dev(\/|$)/i,
+  // MITRE / threat intel standards orgs
+  /(^|\.)atlas\.mitre\.org(\/|$)/i,
+  /(^|\.)mitre\.org(\/|$)/i,
+  /(^|\.)mitre-engenuity\.org(\/|$)/i,
+  /(^|\.)mitre-atlas(\/|$)/i,
+  /(^|\.)owasp\.org(\/|$)/i,
+  /(^|\.)cisa\.gov(\/|$)/i,
+  // Google + Microsoft + corporate blog/security surfaces (specific paths gated below by PRIMARY_PATH_FRAGMENTS)
+  /(^|\.)blog\.google(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  /(^|\.)googlecloudpresscorner\.com(\/|$)/i,
+  /(^|\.)blogs\.microsoft\.com(\/|$)/i,
 ];
 
 const PRIMARY_PATH_FRAGMENTS = [
@@ -73,6 +96,8 @@ const PRIMARY_PATH_FRAGMENTS = [
   "/press-release",
   "/press-releases",
   "/news/",
+  "/news-release",
+  "/news-releases",
   "/newsroom",
   "/investor-relations",
   "/investors/",
@@ -80,6 +105,15 @@ const PRIMARY_PATH_FRAGMENTS = [
   "/research/",
   "/corporate/",
   "/about/news",
+  // Microsoft Security blog (Microsoft's official corporate publication on security)
+  "/en-us/security/blog/",
+  "/security/blog/",
+  // Microsoft Learn product documentation (official platform docs)
+  "/copilot/security/",
+  // M365 Message Center (official admin notifications)
+  "/message/mc",
+  // Resources / case-study pages on corporate domains
+  "/resources/",
   // Conference / spec / protocol artifacts hosted on official corporate domains
   "/spec/",
   "/specs/",
@@ -177,6 +211,33 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)forrester\.com(\/|$)/i,
   /(^|\.)idc\.com(\/|$)/i,
   /(^|\.)cbinsights\.com(\/|$)/i,
+  // Cybersecurity + IT trade press
+  /(^|\.)crn\.com(\/|$)/i,
+  /(^|\.)darkreading\.com(\/|$)/i,
+  /(^|\.)bleepingcomputer\.com(\/|$)/i,
+  /(^|\.)scmagazine\.com(\/|$)/i,
+  /(^|\.)securityweek\.com(\/|$)/i,
+  /(^|\.)threatpost\.com(\/|$)/i,
+  /(^|\.)thehackernews\.com(\/|$)/i,
+  /(^|\.)cyberscoop\.com(\/|$)/i,
+  /(^|\.)cybersecuritydive\.com(\/|$)/i,
+  /(^|\.)securitybrief\.ca(\/|$)/i,
+  /(^|\.)securitybrief\.com\.au(\/|$)/i,
+  /(^|\.)securitybrief\.co\.nz(\/|$)/i,
+  /(^|\.)securitybrief\.eu(\/|$)/i,
+  /(^|\.)yahoo\.com(\/|$)/i,
+  /(^|\.)finance\.yahoo\.com(\/|$)/i,
+  /(^|\.)cnet\.com(\/|$)/i,
+  /(^|\.)infosecurity-magazine\.com(\/|$)/i,
+  /(^|\.)siliconrepublic\.com(\/|$)/i,
+  /(^|\.)theregister\.com(\/|$)/i,
+  /(^|\.)zdnet\.com(\/|$)/i,
+  /(^|\.)computerworld\.com(\/|$)/i,
+  /(^|\.)infoworld\.com(\/|$)/i,
+  // CB-Insights / VC analyst publications
+  /(^|\.)notablecap\.com(\/|$)/i,
+  /(^|\.)cognitionhub\.com(\/|$)/i,
+  /(^|\.)iris\.vc(\/|$)/i,
 ];
 
 export interface Reference {
