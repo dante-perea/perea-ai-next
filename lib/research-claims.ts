@@ -196,6 +196,50 @@ const PRIMARY_PATH_FRAGMENTS = [
   "/blob/master/spec",
 ];
 
+// Mental-health-vertical primary surfaces (corporate IR + vendor sites + PE/VC firms + government bodies)
+const MENTAL_HEALTH_PRIMARY_PATTERNS: RegExp[] = [
+  // Practice-management EHR + AI scribe vendors (corporate)
+  /(^|\.)simplepractice\.com(\/|$)/i,
+  /(^|\.)therapynotes\.com(\/|$)/i,
+  /(^|\.)heidihealth\.com(\/|$)/i,
+  /(^|\.)eleos\.health(\/|$)/i,
+  /(^|\.)upheal\.io(\/|$)/i,
+  /(^|\.)mentalyc\.com(\/|$)/i,
+  /(^|\.)autonotes\.ai(\/|$)/i,
+  // Insurance-billing marketplaces (corporate)
+  /(^|\.)headway\.co(\/|$)/i,
+  /(^|\.)helloalma\.com(\/|$)/i,
+  /(^|\.)growtherapy\.com(\/|$)/i,
+  // Enterprise EAP cohort (corporate)
+  /(^|\.)springhealth\.com(\/|$)/i,
+  /(^|\.)lyrahealth\.com(\/|$)/i,
+  /(^|\.)modernhealth\.com(\/|$)/i,
+  /(^|\.)joinmodernhealth\.com(\/|$)/i,
+  // Telehealth platforms (corporate IR)
+  /(^|\.)talkspace\.com(\/|$)/i,
+  /(^|\.)investors\.talkspace\.com(\/|$)/i,
+  /(^|\.)betterhelp\.com(\/|$)/i,
+  /(^|\.)cerebral\.com(\/|$)/i,
+  // U.S. government health authorities
+  /(^|\.)hrsa\.gov(\/|$)/i,
+  /(^|\.)bhw\.hrsa\.gov(\/|$)/i,
+  /(^|\.)bls\.gov(\/|$)/i,
+  /(^|\.)data\.bls\.gov(\/|$)/i,
+  /(^|\.)samhsa\.gov(\/|$)/i,
+  /(^|\.)cms\.gov(\/|$)/i,
+  /(^|\.)healthit\.gov(\/|$)/i,
+  // Mental-health PE/VC firms acting as primary owner-side disclosure
+  /(^|\.)greenfieldpartners\.com(\/|$)/i,
+  /(^|\.)spark\.capital(\/|$)/i,
+  /(^|\.)sparkcapital\.com(\/|$)/i,
+  /(^|\.)thrivecapital\.com(\/|$)/i,
+  /(^|\.)foundersfund\.com(\/|$)/i,
+  /(^|\.)kleinerperkins\.com(\/|$)/i,
+  /(^|\.)battery\.com(\/|$)/i,
+  /(^|\.)generationim\.com(\/|$)/i,
+  /(^|\.)spark\.com(\/|$)/i,
+];
+
 // Property-management-vertical primary surfaces (corporate IR + vendor sites + PE/VC firms + REIT/industry bodies)
 const PROPERTY_MGMT_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)appfolio\.com(\/|$)/i,
@@ -444,6 +488,39 @@ const SECONDARY_PATTERNS: RegExp[] = [
   // Cohen Milstein (plaintiffs' firm; secondary regulatory disclosure)
   /(^|\.)cohenmilstein\.com(\/|$)/i,
   /(^|\.)blog\.liebatlaw\.com(\/|$)/i,
+  // Mental-health trade press
+  /(^|\.)fiercehealthcare\.com(\/|$)/i,
+  /(^|\.)mobihealthnews\.com(\/|$)/i,
+  /(^|\.)statnews\.com(\/|$)/i,
+  /(^|\.)beckersbehavioralhealth\.com(\/|$)/i,
+  /(^|\.)thehemingwayreport\.com(\/|$)/i,
+  /(^|\.)medcitynews\.com(\/|$)/i,
+  /(^|\.)healthcareittoday\.com(\/|$)/i,
+  /(^|\.)slice(of)?healthcare\.com(\/|$)/i,
+  /(^|\.)sliceofhealthcare\.com(\/|$)/i,
+  /(^|\.)behavioralhealthbusiness\.com(\/|$)/i,
+  /(^|\.)psychcentral\.com(\/|$)/i,
+  /(^|\.)reit\.com(\/|$)/i,
+  // EHR comparison + analytics secondary press
+  /(^|\.)ehrsource\.com(\/|$)/i,
+  /(^|\.)ehrinsider\.com(\/|$)/i,
+  /(^|\.)usecortexa\.com(\/|$)/i,
+  /(^|\.)trysignalbase\.com(\/|$)/i,
+  // Healthcare market research firms
+  /(^|\.)bccresearch\.com(\/|$)/i,
+  /(^|\.)healthcareforesights\.com(\/|$)/i,
+  /(^|\.)marketintelo\.com(\/|$)/i,
+  /(^|\.)futuremarketinsights\.com(\/|$)/i,
+  /(^|\.)giiresearch\.com(\/|$)/i,
+  /(^|\.)imarcgroup\.com(\/|$)/i,
+  // Aggregators + SEC filing mirror sites
+  /(^|\.)companiesmarketcap\.com(\/|$)/i,
+  /(^|\.)techstartups\.com(\/|$)/i,
+  /(^|\.)asiatechdaily\.com(\/|$)/i,
+  /(^|\.)tracxn\.com(\/|$)/i,
+  /(^|\.)pitchbook\.com(\/|$)/i,
+  /(^|\.)sacra\.com(\/|$)/i,
+  /(^|\.)growjo\.com(\/|$)/i,
 ];
 
 export interface Reference {
@@ -482,6 +559,9 @@ export function classifyTier(
   }
   for (const re of PROPERTY_MGMT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `property-mgmt primary: ${domain}` };
+  }
+  for (const re of MENTAL_HEALTH_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `mental-health primary: ${domain}` };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
