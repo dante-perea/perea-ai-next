@@ -591,6 +591,151 @@ const CASTELLANOS_CLASSIFICATION_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.sandiegouniontribune\.com(\/|$)/i,
 ];
 
+const SENIOR_CARE_PRIMARY_PATTERNS: RegExp[] = [
+  // Federal government — health, aging, labor, courts, statutes
+  /(^|\.)acl\.gov(\/|$)/i,
+  /(^|\.)cms\.gov(\/|$)/i,
+  /(^|\.)hhs\.gov(\/|$)/i,
+  /(^|\.)nih\.gov(\/|$)/i,
+  /(^|\.)nia\.nih\.gov(\/|$)/i,
+  /(^|\.)cdc\.gov(\/|$)/i,
+  /(^|\.)medicaid\.gov(\/|$)/i,
+  /(^|\.)medicare\.gov(\/|$)/i,
+  /(^|\.)bls\.gov(\/|$)/i,
+  /(^|\.)cbo\.gov(\/|$)/i,
+  /(^|\.)gao\.gov(\/|$)/i,
+  /(^|\.)federalregister\.gov(\/|$)/i,
+  /(^|\.)congress\.gov(\/|$)/i,
+  /(^|\.)accessdata\.fda\.gov(\/|$)/i,
+  /(^|\.)fda\.gov(\/|$)/i,
+  /(^|\.)ssa\.gov(\/|$)/i,
+  // State government health/aging
+  /(^|\.)aging\.ohio\.gov(\/|$)/i,
+  /(^|\.)health\.ny\.gov(\/|$)/i,
+  /(^|\.)mass\.gov(\/|$)/i,
+  /(^|\.)dhcs\.ca\.gov(\/|$)/i,
+  /(^|\.)dhs\.state(\/|$)/i,
+  // Court records and legal primary
+  /(^|\.)storage\.courtlistener\.com(\/|$)/i,
+  /(^|\.)courtlistener\.com(\/|$)/i,
+  /(^|\.)pacer\.gov(\/|$)/i,
+  // Peer-reviewed journals
+  /(^|\.)nature\.com(\/|$)/i,
+  /(^|\.)nejm\.org(\/|$)/i,
+  /(^|\.)jamanetwork\.com(\/|$)/i,
+  /(^|\.)thelancet\.com(\/|$)/i,
+  /(^|\.)pubmed\.ncbi\.nlm\.nih\.gov(\/|$)/i,
+  /(^|\.)ncbi\.nlm\.nih\.gov(\/|$)/i,
+  // Industry primary trade associations and authoritative bodies
+  /(^|\.)alz\.org(\/|$)/i,
+  /(^|\.)ahcancal\.org(\/|$)/i,
+  /(^|\.)npaonline\.org(\/|$)/i,
+  /(^|\.)leadingage\.org(\/|$)/i,
+  /(^|\.)argentum\.org(\/|$)/i,
+  /(^|\.)nahc\.org(\/|$)/i,
+  /(^|\.)nic\.org(\/|$)/i,
+  /(^|\.)blog\.nic\.org(\/|$)/i,
+  // Senior-care vendor corporate sites (primary corporate disclosures)
+  /(^|\.)pointclickcare\.com(\/|$)/i,
+  /(^|\.)matrixcare\.com(\/|$)/i,
+  /(^|\.)alayacare\.com(\/|$)/i,
+  /(^|\.)wellsky\.com(\/|$)/i,
+  /(^|\.)sensi\.ai(\/|$)/i,
+  /(^|\.)inspiren\.com(\/|$)/i,
+  /(^|\.)suki\.ai(\/|$)/i,
+  /(^|\.)ceracare\.co\.uk(\/|$)/i,
+  /(^|\.)cera\.com(\/|$)/i,
+  /(^|\.)trualta\.com(\/|$)/i,
+  /(^|\.)caribou\.care(\/|$)/i,
+  /(^|\.)vestahealthcare\.com(\/|$)/i,
+  /(^|\.)devoted\.com(\/|$)/i,
+  /(^|\.)joinhonor\.com(\/|$)/i,
+  /(^|\.)welltower\.com(\/|$)/i,
+  /(^|\.)ventasreit\.com(\/|$)/i,
+  /(^|\.)ir\.ventasreit\.com(\/|$)/i,
+  /(^|\.)investor\.resmed\.com(\/|$)/i,
+  /(^|\.)resmed\.com(\/|$)/i,
+  /(^|\.)brightree\.com(\/|$)/i,
+  /(^|\.)theora\.com(\/|$)/i,
+  /(^|\.)apple\.com(\/|$)/i,
+  /(^|\.)support\.apple\.com(\/|$)/i,
+  /(^|\.)vayyar\.com(\/|$)/i,
+  /(^|\.)walabot\.com(\/|$)/i,
+  /(^|\.)tellus\.com(\/|$)/i,
+  /(^|\.)safebeing\.com(\/|$)/i,
+  /(^|\.)safelyyou\.com(\/|$)/i,
+  /(^|\.)olacare\.com(\/|$)/i,
+  /(^|\.)carepredict\.com(\/|$)/i,
+  /(^|\.)carecentrix\.com(\/|$)/i,
+  /(^|\.)homeinstead\.com(\/|$)/i,
+  /(^|\.)maplewoodseniorliving\.com(\/|$)/i,
+  /(^|\.)brookdale\.com(\/|$)/i,
+  /(^|\.)atriaseniorliving\.com(\/|$)/i,
+  /(^|\.)anhwerd\.org(\/|$)/i,
+];
+
+const SENIOR_CARE_SECONDARY_PATTERNS: RegExp[] = [
+  // Senior-care and healthcare trade press
+  /(^|\.)mcknights\.com(\/|$)/i,
+  /(^|\.)mcknightsseniorliving\.com(\/|$)/i,
+  /(^|\.)mcknightshomecare\.com(\/|$)/i,
+  /(^|\.)homehealthcarenews\.com(\/|$)/i,
+  /(^|\.)skillednursingnews\.com(\/|$)/i,
+  /(^|\.)seniorhousingnews\.com(\/|$)/i,
+  /(^|\.)hospicenews\.com(\/|$)/i,
+  /(^|\.)homecaremag\.com(\/|$)/i,
+  /(^|\.)agingmedia\.com(\/|$)/i,
+  /(^|\.)beckershospitalreview\.com(\/|$)/i,
+  /(^|\.)healthcareitnews\.com(\/|$)/i,
+  /(^|\.)healthcaredive\.com(\/|$)/i,
+  /(^|\.)fiercehealthcare\.com(\/|$)/i,
+  /(^|\.)modernhealthcare\.com(\/|$)/i,
+  /(^|\.)medcitynews\.com(\/|$)/i,
+  /(^|\.)healthleadersmedia\.com(\/|$)/i,
+  // Industry analyst and market-research firms
+  /(^|\.)novaoneadvisor\.com(\/|$)/i,
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)polarismarketresearch\.com(\/|$)/i,
+  /(^|\.)alliedmarketresearch\.com(\/|$)/i,
+  /(^|\.)marketsandmarkets\.com(\/|$)/i,
+  /(^|\.)precedenceresearch\.com(\/|$)/i,
+  /(^|\.)imarcgroup\.com(\/|$)/i,
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  // Consumer and senior-care data publishers
+  /(^|\.)aplaceformom\.com(\/|$)/i,
+  /(^|\.)caring\.com(\/|$)/i,
+  /(^|\.)senioradvisor\.com(\/|$)/i,
+  /(^|\.)agingcare\.com(\/|$)/i,
+  // Health-policy think tanks and analyst orgs
+  /(^|\.)kff\.org(\/|$)/i,
+  /(^|\.)commonwealthfund\.org(\/|$)/i,
+  /(^|\.)healthaffairs\.org(\/|$)/i,
+  /(^|\.)brookings\.edu(\/|$)/i,
+  /(^|\.)urban\.org(\/|$)/i,
+  /(^|\.)rand\.org(\/|$)/i,
+  // EHR and product analyst publishers
+  /(^|\.)emrguides\.com(\/|$)/i,
+  /(^|\.)klasresearch\.com(\/|$)/i,
+  /(^|\.)softwareadvice\.com(\/|$)/i,
+  /(^|\.)getapp\.com(\/|$)/i,
+  // Funding and corporate-tracking publishers
+  /(^|\.)crunchbase\.com(\/|$)/i,
+  /(^|\.)pitchbook\.com(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)venturebeat\.com(\/|$)/i,
+  /(^|\.)forbes\.com(\/|$)/i,
+  /(^|\.)bloomberg\.com(\/|$)/i,
+  /(^|\.)reuters\.com(\/|$)/i,
+  // Generalist tech and policy press
+  /(^|\.)wsj\.com(\/|$)/i,
+  /(^|\.)nytimes\.com(\/|$)/i,
+  /(^|\.)washingtonpost\.com(\/|$)/i,
+  /(^|\.)courthousenews\.com(\/|$)/i,
+  /(^|\.)law360\.com(\/|$)/i,
+  /(^|\.)pe\.com(\/|$)/i,
+  /(^|\.)pehub\.com(\/|$)/i,
+];
+
 const MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate
   /(^|\.)amazon\.com(\/|$)/i,
@@ -1015,6 +1160,9 @@ export function classifyTier(
   for (const re of CASTELLANOS_CLASSIFICATION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `castellanos-classification primary: ${domain}` };
   }
+  for (const re of SENIOR_CARE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `senior-care primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1028,6 +1176,9 @@ export function classifyTier(
   }
   for (const re of CASTELLANOS_CLASSIFICATION_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `castellanos-classification secondary: ${domain}` };
+  }
+  for (const re of SENIOR_CARE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `senior-care secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
