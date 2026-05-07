@@ -460,6 +460,137 @@ const PORTABLE_BENEFITS_LEGISLATION_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)ecomwatch\.com(\/|$)/i,
 ];
 
+const CASTELLANOS_CLASSIFICATION_PRIMARY_PATTERNS: RegExp[] = [
+  // California court system (opinions + dockets + case info)
+  /(^|\.)supreme\.courts\.ca\.gov(\/|$)/i,
+  /(^|\.)courts\.ca\.gov(\/|$)/i,
+  /(^|\.)www4\.courts\.ca\.gov(\/|$)/i,
+  /(^|\.)appellatecases\.courtinfo\.ca\.gov(\/|$)/i,
+  /(^|\.)statecourtreport\.org(\/|$)/i,
+  // California legislature + code
+  /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+  /(^|\.)california\.public\.law(\/|$)/i,
+  // California state government / executive
+  /(^|\.)gov\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.gov\.ca\.gov(\/|$)/i,
+  /(^|\.)perb\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.perb\.ca\.gov(\/|$)/i,
+  /(^|\.)sos\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.sos\.ca\.gov(\/|$)/i,
+  /(^|\.)vig\.cdn\.sos\.ca\.gov(\/|$)/i,
+  /(^|\.)lao\.ca\.gov(\/|$)/i,
+  /(^|\.)ftb\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.ftb\.ca\.gov(\/|$)/i,
+  /(^|\.)edd\.ca\.gov(\/|$)/i,
+  /(^|\.)labor\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.labor\.ca\.gov(\/|$)/i,
+  // California legislative committee + senator pages
+  /(^|\.)sd03\.senate\.ca\.gov(\/|$)/i,
+  /(^|\.)ains\.assembly\.ca\.gov(\/|$)/i,
+  /(^|\.)acom\.assembly\.ca\.gov(\/|$)/i,
+  // Other state legislatures
+  /(^|\.)assembly\.state\.ny\.us(\/|$)/i,
+  /(^|\.)nysenate\.gov(\/|$)/i,
+  /(^|\.)www\.nysenate\.gov(\/|$)/i,
+  /(^|\.)lawfilesext\.leg\.wa\.gov(\/|$)/i,
+  // Court opinion mirrors / databases (publish primary court opinion text)
+  /(^|\.)law\.justia\.com(\/|$)/i,
+  /(^|\.)casetext\.com(\/|$)/i,
+  /(^|\.)caselaw\.findlaw\.com(\/|$)/i,
+  /(^|\.)scocal\.stanford\.edu(\/|$)/i,
+  /(^|\.)courthousenews\.com(\/|$)/i,
+  /(^|\.)www\.courthousenews\.com(\/|$)/i,
+  /(^|\.)a\.qoid\.us(\/|$)/i,
+  // Vendor corporate (rideshare/portable-health platforms)
+  /(^|\.)uber\.com(\/|$)/i,
+  /(^|\.)www\.uber\.com(\/|$)/i,
+  // Academic primary (amicus briefs, faculty-published court documents)
+  /(^|\.)berkeley\.edu(\/|$)/i,
+  /(^|\.)law\.berkeley\.edu(\/|$)/i,
+  /(^|\.)www\.law\.berkeley\.edu(\/|$)/i,
+  // S3-hosted official legislative analyses
+  /(^|\.)billtexts\.s3\.amazonaws\.com(\/|$)/i,
+  /(^|\.)s3\.amazonaws\.com(\/|$)/i,
+];
+
+const CASTELLANOS_CLASSIFICATION_SECONDARY_PATTERNS: RegExp[] = [
+  // California regional press
+  /(^|\.)pressdemocrat\.com(\/|$)/i,
+  /(^|\.)www\.pressdemocrat\.com(\/|$)/i,
+  /(^|\.)sfgate\.com(\/|$)/i,
+  /(^|\.)preview-prod\.w\.sfgate\.com(\/|$)/i,
+  /(^|\.)abc7\.com(\/|$)/i,
+  /(^|\.)www\.abc7\.com(\/|$)/i,
+  /(^|\.)kqed\.org(\/|$)/i,
+  /(^|\.)ww2\.kqed\.org(\/|$)/i,
+  /(^|\.)sacbee\.com(\/|$)/i,
+  /(^|\.)www\.sacbee\.com(\/|$)/i,
+  /(^|\.)kcra\.com(\/|$)/i,
+  /(^|\.)www\.kcra\.com(\/|$)/i,
+  /(^|\.)latimes\.com(\/|$)/i,
+  /(^|\.)www\.latimes\.com(\/|$)/i,
+  /(^|\.)sfexaminer\.com(\/|$)/i,
+  /(^|\.)www\.sfexaminer\.com(\/|$)/i,
+  /(^|\.)sf\.eater\.com(\/|$)/i,
+  /(^|\.)eater\.com(\/|$)/i,
+  /(^|\.)eu\.desertsun\.com(\/|$)/i,
+  /(^|\.)desertsun\.com(\/|$)/i,
+  /(^|\.)calmatters\.org(\/|$)/i,
+  /(^|\.)www\.calmatters\.org(\/|$)/i,
+  // Massachusetts regional press
+  /(^|\.)bostonglobe\.com(\/|$)/i,
+  /(^|\.)www\.bostonglobe\.com(\/|$)/i,
+  /(^|\.)commonwealthbeacon\.org(\/|$)/i,
+  /(^|\.)wgbh\.org(\/|$)/i,
+  /(^|\.)www\.wgbh\.org(\/|$)/i,
+  /(^|\.)gbh\.org(\/|$)/i,
+  // Illinois regional press (additional beyond portable-benefits set)
+  /(^|\.)newsletters\.suntimes\.com(\/|$)/i,
+  /(^|\.)capitolnewsillinois\.com(\/|$)/i,
+  // National + general business
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)www\.techcrunch\.com(\/|$)/i,
+  /(^|\.)news\.bloomberglaw\.com(\/|$)/i,
+  /(^|\.)bloomberglaw\.com(\/|$)/i,
+  /(^|\.)usnews\.com(\/|$)/i,
+  /(^|\.)www\.usnews\.com(\/|$)/i,
+  /(^|\.)cnbc\.com(\/|$)/i,
+  /(^|\.)www\.cnbc\.com(\/|$)/i,
+  /(^|\.)cnn\.com(\/|$)/i,
+  /(^|\.)www\.cnn\.com(\/|$)/i,
+  /(^|\.)npr\.org(\/|$)/i,
+  /(^|\.)www\.npr\.org(\/|$)/i,
+  /(^|\.)cbsnews\.com(\/|$)/i,
+  /(^|\.)www\.cbsnews\.com(\/|$)/i,
+  // Legal commentary + law firms
+  /(^|\.)hklaw\.com(\/|$)/i,
+  /(^|\.)jacksonlewis\.com(\/|$)/i,
+  /(^|\.)fenwick\.com(\/|$)/i,
+  /(^|\.)callaborlaw\.com(\/|$)/i,
+  /(^|\.)cdf-labor-law\.com(\/|$)/i,
+  /(^|\.)ogletree\.com(\/|$)/i,
+  /(^|\.)mondaq\.com(\/|$)/i,
+  /(^|\.)www\.mondaq\.com(\/|$)/i,
+  /(^|\.)hrdailyadvisor\.hci\.org(\/|$)/i,
+  /(^|\.)scocablog\.com(\/|$)/i,
+  /(^|\.)electionlawblog\.org(\/|$)/i,
+  /(^|\.)law\.com(\/|$)/i,
+  /(^|\.)www\.law\.com(\/|$)/i,
+  // Academic + research / advocacy / industry
+  /(^|\.)cspa\.tufts\.edu(\/|$)/i,
+  /(^|\.)cwci\.org(\/|$)/i,
+  /(^|\.)seiu\.org(\/|$)/i,
+  /(^|\.)uschamber\.com(\/|$)/i,
+  /(^|\.)www\.uschamber\.com(\/|$)/i,
+  /(^|\.)grsm\.com(\/|$)/i,
+  /(^|\.)ballotpedia\.org(\/|$)/i,
+  /(^|\.)www\.ballotpedia\.org(\/|$)/i,
+  /(^|\.)sites\.law\.berkeley\.edu(\/|$)/i,
+  /(^|\.)businessdailynetwork\.com(\/|$)/i,
+  /(^|\.)sandiegouniontribune\.com(\/|$)/i,
+  /(^|\.)www\.sandiegouniontribune\.com(\/|$)/i,
+];
+
 const MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate
   /(^|\.)amazon\.com(\/|$)/i,
@@ -881,6 +1012,9 @@ export function classifyTier(
   for (const re of PORTABLE_BENEFITS_LEGISLATION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `portable-benefits-legislation primary: ${domain}` };
   }
+  for (const re of CASTELLANOS_CLASSIFICATION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `castellanos-classification primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -891,6 +1025,9 @@ export function classifyTier(
   }
   for (const re of PORTABLE_BENEFITS_LEGISLATION_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `portable-benefits-legislation secondary: ${domain}` };
+  }
+  for (const re of CASTELLANOS_CLASSIFICATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `castellanos-classification secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
