@@ -164,6 +164,10 @@ export default async function ResearchArticleEsPage(
                 <span className={styles.heroMetaValue}>{frontmatter.authors.join(", ")}</span>
               </div>
             )}
+            <div className={styles.heroMetaItem}>
+              <span className={styles.heroMetaLabel}>Email</span>
+              <a href="mailto:dante@perea.ai" className={styles.heroMetaValue}>dante@perea.ai</a>
+            </div>
             {dateStr && (
               <div className={styles.heroMetaItem}>
                 <span className={styles.heroMetaLabel}>Publicado</span>
