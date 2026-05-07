@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T12:07"
 audience: "Founders, GTM leads, and product teams selling AI agents into K-12, higher education, corporate learning + development, curriculum + content creation, assessment + testing, and admissions + enrollment — plus operators evaluating teacher-tool + student-tutoring + workforce-skilling adjacencies."
 length: "~5,300 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "2.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:57"
 audience: "Cybersecurity founders, CISOs, security infrastructure investors, AI-platform PMs"
 length: "~9,500 words"
 license: "CC BY 4.0"

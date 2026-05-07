@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T08:28"
 audience: "Founders building vertical AI agents and weighing model quality vs corpus depth as the source of defensibility. Operators inside vertical-AI incumbents (Harvey, Legora, EvenUp, Hippocratic AI, Abridge, OpenEvidence, Sixfold, Tractable, Trullion, Vic.ai, Real Brokerage, CoStar, Procore, Autodesk Construction Cloud) calibrating corpus strategy against incumbent advantages. Investors pricing the corpus moat into vertical-AI multiples after Cowork commoditized model quality and CaseText/EvenUp/Hippocratic precedents reset acquisition comps."
 length: "~5,800 words"
 license: "CC BY 4.0"

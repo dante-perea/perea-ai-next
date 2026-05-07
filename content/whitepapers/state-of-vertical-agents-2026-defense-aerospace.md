@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T11:07"
 audience: "Founders, GTM leads, and product teams selling AI agents into U.S. defense, intelligence, and aerospace mission systems — plus operators evaluating dual-use commercial-defense adjacencies."
 length: "~5,400 words"
 license: "CC BY 4.0"

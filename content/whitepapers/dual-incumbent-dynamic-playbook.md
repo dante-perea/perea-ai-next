@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:36"
 audience: "Founders building vertical AI agents and weighing the partner-and-competitor decision when the canonical channel partner is also building competing internal AI. Operators inside vertical-AI incumbents calibrating dual-incumbent partnership posture. Investors triangulating which vertical-AI vendors structure pilots to survive Big-4 / Microsoft / Epic / Vista internal-build competition vs. who gets squeezed out at renewal. Channel + corp-dev teams inside Big-4 + Microsoft + Epic + Cerner + Oracle + Vista Equity calibrating partnership programs for AI-native vendors."
 length: "~5,400 words"
 license: "CC BY 4.0"

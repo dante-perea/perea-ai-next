@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T06:58"
 audience: "Vertical-agent founders shipping the first version. Operators inside vertical-AI startups calibrating pricing, distribution, and tooling. Investors triangulating which 90-day patterns predict $10M-ARR-by-year-3 outcomes."
 length: "~6,500 words"
 license: "CC BY 4.0"

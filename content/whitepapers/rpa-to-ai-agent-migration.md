@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:06"
 audience: "Operators inside enterprises with established UiPath / Microsoft Power Automate / Blue Prism / Automation Anywhere RPA programs evaluating migration to AI agents. Founders building AI agent products that displace or augment legacy RPA deployments. Investors triangulating which enterprise-AI vendors capture the RPA-augmentation $30B+ TAM. Chief Operating Officers + Chief Financial Officers + Chief Information Officers + Chief Process Officers calibrating the RPA-vs-AI-agent capital allocation decision and the 12-18-month enterprise migration timeline."
 length: "~5,500 words"
 license: "CC BY 4.0"

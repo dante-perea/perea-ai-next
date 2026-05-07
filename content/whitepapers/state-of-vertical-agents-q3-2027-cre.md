@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T07:58"
 audience: "Founders evaluating commercial real estate vertical agent market entry. Operators inside top-3 brokers (CBRE, JLL, Cushman & Wakefield), CRE funds (Vista, Blackstone, Brookfield, KKR), residential platforms (Real Brokerage, Compass, Anywhere), and CRE-finance specialists calibrating product strategy. Investors triangulating which AI-native CRE business gets acquired by Real Brokerage / Compass / CoStar / JLL / CBRE / Cushman next."
 length: "~6,500 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T12:57"
 audience: "Travel-tech founders, hotel operators, OTA executives, GDS product leaders, corporate-travel buyers, and investors evaluating the agentic-travel thesis"
 length: "~5,200 words"
 license: "CC BY 4.0"

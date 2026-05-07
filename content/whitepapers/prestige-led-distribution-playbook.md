@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T08:36"
 audience: "Founders building vertical AI agents and weighing GTM motion priority. Operators inside vertical-AI incumbents (Harvey, Legora, Hippocratic AI, Abridge, OpenEvidence, EvenUp, Sixfold, Tractable, Trullion, Vic.ai) calibrating distribution strategy against incumbent advantages. Investors triangulating which vertical-AI businesses ride the prestige-led-distribution flywheel and which ones do not."
 length: "~5,400 words"
 license: "CC BY 4.0"

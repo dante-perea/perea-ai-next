@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T11:37"
 audience: "Founders, GTM leads, and product teams selling AI agents into discrete manufacturing, process manufacturing, automotive, aerospace, semiconductor, electronics, food + beverage, and industrial automation — plus operators evaluating reshoring-driven brownfield modernization opportunities."
 length: "~5,300 words"
 license: "CC BY 4.0"

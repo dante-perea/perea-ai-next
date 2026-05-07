@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T12:38"
 audience: "Founders, GTM leads, and product teams selling AI agents into film + TV studios, streaming services, advertising + corporate video, music + audio production, news + journalism, gaming + interactive media, broadcasting + sports — plus operators evaluating creator-economy + AI-avatar + AI-music adjacencies."
 length: "~5,200 words"
 license: "CC BY 4.0"

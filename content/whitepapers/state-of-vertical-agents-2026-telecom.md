@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T12:18"
 audience: "Founders, GTM leads, and product teams selling AI agents into telecom carriers (mobile + fixed-line + cable), network operations, RAN automation, OSS/BSS, customer experience, network slicing + private 5G, and field service + tower management — plus operators evaluating MVNO + AI-native carrier adjacencies."
 length: "~5,200 words"
 license: "CC BY 4.0"

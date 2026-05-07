@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:05"
 audience: "Founders building insurance vertical AI agents and weighing the compliance-overhead question. Operators inside insurance-AI incumbents (Sixfold, Tractable, EvolutionIQ-now-CCC, a21.ai, Cambio) calibrating multi-jurisdiction compliance posture. General counsel + chief compliance officers inside Top-50 carriers + reinsurers + MGAs evaluating insurance-AI vendor compliance evidence packs."
 length: "~5,000 words"
 license: "CC BY 4.0"

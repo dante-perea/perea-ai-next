@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T07:39"
 audience: "Founders evaluating accounting and finance-ops vertical agent market entry. Operators inside Big-4 firms, Top-100 accounting firms, mid-market firms, and corporate-finance teams calibrating product strategy. Investors triangulating which AI-native accounting business gets acquired by Workday / Oracle / Microsoft / Sage / Intuit / ServiceNow / IBM next."
 length: "~6,500 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T11:17"
 audience: "Founders, GTM leads, and product teams selling AI agents into electric utilities, oil and gas operators, renewables developers, and energy storage / SMR / nuclear adjacencies — plus operators evaluating data-center-power-demand-driven enterprise software opportunities."
 length: "~5,400 words"
 license: "CC BY 4.0"

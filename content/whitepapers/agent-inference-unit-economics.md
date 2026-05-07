@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:16"
 audience: "Founders building AI agent products and weighing the inference-cost-as-COGS tradeoff. Operators inside enterprise AI teams calibrating self-host vs API vs hybrid inference architecture. Investors triangulating which AI agent businesses have FinOps discipline + cost-per-task tracking + governance frameworks vs who is exposed to runaway inference spend. Chief Financial Officers + Chief Technology Officers + Chief AI Officers + cloud-FinOps leaders evaluating inference-cost optimization roadmap and 12-18-month $50M-$500M annual inference-spend cycles."
 length: "~5,400 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:16"
 audience: "Founders building healthcare vertical AI agents and weighing the validation-panel investment as a moat decision. Operators inside healthcare-AI incumbents (Hippocratic AI, Abridge, OpenEvidence, DAX Copilot/Microsoft Nuance, Suki, Augmedix-now-Commure) calibrating panel-design strategy. Investors triangulating which healthcare-AI vendors have built genuine validation moats vs. who is shipping benchmark-only quality claims. Cross-vertical operators in insurance, accounting, CRE, and construction adapting validation-panel methodology to their domains."
 length: "~5,200 words"
 license: "CC BY 4.0"

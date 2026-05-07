@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:28"
 audience: "Founders building healthcare vertical AI agents and weighing the consumer-triage vs clinical-documentation vs prior-auth/claims decision matrix. Operators inside health systems + payors + pharma calibrating AI agent deployment programs against published failure-mode evidence. Investors triangulating which healthcare-AI vendors avoid the ChatGPT-Health-undertriage + nH-Predict-error-rate + WISeR-delay failure patterns vs who is exposed to litigation + regulatory + reputational risk. Chief Medical Officers + Chief Risk Officers + Chief Compliance Officers + Chief AI Officers + Chief Information Security Officers evaluating healthcare-AI vendor selection."
 length: "~5,500 words"
 license: "CC BY 4.0"

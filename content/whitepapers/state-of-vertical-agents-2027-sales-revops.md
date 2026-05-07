@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T19:08"
 audience: "Founders building vertical AI agents for sales & revenue operations; VP Sales / Sales Ops / RevOps leaders evaluating the post-CRM stack; investors mapping the agentic GTM category"
 length: "~13,500 words"
 license: "CC BY 4.0"

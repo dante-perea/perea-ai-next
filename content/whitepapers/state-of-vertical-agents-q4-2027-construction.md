@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T08:19"
 audience: "Founders evaluating construction and AEC vertical agent market entry. Operators inside ENR Top 400 contractors, top-3 specialty-trade suppliers (HVAC, electrical, plumbing wholesalers), construction-tech incumbents (Procore, Autodesk Construction Cloud, Trimble), AGC + CFMA member firms, and construction-finance specialists calibrating product strategy. Investors triangulating which AI-native AEC business gets acquired by Procore / Autodesk / Trimble / Oracle / Microsoft next."
 length: "~6,400 words"
 license: "CC BY 4.0"

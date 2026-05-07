@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T11:57"
 audience: "Founders, GTM leads, and product teams selling AI agents into talent acquisition, HR information systems (HRIS), people analytics, learning + development, performance + engagement, and the talent marketplace + gig labor adjacency."
 length: "~5,200 words"
 license: "CC BY 4.0"

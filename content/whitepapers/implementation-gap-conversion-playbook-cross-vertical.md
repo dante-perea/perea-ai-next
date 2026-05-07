@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:46"
 audience: "Founders building vertical AI agents and weighing the implementation-gap conversion question. Operators inside vertical-AI incumbents calibrating customer-success methodology and renewal-conversion strategy. Investors triangulating which vertical-AI vendors have documented Conversion Methodology vs. who is shipping benchmark-only quality claims. Customer-success + change-management + executive-sponsor leaders inside Top-100 health systems + Big-4 firms + ENR Top 400 contractors + Top-3 brokers + Top-50 PI firms calibrating AI deployment programs. CIOs and CDOs evaluating AI agent vendor selection through the 89%-of-failures-from-5-root-causes lens."
 length: "~5,400 words"
 license: "CC BY 4.0"

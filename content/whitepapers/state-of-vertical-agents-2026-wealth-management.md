@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T13:06"
 audience: "Wealth-tech founders, RIA principals, broker-dealer technology leaders, custodian product teams, and investors evaluating advisor-productivity AI"
 length: "~5,000 words"
 license: "CC BY 4.0"

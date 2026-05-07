@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T08:55"
 audience: "Founders building insurance vertical AI agents and weighing the reinsurer-seed-customer GTM pattern. Operators inside Munich Re, Swiss Re, Hannover Re, and the Top-10 reinsurer cohort calibrating AI-product-co-development positioning. Investors triangulating which insurance-AI startups land Munich Re / Swiss Re / Hannover Re seed-customer relationships and which ones don't."
 length: "~5,400 words"
 license: "CC BY 4.0"

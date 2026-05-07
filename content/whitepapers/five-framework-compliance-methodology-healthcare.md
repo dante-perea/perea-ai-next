@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:27"
 audience: "Founders building healthcare vertical AI agents and weighing the multi-jurisdiction compliance overhead. Operators inside healthcare-AI incumbents (Hippocratic AI, Abridge, OpenEvidence, DAX Copilot/Microsoft Nuance, Suki, Augmedix-now-Commure) calibrating multi-framework compliance posture. General counsel + compliance officers inside Top-50 health systems + payors + pharma evaluating healthcare-AI vendor compliance evidence packs. Investors triangulating healthcare-AI vendors with documented Five-Framework readiness vs. retrofit-risk-exposed alternatives."
 length: "~5,400 words"
 license: "CC BY 4.0"

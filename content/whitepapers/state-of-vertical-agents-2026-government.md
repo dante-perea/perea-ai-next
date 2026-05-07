@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T10:38"
 audience: "Founders, GTM leads, and product teams selling AI agents into U.S. federal, state, local, and tribal government — plus operators evaluating defense/intel adjacencies."
 length: "~5,400 words"
 license: "CC BY 4.0"

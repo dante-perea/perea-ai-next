@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T11:27"
 audience: "Founders, GTM leads, and product teams selling AI agents into freight brokerage, asset-based carriers, shippers, third-party logistics (3PL/4PL), freight forwarders, and last-mile delivery — plus operators evaluating customs, yard-management, and warehousing-physical-AI adjacencies."
 length: "~5,300 words"
 license: "CC BY 4.0"

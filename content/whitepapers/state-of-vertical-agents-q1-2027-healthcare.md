@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T07:19"
 audience: "Founders evaluating healthcare-vertical agent market entry. Operators inside health systems, payors, pharma, and EHR vendors calibrating product strategy. Investors triangulating which AI-native unicorn-tier business gets acquired by Microsoft / Epic / Cerner-Oracle / Commure / UnitedHealth-Optum next."
 length: "~6,500 words"
 license: "CC BY 4.0"

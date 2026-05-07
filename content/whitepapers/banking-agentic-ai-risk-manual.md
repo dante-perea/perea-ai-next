@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T09:56"
 audience: "Founders building banking + financial services vertical AI agents and weighing the SR 26-2 footnote-3-carve-out compliance posture. Operators inside Top-100 U.S. banks ($30B+ asset organizations) calibrating MRM extension to agentic AI. Investors triangulating which financial-services-AI vendors have documented MRM-extension methodology vs. who is exposed to OCC + Federal Reserve + FDIC supervisory examinations under the regulatory gray zone. Bank chief risk officers + chief model risk officers + AI risk officers + chief data officers evaluating agentic AI deployment programs under the new April 17, 2026 regime."
 length: "~5,800 words"
 license: "CC BY 4.0"

@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T08:46"
 audience: "Founders building vertical AI agents and weighing IPO trajectory vs platform-acquisition exit positioning. Operators inside vertical-AI incumbents calibrating M&A strategy. Investors triangulating which vertical-AI businesses get absorbed by Verisk / CCC / Moody's / Solera / Duck Creek / Microsoft / Real Brokerage / Procore / Autodesk Construction Cloud / Big-4 / Workday next, and at what valuation multiples."
 length: "~5,600 words"
 license: "CC BY 4.0"

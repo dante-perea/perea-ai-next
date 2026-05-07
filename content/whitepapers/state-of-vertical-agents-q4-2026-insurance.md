@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T06:36"
 audience: "Founders evaluating insurance-vertical agent market entry. Operators inside carriers, MGAs, TPAs, reinsurers, and brokers calibrating product strategy. Investors triangulating who wins after the Duck Creek Agentic Platform launch in April 2026."
 length: "~6,500 words"
 license: "CC BY 4.0"

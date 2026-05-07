@@ -5,7 +5,7 @@ publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
 status: "Public draft"
-date: "2026-05"
+date: "2026-05-07T13:16"
 audience: "Capital-markets technology founders, investment banking heads of innovation, sell-side equity research leaders, buy-side asset manager technology officers, and investors evaluating the AI-banking thesis"
 length: "~4,800 words"
 license: "CC BY 4.0"
