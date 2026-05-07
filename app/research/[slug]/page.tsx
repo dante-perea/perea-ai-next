@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import fs from "node:fs";
+import path from "node:path";
+import matter from "gray-matter";
 import { getResearch, listResearch } from "@/lib/research";
 import { getTranslation } from "@/lib/research-translations";
+import { extractReferences } from "@/lib/research-claims";
 import { ReadingProgress } from "@/components/research/ReadingProgress";
 import { StickyTOC } from "@/components/research/StickyTOC";
 import { ShareRow } from "@/components/research/ShareRow";
@@ -98,6 +102,30 @@ export default async function ResearchArticlePage(
   const dateStr = formatDate(frontmatter.date);
   const spanishExists = esTranslation !== null;
 
+  // Parse references from the raw markdown for the schema.org `citation` array.
+  // We re-read the file (small) rather than threading refs through getResearch's
+  // public surface — keeps the lib API stable.
+  let citationLd: Array<Record<string, unknown>> = [];
+  try {
+    const filePath = path.join(process.cwd(), "content", "whitepapers", `${slug}.md`);
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf8");
+      const { content } = matter(raw);
+      const { refs } = extractReferences(content);
+      citationLd = refs
+        .filter((r) => r.url)
+        .map((r) => ({
+          "@type": "CreativeWork",
+          "@id": `${url}#ref-${r.index}`,
+          url: r.url,
+          name: r.rawLine.replace(/^\s*[\d.]+\s*/, "").slice(0, 240),
+        }));
+    }
+  } catch {
+    // Non-fatal — schema.org is enrichment, not blocking.
+    citationLd = [];
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -108,7 +136,7 @@ export default async function ResearchArticlePage(
         description: frontmatter.subtitle || frontmatter.description,
         abstract: frontmatter.subtitle,
         datePublished: frontmatter.date,
-        dateModified: frontmatter.date,
+        dateModified: frontmatter.dateModified || frontmatter.date,
         author: (frontmatter.authors || []).map((name) => ({
           "@type": "Person",
           "@id": `${SITE_URL}/#dante-perea`,
@@ -127,6 +155,20 @@ export default async function ResearchArticlePage(
         timeRequired: `PT${readingTimeMinutes}M`,
         url,
         mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        ...(frontmatter.version ? { version: frontmatter.version } : {}),
+        ...(frontmatter.keywords && frontmatter.keywords.length > 0
+          ? { keywords: frontmatter.keywords.join(", ") }
+          : {}),
+        ...(frontmatter.topical_entities && frontmatter.topical_entities.length > 0
+          ? {
+              about: frontmatter.topical_entities.map((t) => ({
+                "@type": "Thing",
+                name: t,
+              })),
+            }
+          : {}),
+        ...(citationLd.length > 0 ? { citation: citationLd } : {}),
+        ...(frontmatter.audience ? { audience: { "@type": "Audience", audienceType: frontmatter.audience } } : {}),
         ...(spanishExists ? { workTranslation: { "@id": esUrl } } : {}),
       },
       {

@@ -22,6 +22,12 @@ export interface ResearchFrontmatter {
   length?: string;
   license?: string;
   description?: string;
+  // GEO/AEO + retrievability metadata
+  profile?: "authority-survey" | "field-manual" | "technical-playbook" | "failure-mode" | "hedged";
+  dateModified?: string;
+  keywords?: string[];
+  topical_entities?: string[];
+  version_history?: { version: string; date: string; note?: string }[];
 }
 
 export interface ResearchTocItem {
