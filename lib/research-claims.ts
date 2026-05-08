@@ -1549,6 +1549,64 @@ const VENDOR_CONTRACT_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)snellman\.com(\/|$)/i,
 ];
 
+const UNIFIED_GOVERNANCE_PRIMARY_PATTERNS: RegExp[] = [
+  // Singapore IMDA + AI Verify Foundation (regulator + standards-body equivalent)
+  /(^|\.)aiverifyfoundation\.sg(\/|$)/i,
+  /(^|\.)staging\.aiverifyfoundation\.sg(\/|$)/i,
+  /(^|\.)imda\.gov\.sg(\/|$)/i,
+  /(^|\.)singaporestandardseshop\.sg(\/|$)/i,
+  // COMPEL framework canonical surfaces (the unified-controls reference)
+  /(^|\.)compelframework\.org(\/|$)/i,
+  /(^|\.)compel\.one(\/|$)/i,
+  // EU AI Act service desk / EUR-Lex / NIST AIRC sub-domains
+  /(^|\.)ai-act-service-desk\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)airc\.nist\.gov(\/|$)/i,
+  /(^|\.)nvlpubs\.nist\.gov(\/|$)/i,
+  /(^|\.)downloads\.regulations\.gov(\/|$)/i,
+];
+
+const UNIFIED_GOVERNANCE_SECONDARY_PATTERNS: RegExp[] = [
+  // Governance platforms + AI risk management vendor surfaces
+  /(^|\.)modulos\.ai(\/|$)/i,
+  /(^|\.)docs\.modulos\.ai(\/|$)/i,
+  /(^|\.)trussed\.ai(\/|$)/i,
+  /(^|\.)feeds\.trussed\.ai(\/|$)/i,
+  /(^|\.)fairnow\.ai(\/|$)/i,
+  /(^|\.)gaicc\.org(\/|$)/i,
+  /(^|\.)glacis\.io(\/|$)/i,
+  /(^|\.)runcycles\.io(\/|$)/i,
+  /(^|\.)safeguardsai\.com(\/|$)/i,
+  /(^|\.)dsalta\.com(\/|$)/i,
+  /(^|\.)examcert\.app(\/|$)/i,
+  /(^|\.)elevateconsult\.com(\/|$)/i,
+  /(^|\.)yonahwelker\.org(\/|$)/i,
+  /(^|\.)fernandoarrieta\.org(\/|$)/i,
+  /(^|\.)ampliflow\.com(\/|$)/i,
+  /(^|\.)lenavix\.com(\/|$)/i,
+  /(^|\.)ai\.lenavix\.com(\/|$)/i,
+  /(^|\.)strac\.io(\/|$)/i,
+  /(^|\.)legalithm\.com(\/|$)/i,
+  /(^|\.)theartofservice\.com(\/|$)/i,
+  /(^|\.)risktemplate\.com(\/|$)/i,
+  // ISO/IEC 42001 conformity-assessment certification bodies (industry secondary)
+  /(^|\.)qmscert\.com(\/|$)/i,
+  /(^|\.)kiwa\.com(\/|$)/i,
+  /(^|\.)dnv\.ae(\/|$)/i,
+  /(^|\.)dnv\.com(\/|$)/i,
+  /(^|\.)sgs\.com(\/|$)/i,
+  /(^|\.)orioncan\.com(\/|$)/i,
+  /(^|\.)bsigroup\.com(\/|$)/i,
+  /(^|\.)v1\.bsigroup\.com(\/|$)/i,
+  /(^|\.)pacificcert\.com(\/|$)/i,
+  /(^|\.)blog\.pacificcert\.com(\/|$)/i,
+  /(^|\.)rsisecurity\.com(\/|$)/i,
+  /(^|\.)blog\.rsisecurity\.com(\/|$)/i,
+  // Practitioner industry consortia + community blogs
+  /(^|\.)compliact\.medium\.com(\/|$)/i,
+  /(^|\.)cloudsecurityalliance\.org(\/|$)/i,
+  /(^|\.)euaicompass\.com(\/|$)/i,
+];
+
 const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
   // Regulators + standards bodies
   /(^|\.)govt\.westlaw\.com(\/|$)/i,
@@ -2659,6 +2717,9 @@ export function classifyTier(
   for (const re of VENDOR_CONTRACT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:vendor-contract-primary" };
   }
+  for (const re of UNIFIED_GOVERNANCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:unified-governance-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2687,6 +2748,9 @@ export function classifyTier(
   }
   for (const re of VENDOR_CONTRACT_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:vendor-contract-secondary" };
+  }
+  for (const re of UNIFIED_GOVERNANCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:unified-governance-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
