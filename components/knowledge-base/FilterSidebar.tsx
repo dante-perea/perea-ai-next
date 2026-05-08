@@ -46,7 +46,7 @@ export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTags
   }
 
   return (
-    <aside className="w-44 shrink-0">
+    <aside className="w-52 shrink-0">
       <div className="sticky top-8 space-y-4">
         {/* All */}
         <div>
@@ -75,8 +75,8 @@ export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTags
         {/* Tags */}
         {allTags.length > 0 && (
           <div>
-            <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Tags</p>
-            <div className="flex flex-wrap gap-1.5">
+            <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Tags</p>
+            <div className="max-h-80 overflow-y-auto space-y-0.5">
               {allTags.map((tag) => {
                 const count = files.filter((f) => f.tags.includes(tag)).length;
                 const isActive = selectedTags.includes(tag);
@@ -85,19 +85,19 @@ export function FilterSidebar({ files, allTags, selectedTags, typeFilter, onTags
                     <button
                       onClick={() => toggleTag(tag)}
                       className={[
-                        "flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors",
+                        "w-full flex items-center justify-between rounded-lg px-3 py-1.5 text-sm transition-colors",
                         isActive
                           ? "bg-[var(--color-accent-bg)] font-semibold text-[var(--color-accent)]"
-                          : "bg-[var(--color-bg-card)] text-[var(--color-ink-soft)] hover:bg-[var(--color-border)]",
+                          : "text-[var(--color-ink-soft)] hover:bg-[var(--color-bg-card)]",
                       ].join(" ")}
                     >
-                      <span className="max-w-[72px] truncate">{tag}</span>
-                      <span className="text-[10px] opacity-50">{count}</span>
+                      <span className="truncate text-xs">{tag}</span>
+                      <span className="ml-2 shrink-0 text-[10px] text-[var(--color-ink-faint)]">{count}</span>
                     </button>
                     {onShareTag && (
                       <button
                         onClick={(e) => { e.stopPropagation(); onShareTag(tag); }}
-                        className="absolute -right-1 -top-1 hidden h-4 w-4 items-center justify-center rounded-full bg-[var(--color-accent)] text-white group-hover:flex"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 hidden h-4 w-4 items-center justify-center rounded-full bg-[var(--color-accent)] text-white group-hover:flex"
                         title={`Share "${tag}" files with a team`}
                       >
                         <ShareIcon />

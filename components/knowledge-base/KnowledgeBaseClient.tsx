@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FilterSidebar } from "./FilterSidebar";
 import { UploadZone, type UploadZoneHandle } from "./UploadZone";
 import { UrlImport } from "./UrlImport";
-import { FileList } from "./FileList";
+import { FileListProto } from "./FileListProto";
 import type { FileMetadata } from "@/lib/knowledge-base/types";
 import type { TeamRole, Team } from "@/lib/knowledge-base/teams";
 
@@ -65,6 +65,8 @@ export function KnowledgeBaseClient({
   teams,
 }: KnowledgeBaseClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const variant = searchParams.get("variant") ?? "A";
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -248,8 +250,9 @@ export function KnowledgeBaseClient({
             </div>
           )}
 
-          <FileList
+          <FileListProto
             files={visibleFiles}
+            variant={variant}
             onTagsChange={canWrite ? handleTagsChange : undefined}
             onDelete={handleDelete}
             showUploadedBy={isTeam}
