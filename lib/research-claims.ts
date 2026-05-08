@@ -1578,6 +1578,30 @@ const SPECIALIZED_JUDGE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)blog\.salesforceairesearch\.com(\/|$)/i,
 ];
 
+const EDGE_AI_PRIMARY_PATTERNS: RegExp[] = [
+  // Apple corporate primary surfaces
+  /(^|\.)machinelearning\.apple\.com(\/|$)/i,
+  /(^|\.)opensource\.apple\.com(\/|$)/i,
+  /(^|\.)apple\.github\.io(\/|$)/i,
+  // Microsoft sub-domains for Azure + Foundry + Olive docs
+  /(^|\.)azure\.microsoft\.com(\/|$)/i,
+  /(^|\.)ai\.azure\.com(\/|$)/i,
+  /(^|\.)microsoft\.github\.io(\/|$)/i,
+  // NVIDIA + Qualcomm corporate primary
+  /(^|\.)build\.nvidia\.com(\/|$)/i,
+  /(^|\.)docs\.qualcomm\.com(\/|$)/i,
+  /(^|\.)workbench\.aihub\.qualcomm\.com(\/|$)/i,
+  // Nexa AI canonical docs (vendor primary on own SDK)
+  /(^|\.)docs\.nexa\.ai(\/|$)/i,
+  /(^|\.)nexa\.ai(\/|$)/i,
+];
+
+const EDGE_AI_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)strathweb\.com(\/|$)/i,
+  /(^|\.)macmlx\.app(\/|$)/i,
+  /(^|\.)axiomlogica\.com(\/|$)/i,
+];
+
 const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
   // Microsoft tech-community + sub-domains
   /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
@@ -2776,6 +2800,9 @@ export function classifyTier(
   for (const re of KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:knowledge-distillation-primary" };
   }
+  for (const re of EDGE_AI_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:edge-ai-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2813,6 +2840,9 @@ export function classifyTier(
   }
   for (const re of KNOWLEDGE_DISTILLATION_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:knowledge-distillation-secondary" };
+  }
+  for (const re of EDGE_AI_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:edge-ai-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
