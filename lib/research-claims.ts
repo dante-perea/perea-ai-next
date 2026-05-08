@@ -1732,6 +1732,89 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const FIELD_DOCUMENTATION_PRIMARY_PATTERNS: RegExp[] = [
+  // FSM + field-doc vendor corporate sites
+  /(^|\.)servicetitan\.com(\/|$)/i,
+  /(^|\.)investors\.servicetitan\.com(\/|$)/i,
+  /(^|\.)sec\.gov(\/|$)/i,
+  /(^|\.)getjobber\.com(\/|$)/i,
+  /(^|\.)jobber\.com(\/|$)/i,
+  /(^|\.)housecallpro\.com(\/|$)/i,
+  /(^|\.)workiz\.com(\/|$)/i,
+  /(^|\.)fieldedge\.com(\/|$)/i,
+  /(^|\.)jobnimbus\.com(\/|$)/i,
+  /(^|\.)tackonfsm\.com(\/|$)/i,
+  /(^|\.)getfieldy\.com(\/|$)/i,
+  /(^|\.)simprogroup\.com(\/|$)/i,
+  /(^|\.)buildops\.com(\/|$)/i,
+  /(^|\.)procore\.com(\/|$)/i,
+  /(^|\.)companycam\.com(\/|$)/i,
+  /(^|\.)spectora\.com(\/|$)/i,
+  /(^|\.)spectacularapp\.com(\/|$)/i,
+  /(^|\.)inspectordata\.com(\/|$)/i,
+  /(^|\.)nuance\.com(\/|$)/i,
+  /(^|\.)abridge\.com(\/|$)/i,
+  /(^|\.)suki\.ai(\/|$)/i,
+  /(^|\.)nablamed\.com(\/|$)/i,
+  /(^|\.)deepscribe\.ai(\/|$)/i,
+  /(^|\.)ambience\.health(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  /(^|\.)epic\.com(\/|$)/i,
+  // Trade-niche FSM and field-doc vendors from this paper's research
+  /(^|\.)fieldopspro\.com(\/|$)/i,
+  /(^|\.)servicetap\.com(\/|$)/i,
+  /(^|\.)repair-crm\.com(\/|$)/i,
+  /(^|\.)precisionopsapp\.com(\/|$)/i,
+  /(^|\.)servbuilder\.com(\/|$)/i,
+  /(^|\.)inspekta\.com(\/|$)/i,
+  /(^|\.)getprofield\.com(\/|$)/i,
+  /(^|\.)buildlogapp\.com(\/|$)/i,
+  /(^|\.)oxmaint\.com(\/|$)/i,
+  /(^|\.)osha-defense\.com(\/|$)/i,
+  /(^|\.)osha\.gov(\/|$)/i,
+  /(^|\.)dol\.gov(\/|$)/i,
+  /(^|\.)bls\.gov(\/|$)/i,
+  /(^|\.)injurytracking\.dol\.gov(\/|$)/i,
+  // Investor / financial primaries
+  /(^|\.)cbinsights\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  // Market research firm primaries
+  /(^|\.)technavio\.com(\/|$)/i,
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)marketsandmarkets\.com(\/|$)/i,
+  /(^|\.)futuremarketinsights\.com(\/|$)/i,
+  /(^|\.)ibisworld\.com(\/|$)/i,
+  /(^|\.)qyresearch\.in(\/|$)/i,
+  // AHA + JAMA + KLAS as primary medical organizations
+  /(^|\.)aha\.org(\/|$)/i,
+  /(^|\.)jamanetwork\.com(\/|$)/i,
+  /(^|\.)klasresearch\.com(\/|$)/i,
+];
+
+const FIELD_DOCUMENTATION_SECONDARY_PATTERNS: RegExp[] = [
+  // FSM analyst / comparison / review secondaries
+  /(^|\.)stackscored\.com(\/|$)/i,
+  /(^|\.)leadduo\.io(\/|$)/i,
+  /(^|\.)pipelineon\.com(\/|$)/i,
+  /(^|\.)rivetops\.io(\/|$)/i,
+  /(^|\.)freeservicepro\.com(\/|$)/i,
+  /(^|\.)fieldservicesoftware\.io(\/|$)/i,
+  /(^|\.)beltstack\.com(\/|$)/i,
+  /(^|\.)beatable\.co(\/|$)/i,
+  /(^|\.)contractortoolstack\.com(\/|$)/i,
+  /(^|\.)siliconprairienews\.com(\/|$)/i,
+  /(^|\.)ksnblocal4\.com(\/|$)/i,
+  /(^|\.)startlandnews\.com(\/|$)/i,
+  /(^|\.)softwareadvice\.com(\/|$)/i,
+  /(^|\.)g2\.com(\/|$)/i,
+  /(^|\.)capterra\.com(\/|$)/i,
+  /(^|\.)scribemed\.com(\/|$)/i,
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
+  /(^|\.)play\.google\.com(\/|$)/i,
+  /(^|\.)apps\.apple\.com(\/|$)/i,
+];
+
 const VERTICAL_PRICING_PRIMARY_PATTERNS: RegExp[] = [
   // Vertical pricing benchmark + analyst sites (primary on own datasets)
   /(^|\.)vertice\.one(\/|$)/i,
@@ -3176,6 +3259,9 @@ export function classifyTier(
   for (const re of VERTICAL_PRICING_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:vertical-pricing-primary" };
   }
+  for (const re of FIELD_DOCUMENTATION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:field-documentation-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3243,6 +3329,9 @@ export function classifyTier(
   }
   for (const re of SOLO_OPERATOR_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:solo-operator-secondary" };
+  }
+  for (const re of FIELD_DOCUMENTATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:field-documentation-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
