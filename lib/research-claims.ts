@@ -1732,6 +1732,44 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const FRACTIONAL_CFO_PRIMARY_PATTERNS: RegExp[] = [
+  // Primary product/corporate sites
+  /(^|\.)chatfin\.ai(\/|$)/i,
+  /(^|\.)pigment\.com(\/|$)/i,
+  /(^|\.)vic\.ai(\/|$)/i,
+  /(^|\.)zeni\.ai(\/|$)/i,
+  /(^|\.)pilot\.com(\/|$)/i,
+  /(^|\.)burklandassociates\.com(\/|$)/i,
+  /(^|\.)toptal\.com(\/|$)/i,
+  /(^|\.)paro\.ai(\/|$)/i,
+  /(^|\.)trullion\.com(\/|$)/i,
+  /(^|\.)cubesoftware\.com(\/|$)/i,
+  /(^|\.)cfoadvisors\.com(\/|$)/i,
+  /(^|\.)drivetrain\.ai(\/|$)/i,
+  /(^|\.)neuralledger\.co(\/|$)/i,
+  /(^|\.)knolli\.ai(\/|$)/i,
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)nasscom\.in(\/|$)/i,
+  /(^|\.)lek\.com(\/|$)/i,
+  // Url-shorteners pointing to corp profiles count as primary
+  /(^|\.)tinyurl\.com(\/|$)/i,
+];
+
+const FRACTIONAL_CFO_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)gitnux\.org(\/|$)/i,
+  /(^|\.)robocfo\.ai(\/|$)/i,
+  /(^|\.)houseblend\.io(\/|$)/i,
+  /(^|\.)increased\.com(\/|$)/i,
+  /(^|\.)cfoiquk\.com(\/|$)/i,
+  /(^|\.)fractionalpulse\.com(\/|$)/i,
+  /(^|\.)fractionalcfoschool\.com(\/|$)/i,
+  /(^|\.)upflow\.io(\/|$)/i,
+  /(^|\.)getexact\.com(\/|$)/i,
+  /(^|\.)cpabychoice\.com(\/|$)/i,
+  /(^|\.)concators\.com(\/|$)/i,
+  /(^|\.)strategicmarketresearch\.com(\/|$)/i,
+];
+
 const TRUMP_EO_401K_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)psca\.org(\/|$)/i,
   /(^|\.)asppa-net\.org(\/|$)/i,
@@ -3056,6 +3094,9 @@ export function classifyTier(
   for (const re of TRUMP_EO_401K_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:trump-eo-401k-primary" };
   }
+  for (const re of FRACTIONAL_CFO_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:fractional-cfo-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3117,6 +3158,9 @@ export function classifyTier(
   }
   for (const re of TRUMP_EO_401K_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:trump-eo-401k-secondary" };
+  }
+  for (const re of FRACTIONAL_CFO_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:fractional-cfo-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
