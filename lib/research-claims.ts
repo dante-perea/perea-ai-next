@@ -1712,6 +1712,45 @@ const SECTORAL_BARGAINING_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)blockclubchicago\.org(\/|$)/i,
 ];
 
+const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
+  // Primary text repositories
+  /(^|\.)en\.wikisource\.org(\/|$)/i,
+  // Official authoritative-org sites
+  /(^|\.)asc\.fasb\.org(\/|$)/i,
+  // Major law-firm primary publishing surfaces (own legal analysis)
+  /(^|\.)arnoldporter\.com(\/|$)/i,
+  /(^|\.)alston\.com(\/|$)/i,
+  /(^|\.)hklaw\.com(\/|$)/i,
+  /(^|\.)mofo\.com(\/|$)/i,
+  /(^|\.)erisapracticecenter\.com(\/|$)/i,
+  // Corporate primary surfaces (own product / announcement / glide path)
+  /(^|\.)empower\.com(\/|$)/i,
+  /(^|\.)blackrock\.com(\/|$)/i,
+  /(^|\.)workplace\.vanguard\.com(\/|$)/i,
+  /(^|\.)investor\.vanguard\.com(\/|$)/i,
+  // Academic + professional research
+  /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
+];
+
+const TRUMP_EO_401K_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)psca\.org(\/|$)/i,
+  /(^|\.)asppa-net\.org(\/|$)/i,
+  /(^|\.)ifebp\.org(\/|$)/i,
+  /(^|\.)fiduciarynews\.com(\/|$)/i,
+  /(^|\.)wealthmanagement\.com(\/|$)/i,
+  /(^|\.)investmentnews\.com(\/|$)/i,
+  /(^|\.)corpdev\.org(\/|$)/i,
+  /(^|\.)commonsense401kproject\.com(\/|$)/i,
+  /(^|\.)encorefiduciary\.com(\/|$)/i,
+  /(^|\.)uselaws\.com(\/|$)/i,
+  /(^|\.)cerulli\.com(\/|$)/i,
+  /(^|\.)reginfo\.gov(\/|$)/i,
+  /(^|\.)morningstar\.com(\/|$)/i,
+  /(^|\.)pionline\.com(\/|$)/i,
+  /(^|\.)plansponsor\.com(\/|$)/i,
+  /(^|\.)planadviser\.com(\/|$)/i,
+];
+
 const FREELANCE_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
   // Freelance platform vendor corporate
   /(^|\.)usebraintrust\.com(\/|$)/i,
@@ -3014,6 +3053,9 @@ export function classifyTier(
   for (const re of SECTORAL_BARGAINING_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:sectoral-bargaining-primary" };
   }
+  for (const re of TRUMP_EO_401K_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:trump-eo-401k-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3072,6 +3114,9 @@ export function classifyTier(
   }
   for (const re of SECTORAL_BARGAINING_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:sectoral-bargaining-secondary" };
+  }
+  for (const re of TRUMP_EO_401K_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:trump-eo-401k-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
