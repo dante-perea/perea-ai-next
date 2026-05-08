@@ -1732,6 +1732,51 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const SOLO_OPERATOR_PRIMARY_PATTERNS: RegExp[] = [
+  // Agent platform corporate sites
+  /(^|\.)cursor\.so(\/|$)/i,
+  /(^|\.)cursor\.com(\/|$)/i,
+  /(^|\.)lindy\.ai(\/|$)/i,
+  /(^|\.)relay\.app(\/|$)/i,
+  /(^|\.)agent0\.markops\.ai(\/|$)/i,
+  /(^|\.)intercom\.com(\/|$)/i,
+  /(^|\.)crisp\.chat(\/|$)/i,
+  /(^|\.)buffer\.com(\/|$)/i,
+  /(^|\.)perplexity\.ai(\/|$)/i,
+  /(^|\.)supabase\.com(\/|$)/i,
+  /(^|\.)vercel\.com(\/|$)/i,
+  /(^|\.)getathenic\.com(\/|$)/i,
+  // Solo-operator practitioner / framework sites (primary on own framework + case studies)
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)contextstudios\.ai(\/|$)/i,
+  /(^|\.)agent-wars\.com(\/|$)/i,
+  /(^|\.)salessheets\.ai(\/|$)/i,
+  /(^|\.)foundra\.ai(\/|$)/i,
+  // Major platform corporate
+  /(^|\.)anthropic\.com(\/|$)/i,
+];
+
+const SOLO_OPERATOR_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)openbooklet\.com(\/|$)/i,
+  /(^|\.)effloow\.com(\/|$)/i,
+  /(^|\.)dev\.to(\/|$)/i,
+  /(^|\.)firstaimovers\.com(\/|$)/i,
+  /(^|\.)udit\.co(\/|$)/i,
+  /(^|\.)digitalapplied\.com(\/|$)/i,
+  /(^|\.)amitkoth\.com(\/|$)/i,
+  /(^|\.)usagebar\.com(\/|$)/i,
+  /(^|\.)500k\.io(\/|$)/i,
+  /(^|\.)semianalysis\.com(\/|$)/i,
+  /(^|\.)pitchbook\.com(\/|$)/i,
+  /(^|\.)crunchbase\.com(\/|$)/i,
+  /(^|\.)wired\.com(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)theinformation\.com(\/|$)/i,
+  /(^|\.)ycombinator\.com(\/|$)/i,
+  /(^|\.)a16z\.com(\/|$)/i,
+  /(^|\.)sequoiacap\.com(\/|$)/i,
+];
+
 const FRACTIONAL_CFO_PRIMARY_PATTERNS: RegExp[] = [
   // Primary product/corporate sites
   /(^|\.)chatfin\.ai(\/|$)/i,
@@ -3097,6 +3142,9 @@ export function classifyTier(
   for (const re of FRACTIONAL_CFO_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:fractional-cfo-primary" };
   }
+  for (const re of SOLO_OPERATOR_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:solo-operator-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3161,6 +3209,9 @@ export function classifyTier(
   }
   for (const re of FRACTIONAL_CFO_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:fractional-cfo-secondary" };
+  }
+  for (const re of SOLO_OPERATOR_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:solo-operator-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
