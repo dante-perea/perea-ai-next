@@ -2036,6 +2036,68 @@ const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)gartner\.com(\/|$)/i,
   /(^|\.)profitwell\.com(\/|$)/i,
   /(^|\.)a16z\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)www\.anthropic\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)www\.openai\.com(\/|$)/i,
+  /(^|\.)help\.openai\.com(\/|$)/i,
+  /(^|\.)platform\.openai\.com(\/|$)/i,
+  /(^|\.)leaderboard\.steel\.dev(\/|$)/i,
+  /(^|\.)steel\.dev(\/|$)/i,
+  /(^|\.)modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)spec\.modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)cloudflare\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)devblogs\.microsoft\.com(\/|$)/i,
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /(^|\.)docs\.microsoft\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  /(^|\.)vibebrowser\.app(\/|$)/i,
+  /(^|\.)www\.vibebrowser\.app(\/|$)/i,
+  /(^|\.)getmaxim\.ai(\/|$)/i,
+  /(^|\.)www\.getmaxim\.ai(\/|$)/i,
+  /(^|\.)knowledgesdk\.com(\/|$)/i,
+  /(^|\.)speakeasy\.com(\/|$)/i,
+  /(^|\.)www\.speakeasy\.com(\/|$)/i,
+  /(^|\.)scalekit\.com(\/|$)/i,
+  /(^|\.)www\.scalekit\.com(\/|$)/i,
+  /(^|\.)apiscout\.dev(\/|$)/i,
+  /(^|\.)anycap\.ai(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)serp\.fast(\/|$)/i,
+];
+
+const BROWSER_VS_PROTOCOL_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)9to5google\.com(\/|$)/i,
+  /(^|\.)zdnet\.com(\/|$)/i,
+  /(^|\.)bleepingcomputer\.com(\/|$)/i,
+  /(^|\.)en\.wikipedia\.org(\/|$)/i,
+  /(^|\.)wikipedia\.org(\/|$)/i,
+  /(^|\.)airank\.dev(\/|$)/i,
+  /(^|\.)vibebrowser\.app(\/|$)/i,
+  /(^|\.)www\.vibebrowser\.app(\/|$)/i,
+  /(^|\.)browserbase\.com(\/|$)/i,
+  /(^|\.)serp\.fast(\/|$)/i,
+  /(^|\.)tyk\.io(\/|$)/i,
+  /(^|\.)getmaxim\.ai(\/|$)/i,
+  /(^|\.)www\.getmaxim\.ai(\/|$)/i,
+  /(^|\.)apiscout\.dev(\/|$)/i,
+  /(^|\.)anycap\.ai(\/|$)/i,
+  /(^|\.)knowledgesdk\.com(\/|$)/i,
+  /(^|\.)speakeasy\.com(\/|$)/i,
+  /(^|\.)www\.speakeasy\.com(\/|$)/i,
+  /(^|\.)scalekit\.com(\/|$)/i,
+  /(^|\.)www\.scalekit\.com(\/|$)/i,
+  /(^|\.)lunar\.dev(\/|$)/i,
+  /(^|\.)truefoundry\.com(\/|$)/i,
+  /(^|\.)fp8\.co(\/|$)/i,
+  /(^|\.)agentpatch\.ai(\/|$)/i,
+  /(^|\.)agentsindex\.ai(\/|$)/i,
+  /(^|\.)mcpfind\.org(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
 ];
 
 const B2B_TRIAL_DESIGN_SECONDARY_PATTERNS: RegExp[] = [
@@ -3935,6 +3997,9 @@ export function classifyTier(
   }
   for (const re of BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:browser-agent-perception-primary" };
+  }
+  for (const re of BROWSER_VS_PROTOCOL_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:browser-vs-protocol-secondary" };
   }
   for (const re of B2B_TRIAL_DESIGN_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:b2b-trial-design-secondary" };
