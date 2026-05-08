@@ -1636,6 +1636,37 @@ const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)distillabs\.ai(\/|$)/i,
 ];
 
+const CAPTIVE_INSURANCE_PRIMARY_PATTERNS: RegExp[] = [
+  // Captive industry primary resources
+  /(^|\.)captive\.com(\/|$)/i,
+  /(^|\.)captiveinsurancetimes\.com(\/|$)/i,
+  /(^|\.)vermontcaptive\.com(\/|$)/i,
+  /(^|\.)vermontbiz\.com(\/|$)/i,
+  // Captive vendor corporate
+  /(^|\.)hbgsolo\.com(\/|$)/i,
+  /(^|\.)blog\.hbgsolo\.com(\/|$)/i,
+  /(^|\.)solohealthcollective\.pxf\.io(\/|$)/i,
+  // AICPA + practitioner authorities
+  /(^|\.)thetaxadviser\.com(\/|$)/i,
+  // Major tax/audit firms (primary on own published opinions)
+  /(^|\.)kpmg\.com(\/|$)/i,
+  /(^|\.)taxnews\.ey\.com(\/|$)/i,
+  /(^|\.)ey\.com(\/|$)/i,
+  /(^|\.)tax\.thomsonreuters\.com(\/|$)/i,
+];
+
+const CAPTIVE_INSURANCE_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)captiveinternational\.com(\/|$)/i,
+  /(^|\.)captivereview\.com(\/|$)/i,
+  /(^|\.)newenglandnewspress\.com(\/|$)/i,
+  /(^|\.)citizenportal\.ai(\/|$)/i,
+  /(^|\.)ams\.law(\/|$)/i,
+  /(^|\.)billtrack50\.com(\/|$)/i,
+  /(^|\.)blog\.freelancersunion\.org(\/|$)/i,
+  /(^|\.)news\.bloombergtax\.com(\/|$)/i,
+  /(^|\.)lexology\.com(\/|$)/i,
+];
+
 const FREELANCE_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
   // Freelance platform vendor corporate
   /(^|\.)usebraintrust\.com(\/|$)/i,
@@ -2932,6 +2963,9 @@ export function classifyTier(
   for (const re of FREELANCE_PLATFORM_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:freelance-platform-primary" };
   }
+  for (const re of CAPTIVE_INSURANCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:captive-insurance-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -2984,6 +3018,9 @@ export function classifyTier(
   }
   for (const re of FREELANCE_PLATFORM_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:freelance-platform-secondary" };
+  }
+  for (const re of CAPTIVE_INSURANCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:captive-insurance-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
