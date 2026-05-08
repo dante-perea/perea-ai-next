@@ -1979,6 +1979,34 @@ const HYPERSCALER_RUNTIME_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)agentsindex\.ai(\/|$)/i,
 ];
 
+const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)playwright\.dev(\/|$)/i,
+  /(^|\.)playwright\.com(\/|$)/i,
+  /(^|\.)browserbase\.com(\/|$)/i,
+  /(^|\.)stagehand\.dev(\/|$)/i,
+  /(^|\.)npmjs\.com(\/|$)/i,
+  /(^|\.)github\.com\/microsoft\/playwright(\/|$)/i,
+  /(^|\.)github\.com\/microsoft\/Playwright-MCP(\/|$)/i,
+  /(^|\.)github\.com\/microsoft\/playwright-mcp(\/|$)/i,
+  /(^|\.)github\.com\/browser-use(\/|$)/i,
+  /(^|\.)github\.com\/browserbase(\/|$)/i,
+  /(^|\.)github\.com\/google-gemini(\/|$)/i,
+  /(^|\.)github\.com\/MinorJerry(\/|$)/i,
+  /(^|\.)github\.com\/osu-nlp-group(\/|$)/i,
+  /(^|\.)github\.com\/mediar-ai(\/|$)/i,
+  /(^|\.)togithub\.com(\/|$)/i,
+  /(^|\.)platform\.claude\.com(\/|$)/i,
+  /(^|\.)claude\.com(\/|$)/i,
+  /(^|\.)operator\.chatgpt\.com(\/|$)/i,
+  /(^|\.)w3\.org(\/|$)/i,
+  /(^|\.)webaim\.org(\/|$)/i,
+  /(^|\.)chromedevtools\.github\.io(\/|$)/i,
+  /(^|\.)developer\.mozilla\.org(\/|$)/i,
+  /(^|\.)osu-nlp-group\.github\.io(\/|$)/i,
+  /(^|\.)webarena\.dev(\/|$)/i,
+  /(^|\.)arxiv\.org(\/|$)/i,
+];
+
 const PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stridehealth\.com(\/|$)/i,
   /(^|\.)patreon\.stridehealth\.com(\/|$)/i,
@@ -3860,6 +3888,9 @@ export function classifyTier(
   }
   for (const re of PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:portable-benefits-platform-primary" };
+  }
+  for (const re of BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:browser-agent-perception-primary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
