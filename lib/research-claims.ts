@@ -1847,6 +1847,48 @@ const EDD_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)simonwillison\.net(\/|$)/i,
 ];
 
+const PROCUREMENT_PILOT_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)thehackettgroup\.com(\/|$)/i,
+  /(^|\.)mckinsey\.com(\/|$)/i,
+  /(^|\.)mckinsey\.com\.br(\/|$)/i,
+  /(^|\.)forrester\.com(\/|$)/i,
+  /(^|\.)gartner\.com(\/|$)/i,
+  /(^|\.)deloitte\.com(\/|$)/i,
+  /(^|\.)ey\.com(\/|$)/i,
+  /(^|\.)pwc\.com(\/|$)/i,
+  /(^|\.)kpmg\.com(\/|$)/i,
+  /(^|\.)bcg\.com(\/|$)/i,
+  /(^|\.)oliverwyman\.com(\/|$)/i,
+  /(^|\.)ardentpartners\.com(\/|$)/i,
+  /(^|\.)zycus\.com(\/|$)/i,
+  /(^|\.)ivalua\.com(\/|$)/i,
+  /(^|\.)info\.ivalua\.com(\/|$)/i,
+  /(^|\.)pactum\.com(\/|$)/i,
+  /(^|\.)globality\.com(\/|$)/i,
+  /(^|\.)sap\.com(\/|$)/i,
+  /(^|\.)coupa\.com(\/|$)/i,
+  /(^|\.)gep\.com(\/|$)/i,
+  /(^|\.)jaggaer\.com(\/|$)/i,
+  /(^|\.)ideas\.repec\.org(\/|$)/i,
+  /(^|\.)operationscouncil\.org(\/|$)/i,
+  /(^|\.)ism\.ws(\/|$)/i,
+  /(^|\.)cips\.org(\/|$)/i,
+];
+
+const PROCUREMENT_PILOT_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)webpronews\.com(\/|$)/i,
+  /(^|\.)cpostrategy\.media(\/|$)/i,
+  /(^|\.)newsletter\.pureprocurement\.ca(\/|$)/i,
+  /(^|\.)art-of-procurement\.com(\/|$)/i,
+  /(^|\.)procurementmag\.com(\/|$)/i,
+  /(^|\.)spendmatters\.com(\/|$)/i,
+  /(^|\.)supplychaindive\.com(\/|$)/i,
+  /(^|\.)cpomag\.com(\/|$)/i,
+  /(^|\.)thefutureofcommerce\.com(\/|$)/i,
+  /(^|\.)procurious\.com(\/|$)/i,
+  /(^|\.)raindrop\.com(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3513,6 +3555,9 @@ export function classifyTier(
   for (const re of EDD_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:edd-primary" };
   }
+  for (const re of PROCUREMENT_PILOT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:procurement-pilot-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3604,6 +3649,9 @@ export function classifyTier(
   }
   for (const re of EDD_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:edd-secondary" };
+  }
+  for (const re of PROCUREMENT_PILOT_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:procurement-pilot-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
