@@ -1414,6 +1414,34 @@ const MCP_OAUTH_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)stackoverflow\.com(\/|$)/i,
 ];
 
+const IDEMPOTENCY_ORCHESTRATION_PRIMARY_PATTERNS: RegExp[] = [
+  // Durable workflow runtime vendors
+  /(^|\.)temporal\.io(\/|$)/i,
+  /(^|\.)docs\.temporal\.io(\/|$)/i,
+  /(^|\.)blog\.temporal\.io(\/|$)/i,
+  /(^|\.)restate\.dev(\/|$)/i,
+  /(^|\.)docs\.restate\.dev(\/|$)/i,
+  /(^|\.)blog\.restate\.dev(\/|$)/i,
+  // Anthropic-adjacent canonical commentary primary for Claude Agent SDK
+  /(^|\.)claudelab\.net(\/|$)/i,
+];
+
+const IDEMPOTENCY_ORCHESTRATION_SECONDARY_PATTERNS: RegExp[] = [
+  // Practitioner blogs on idempotency / agent retries / Stripe-pattern decompositions
+  /(^|\.)exesolution\.com(\/|$)/i,
+  /(^|\.)getaxonflow\.com(\/|$)/i,
+  /(^|\.)agentixlabs\.com(\/|$)/i,
+  /(^|\.)finlyinsights\.com(\/|$)/i,
+  /(^|\.)codelit\.io(\/|$)/i,
+  /(^|\.)mdsanwarhossain\.me(\/|$)/i,
+  /(^|\.)hookbase\.app(\/|$)/i,
+  /(^|\.)apiscout\.dev(\/|$)/i,
+  /(^|\.)claudeguide\.io(\/|$)/i,
+  /(^|\.)sujeet\.pro(\/|$)/i,
+  /(^|\.)semaphoreci\.com(\/|$)/i,
+  /(^|\.)martinfowler\.com(\/|$)/i,
+];
+
 const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
   // Regulators + standards bodies
   /(^|\.)govt\.westlaw\.com(\/|$)/i,
@@ -2515,6 +2543,9 @@ export function classifyTier(
   for (const re of MCP_OAUTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:mcp-oauth-primary" };
   }
+  for (const re of IDEMPOTENCY_ORCHESTRATION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:idempotency-orchestration-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2534,6 +2565,9 @@ export function classifyTier(
   // so that explicit secondary classification beats incidental "/resources/" matches.
   for (const re of MCP_OAUTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:mcp-oauth-secondary" };
+  }
+  for (const re of IDEMPOTENCY_ORCHESTRATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:idempotency-orchestration-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
