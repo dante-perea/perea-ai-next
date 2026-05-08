@@ -1958,6 +1958,27 @@ const REWARDBENCH_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)databricks\.com(\/|$)/i,
 ];
 
+const HYPERSCALER_RUNTIME_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)aws\.amazon\.com(\/|$)/i,
+  /(^|\.)docs\.aws\.amazon\.com(\/|$)/i,
+  /(^|\.)azure\.microsoft\.com(\/|$)/i,
+  /(^|\.)devblogs\.microsoft\.com(\/|$)/i,
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  /(^|\.)docs\.cloud\.google\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)platform\.openai\.com(\/|$)/i,
+  /(^|\.)developers\.openai\.com(\/|$)/i,
+  /(^|\.)openai\.github\.io(\/|$)/i,
+  /(^|\.)github\.com\/openai(\/|$)/i,
+];
+
+const HYPERSCALER_RUNTIME_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)pump\.co(\/|$)/i,
+  /(^|\.)agentsindex\.ai(\/|$)/i,
+];
+
 const REWARDBENCH_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)emergentmind\.com(\/|$)/i,
   /(^|\.)deeplearn\.org(\/|$)/i,
@@ -3665,6 +3686,9 @@ export function classifyTier(
   for (const re of REWARDBENCH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:rewardbench-primary" };
   }
+  for (const re of HYPERSCALER_RUNTIME_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:hyperscaler-runtime-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3768,6 +3792,9 @@ export function classifyTier(
   }
   for (const re of REWARDBENCH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:rewardbench-secondary" };
+  }
+  for (const re of HYPERSCALER_RUNTIME_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:hyperscaler-runtime-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
