@@ -1732,6 +1732,33 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const MCP_BUYERS_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)modelcontextprotocol\.org(\/|$)/i,
+  /(^|\.)registry\.modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)stacklok\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)support\.anthropic\.com(\/|$)/i,
+  /(^|\.)owasp\.org(\/|$)/i,
+  /(^|\.)microsoft\.github\.io(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)stackone\.com(\/|$)/i,
+];
+
+const MCP_BUYERS_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)truto\.one(\/|$)/i,
+  /(^|\.)chatforest\.com(\/|$)/i,
+  /(^|\.)agentrank-ai\.com(\/|$)/i,
+  /(^|\.)prefect\.io(\/|$)/i,
+  /(^|\.)mcpguide\.dev(\/|$)/i,
+  /(^|\.)ssojet\.com(\/|$)/i,
+  /(^|\.)yupl\.com(\/|$)/i,
+  /(^|\.)langsight\.dev(\/|$)/i,
+  /(^|\.)rapidclaw\.dev(\/|$)/i,
+  /(^|\.)callsphere\.ai(\/|$)/i,
+  /(^|\.)victorinollc\.com(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3389,6 +3416,9 @@ export function classifyTier(
   for (const re of SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:subscription-paradox-primary" };
   }
+  for (const re of MCP_BUYERS_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:mcp-buyers-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3471,6 +3501,9 @@ export function classifyTier(
   }
   for (const re of SUBSCRIPTION_PARADOX_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:subscription-paradox-secondary" };
+  }
+  for (const re of MCP_BUYERS_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:mcp-buyers-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
