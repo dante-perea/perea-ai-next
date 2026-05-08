@@ -1442,6 +1442,57 @@ const IDEMPOTENCY_ORCHESTRATION_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)martinfowler\.com(\/|$)/i,
 ];
 
+const FRIA_METHODOLOGY_PRIMARY_PATTERNS: RegExp[] = [
+  // EU AI Act regulation mirrors
+  /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)en\.ai-act\.io(\/|$)/i,
+  /(^|\.)ai-act\.io(\/|$)/i,
+  /(^|\.)ai-eu-act\.eu(\/|$)/i,
+  /(^|\.)artificial-intelligence-act\.com(\/|$)/i,
+  /(^|\.)eurlexa\.com(\/|$)/i,
+  // EU institutional + national-DPA + Council of Europe
+  /(^|\.)edps\.europa\.eu(\/|$)/i,
+  /(^|\.)fra\.europa\.eu(\/|$)/i,
+  /(^|\.)futurium\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)rm\.coe\.int(\/|$)/i,
+  /(^|\.)coe\.int(\/|$)/i,
+  /(^|\.)apdcat\.cat(\/|$)/i,
+  /(^|\.)government\.nl(\/|$)/i,
+  // Civil-society canonical FRIA publishers
+  /(^|\.)humanrights\.dk(\/|$)/i,
+  /(^|\.)ecnl\.org(\/|$)/i,
+  /(^|\.)learningcenter\.ecnl\.org(\/|$)/i,
+  // Academic + research portals
+  /(^|\.)pollicinoaidvisory\.eu(\/|$)/i,
+  /(^|\.)research-portal\.uu\.nl(\/|$)/i,
+  /(^|\.)iris\.cnr\.it(\/|$)/i,
+  /(^|\.)iris\.polito\.it(\/|$)/i,
+  /(^|\.)sciencedirect\.com(\/|$)/i,
+  /(^|\.)papers\.ssrn\.com(\/|$)/i,
+  /(^|\.)ssrn\.com(\/|$)/i,
+];
+
+const FRIA_METHODOLOGY_SECONDARY_PATTERNS: RegExp[] = [
+  // EU AI Act practitioner blogs / vendor analyst sites
+  /(^|\.)aiactblog\.nl(\/|$)/i,
+  /(^|\.)euai\.app(\/|$)/i,
+  /(^|\.)aiactstack\.com(\/|$)/i,
+  /(^|\.)reg-intel\.com(\/|$)/i,
+  /(^|\.)legalithm\.com(\/|$)/i,
+  /(^|\.)archerirm\.com(\/|$)/i,
+  /(^|\.)aicompliancevendors\.com(\/|$)/i,
+  /(^|\.)euaiactchecklist\.com(\/|$)/i,
+  /(^|\.)euaicompass\.com(\/|$)/i,
+  /(^|\.)haffa\.ai(\/|$)/i,
+  /(^|\.)aigl\.blog(\/|$)/i,
+  /(^|\.)freshfields\.com(\/|$)/i,
+  /(^|\.)eucrim\.eu(\/|$)/i,
+  /(^|\.)gamingtechlaw\.com(\/|$)/i,
+  /(^|\.)eudigitallaw\.com(\/|$)/i,
+  /(^|\.)socialimpactassessment\.com(\/|$)/i,
+  /(^|\.)cadeproject\.org(\/|$)/i,
+];
+
 const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
   // Regulators + standards bodies
   /(^|\.)govt\.westlaw\.com(\/|$)/i,
@@ -2546,6 +2597,9 @@ export function classifyTier(
   for (const re of IDEMPOTENCY_ORCHESTRATION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:idempotency-orchestration-primary" };
   }
+  for (const re of FRIA_METHODOLOGY_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:fria-methodology-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2568,6 +2622,9 @@ export function classifyTier(
   }
   for (const re of IDEMPOTENCY_ORCHESTRATION_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:idempotency-orchestration-secondary" };
+  }
+  for (const re of FRIA_METHODOLOGY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:fria-methodology-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
