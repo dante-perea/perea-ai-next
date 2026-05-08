@@ -1636,6 +1636,35 @@ const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)distillabs\.ai(\/|$)/i,
 ];
 
+const FREELANCE_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
+  // Freelance platform vendor corporate
+  /(^|\.)usebraintrust\.com(\/|$)/i,
+  /(^|\.)braintrust\.com(\/|$)/i,
+  /(^|\.)braintrust\.dev(\/|$)/i,
+  /(^|\.)toptal\.com(\/|$)/i,
+  /(^|\.)graphite\.work(\/|$)/i,
+  /(^|\.)app\.graphite\.work(\/|$)/i,
+  /(^|\.)fiverr\.com(\/|$)/i,
+  /(^|\.)investors\.fiverr\.com(\/|$)/i,
+  // GigRadar - primary research on Upwork marketplace data
+  /(^|\.)gigradar\.io(\/|$)/i,
+];
+
+const FREELANCE_PLATFORM_SECONDARY_PATTERNS: RegExp[] = [
+  // Financial trade press + market data
+  /(^|\.)tikr\.com(\/|$)/i,
+  /(^|\.)seekingalpha\.com(\/|$)/i,
+  /(^|\.)stocktitan\.net(\/|$)/i,
+  /(^|\.)grafa\.com(\/|$)/i,
+  /(^|\.)mergr\.com(\/|$)/i,
+  /(^|\.)fool\.com(\/|$)/i,
+  /(^|\.)siliconangle\.com(\/|$)/i,
+  // Freelance platform commentary
+  /(^|\.)vincentschmalbach\.com(\/|$)/i,
+  /(^|\.)bswen\.com(\/|$)/i,
+  /(^|\.)docs\.bswen\.com(\/|$)/i,
+];
+
 const SOLO_401K_PRIMARY_PATTERNS: RegExp[] = [
   // J.P. Morgan corporate + vendor
   /(^|\.)am\.jpmorgan\.com(\/|$)/i,
@@ -2900,6 +2929,9 @@ export function classifyTier(
   for (const re of SOLO_401K_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:solo-401k-primary" };
   }
+  for (const re of FREELANCE_PLATFORM_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:freelance-platform-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -2949,6 +2981,9 @@ export function classifyTier(
   }
   for (const re of SOLO_401K_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:solo-401k-secondary" };
+  }
+  for (const re of FREELANCE_PLATFORM_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:freelance-platform-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
