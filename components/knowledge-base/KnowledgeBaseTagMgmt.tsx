@@ -105,7 +105,16 @@ function useTagOps(
     });
   }, [files, updateFileTags]);
 
-  return { updateFileTags, renameTag, deleteTag, mergeTag, addTagToFiles };
+  const retagFile = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/knowledge-base/files/${id}/retag`, { method: "POST" });
+      if (!res.ok) throw new Error("retag failed");
+      const updated: FileMetadata = await res.json();
+      setFiles((prev) => prev.map((f) => (f.id === id ? updated : f)));
+    } catch { router.refresh(); }
+  }, [setFiles, router]);
+
+  return { updateFileTags, renameTag, deleteTag, mergeTag, addTagToFiles, retagFile };
 }
 
 // ─── Shared small components ──────────────────────────────────────────────────
@@ -134,7 +143,7 @@ function InlineRename({ value, onSave, onCancel }: { value: string; onSave: (v: 
   );
 }
 
-function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete, canDelete }: {
+function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete, canDelete, onRetag }: {
   file: FileMetadata;
   activeTag?: string;
   onTagClick?: (t: string) => void;
@@ -142,9 +151,11 @@ function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete,
   onTagAdd?: (t: string) => void;
   onDelete?: () => void;
   canDelete?: boolean;
+  onRetag?: () => Promise<void>;
 }) {
   const [addInput, setAddInput] = useState("");
   const [adding, setAdding] = useState(false);
+  const [retagging, setRetagging] = useState(false);
   const otherTags = activeTag ? file.tags.filter((t) => t !== activeTag) : file.tags;
 
   function submitAdd() {
@@ -201,6 +212,20 @@ function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete,
       <div className="flex shrink-0 items-center gap-2">
         <span className="text-xs text-[var(--color-ink-faint)]">{formatBytes(file.size)}</span>
         <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+          {onRetag && (
+            <button
+              onClick={async () => { setRetagging(true); try { await onRetag(); } finally { setRetagging(false); } }}
+              disabled={retagging}
+              title="Re-generate tags from document"
+              className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:bg-[var(--color-accent-bg)] hover:text-[var(--color-accent)] disabled:opacity-40"
+            >
+              {retagging ? (
+                <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              ) : (
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              )}
+            </button>
+          )}
           <a href={`/api/knowledge-base/files/${file.id}/download`} title="Download" className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:bg-[var(--color-accent-bg)] hover:text-[var(--color-accent)]">
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
           </a>
@@ -855,6 +880,7 @@ function VariantC({ files, canWrite, userId, ops, uploadZoneRef, teamId }: Varia
                   onTagClick={(t) => setSelectedTags((p) => { const n = new Set(p); n.has(t) ? n.delete(t) : n.add(t); return n; })}
                   onTagRemove={canWrite ? (t) => ops.updateFileTags(file.id, file.tags.filter((x) => x !== t)) : undefined}
                   onTagAdd={canWrite ? (t) => ops.updateFileTags(file.id, [...file.tags, t]) : undefined}
+                  onRetag={canWrite ? () => ops.retagFile(file.id) : undefined}
                   canDelete
                   onDelete={() => { if (confirm(`Delete "${file.filename}"?`)) ops.updateFileTags(file.id, []); }}
                 />
