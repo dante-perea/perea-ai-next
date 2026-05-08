@@ -1370,6 +1370,50 @@ const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bensbites\.com(\/|$)/i,
 ];
 
+const AIBOM_SUPPLY_CHAIN_PRIMARY_PATTERNS: RegExp[] = [
+  // CycloneDX standard
+  /(^|\.)cyclonedx\.org(\/|$)/i,
+  /(^|\.)ecma-tc54\.github\.io(\/|$)/i,
+  // Snyk corporate primary
+  /(^|\.)snyk\.io(\/|$)/i,
+  /(^|\.)docs\.snyk\.io(\/|$)/i,
+  /(^|\.)labs\.snyk\.io(\/|$)/i,
+  /(^|\.)updates\.snyk\.io(\/|$)/i,
+  /(^|\.)evo\.ai\.snyk\.io(\/|$)/i,
+  // EU AI Act + regulators + standards bodies
+  /(^|\.)ai-act-service-desk\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)ec\.europa\.eu(\/|$)/i,
+  /(^|\.)eur-lex\.europa\.eu(\/|$)/i,
+  /(^|\.)nist\.gov(\/|$)/i,
+  /(^|\.)iso\.org(\/|$)/i,
+  /(^|\.)cisa\.gov(\/|$)/i,
+  /(^|\.)spdx\.org(\/|$)/i,
+  /(^|\.)cen-cenelec\.eu(\/|$)/i,
+  // Invariant Labs (foundational tool-poisoning research)
+  /(^|\.)invariantlabs\.ai(\/|$)/i,
+];
+
+const AIBOM_SUPPLY_CHAIN_SECONDARY_PATTERNS: RegExp[] = [
+  // EU AI Act analyst guides
+  /(^|\.)aiacto\.eu(\/|$)/i,
+  /(^|\.)euaiactguide\.com(\/|$)/i,
+  /(^|\.)aiactgap\.com(\/|$)/i,
+  /(^|\.)annexa\.eu(\/|$)/i,
+  /(^|\.)ai-resources\.eu(\/|$)/i,
+  /(^|\.)aiactregistration\.com(\/|$)/i,
+  // MCP supply-chain research blogs
+  /(^|\.)marmelab\.com(\/|$)/i,
+  /(^|\.)lorikeetsecurity\.com(\/|$)/i,
+  /(^|\.)aguardic\.com(\/|$)/i,
+  /(^|\.)policylayer\.com(\/|$)/i,
+  // SBOM / SCA practitioner sites
+  /(^|\.)dependabot\.com(\/|$)/i,
+  /(^|\.)endorlabs\.com(\/|$)/i,
+  /(^|\.)anchore\.com(\/|$)/i,
+  /(^|\.)chainguard\.dev(\/|$)/i,
+  /(^|\.)socket\.dev(\/|$)/i,
+];
+
 const BROWSER_AGENT_SECURITY_PRIMARY_PATTERNS: RegExp[] = [
   // Vendor primary disclosure surfaces
   /(^|\.)brave\.com(\/|$)/i,
@@ -2379,6 +2423,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of AIBOM_SUPPLY_CHAIN_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:aibom-supply-chain-primary" };
+  }
   for (const re of BROWSER_AGENT_SECURITY_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:browser-agent-security-primary" };
   }
@@ -2390,6 +2437,9 @@ export function classifyTier(
   }
   // Hoist topic-specific secondary domain matches above path-fragment heuristic
   // so that explicit secondary classification beats incidental "/resources/" matches.
+  for (const re of AIBOM_SUPPLY_CHAIN_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:aibom-supply-chain-secondary" };
+  }
   for (const re of BROWSER_AGENT_SECURITY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:browser-agent-security-secondary" };
   }
