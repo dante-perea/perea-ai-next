@@ -1578,6 +1578,28 @@ const SPECIALIZED_JUDGE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)blog\.salesforceairesearch\.com(\/|$)/i,
 ];
 
+const PART2_HEALTH_PRIMARY_PATTERNS: RegExp[] = [
+  // Federal regulatory primary surfaces for the rule
+  /(^|\.)federalregister\.gov(\/|$)/i,
+  /(^|\.)govinfo\.gov(\/|$)/i,
+  /(^|\.)hhs\.gov(\/|$)/i,
+  /(^|\.)samhsa\.gov(\/|$)/i,
+  /(^|\.)coephi\.org(\/|$)/i,
+  // Major US law firms (canonical practitioner authority for federal-regulatory rulemaking)
+  /(^|\.)crowell\.com(\/|$)/i,
+  /(^|\.)nixonpeabody\.com(\/|$)/i,
+  /(^|\.)cblaw\.com(\/|$)/i,
+  /(^|\.)bakerdonelson\.com(\/|$)/i,
+  /(^|\.)woodsrogers\.com(\/|$)/i,
+];
+
+const PART2_HEALTH_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)techtarget\.com(\/|$)/i,
+  /(^|\.)lexology\.com(\/|$)/i,
+  /(^|\.)healthlawattorneyblog\.com(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+];
+
 const EDGE_AI_PRIMARY_PATTERNS: RegExp[] = [
   // Apple corporate primary surfaces
   /(^|\.)machinelearning\.apple\.com(\/|$)/i,
@@ -2803,6 +2825,9 @@ export function classifyTier(
   for (const re of EDGE_AI_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:edge-ai-primary" };
   }
+  for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2843,6 +2868,9 @@ export function classifyTier(
   }
   for (const re of EDGE_AI_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:edge-ai-secondary" };
+  }
+  for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
