@@ -2025,6 +2025,30 @@ const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)docs\.together\.ai(\/|$)/i,
   /(^|\.)semgrep\.dev(\/|$)/i,
   /(^|\.)docs\.anthropic\.com(\/|$)/i,
+  /(^|\.)forrester\.com(\/|$)/i,
+  /(^|\.)go\.forrester\.com(\/|$)/i,
+  /(^|\.)investor\.forrester\.com(\/|$)/i,
+  /(^|\.)iconiq\.com(\/|$)/i,
+  /(^|\.)iconiqcapital\.com(\/|$)/i,
+  /(^|\.)cdn\.prod\.website-files\.com(\/|$)/i,
+  /(^|\.)bvp\.com(\/|$)/i,
+  /(^|\.)joinpavilion\.com(\/|$)/i,
+  /(^|\.)gartner\.com(\/|$)/i,
+  /(^|\.)profitwell\.com(\/|$)/i,
+  /(^|\.)a16z\.com(\/|$)/i,
+];
+
+const B2B_TRIAL_DESIGN_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)chartmogul\.com(\/|$)/i,
+  /(^|\.)userpilot\.com(\/|$)/i,
+  /(^|\.)pendo\.io(\/|$)/i,
+  /(^|\.)userflow\.com(\/|$)/i,
+  /(^|\.)appcues\.com(\/|$)/i,
+  /(^|\.)saashero\.com(\/|$)/i,
+  /(^|\.)saasfactor\.com(\/|$)/i,
+  /(^|\.)saastr\.com(\/|$)/i,
+  /(^|\.)hyperscience\.com(\/|$)/i,
+  /(^|\.)forbes\.com(\/|$)/i,
 ];
 
 const PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
@@ -3911,6 +3935,9 @@ export function classifyTier(
   }
   for (const re of BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:browser-agent-perception-primary" };
+  }
+  for (const re of B2B_TRIAL_DESIGN_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:b2b-trial-design-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
