@@ -2014,6 +2014,17 @@ const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)docs\.mem0\.ai(\/|$)/i,
   /(^|\.)help\.getzep\.com(\/|$)/i,
   /(^|\.)langchain-ai\.github\.io(\/|$)/i,
+  /(^|\.)github\.com\/meta-llama(\/|$)/i,
+  /(^|\.)meta-llama\.github\.io(\/|$)/i,
+  /(^|\.)ai\.meta\.com(\/|$)/i,
+  /(^|\.)llama\.meta\.com(\/|$)/i,
+  /(^|\.)github\.com\/anthropics(\/|$)/i,
+  /(^|\.)docs\.claude\.com(\/|$)/i,
+  /(^|\.)console\.anthropic\.com(\/|$)/i,
+  /(^|\.)github\.com\/ethz-spylab(\/|$)/i,
+  /(^|\.)docs\.together\.ai(\/|$)/i,
+  /(^|\.)semgrep\.dev(\/|$)/i,
+  /(^|\.)docs\.anthropic\.com(\/|$)/i,
 ];
 
 const PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
