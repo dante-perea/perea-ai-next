@@ -1102,6 +1102,136 @@ const MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)paymentweek\.com(\/|$)/i,
 ];
 
+const CONSTRUCTION_COMPLIANCE_PRIMARY_PATTERNS: RegExp[] = [
+  // AIA contract documents
+  /(^|\.)aiacontracts\.com(\/|$)/i,
+  /(^|\.)help\.aiacontracts\.com(\/|$)/i,
+  /(^|\.)learn\.aiacontracts\.com(\/|$)/i,
+  /(^|\.)aia\.org(\/|$)/i,
+  // Construction software corporate
+  /(^|\.)procore\.com(\/|$)/i,
+  /(^|\.)investors\.procore\.com(\/|$)/i,
+  /(^|\.)autodesk\.com(\/|$)/i,
+  /(^|\.)construction\.autodesk\.com(\/|$)/i,
+  /(^|\.)investors\.autodesk\.com(\/|$)/i,
+  /(^|\.)apps\.autodesk\.com(\/|$)/i,
+  /(^|\.)buildertrend\.com(\/|$)/i,
+  /(^|\.)higharc\.com(\/|$)/i,
+  /(^|\.)cmicglobal\.com(\/|$)/i,
+  /(^|\.)trimble\.com(\/|$)/i,
+  /(^|\.)tekla\.com(\/|$)/i,
+  /(^|\.)bluebeam\.com(\/|$)/i,
+  /(^|\.)foundationsoft\.com(\/|$)/i,
+  /(^|\.)foundationsoftware\.com(\/|$)/i,
+  /(^|\.)sage\.com(\/|$)/i,
+  /(^|\.)acumatica\.com(\/|$)/i,
+  /(^|\.)viewpoint\.com(\/|$)/i,
+  // AI-native construction startups corporate
+  /(^|\.)trunktools\.com(\/|$)/i,
+  /(^|\.)buildots\.com(\/|$)/i,
+  /(^|\.)documentcrunch\.com(\/|$)/i,
+  /(^|\.)openspace\.ai(\/|$)/i,
+  /(^|\.)disperse\.io(\/|$)/i,
+  /(^|\.)doxel\.ai(\/|$)/i,
+  /(^|\.)togal\.ai(\/|$)/i,
+  /(^|\.)alicetechnologies\.com(\/|$)/i,
+  /(^|\.)smartvid\.io(\/|$)/i,
+  /(^|\.)newmetrix\.com(\/|$)/i,
+  /(^|\.)avvir\.io(\/|$)/i,
+  /(^|\.)versatile\.com(\/|$)/i,
+  /(^|\.)beamup\.ai(\/|$)/i,
+  // Prequalification platforms corporate
+  /(^|\.)isnetworld\.com(\/|$)/i,
+  /(^|\.)avetta\.com(\/|$)/i,
+  /(^|\.)veriforce\.com(\/|$)/i,
+  // VC + sponsor primary publications
+  /(^|\.)baincapitaltechopportunities\.com(\/|$)/i,
+  /(^|\.)hggc\.com(\/|$)/i,
+  /(^|\.)spark\.capital(\/|$)/i,
+  /(^|\.)pillar\.vc(\/|$)/i,
+  /(^|\.)insightpartners\.com(\/|$)/i,
+  /(^|\.)redpoint\.com(\/|$)/i,
+  /(^|\.)innovationendeavors\.com(\/|$)/i,
+  /(^|\.)stepstonegroup\.com(\/|$)/i,
+  /(^|\.)libertymutual\.com(\/|$)/i,
+  /(^|\.)qumracapital\.com(\/|$)/i,
+  /(^|\.)tlvpartners\.com(\/|$)/i,
+  /(^|\.)lightspeed\.com(\/|$)/i,
+  /(^|\.)greenfieldpartners\.com(\/|$)/i,
+  /(^|\.)nemetschek\.com(\/|$)/i,
+  /(^|\.)titaniumventures\.com(\/|$)/i,
+  /(^|\.)navitascapital\.com(\/|$)/i,
+  /(^|\.)zacuaventures\.com(\/|$)/i,
+  /(^|\.)ironspring\.com(\/|$)/i,
+  /(^|\.)fifthwall\.com(\/|$)/i,
+  /(^|\.)luxcapital\.com(\/|$)/i,
+  /(^|\.)menlovc\.com(\/|$)/i,
+  // Federal regulator + agency (additional construction-specific)
+  /(^|\.)census\.gov(\/|$)/i,
+  /(^|\.)energy\.gov(\/|$)/i,
+  /(^|\.)dol\.gov(\/|$)/i,
+  /(^|\.)osha\.gov(\/|$)/i,
+  /(^|\.)cms\.gov(\/|$)/i,
+  /(^|\.)ecfr\.gov(\/|$)/i,
+  /(^|\.)sam\.gov(\/|$)/i,
+  /(^|\.)alpha\.sam\.gov(\/|$)/i,
+  // SEC filing aggregator (acts as primary mirror for IR filings)
+  /(^|\.)last10k\.com(\/|$)/i,
+  /(^|\.)s21\.q4cdn\.com(\/|$)/i,
+];
+
+const CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS: RegExp[] = [
+  // Construction trade press
+  /(^|\.)enr\.com(\/|$)/i,
+  /(^|\.)constructiondive\.com(\/|$)/i,
+  /(^|\.)constructionexec\.com(\/|$)/i,
+  /(^|\.)forconstructionpros\.com(\/|$)/i,
+  /(^|\.)constructionbusinessowner\.com(\/|$)/i,
+  /(^|\.)builderonline\.com(\/|$)/i,
+  /(^|\.)constructionequipmentguide\.com(\/|$)/i,
+  /(^|\.)constructionjunkie\.com(\/|$)/i,
+  /(^|\.)hbsdealer\.com(\/|$)/i,
+  /(^|\.)constructionbids\.ai(\/|$)/i,
+  /(^|\.)constructiondaily\.com(\/|$)/i,
+  /(^|\.)constructionconnect\.com(\/|$)/i,
+  /(^|\.)dodgeconstruction\.com(\/|$)/i,
+  /(^|\.)houzz\.com(\/|$)/i,
+  // Housing trade press
+  /(^|\.)housingwire\.com(\/|$)/i,
+  /(^|\.)forbuilders\.com(\/|$)/i,
+  /(^|\.)builderonline\.com(\/|$)/i,
+  /(^|\.)professionalbuilder\.com(\/|$)/i,
+  // Compliance + safety trade press
+  /(^|\.)industrialcompliancesafety\.com(\/|$)/i,
+  /(^|\.)expiryedge\.com(\/|$)/i,
+  /(^|\.)deltawye\.com(\/|$)/i,
+  /(^|\.)cstoneindustries\.com(\/|$)/i,
+  /(^|\.)safety-and-health-magazine\.com(\/|$)/i,
+  /(^|\.)ehsdailyadvisor\.com(\/|$)/i,
+  /(^|\.)blr\.com(\/|$)/i,
+  // Lien-rights compliance vendor blogs
+  /(^|\.)siteline\.com(\/|$)/i,
+  /(^|\.)lienshield\.app(\/|$)/i,
+  /(^|\.)projul\.com(\/|$)/i,
+  /(^|\.)trysubshield\.com(\/|$)/i,
+  /(^|\.)levelset\.com(\/|$)/i,
+  /(^|\.)procore-help\.com(\/|$)/i,
+  // Law firms / regulatory commentary
+  /(^|\.)seyfarth\.com(\/|$)/i,
+  /(^|\.)foley\.com(\/|$)/i,
+  /(^|\.)kilpatricktownsend\.com(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)constructionrisk\.com(\/|$)/i,
+  /(^|\.)constructionlawyer\.com(\/|$)/i,
+  // Sales/M&A intelligence
+  /(^|\.)salestools\.io(\/|$)/i,
+  // Industry blog
+  /(^|\.)dancumberlandlabs\.com(\/|$)/i,
+  /(^|\.)hypepotamus\.com(\/|$)/i,
+  // EHR/EHR-equivalent comparison sites
+  /(^|\.)adaptdigitalsolutions\.com(\/|$)/i,
+];
+
 const THERAPIST_AI_SCRIBE_PRIMARY_PATTERNS: RegExp[] = [
   // AI scribe vendors corporate / IR
   /(^|\.)mentalyc\.com(\/|$)/i,
@@ -1749,6 +1879,9 @@ export function classifyTier(
   for (const re of THERAPIST_AI_SCRIBE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `therapist-ai-scribe primary: ${domain}` };
   }
+  for (const re of CONSTRUCTION_COMPLIANCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `construction-compliance primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1777,6 +1910,9 @@ export function classifyTier(
   }
   for (const re of THERAPIST_AI_SCRIBE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `therapist-ai-scribe secondary: ${domain}` };
+  }
+  for (const re of CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `construction-compliance secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
