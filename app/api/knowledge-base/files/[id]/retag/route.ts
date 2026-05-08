@@ -85,7 +85,7 @@ export async function POST(
         : "(Binary file — use filename and type as context)";
 
       const { text } = await generateText({
-        model: gateway("openai/gpt-4o-mini"),
+        model: gateway("xai/grok-4.3"),
         prompt: `${SYSTEM_PROMPT}\n\nFilename: ${file.filename}\nType: ${file.contentType}\n${contentStr}`,
         maxOutputTokens: 128,
       });
