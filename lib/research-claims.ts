@@ -1732,6 +1732,34 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)stripe\.com(\/|$)/i,
+  /(^|\.)salesforce\.com(\/|$)/i,
+  /(^|\.)bvp\.com(\/|$)/i,
+  /(^|\.)cloudindex\.bvp\.com(\/|$)/i,
+  /(^|\.)cloud\.substack\.com(\/|$)/i,
+  /(^|\.)techtarget\.com(\/|$)/i,
+  /(^|\.)diginomica\.com(\/|$)/i,
+  /(^|\.)pymnts\.com(\/|$)/i,
+  /(^|\.)saasvaluationmultiple\.com(\/|$)/i,
+];
+
+const SUBSCRIPTION_PARADOX_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)saastr\.com(\/|$)/i,
+  /(^|\.)tierly\.app(\/|$)/i,
+  /(^|\.)victorinollc\.com(\/|$)/i,
+  /(^|\.)eesel\.ai(\/|$)/i,
+  /(^|\.)softwarefinder\.com(\/|$)/i,
+  /(^|\.)agentsindex\.ai(\/|$)/i,
+  /(^|\.)getgenerative\.ai(\/|$)/i,
+  /(^|\.)autonainews\.com(\/|$)/i,
+  /(^|\.)planetarylabour\.com(\/|$)/i,
+  /(^|\.)dailyalpha\.us(\/|$)/i,
+  /(^|\.)nextwavesinsight\.com(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)podbrain\.app(\/|$)/i,
+];
+
 const VERIFIABLE_BOT_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)vercel\.com(\/|$)/i,
   /(^|\.)bots\.fyi(\/|$)/i,
@@ -3358,6 +3386,9 @@ export function classifyTier(
   for (const re of VERIFIABLE_BOT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:verifiable-bot-primary" };
   }
+  for (const re of SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:subscription-paradox-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3437,6 +3468,9 @@ export function classifyTier(
   }
   for (const re of VERIFIABLE_BOT_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:verifiable-bot-secondary" };
+  }
+  for (const re of SUBSCRIPTION_PARADOX_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:subscription-paradox-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
