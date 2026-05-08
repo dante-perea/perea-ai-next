@@ -211,7 +211,6 @@ function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete,
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <span className="text-xs text-[var(--color-ink-faint)]">{formatBytes(file.size)}</span>
-        <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
           {onRetag && (
             <button
               onClick={async () => { setRetagging(true); try { await onRetag(); } finally { setRetagging(false); } }}
@@ -226,15 +225,16 @@ function FileRow({ file, activeTag, onTagClick, onTagRemove, onTagAdd, onDelete,
               )}
             </button>
           )}
-          <a href={`/api/knowledge-base/files/${file.id}/download`} title="Download" className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:bg-[var(--color-accent-bg)] hover:text-[var(--color-accent)]">
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-          </a>
-          {canDelete && onDelete && (
-            <button onClick={onDelete} title="Delete" className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:text-red-500">
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-            </button>
-          )}
-        </div>
+          <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+            <a href={`/api/knowledge-base/files/${file.id}/download`} title="Download" className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:bg-[var(--color-accent-bg)] hover:text-[var(--color-accent)]">
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            </a>
+            {canDelete && onDelete && (
+              <button onClick={onDelete} title="Delete" className="rounded p-1 text-[var(--color-ink-faint)] transition-colors hover:text-red-500">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            )}
+          </div>
       </div>
     </div>
   );
