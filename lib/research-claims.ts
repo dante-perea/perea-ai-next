@@ -3012,6 +3012,80 @@ const CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)tldrsec\.com(\/|$)/i,
 ];
 
+const EU_AI_ACT_ARTICLE_14_PRIMARY_PATTERNS: RegExp[] = [
+  // EU institutional domains
+  /(^|\.)europarl\.europa\.eu(\/|$)/i,
+  /(^|\.)www\.europarl\.europa\.eu(\/|$)/i,
+  /(^|\.)consilium\.europa\.eu(\/|$)/i,
+  /(^|\.)data\.consilium\.europa\.eu(\/|$)/i,
+  /(^|\.)eur-lex\.europa\.eu(\/|$)/i,
+  /(^|\.)digital-strategy\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)ec\.europa\.eu(\/|$)/i,
+  // Member State authorities
+  /(^|\.)imda\.gov\.sg(\/|$)/i,
+  /(^|\.)pdpc\.gov\.sg(\/|$)/i,
+  // Quasi-official AI Act regulation-text aggregators (FLI / well-maintained mirrors of OJ text)
+  /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)en\.ai-act\.io(\/|$)/i,
+  /(^|\.)aiact-info\.eu(\/|$)/i,
+  /(^|\.)ai-act-text\.com(\/|$)/i,
+  /(^|\.)artificialintelligenceact\.com(\/|$)/i,
+  /(^|\.)euai\.app(\/|$)/i,
+  /(^|\.)aiact\.algolia\.com(\/|$)/i,
+  /(^|\.)streamlex\.eu(\/|$)/i,
+];
+
+const EU_AI_ACT_ARTICLE_14_SECONDARY_PATTERNS: RegExp[] = [
+  // Top-tier law firms publishing on AI Act
+  /(^|\.)freshfields\.com(\/|$)/i,
+  /(^|\.)www\.freshfields\.com(\/|$)/i,
+  /(^|\.)eversheds-sutherland\.com(\/|$)/i,
+  /(^|\.)www\.eversheds-sutherland\.com(\/|$)/i,
+  /(^|\.)bakermckenzie\.com(\/|$)/i,
+  /(^|\.)www\.bakermckenzie\.com(\/|$)/i,
+  /(^|\.)kennedyslaw\.com(\/|$)/i,
+  /(^|\.)www\.kennedyslaw\.com(\/|$)/i,
+  /(^|\.)lewissilkin\.com(\/|$)/i,
+  /(^|\.)www\.lewissilkin\.com(\/|$)/i,
+  /(^|\.)cms\.law(\/|$)/i,
+  /(^|\.)www\.cms\.law(\/|$)/i,
+  /(^|\.)conventuslaw\.com(\/|$)/i,
+  /(^|\.)bm\.consulting(\/|$)/i,
+  // Compliance vendors + EU AI Act analyst aggregators
+  /(^|\.)aktai\.eu(\/|$)/i,
+  /(^|\.)www\.aktai\.eu(\/|$)/i,
+  /(^|\.)aigl\.blog(\/|$)/i,
+  /(^|\.)www\.aigl\.blog(\/|$)/i,
+  /(^|\.)regdossier\.eu(\/|$)/i,
+  /(^|\.)quantamixsolutions\.com(\/|$)/i,
+  /(^|\.)glocertinternational\.com(\/|$)/i,
+  /(^|\.)www\.glocertinternational\.com(\/|$)/i,
+  /(^|\.)actproof\.ai(\/|$)/i,
+  /(^|\.)auroratrust\.ai(\/|$)/i,
+  /(^|\.)complyance\.app(\/|$)/i,
+  /(^|\.)regulativ\.ai(\/|$)/i,
+  /(^|\.)www\.regulativ\.ai(\/|$)/i,
+  /(^|\.)aiactgap\.com(\/|$)/i,
+  /(^|\.)www\.aiactgap\.com(\/|$)/i,
+  /(^|\.)aiactregistration\.com(\/|$)/i,
+  /(^|\.)euaicompass\.com(\/|$)/i,
+  // Trade press (German cybersecurity outlet) and think tanks
+  /(^|\.)securitytoday\.de(\/|$)/i,
+  /(^|\.)www\.securitytoday\.de(\/|$)/i,
+  /(^|\.)fpf\.org(\/|$)/i,
+  /(^|\.)www\.fpf\.org(\/|$)/i,
+  /(^|\.)aiasiapacific\.org(\/|$)/i,
+  // Engineering analyst blogs implementing Article 14 patterns
+  /(^|\.)compelframework\.org(\/|$)/i,
+  /(^|\.)www\.compelframework\.org(\/|$)/i,
+  /(^|\.)agenticcontrolplane\.com(\/|$)/i,
+  /(^|\.)azmoy\.com(\/|$)/i,
+  /(^|\.)agentapproved\.ai(\/|$)/i,
+  /(^|\.)oktsec\.com(\/|$)/i,
+  /(^|\.)safeguardsai\.com(\/|$)/i,
+  /(^|\.)amministrativo\.it(\/|$)/i,
+];
+
 const MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate / Seller Central / Brand Services / Selling Partners
   /(^|\.)amazon\.com(\/|$)/i,
@@ -4103,6 +4177,12 @@ export function classifyTier(
   }
   for (const re of CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:capability-agent-security-secondary" };
+  }
+  for (const re of EU_AI_ACT_ARTICLE_14_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:eu-ai-act-article-14-primary" };
+  }
+  for (const re of EU_AI_ACT_ARTICLE_14_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:eu-ai-act-article-14-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
