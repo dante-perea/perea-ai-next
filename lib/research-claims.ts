@@ -1946,6 +1946,26 @@ const LLMSTXT_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)llmtxt\.app(\/|$)/i,
 ];
 
+const REWARDBENCH_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)allenai\.org(\/|$)/i,
+  /(^|\.)github\.com\/allenai(\/|$)/i,
+  /(^|\.)github\.com\/scalerlab(\/|$)/i,
+  /(^|\.)github\.com\/skyworkai(\/|$)/i,
+  /(^|\.)github\.com\/contextualai(\/|$)/i,
+  /(^|\.)github\.com\/thu-coai(\/|$)/i,
+  /(^|\.)hugging-face\.cn(\/|$)/i,
+  /(^|\.)contextual\.ai(\/|$)/i,
+  /(^|\.)databricks\.com(\/|$)/i,
+];
+
+const REWARDBENCH_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)emergentmind\.com(\/|$)/i,
+  /(^|\.)deeplearn\.org(\/|$)/i,
+  /(^|\.)catalyzex\.com(\/|$)/i,
+  /(^|\.)arxivlens\.com(\/|$)/i,
+  /(^|\.)app\.argminai\.com(\/|$)/i,
+];
+
 const LLMSTXT_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)ai\.rs(\/|$)/i,
   /(^|\.)ai-herald\.com(\/|$)/i,
@@ -3642,6 +3662,9 @@ export function classifyTier(
   for (const re of LLMSTXT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:llmstxt-primary" };
   }
+  for (const re of REWARDBENCH_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:rewardbench-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3742,6 +3765,9 @@ export function classifyTier(
   }
   for (const re of LLMSTXT_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:llmstxt-secondary" };
+  }
+  for (const re of REWARDBENCH_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:rewardbench-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
