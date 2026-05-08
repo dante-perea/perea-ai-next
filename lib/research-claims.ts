@@ -1921,6 +1921,52 @@ const GUI_GROUNDING_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)labs\.adept\.ai(\/|$)/i,
 ];
 
+const LLMSTXT_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)llmstxt\.org(\/|$)/i,
+  /(^|\.)answer\.ai(\/|$)/i,
+  /(^|\.)mintlify\.com(\/|$)/i,
+  /(^|\.)mintlify\.mintlify\.app(\/|$)/i,
+  /(^|\.)vercel\.com(\/|$)/i,
+  /(^|\.)cloudflare\.com(\/|$)/i,
+  /(^|\.)stripe\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)agentdiscovery\.io(\/|$)/i,
+  /(^|\.)llmld\.org(\/|$)/i,
+  /(^|\.)agentnetworkprotocol\.com(\/|$)/i,
+  /(^|\.)ietf\.org(\/|$)/i,
+  /(^|\.)pypi\.org(\/|$)/i,
+  /(^|\.)github\.com\/answerdotai(\/|$)/i,
+  /(^|\.)github\.com\/metisos(\/|$)/i,
+  /(^|\.)github\.com\/langchain-ai(\/|$)/i,
+  /(^|\.)github\.com\/agent-network-protocol(\/|$)/i,
+  /(^|\.)github\.com\/walkojas-boop(\/|$)/i,
+  /(^|\.)schema\.org(\/|$)/i,
+  /(^|\.)llmstxt\.work(\/|$)/i,
+  /(^|\.)llmtxt\.info(\/|$)/i,
+  /(^|\.)llmtxt\.app(\/|$)/i,
+];
+
+const LLMSTXT_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)ai\.rs(\/|$)/i,
+  /(^|\.)ai-herald\.com(\/|$)/i,
+  /(^|\.)miniloop\.ai(\/|$)/i,
+  /(^|\.)roast\.page(\/|$)/i,
+  /(^|\.)ritnerdigital\.com(\/|$)/i,
+  /(^|\.)digitalstrategyforce\.com(\/|$)/i,
+  /(^|\.)broworks\.net(\/|$)/i,
+  /(^|\.)llmstxtgenerator\.org(\/|$)/i,
+  /(^|\.)crawleroptic\.com(\/|$)/i,
+  /(^|\.)clickcentricseo\.com(\/|$)/i,
+  /(^|\.)aicrawlercheck\.com(\/|$)/i,
+  /(^|\.)richardlemon\.com(\/|$)/i,
+  /(^|\.)profound\.so(\/|$)/i,
+  /(^|\.)lowtouch\.ai(\/|$)/i,
+  /(^|\.)growthterminal\.io(\/|$)/i,
+  /(^|\.)builtwith\.com(\/|$)/i,
+  /(^|\.)semrush\.com(\/|$)/i,
+  /(^|\.)searchengineland\.com(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3593,6 +3639,9 @@ export function classifyTier(
   for (const re of GUI_GROUNDING_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gui-grounding-primary" };
   }
+  for (const re of LLMSTXT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:llmstxt-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3690,6 +3739,9 @@ export function classifyTier(
   }
   for (const re of GUI_GROUNDING_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gui-grounding-secondary" };
+  }
+  for (const re of LLMSTXT_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:llmstxt-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
