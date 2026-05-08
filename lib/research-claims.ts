@@ -1370,6 +1370,59 @@ const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bensbites\.com(\/|$)/i,
 ];
 
+const BROWSER_AGENT_SECURITY_PRIMARY_PATTERNS: RegExp[] = [
+  // Vendor primary disclosure surfaces
+  /(^|\.)brave\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)perplexity\.ai(\/|$)/i,
+  /(^|\.)support\.claude\.com(\/|$)/i,
+  /(^|\.)claude\.ai(\/|$)/i,
+  /(^|\.)msrc\.microsoft\.com(\/|$)/i,
+  /(^|\.)aim\.security(\/|$)/i,
+  // Standards bodies + NIST + CVE
+  /(^|\.)nvd\.nist\.gov(\/|$)/i,
+  /(^|\.)cve\.mitre\.org(\/|$)/i,
+  /(^|\.)cve\.org(\/|$)/i,
+  // Academic publishers
+  /(^|\.)ojs\.aaai\.org(\/|$)/i,
+  /(^|\.)aaai\.org(\/|$)/i,
+  /(^|\.)usenix\.org(\/|$)/i,
+  /(^|\.)ieeexplore\.ieee\.org(\/|$)/i,
+  /(^|\.)acm\.org(\/|$)/i,
+];
+
+const BROWSER_AGENT_SECURITY_SECONDARY_PATTERNS: RegExp[] = [
+  // Vulnerability research labs + AI security analyst blogs
+  /(^|\.)koi\.security(\/|$)/i,
+  /(^|\.)labs\.zenity\.io(\/|$)/i,
+  /(^|\.)zenity\.io(\/|$)/i,
+  /(^|\.)raxe\.ai(\/|$)/i,
+  /(^|\.)forcepoint\.com(\/|$)/i,
+  /(^|\.)labs\.cloudsecurityalliance\.org(\/|$)/i,
+  /(^|\.)cloudsecurityalliance\.org(\/|$)/i,
+  /(^|\.)forge\.ai(\/|$)/i,
+  /(^|\.)alice\.io(\/|$)/i,
+  /(^|\.)breakmyagent\.ai(\/|$)/i,
+  /(^|\.)hivesecurity\.gitlab\.io(\/|$)/i,
+  /(^|\.)wiki\.charleschen\.ai(\/|$)/i,
+  /(^|\.)deepyard\.dev(\/|$)/i,
+  // Independent AI security commentators
+  /(^|\.)simonwillison\.net(\/|$)/i,
+  /(^|\.)blog\.simonwillison\.net(\/|$)/i,
+  // Tech press
+  /(^|\.)theregister\.com(\/|$)/i,
+  /(^|\.)arstechnica\.com(\/|$)/i,
+  /(^|\.)zdnet\.com(\/|$)/i,
+  /(^|\.)insight\.tmcnet\.com(\/|$)/i,
+  /(^|\.)tmcnet\.com(\/|$)/i,
+  /(^|\.)newsdefused\.com(\/|$)/i,
+  /(^|\.)ainewstoday\.org(\/|$)/i,
+  /(^|\.)gadgets360\.com(\/|$)/i,
+  /(^|\.)ciol\.com(\/|$)/i,
+  /(^|\.)indianexpress\.com(\/|$)/i,
+  /(^|\.)tenable\.com(\/|$)/i,
+];
+
 const CAPABILITY_AGENT_SECURITY_PRIMARY_PATTERNS: RegExp[] = [
   // Academic publishers + canonical OCap source authors
   /(^|\.)cacm\.acm\.org(\/|$)/i,
@@ -2326,6 +2379,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of BROWSER_AGENT_SECURITY_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:browser-agent-security-primary" };
+  }
   for (const re of CAPABILITY_AGENT_SECURITY_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:capability-agent-security-primary" };
   }
@@ -2334,6 +2390,9 @@ export function classifyTier(
   }
   // Hoist topic-specific secondary domain matches above path-fragment heuristic
   // so that explicit secondary classification beats incidental "/resources/" matches.
+  for (const re of BROWSER_AGENT_SECURITY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:browser-agent-security-secondary" };
+  }
   for (const re of CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:capability-agent-security-secondary" };
   }
