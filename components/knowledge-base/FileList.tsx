@@ -22,6 +22,64 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+interface TypeStyle {
+  label: string;
+  bg: string;
+  text: string;
+}
+
+function getTypeStyle(contentType: string): TypeStyle {
+  if (contentType.includes("pdf")) return { label: "PDF", bg: "bg-red-50", text: "text-red-600" };
+  if (contentType.startsWith("image/")) return { label: "IMAGE", bg: "bg-blue-50", text: "text-blue-600" };
+  if (contentType.startsWith("video/")) return { label: "VIDEO", bg: "bg-orange-50", text: "text-orange-600" };
+  if (contentType.startsWith("audio/")) return { label: "AUDIO", bg: "bg-pink-50", text: "text-pink-600" };
+  if (contentType.includes("json")) return { label: "JSON", bg: "bg-green-50", text: "text-green-700" };
+  if (contentType.includes("yaml")) return { label: "YAML", bg: "bg-green-50", text: "text-green-700" };
+  if (contentType.includes("xml")) return { label: "XML", bg: "bg-green-50", text: "text-green-700" };
+  if (contentType.startsWith("text/markdown") || contentType.includes("markdown")) return { label: "MD", bg: "bg-slate-100", text: "text-slate-600" };
+  if (contentType.startsWith("text/")) return { label: "TXT", bg: "bg-slate-100", text: "text-slate-600" };
+  if (contentType.includes("zip") || contentType.includes("tar") || contentType.includes("gzip")) return { label: "ZIP", bg: "bg-amber-50", text: "text-amber-700" };
+  return { label: "FILE", bg: "bg-gray-100", text: "text-gray-500" };
+}
+
+function FileTypeBadge({ contentType }: { contentType: string }) {
+  const { label, bg, text } = getTypeStyle(contentType);
+  return (
+    <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wide ${bg} ${text}`}>
+      {label}
+    </span>
+  );
+}
+
+function IdChip({ id }: { id: string }) {
+  const [copied, setCopied] = useState(false);
+
+  function copy(e: React.MouseEvent) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  return (
+    <button
+      onClick={copy}
+      title={`Copy ID: ${id}`}
+      className="flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-xs text-[var(--color-ink-faint)] transition-colors hover:bg-[var(--color-bg-card)] hover:text-[var(--color-ink-soft)]"
+    >
+      {copied
+        ? <span className="text-emerald-500">✓</span>
+        : <CopyIcon />
+      }
+      {id.slice(0, 8)}
+    </button>
+  );
+}
+
 // ── File row ──────────────────────────────────────────────────────────────────
 
 function FileRow({
@@ -55,18 +113,30 @@ function FileRow({
 
   return (
     <tr className="group border-b border-[var(--color-border)] hover:bg-[var(--color-bg-card)] transition-colors">
-      {/* File name + size */}
+      {/* File name */}
       <td className="py-3 pl-4 pr-3">
         <a
           href={`/api/knowledge-base/files/${file.id}/download`}
-          className="flex items-center gap-2 hover:text-[var(--color-accent)] transition-colors"
+          className="flex items-center gap-2 font-medium text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors"
         >
           <FileIcon contentType={file.contentType} />
-          <span className="flex flex-col min-w-0">
-            <span className="truncate text-sm font-medium text-[var(--color-ink)]">{file.filename}</span>
-            <span className="text-xs text-[var(--color-ink-faint)]">{formatBytes(file.size)}</span>
-          </span>
+          <span className="max-w-[180px] truncate text-sm">{file.filename}</span>
         </a>
+      </td>
+
+      {/* Type badge */}
+      <td className="py-3 pr-3">
+        <FileTypeBadge contentType={file.contentType} />
+      </td>
+
+      {/* Size */}
+      <td className="py-3 pr-3 text-sm text-[var(--color-ink-muted)] whitespace-nowrap">
+        {formatBytes(file.size)}
+      </td>
+
+      {/* Date */}
+      <td className="py-3 pr-3 text-sm text-[var(--color-ink-muted)] whitespace-nowrap">
+        {formatDate(file.uploadedAt)}
       </td>
 
       {/* Uploaded by (team context) */}
@@ -96,6 +166,11 @@ function FileRow({
             />
           )}
         </div>
+      </td>
+
+      {/* ID chip */}
+      <td className="py-3 pr-3">
+        <IdChip id={file.id} />
       </td>
 
       {/* Actions — revealed on hover */}
@@ -177,6 +252,14 @@ function FileIcon({ contentType }: { contentType: string }) {
   );
 }
 
+function CopyIcon() {
+  return (
+    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export function FileList({
@@ -196,10 +279,14 @@ export function FileList({
           <thead>
             <tr className="border-b border-[var(--color-border)] bg-[var(--color-bg-card)]">
               <th className="py-2.5 pl-4 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">File</th>
+              <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Type</th>
+              <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Size</th>
+              <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Date</th>
               {showUploadedBy && (
                 <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Uploaded by</th>
               )}
               <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">Tags</th>
+              <th className="py-2.5 pr-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]">ID</th>
               <th className="py-2.5 pr-4 text-right text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-faint)]"></th>
             </tr>
           </thead>
@@ -207,7 +294,7 @@ export function FileList({
             {files.map((file) => {
               const canDelete = canDeleteAny !== false
                 ? true
-                : file.userId === currentUserId;
+                : file.userId === currentUserId; // editor: own files only
               return (
                 <FileRow
                   key={file.id}
