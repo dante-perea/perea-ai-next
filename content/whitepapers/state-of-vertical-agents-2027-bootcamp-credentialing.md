@@ -25,6 +25,7 @@ description: >-
   Academy + OpenAI), regulatory landmines (BloomTech CFPB consent order,
   California DFPI ISA registration, 2U bankruptcy), and the seven founder
   archetypes who win the next decade.
+profile: "field-manual"
 ---
 
 ## Foreword

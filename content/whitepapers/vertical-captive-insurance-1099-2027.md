@@ -10,6 +10,7 @@ audience: "Captive insurance founders, freelance-finance vendor leads, 1099 heal
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "An authority survey of the vertical-captive-insurance layer for 1099 workers in 2026–2027: IRS T.D. 10029 making micro-captive 831(b) arrangements listed transactions, Vermont H.649 signed by Phil Scott on March 24, 2026, North Carolina's 263 captives + 746 cells, Florida SB 990 / CS/CS/HB 883 protected-cell captive framework effective July 1 2026, and the Vault Health Captive + Solo Health Collective + Ten99 Health vendor cohort built atop NC's regulatory perimeter."
+profile: "field-manual"
 ---
 
 ## Foreword

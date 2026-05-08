@@ -10,6 +10,7 @@ audience: "Founders building dental-vertical AI products, DSO operators, dental-
 length: "~10,000 words"
 license: "CC BY 4.0"
 description: "Authority survey of the U.S. dental-operations continuum entering 2027 — a $172-203 billion services market consolidating into the top-10 DSOs (Heartland, Aspen TAG, PDS Health, Smile Doctors, Smile Brands, Dentalcorp), the FDA-cleared dental-AI imaging triopoly (Pearl, Overjet, VideaHealth), the practice-management EHR triopoly (Henry Schein One Dentrix, Patterson Eaglesoft, Planet DDS Denticon), and the regulatory bifurcation between PL 119-21 OBBBA Medicaid compression and California SB 351 corporate-practice-of-dentistry codification."
+profile: "field-manual"
 ---
 
 ## Foreword

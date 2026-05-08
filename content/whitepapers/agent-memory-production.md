@@ -10,6 +10,7 @@ audience: "Platform engineers, infra leads, and applied-AI teams shipping multi-
 length: "~6,800 words"
 license: "CC BY 4.0"
 description: "Memory is the third production infrastructure layer for agents — after MCP for tool access and observability for runtime visibility. The 2025-2026 landscape converged on a four-type taxonomy (working / episodic / semantic / procedural), four serious frameworks (Mem0, Zep/Graphiti, Letta, LangMem), and a benchmarked vector-DB hierarchy (Qdrant for hot path, Weaviate for tool registries, pgvector for under-10M, Pinecone for managed simplicity). This paper documents the architecture, the failure modes (drift, persistent poisoning, cross-context contamination), and the 2026 production playbook."
+profile: "field-manual"
 ---
 
 ## Foreword

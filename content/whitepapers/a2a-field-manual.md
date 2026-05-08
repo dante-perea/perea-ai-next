@@ -10,6 +10,7 @@ audience: "Founders and architects building multi-agent systems, integrators eva
 length: "~3,200 words"
 license: "CC BY 4.0"
 description: "Reference manual for the Agent2Agent (A2A) protocol — the v1.0 spec ratified March 2026 under Linux Foundation governance. Maps how Agent Cards, JSON-RPC bindings, SSE streaming, and stateful task lifecycles compose with MCP into the canonical multi-agent reference architecture, and what an integration should actually look like in 2026."
+profile: "field-manual"
 ---
 
 # The A2A Field Manual

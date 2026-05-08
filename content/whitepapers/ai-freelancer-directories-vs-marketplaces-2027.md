@@ -10,6 +10,7 @@ audience: "Freelance-platform founders, marketplace product leaders, B2B agency 
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "An authority survey of the AI-freelancer-directory + marketplace cohort in 2026–2027: Braintrust AIR's first-round AI interviewer at 62% penetration, Toptal's roll-up of Graphite + NSI + Growth Collective + VironIT + YouTeam, Upwork Uma's evolution into an always-on work agent at $787.8M FY2025 revenue + $4.028B GSV, Fiverr's $380M–$420M 2026 revenue guidance reset, and the GigRadar-quantified marketplace dysfunction (4-minute reply-rate cliff, $0.30/connect economics, 2.7× category spread)."
+profile: "field-manual"
 ---
 
 ## Foreword

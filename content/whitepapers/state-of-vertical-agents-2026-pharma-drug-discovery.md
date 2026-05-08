@@ -10,6 +10,7 @@ audience: "Founders, GTM leads, and product teams selling AI agents into pharma 
 length: "~5,400 words"
 license: "CC BY 4.0"
 description: "The eighth entry in the State of Vertical Agents series, mapping the U.S. and global pharma + drug discovery AI agent market as it exists in May 2026. Covers the Recursion-Exscientia merger (July 2025) and 5 differentiated clinical programs; Isomorphic Labs $600M first external raise + $2.9B combined Eli Lilly + Novartis research partnerships; Generate Biomedicines GB-0895 entering Phase III as the first AI-derived antibody; Insitro's expanded Bristol Myers Squibb ALS partnership; the FDA-EMA Guiding Principles of Good AI Practice in Drug Development (January 2026); FDA's 7-step credibility assessment framework (January 2025 draft guidance); EU GMP Annex 22 (PIC/S draft) for AI/ML in pharmaceutical manufacturing; the 21 CFR Part 11 electronic records, signatures, and audit-trail requirements that gate every production AI agent; the three failure modes (the credibility assessment gap, the GxP audit-trail compliance gap, the validation evidence package gap); MLP communities (BIO, JPMorgan Healthcare Conference, AACR, ASH); and a five-path GTM decision tree (research-tool vendor, target-discovery co-development, clinical-trial automation, manufacturing/QC AI, regulatory-AI). Closes the open vertical thread for pharma + drug discovery in the perea.ai canon."
+profile: "field-manual"
 ---
 
 ## Foreword

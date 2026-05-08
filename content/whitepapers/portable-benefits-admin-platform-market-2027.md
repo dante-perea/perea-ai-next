@@ -10,6 +10,7 @@ audience: "founders, benefits-platform operators, gig-platform policy teams, sta
 length: "~2,800 words"
 license: "CC BY 4.0"
 description: "Authority survey of the portable-benefits administrative platform market beyond Stride. Maps the four archetypes (consumer-direct brokerage, B2B2C platform middleware, captive-insurance pool, employment-cooperative EOR), prices the TAM (USD 2.14B in 2024 growing to USD 7.86B by 2033), inventories the vendor cohort, and traces the state safe-harbor patchwork — Utah 2023, Tennessee 2025-04, Alabama 2025, Wisconsin pending — into the federal Modern Worker Security Act and Unlocking Benefits for Independent Workers Act bills."
+profile: "field-manual"
 ---
 
 ## Executive summary

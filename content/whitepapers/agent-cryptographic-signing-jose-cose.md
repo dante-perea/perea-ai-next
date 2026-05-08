@@ -10,6 +10,7 @@ audience: "Security architects designing the trust layer for autonomous agents, 
 length: "~3,000 words"
 license: "CC BY 4.0"
 description: "Field manual for cryptographic signing of agent artifacts. Maps the JOSE (RFC 7515) vs COSE (RFC 9052) decision matrix, the SCITT (Supply Chain Integrity, Transparency, and Trust) IETF architecture and its April 2026 AI-agent-execution profile, Microsoft CoseSignTool with CWT Claims and DID:x509, and the PQ/T hybrid composite signatures (ML-DSA + ECDSA/EdDSA) that will let signed agent artifacts survive a quantum computer."
+profile: "field-manual"
 ---
 
 # Cryptographic Signing for Agent Artifacts

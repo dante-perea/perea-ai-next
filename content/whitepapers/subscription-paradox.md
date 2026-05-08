@@ -10,6 +10,7 @@ audience: "SaaS founders, finance and pricing leaders, board members and investo
 length: "~3,400 words"
 license: "CC BY 4.0"
 description: "An authority survey of how the per-seat SaaS pricing model breaks under agent-mediated commerce in 2026: the input-vs-output-constrained framing from Atlassian's Cannon-Brookes; Salesforce Agentforce's three-prices-for-one-agent ($2/conversation, $0.10/action via Flex Credits, $125/user/month AELA); Intercom Fin's $0.99/resolution outcome model; ServiceNow's Foundation/Advanced/Prime tiers and target of 50% non-seat revenue; the Bain finding that 65% of vendors now layer usage on top of seats; the multiple compression from 18.6x EV/ARR (Q4 2021) to 6.4x (Q1 2026); and the hybrid pattern that 46-65% of companies have settled on as the modal answer."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence

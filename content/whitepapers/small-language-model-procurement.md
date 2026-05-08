@@ -10,6 +10,7 @@ audience: "B2B procurement leaders, CIOs, ML platform engineers, and engineering
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "80% of enterprise AI workloads suit small specialized models, not frontier — and the cost asymmetry is now 2,080× ($3 vs $6,241 per 1M requests for distil labs fine-tuned vs Claude Opus). LoRA/QLoRA puts fine-tuning at $1,500 on a single RTX 4090 vs $50K full FT on H100s. Production case studies converge on Mistral-7B + LoRA + vLLM + AWQ + Q8 KV cache. The 90-day procurement playbook: task taxonomy → tier A/B/C → fine-tune → deploy 80/20 router → measure."
+profile: "technical-playbook"
 ---
 
 # The Small-Language-Model Procurement Playbook

@@ -10,6 +10,7 @@ audience: "ML engineers, evaluation leads, and eval-platform users (Braintrust, 
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "Single LLM-as-a-judge has known failure modes: self-preference bias 10-25 percentage points within model families, position bias, token bias, shared confounders. CARE (NeurIPS 2025) reduces aggregation error 26.8% via sparse+low-rank+tensor decomposition. Bradley-Terry-Davidson distribution-calibrated aggregation (arXiv 2512.03019) matches human raters. CalibraEval NOA fixes selection bias label-free. The 2026 production playbook: cross-family ensembles for release-gating, single calibrated judge for continuous monitoring."
+profile: "technical-playbook"
 ---
 
 # The Multi-Judge LLM Calibration Playbook

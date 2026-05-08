@@ -10,6 +10,7 @@ audience: "Heads of security, CISOs, platform-engineering leads, and applied-AI 
 length: "~9,000 words"
 license: "CC BY 4.0"
 description: "The 2025 prompt-injection landscape forced a quiet architectural pivot in production AI. Detection-only defenses bypass at >90% under adaptive attack; the new defenses — Meta's Rule of Two, Google DeepMind's CaMeL, Microsoft Research's FIDES — work because they constrain the agent rather than detect the attack. This paper documents the EchoLeak chain, the MCPTox 72.8% benchmark, and the GitHub MCP exploit, then maps them onto the seven-layer defense stack production teams are deploying in 2026."
+profile: "field-manual"
 ---
 
 ## Foreword

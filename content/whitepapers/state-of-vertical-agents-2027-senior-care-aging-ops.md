@@ -10,6 +10,7 @@ audience: "Founders building senior-care platform products, healthcare investors
 length: "~11,000 words"
 license: "CC BY 4.0"
 description: "Authority survey of the U.S. senior-care continuum entering 2027 — a $1T-and-growing long-term-care market reshaped in 24 months by the CMS GUIDE Model dementia-care expansion, the federal nursing-home staffing-rule collapse under Section 71111 of Public Law 119-21, the Medicare Advantage 2026 SSBCI supplemental-benefits guardrails, and the rise of an AI-native ambient layer (Sensi.AI, Inspiren, WellSky-Suki) layered over the PointClickCare/MatrixCare/AlayaCare/WellSky EHR triopoly."
+profile: "field-manual"
 ---
 
 ## Foreword

@@ -10,6 +10,7 @@ audience: "CISOs and security leads writing MCP server vendor questionnaires; pl
 length: "~3,400 words"
 license: "CC BY 4.0"
 description: "The buyer-side companion to mcp-server-playbook.md. Maps the four-component MCP platform (registry / gateway / identity / observability) every Fortune 500 evaluation now requires, the OWASP MCP Top 10 questionnaire baseline, the six-dimension vendor scorecard with weighted scoring, the Anthropic signed registry trust model, Cloudflare's published reference architecture for non-engineering teams, and the SSOJet 10-question CISO intake. Built for procurement teams writing RFPs in mid-2026."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence

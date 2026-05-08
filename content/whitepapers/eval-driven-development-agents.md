@@ -10,6 +10,7 @@ audience: "Engineering leaders shipping AI agents to production, ML platform tea
 length: "~3,100 words"
 license: "CC BY 4.0"
 description: "The methodology and tooling field manual for eval-driven development of AI agents. Maps Anthropic's official Red-Green-Refactor practice onto a CI/CD architecture, compares DeepEval, LangSmith, Braintrust, Arize Phoenix, and Promptfoo on the dimensions that decide adoption, and documents the GitHub Actions ecosystem for blocking PR merges when agent quality regresses."
+profile: "field-manual"
 ---
 
 # Eval-Driven Development for AI Agents

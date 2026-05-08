@@ -10,6 +10,7 @@ audience: "Security and platform engineers building agent payment surfaces; iden
 length: "~3,400 words"
 license: "CC BY 4.0"
 description: "An authority survey of the cryptographic and authorization stack underneath agent commerce as it stands in mid-2026: the Asymmetric Pivot from HS256 to ECDSA P-256, the SD-JWT+KB foundation in RFC 9901, AP2's Cart/Intent/Payment Mandate model with delegate_payload chains and cnf claims, the Validation Chasm between cryptographic proof and business authorization, and the PEP/PDP separation that keeps the LLM out of the policy decision."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence
@@ -37,7 +38,7 @@ The practical consequence shows up across every example payload in the spec. Eac
 }
 ```
 
-ES256 (ECDSA over P-256 with SHA-256) is required across the AP2 reference; the Universal Commerce Protocol's AP2 Mandates Extension makes this even more explicit: "Algorithms: ES256 (required), ES384, ES512."[^8] HS256 — the symmetric HMAC scheme that 80%+ of legacy SaaS JWT implementations still default to — is *not* in the permitted set. The Asymmetric Pivot is the precondition for the rest of the stack.
+ES256 (ECDSA over P-256 with SHA-256) is required across the AP2 reference; the Universal Commerce Protocol's AP2 Mandates Extension makes this even more explicit: "Algorithms: ES256 (required), ES384, ES512."[^8] HS256 — the symmetric HMAC scheme that, according to one practitioner write-up, remains the default in a large share of legacy SaaS JWT pipelines — is *not* in the permitted set. The Asymmetric Pivot is the precondition for the rest of the stack.
 
 ## 3. SD-JWT+KB (RFC 9901): the IETF foundation
 
@@ -122,6 +123,8 @@ The reference implementation makes the boundary explicit in its trust model: "Cl
 
 ## 7. Mandate Policy Engines: PEP / PDP separation
 
+> **Sources note.** PDP/OPA architectural patterns in this section draw heavily from two practitioner blogs (Tianpan Pan; Frank @ AppxLab). Treat the specific operational claims (sub-millisecond OPA latency, "80%+ HS256 default" estimates, OPA-as-sidecar topology) as illustrative architecture from individual practitioners rather than industry-validated consensus.
+
 Outside the LLM, two architectural patterns have settled the policy-decision layer in 2026: in-process middleware and out-of-process policy services. The PEP/PDP split is older than agents — XACML, cloud IAM, Kubernetes admission controllers — but agents made the failure modes acute.
 
 The shape, as articulated by Microsoft's Authorization Fabric team:[^3]
@@ -134,7 +137,7 @@ Microsoft's pattern requires the Authorization Fabric be a Microsoft Entra–pro
 
 Cordum's analysis of in-process vs out-of-process governance frames the trust-boundary argument:[^4] "Compromise of the agent does not compromise the policy decision because the two live in separate trust boundaries."[^4] In-process governance — Microsoft AGT, Galileo Agent Control, APort's Open Agent Passport, NeMo Guardrails, Guardrails AI, most LangChain callbacks — runs the PEP and PDP in the same Python process as the agent.[^4] Cordum's Safety Kernel runs as a separate gRPC service behind mTLS; the agent calls it before dispatch and never sees the decision being made.[^4]
 
-Open Policy Agent (OPA) is the CNCF-graduated general-purpose engine, with Rego as its policy language.[^18] Rego is declarative, supports rich data joins via OPAL, and runs sub-millisecond when colocated as a sidecar.[^18] Zylos Research's recommended approach for Rust runtimes: compile OPA policies to WASM and execute them via `wasmtime`, eliminating network round-trips while preserving Rego's expressiveness.[^19]
+Open Policy Agent (OPA) is the CNCF-graduated general-purpose engine, with Rego as its policy language.[^18] Rego is declarative and supports rich data joins via OPAL; one practitioner write-up (Tianpan Pan) reports sub-millisecond decision latencies in colocated-sidecar deployments, though absolute numbers depend heavily on policy complexity and cache state.[^18] Zylos Research's recommended approach for Rust runtimes: compile OPA policies to WASM and execute them via `wasmtime`, eliminating network round-trips while preserving Rego's expressiveness.[^19]
 
 The crucial discipline both Microsoft and Zylos call out is what they label the *LLM-as-advisor-not-judge* model:[^20] LLMs can enrich policy decisions with semantic classification (Category C — "must LLM" — for genuine ambiguity), but structured LLM output must always enter a deterministic decision function. The final ALLOW/DENY must always come from deterministic evaluation.[^20]
 
@@ -144,7 +147,7 @@ The settled architecture, per Tianpan Pan's April 2026 essay:[^18] "A user-initi
 
 Sonnet & Prose's review of the AP2 reference implementation surfaced three failure modes that even a correctly-specified protocol can produce in practice. Each maps to a place where the cryptographic chain interacts with the policy chain.
 
-**Failure mode 1: Symmetric signing.** A naive HS256 implementation of the Checkout JWT — which 80%+ of legacy SaaS JWT pipelines still default to — collapses the entropy property the AP2 specification depends on for `checkout_hash`. Anyone who sees the symmetric secret can forge JWTs and rainbow-table the hash. AP2's normative MUST against deterministic signatures[^5] is the cryptographic equivalent of this failure mode; the operational equivalent is failing to migrate existing JWT signing infrastructure when bolting on agent payments. Detection: any production deployment whose Checkout JWT carries `"alg": "HS256"` is non-conformant.
+**Failure mode 1: Symmetric signing.** A naive HS256 implementation of the Checkout JWT — which, as documented by a single OPA-Rego practitioner blog, remains the default in a large share of legacy SaaS JWT pipelines[^18] — collapses the entropy property the AP2 specification depends on for `checkout_hash`. Anyone who sees the symmetric secret can forge JWTs and rainbow-table the hash. AP2's normative MUST against deterministic signatures[^5] is the cryptographic equivalent of this failure mode; the operational equivalent is failing to migrate existing JWT signing infrastructure when bolting on agent payments. Detection: any production deployment whose Checkout JWT carries `"alg": "HS256"` is non-conformant.
 
 **Failure mode 2: Orphan cart credentials.** AP2's binding chain depends on the `delegate_payload` array linking open and closed Mandates by digest. If an Agent Provider issues a closed Mandate whose `sd_hash` references an open Mandate the verifier cannot resolve — because the open Mandate was never registered with the verifier or has expired — the closed Mandate becomes an orphan credential: cryptographically valid, but unverifiable. AP2 §Security and Privacy explicitly requires verifiers to reject any closed Mandate whose chain cannot be resolved to a known open Mandate.[^16] Operationally, this means a credential lifecycle management layer is required — not optional.
 
@@ -200,64 +203,8 @@ The next paper in this thread will dive into the revocation-registry gap — wha
 [^15]: Google. "Payment Mandate." Accessed May 2026. https://ap2-protocol.org/ap2/payment_mandate/
 [^16]: Google. "AP2 Security and Privacy Considerations (open/closed mandate binding rules)." Accessed May 2026. https://ap2-protocol.org/ap2/security_and_privacy_considerations/
 [^17]: Google. "AP2 Flows." Accessed May 2026. https://ap2-protocol.org/ap2/flows/
-[^18]: Tianpan Pan. "Policy-as-Code for Agents: OPA, Rego, and the Decision Point Your Tool Loop Doesn't Have." April 25, 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
+[^18]: Practitioner blog — Tianpan Pan. "Policy-as-Code for Agents: OPA, Rego, and the Decision Point Your Tool Loop Doesn't Have." April 25, 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
 [^19]: Zylos Research. "Deterministic Governance in AI Agent Systems." March 11, 2026. https://zylos.ai/research/2026-03-11-deterministic-governance-ai-agent-systems
 [^20]: Zylos Research. "Policy Engines for AI Agent Governance: Rule-Based and Hybrid Approaches." March 14, 2026. https://zylos.ai/research/2026-03-14-policy-engines-ai-agent-governance
 [^21]: AP2 GitHub Issues. "Restrict IntentMandate Visibility to User ↔ Shopping Agent Boundary (Issue #180)." March 17, 2026. https://github.com/google-agentic-commerce/AP2/issues/180
-[^22]: Frank. "AI Agents in IDP: A Platform Engineer's Blueprint." April 15, 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^23]: Google. "AP2 Implementation Considerations." Accessed May 2026. https://ap2-protocol.org/ap2/implementation_considerations/
-[^24]: Google. "AP2 Agent Authorization Framework." Accessed May 2026. https://ap2-protocol.org/ap2/agent_authorization/
-[^25]: IETF. "RFC 9901 — Selective Disclosure for JWTs (Datatracker)." November 19, 2025. https://datatracker.ietf.org/doc/rfc9901/
-[^26]: IETF Datatracker. "draft-ietf-oauth-selective-disclosure-jwt full text." May 29, 2025. https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt
-[^27]: Universal Commerce Protocol. "AP2 Mandates Extension (draft)." Accessed May 2026. https://ucp.dev/draft/specification/ap2-mandates/
-[^28]: Microsoft. "Authorization Fabric pattern with Cosmos DB policy store." Accessed May 2026. https://techcommunity.microsoft.com/blog/microsoft-security-blog/authorization-and-governance-for-ai-agents-runtime-authorization-beyond-identity/4509161
-[^29]: Cordum. "Safety Kernel separate gRPC service architecture." Accessed May 2026. https://cordum.io/blog/in-process-vs-out-of-process-ai-agent-governance
-[^30]: Tianpan Pan. "PDP-in-the-loop architecture and capability tokens." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^31]: Zylos Research. "Hybrid policy pipelines: deterministic prefilter + LLM + deterministic enforcement (Category D)." March 2026. https://zylos.ai/research/2026-03-14-policy-engines-ai-agent-governance
-[^32]: Frank. "Compliance posture mapping (EU AI Act)." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^33]: Google. "AP2 Checkout Mandate SD-JWT example with delegate_payload chain." Accessed May 2026. https://ap2-protocol.org/ap2/checkout_mandate/
-[^34]: Google. "AP2 Payment Mandate constraint blocks (amount_range, allowed_payees)." Accessed May 2026. https://ap2-protocol.org/ap2/payment_mandate/
-[^35]: Google. "AP2 Flows — Human Not Present Autonomous flow." Accessed May 2026. https://ap2-protocol.org/ap2/flows/
-[^36]: Google. "AP2 Implementation Considerations: Trusted Surface and Agent key roles." Accessed May 2026. https://ap2-protocol.org/ap2/implementation_considerations/
-[^37]: Google. "AP2 Agent Authorization Framework — open vs closed Mandate model." Accessed May 2026. https://ap2-protocol.org/ap2/agent_authorization/
-[^38]: Google. "AP2 Agent Authorization — Mandate Receipt and double-spend prevention." Accessed May 2026. https://ap2-protocol.org/ap2/agent_authorization/
-[^39]: IETF Datatracker. "RFC 9901 publication metadata (November 2025)." https://datatracker.ietf.org/doc/rfc9901/
-[^40]: IETF. "RFC 9901 §4.3 Key Binding JWT (sd_hash, aud, nonce, iat requirements)." November 2025. https://www.rfc-editor.org/rfc/rfc9901
-[^41]: IETF. "RFC 9901 §4.3.2 Validating the Key Binding JWT." November 2025. https://www.rfc-editor.org/rfc/rfc9901
-[^42]: IETF. "RFC 9901 §9.1 Disclosure salt entropy requirements." November 2025. https://www.rfc-editor.org/rfc/rfc9901
-[^43]: IETF Datatracker. "SD-JWT draft history (drafts 12-22) and editor list." Accessed May 2026. https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/22/
-[^44]: IETF. "RFC 9901 abstract and proposed standard status." November 2025. https://www.rfc-editor.org/rfc/rfc9901
-[^45]: AP2 GitHub. "Issue #180 — IntentMandate visibility restriction proposal." March 17, 2026. https://github.com/google-agentic-commerce/AP2/issues/180
-[^46]: Google. "AP2 Specification — checkout_hash, _sd_alg, and entropy requirements." Accessed May 2026. https://ap2-protocol.org/ap2/specification/
-[^47]: Google. "AP2 Verifiable Digital Credential Formats (VDCs)." Accessed May 2026. https://ap2-protocol.org/ap2/specification/
-[^48]: Google. "AP2 Section 4 — Trust Anchors (GitHub mirror of specification.md)." Accessed May 2026. https://github.com/google-agentic-commerce/AP2/blob/main/docs/specification.md
-[^49]: UCP. "Algorithms ES256 (required), ES384, ES512 normative requirement." April 2026. http://ucp.dev/2026-04-08/specification/ap2-mandates/
-[^50]: UCP. "JCS RFC 8785 canonicalization for AP2 signatures." April 2026. http://ucp.dev/2026-04-08/specification/ap2-mandates/
-[^51]: UCP. "JWK RFC 7517 key format for AP2 platforms." April 2026. http://ucp.dev/2026-04-08/specification/ap2-mandates/
-[^52]: Microsoft. "Microsoft Entra-protected endpoint configuration for Authorization Fabric." Accessed May 2026. https://techcommunity.microsoft.com/blog/microsoft-security-blog/authorization-and-governance-for-ai-agents-runtime-authorization-beyond-identity/4509161
-[^53]: Microsoft. "Authorization Fabric V2 ABAC + RBAC pipeline." Accessed May 2026. https://techcommunity.microsoft.com/blog/microsoft-security-blog/authorization-and-governance-for-ai-agents-runtime-authorization-beyond-identity/4509161
-[^54]: Cordum. "Microsoft AGT, Galileo, NeMo Guardrails as in-process governance category." May 2026. https://cordum.io/blog/in-process-vs-out-of-process-ai-agent-governance
-[^55]: Cordum. "HSM-vs-in-process-keys analogy for PEP/PDP architecture." May 2026. https://cordum.io/blog/in-process-vs-out-of-process-ai-agent-governance
-[^56]: Tianpan Pan. "OPA decision logs as SIEM-streamable structured events." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^57]: Zylos Research. "OPA-via-WASM in Rust runtimes via wasmtime." March 11, 2026. https://zylos.ai/research/2026-03-11-deterministic-governance-ai-agent-systems
-[^58]: Zylos Research. "Deterministic kernel + pluggable LLM advisor architecture." March 11, 2026. https://zylos.ai/research/2026-03-11-deterministic-governance-ai-agent-systems
-[^59]: Frank. "Microsoft Agent Governance Toolkit (MS AGT) released April 2, 2026, MIT license." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^60]: Frank. "Compliance mapping table (EU AI Act → IDP architectural decisions)." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^61]: AP2 GitHub. "Reference implementation Shopping Agent system prompt." March 2026. https://github.com/google-agentic-commerce/AP2/issues/180
-[^62]: AP2 GitHub. "BBS+ anonymous credential proposal in issue #120 (referenced from #180)." March 2026. https://github.com/google-agentic-commerce/AP2/issues/180
-[^63]: Google. "AP2 Implementation Considerations — Trusted Surface roles." Accessed May 2026. https://ap2-protocol.org/ap2/implementation_considerations/
-[^64]: Google. "AP2 Agent Authorization — Action Authorization sequence." Accessed May 2026. https://ap2-protocol.org/ap2/agent_authorization/
-[^65]: Google. "AP2 specification — Merchant Verification rules normative MUSTs." Accessed May 2026. https://ap2-protocol.org/ap2/specification/
-[^66]: Tianpan Pan. "PDP-call latency benchmark (sub-millisecond OPA)." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^67]: Frank. "OWASP top 10 agentic AI risks coverage analysis." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^68]: Tianpan Pan. "Capability tokens task-scoped expiry pattern." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^69]: Frank. "PEP/PDP gateway architecture for MCP/A2A interoperability." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^70]: Tianpan Pan. "OPA-as-sidecar fronting tool gateway pattern." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^71]: Frank. "Audit trail with timestamps EU AI Act requirement mapping." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^72]: Tianpan Pan. "Audit conversation forcing function for governance adoption." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^73]: Frank. "Token budget tracking and request-level events for compliance." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^74]: Tianpan Pan. "Model refusal vs policy refusal event class distinction." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^75]: Frank. "Policy review and version-controlled deployment pattern." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^76]: Tianpan Pan. "Defense-in-depth with downstream PEP/PDP." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
-[^77]: Frank. "Self-service agent registration with GitOps trail." April 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/
-[^78]: Tianpan Pan. "Policy-as-code: Rego, Cedar, and the OPA ecosystem." April 2026. https://tianpan.co/blog/2026-04-25-policy-as-code-agent-permissions-opa-rego
+[^22]: Practitioner blog — Frank (AppxLab). "AI Agents in IDP: A Platform Engineer's Blueprint." April 15, 2026. https://blog.appxlab.io/2026/04/15/ai-agents-idp-governance/

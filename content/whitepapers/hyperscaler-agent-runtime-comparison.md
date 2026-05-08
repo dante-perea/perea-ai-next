@@ -10,6 +10,7 @@ audience: "Platform engineering leads selecting an agent runtime, founders decid
 length: "~3,000 words"
 license: "CC BY 4.0"
 description: "Architectural decision matrix for the four hyperscaler-managed agent runtimes — AWS Bedrock AgentCore (GA Oct 2025), Microsoft Foundry Agent Service (GA March 2026), Google Vertex Agent Engine (Gemini Enterprise Agent Platform), and OpenAI AgentKit (DevDay Oct 2025). Maps pricing, session isolation, framework support, observability, and the canonical decision tree."
+profile: "field-manual"
 ---
 
 # Hyperscaler Agent Runtimes 2026

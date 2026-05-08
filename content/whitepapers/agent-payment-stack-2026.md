@@ -10,6 +10,7 @@ audience: "SaaS founders, payments engineers, fintech architects, and infrastruc
 length: "~9,500 words"
 license: "CC BY 4.0"
 description: "The canonical decision matrix for the agent payment stack: x402 (Coinbase), ACP (OpenAI/Stripe), AP2 (Google), MPP (Stripe/Tempo), TAP (Visa). Architecture, layering rules, vertical recommendations, code examples, regulatory horizon, references."
+profile: "field-manual"
 ---
 
 # Foreword

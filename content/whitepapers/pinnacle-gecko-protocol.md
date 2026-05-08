@@ -4,12 +4,13 @@ subtitle: "An opinionated, source-backed protocol for compressing the full idea-
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Essay"
 date: "2026-05-06T19:05"
 audience: "Founders, builders, and operators compressing their iteration cycle to minutes"
 length: "~3,400 words"
 license: "CC BY 4.0"
 description: "Synthesized from 100+ sources spanning YC, Sequoia, a16z, the founders of Stripe, Airbnb, Facebook, LinkedIn, Basecamp, and the modern indie-hacker generation."
+profile: "field-manual"
 ---
 
 # The Pinnacle Gecko Protocol: Idea → Ship → Feedback in Minutes

@@ -10,6 +10,7 @@ audience: "Site operators, platform engineers, and security teams choosing how t
 length: "~3,300 words"
 license: "CC BY 4.0"
 description: "An authority survey of the supplier-side stack for letting verified agents through bot management as it stands in mid-2026: Vercel BotID GA on Kasada, Cloudflare verified bots and signed agents, the IETF Web Bot Auth working group's HTTP Message Signatures architecture (RFC 9421 + directory + architecture drafts), the three-tier crawler split (training / search-indexing / user-browsing) across OpenAI/Anthropic/Perplexity/Google, and the route-level decision tree (block / allow / allow-and-meter / allow-with-payment-required via x402)."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence

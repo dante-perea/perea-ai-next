@@ -10,6 +10,7 @@ audience: "Product designers, frontend engineers, and PMs building AI-native app
 length: "~3,200 words"
 license: "CC BY 4.0"
 description: "An authority survey of the post-chat agent UX as it stands in mid-2026: Harrison Chase's three-shift framing (trigger, concurrency, interaction), the Agent Inbox primitive, the three open protocols crystallizing the space (AG-UI from CopilotKit, A2UI from Google, MCP Apps from OpenAI), the generative-UI provider stack (Vercel AI SDK 6, Anthropic Artifacts, Hashbrown, OpenAI Apps SDK), and the four reference designs (Cursor 3, Claude Code, Devin, Perplexity) that are now the de-facto patterns for ambient agents."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence

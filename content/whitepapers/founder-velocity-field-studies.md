@@ -10,6 +10,7 @@ audience: "Vertical-agent founders shipping the first version. Operators inside 
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "The operator playbook beneath Pinnacle Gecko. Twelve sub-100-hour MVP-to-paid case studies across legal, insurance, healthcare, accounting, CRE, and construction verticals — synthesized into the 3-precondition rule, the convergent 2026 tooling stack, five pricing anchors that work, six anti-patterns that break the 90-day path, and day-90 quantified targets ($10K–50K MRR / 10–20 paying customers / 80%+ pilot-to-customer conversion / CAC:LTV ≥3:1). Founder-market-fit dominates AI-technical-fit in 11 of 12 cases."
+profile: "field-manual"
 ---
 
 # Founder Velocity Field Studies

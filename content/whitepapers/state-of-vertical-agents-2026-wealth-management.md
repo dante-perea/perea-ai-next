@@ -10,6 +10,7 @@ audience: "Wealth-tech founders, RIA principals, broker-dealer technology leader
 length: "~5,000 words"
 license: "CC BY 4.0"
 description: "A field map of vertical AI agents in wealth management: where Schwab, Fidelity, Vanguard, BlackRock, and Citi Wealth are deploying client-facing and advisor-productivity AI, the Jump/Zocks/Holistiplan/FP Alpha integration mesh that has emerged as the canonical AI-native advisor stack, the Hubly-Docupace acquisition pattern, and the GTM playbook that wins through RIA-custodian channels (Schwab + Fidelity + Pershing) and broker-dealer + wirehouse partnerships."
+profile: "field-manual"
 ---
 
 ## Foreword

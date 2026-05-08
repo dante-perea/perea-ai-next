@@ -10,6 +10,7 @@ audience: "Founders evaluating accounting and finance-ops vertical agent market 
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "The fourth entry in the State of Vertical Agents quarterly series and fifth Tier-S vertical-flavored paper post-elevation. Maps accounting + finance-operations as the highest-CAGR agent-economy vertical (44.6% AI-in-accounting market growth, narrowly exceeding healthcare's 43.96%) with the canonical incumbent-disruption setup: BlackLine ($712M ARR, 4,300+ enterprise customers, Q1 2026 +10% revenue) + FloQast (2,800+ mid-market) + AI-native challengers Vic.ai, Trullion, Karbon, Canopy, Field Guide, Quanto AI, Basis AI. Workday Sana GA as the structural-incumbent threat parallel to Mount Sinai healthcare. Big-4 dual-incumbent dynamic. 5-Framework Compliance Test (SOX 404 + AICPA SAS 145 + IRS Section 6694 + GAAP/IFRS + EU CSRD + AI professional-indemnity) magnitude similar to insurance Three-State Test. 1.4-1.6x productivity ceiling at $400-1,500/hr CPA billing rate matches legal + insurance + healthcare. Acquired-by-platform 7-acquirer set: Workday + Oracle + Microsoft + Sage + Intuit + ServiceNow + IBM."
+profile: "field-manual"
 ---
 
 # State of Vertical Agents Q2 2027: Accounting and Finance Operations

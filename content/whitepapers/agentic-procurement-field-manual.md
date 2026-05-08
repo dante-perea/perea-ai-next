@@ -10,6 +10,7 @@ audience: "B2B founders, CMOs, RevOps and demand-gen leaders, CPOs and procureme
 length: "~10,000 words"
 license: "CC BY 4.0"
 description: "A consolidated field report on how B2B procurement actually works in 2026: 95% of winning vendors are already on the Day One shortlist, 51% of software buyers start research in an AI chatbot, AI agents intermediate every step from RFx to negotiation to settlement. Synthesizes 111 primary sources — 6sense (4,510 buyers), Forrester (18,000 buyers), Gartner ($15T forecast), McKinsey (B2B Pulse), G2 (1,076 buyers), EY/Deloitte CPO surveys, Hackett Group, plus deep treatment of JAGGAER JAI, SAP next-gen Ariba/Joule, Coupa Navi ($9.5T data), GEP SMART/Qi, Pactum (Walmart/Honeywell/BMS), the AP2/x402/ACP/MPP commerce stack, and 90-day playbooks for both buyer-side and seller-side teams."
+profile: "field-manual"
 ---
 
 ## Foreword

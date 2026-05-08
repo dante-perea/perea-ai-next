@@ -10,6 +10,7 @@ audience: "Founders evaluating insurance-vertical agent market entry. Operators 
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "The second entry in the State of Vertical Agents quarterly series. Maps the insurance vertical as the second-highest-leverage agent-economy market in 2026 — $13.45B → $154.39B AI-in-insurance market at 35.7% CAGR, 86% of insurers planning AI-spend increases, eight incumbents shipping at material ARR or platform-acquired exit, the Duck Creek Agentic Platform as the SaaSpocalypse-equivalent inflection, and the Three-State Test (Colorado + NY DFS + EU AI Act Annex III) as the regulatory design floor."
+profile: "field-manual"
 ---
 
 # State of Vertical Agents Q4 2026: Insurance Claims

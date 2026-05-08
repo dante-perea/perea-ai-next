@@ -10,6 +10,7 @@ audience: "Alignment researchers and ML engineers training reward models for RLH
 length: "~3,000 words"
 license: "CC BY 4.0"
 description: "Field guide to the 2026 reward-model and LLM-judge benchmark stack: RewardBench v1 (AllenAI, 2024) and its saturation, RewardBench 2 (2025) with its 20-point gap, JudgeBench (ICLR 2025) for objective-correctness evaluation, IF-RewardBench (Tsinghua, March 2026) for instruction-following listwise ranking, and the Skywork-Reward-V2 / LMUnit / PGRM frontier."
+profile: "field-manual"
 ---
 
 # RewardBench, JudgeBench, IF-RewardBench

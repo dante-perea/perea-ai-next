@@ -10,6 +10,7 @@ audience: "SaaS founders, engineering leaders, and product owners shipping an MC
 length: "~9,200 words"
 license: "CC BY 4.0"
 description: "The canonical playbook for shipping a high-quality MCP server as a SaaS distribution channel: architecture, tool design, OAuth 2.1, security, governance, observability, distribution, and monetization."
+profile: "technical-playbook"
 ---
 
 # Foreword

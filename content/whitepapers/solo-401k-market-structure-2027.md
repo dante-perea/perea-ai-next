@@ -10,6 +10,7 @@ audience: "Solo entrepreneurs, fractional CFOs, retirement-plan founders, RIA we
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "An authority survey of the Solo 401(k) and micro-401(k) market in 2026–2027: Cerulli's 1M-plan forecast, JP Morgan's July 2025 entry via Vestwell, ForUsAll + Opolis, the Fidelity/Schwab/Vanguard/E*TRADE retail tier, the Rocket Dollar/MySolo401k self-directed tier, SECURE 2.0 startup credits via Form 8881, Form 5500-EZ filing economics, and the founder wedges still open in 2027."
+profile: "field-manual"
 ---
 
 ## Foreword

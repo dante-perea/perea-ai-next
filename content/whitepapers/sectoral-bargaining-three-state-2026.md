@@ -10,6 +10,7 @@ audience: "Labor lawyers, gig-economy founders, rideshare and delivery operators
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "An authority survey of the three-state sectoral-bargaining cohort for independent-contractor rideshare drivers in 2024–2026: Massachusetts Question 3 (Nov 2024 ballot, 53.9% yes, M.G.L. c. 150F), California AB 1340 (Newsom signed Oct 3, 2025, effective Jan 1, 2026, PERB-administered TNC Drivers Labor Relations Act, 10/30/50% thresholds, 800,000 drivers), and Illinois SB 2906/HB 4743 (filed Jan 20, 2026, 100,000+ drivers, SEIU Local 1 + IAM Local 701, sectoral agreement framework). Maps the NLRA preemption + Sherman Act antitrust open questions, the AB 288 federal injunction precedent, and the founder + counsel wedges still open."
+profile: "field-manual"
 ---
 
 ## Foreword

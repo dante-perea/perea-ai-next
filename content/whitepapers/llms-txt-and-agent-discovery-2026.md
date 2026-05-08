@@ -10,6 +10,7 @@ audience: "Documentation engineers and SEO/GEO leaders deciding whether to ship 
 length: "~3,000 words"
 license: "CC BY 4.0"
 description: "Field manual for the agent discovery layer of the 2026 web. Maps the llms.txt specification (Jeremy Howard, Sept 2024) and llms-full.txt companion (Mintlify+Anthropic), the directories tracking 1,496 to 844,000 published implementations, and the three competing Agent Discovery Protocols (metisos ADP v2, agentdiscovery.io ADP v2, walkosystems ADP v0.1) — and tells you what to publish today and what to wait on."
+profile: "field-manual"
 ---
 
 # llms.txt and the Agent Discovery Layer

@@ -10,6 +10,7 @@ audience: "Chief Procurement Officers and procurement transformation leaders mov
 length: "~3,200 words"
 license: "CC BY 4.0"
 description: "The operational playbook for closing the 96-point procurement deployment gap. Maps Hackett's six-phase roadmap (Discovery → Sustain), Zycus's twelve-month CPO timeline, McKinsey's rewired model with data spine and agent factories, Ardent's Five-Wave playbook, and Forrester's 90-day plan into a single decision tree, then names the four mechanics (data spine, governance metadata, change management, talent gap) that decide whether a pilot becomes production."
+profile: "technical-playbook"
 ---
 
 # From 4% to 50%: The Agentic Procurement Pilot-to-Scale Playbook

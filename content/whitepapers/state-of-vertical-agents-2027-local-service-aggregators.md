@@ -28,6 +28,7 @@ description: >-
   consumers), and AI-vision insurance integration (Tractable + CCC), plus
   regulatory landmines: CSLB licensing, FTC Noncompete Rule, Franchise Item 19
   FPR. Maps seven founder archetypes for the next decade.
+profile: "field-manual"
 ---
 
 ## Foreword

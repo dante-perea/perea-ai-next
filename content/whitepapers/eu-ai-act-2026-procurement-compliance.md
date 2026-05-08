@@ -10,6 +10,7 @@ audience: "B2B procurement leaders, compliance officers, CIOs, and procurement c
 length: "~6,000 words"
 license: "CC BY 4.0"
 description: "On 2 August 2026 the EU AI Act's Article 26 deployer obligations bind every organization that uses high-risk AI inside the EU. This is the procurement compliance field manual: vendor inventory in 30 days, classification by Annex III in 60, Article 9 artifact and 5-question vendor test by 90 — what every buyer must own and what every vendor must produce."
+profile: "field-manual"
 ---
 
 # The EU AI Act 2026: A Procurement Compliance Field Manual

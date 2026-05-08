@@ -10,6 +10,7 @@ audience: "Founders building vertical AI for field workers, FSM platform PMs, co
 length: "~3,300 words"
 license: "CC BY 4.0"
 description: "An authority survey of the field documentation category as it stands in mid-2026: incumbent FSM platforms, the photo-first wedge from CompanyCam, ambient AI scribes in healthcare, the home-inspection app cohort, AI-generated reports, and the OSHA defensibility loop that anchors trades documentation to a regulatory floor."
+profile: "field-manual"
 ---
 
 ## 1. The category, in one sentence

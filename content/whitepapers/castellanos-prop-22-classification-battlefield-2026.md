@@ -10,6 +10,7 @@ audience: "Founders building gig-platform compliance products, gig-worker advoca
 length: "~12,000 words"
 license: "CC BY 4.0"
 description: "An authority survey of the 2024-2026 worker-classification battlefield — Castellanos v. State of California (7/25/2024 unanimous Cal Supreme Court), AB 1340 sectoral bargaining (10/3/2025), the Newsom-SEIU-Uber-Lyft tripartite agreement (8/29/2025), Massachusetts Question 3 (11/2024) + AG Campbell's $175M settlement, Illinois HB4743 (filed 1/20/2026), and the open NLRA-preemption + Sherman Act § 1 + § 7465 supermajority questions that could unwind the three-state IC sectoral-bargaining stack."
+profile: "field-manual"
 ---
 
 ## Foreword

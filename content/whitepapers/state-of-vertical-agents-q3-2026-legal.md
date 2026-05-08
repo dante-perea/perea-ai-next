@@ -10,6 +10,7 @@ audience: "Founders evaluating vertical-agent market entry. Operators inside leg
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "A structured field manual for entering the legal vertical in 2026 after the Anthropic Cowork SaaSpocalypse rotated $285B of market cap from incumbents to agent-native challengers. Sub-vertical TAM, named incumbents with ARR, MLP communities, GTM motions, pricing models, defensibility patterns, founder-velocity case studies, and EU AI Act compliance economics."
+profile: "field-manual"
 ---
 
 # State of Vertical Agents Q3 2026: Legal

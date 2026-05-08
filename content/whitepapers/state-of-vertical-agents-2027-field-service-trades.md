@@ -10,6 +10,7 @@ audience: "Founders building AI-native software for HVAC, plumbing, electrical, 
 length: "~10,500 words"
 license: "CC BY 4.0"
 description: "A primary-source survey of how AI agents are restructuring the US specialty-trade software stack. ServiceTitan's $961M FY26 ARR + 10,800 customers anchor the incumbent layer alongside Jobber's 100K+ customers, Housecall Pro's 200K Pros, Workiz's 120K customers, and the ServiceTrade / BuildOps commercial-contractor cohort. AI-native challengers (Rebar, Cactus, Lace AI, WorkHero, Duranta, Truce, SiteCapture, Elyos) are building agent-first field-doc, inspection, and pricing layers on top of the incumbent stack. The paper synthesizes 80 primary and secondary sources into one place — no other public source has done this for the 2026–2027 trades cycle."
+profile: "field-manual"
 ---
 
 ## Foreword: Why Field Service, Why Now

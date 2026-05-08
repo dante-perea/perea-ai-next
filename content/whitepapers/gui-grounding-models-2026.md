@@ -10,6 +10,7 @@ audience: "ML engineers building computer-use agents, technical founders evaluat
 length: "~3,000 words"
 license: "CC BY 4.0"
 description: "Field guide to the open-source GUI grounding models powering computer-use agents in 2026. Compares UI-Venus 1.5, Aria-UI, MEGA-GUI, OS-Atlas, UGround, Jedi, ShowUI, SeeClick, and CogAgent on ScreenSpot-Pro, OSWorld-G, AndroidWorld, and WebVoyager — with the architectural choices (RFT, model merge, MoE, Region-of-Interest pipelines) that decide which one ships in your stack."
+profile: "field-manual"
 ---
 
 # GUI Grounding Models 2026

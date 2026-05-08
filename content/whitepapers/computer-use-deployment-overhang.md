@@ -10,6 +10,7 @@ audience: "Platform leads, applied-AI teams, and security engineers evaluating c
 length: "~6,200 words"
 license: "CC BY 4.0"
 description: "From October 2024 to May 2026 the OSWorld leaderboard went from 14.9% (Claude 3.5 Sonnet, screenshot-only) to 75.0% (GPT-5.4, beating human 72.4%). Production deployment did not keep pace. This paper documents the capability landscape, the unique failure modes of agents that perceive screens (Visual Atomicity Violation TOCTOU attacks, 86% adversarial-popup ASR, idempotent failures producing 72.3% of timeouts), and the architectural defenses (CaMeLs Can Use Computers Too, PUSV three-layer verification) that make production rollout safe. Closes with a 90-day playbook for shipping a computer-use agent without burning the trust budget."
+profile: "field-manual"
 ---
 
 ## Foreword

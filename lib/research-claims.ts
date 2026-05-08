@@ -3086,6 +3086,102 @@ const EU_AI_ACT_ARTICLE_14_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)amministrativo\.it(\/|$)/i,
 ];
 
+// GEO/AEO 2026 — generative-engine-optimization paper. Primary surfaces are
+// the academic GEO research, Pew Research Center primary studies, and Google's
+// own platform announcements. Secondary surfaces are the major SEO analytics
+// platforms whose published studies move the citation-research field.
+const GEO_2026_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)pewresearch\.org(\/|$)/i,
+  /(^|\.)www\.pewresearch\.org(\/|$)/i,
+  /(^|\.)princeton\.edu(\/|$)/i,
+  /(^|\.)generative-engines\.com(\/|$)/i,
+  /(^|\.)generative-engine\.org(\/|$)/i,
+  /(^|\.)googleblog\.com(\/|$)/i,
+  /(^|\.)developers\.google\.com(\/|$)/i,
+];
+
+const GEO_2026_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)ahrefs\.com(\/|$)/i,
+  /(^|\.)www\.ahrefs\.com(\/|$)/i,
+  /(^|\.)seerinteractive\.com(\/|$)/i,
+  /(^|\.)www\.seerinteractive\.com(\/|$)/i,
+  /(^|\.)seranking\.com(\/|$)/i,
+  /(^|\.)similarweb\.com(\/|$)/i,
+  /(^|\.)growthmarshal\.io(\/|$)/i,
+  /(^|\.)www\.growthmarshal\.io(\/|$)/i,
+  /(^|\.)searchengineland\.com(\/|$)/i,
+  /(^|\.)searchenginejournal\.com(\/|$)/i,
+  /(^|\.)moz\.com(\/|$)/i,
+  /(^|\.)semrush\.com(\/|$)/i,
+];
+
+// Agent payment stack 2026 — agent-mediated commerce paper. Primary surfaces
+// are the open protocol authors (AP2, x402, ACK, AgentCommerceKit, UCP), the
+// payment-rail authorities publishing on their own developer portals
+// (Coinbase, Visa, Mastercard, Stripe, PayPal), and standards bodies. Secondary
+// surfaces are payment trade press and reference implementation hosts.
+const AGENT_PAYMENT_STACK_PRIMARY_PATTERNS: RegExp[] = [
+  // Open protocol specifications + working groups
+  /(^|\.)ap2-protocol\.org(\/|$)/i,
+  /(^|\.)x402\.org(\/|$)/i,
+  /(^|\.)www\.x402\.org(\/|$)/i,
+  /(^|\.)agentcommercekit\.com(\/|$)/i,
+  /(^|\.)www\.agentcommercekit\.com(\/|$)/i,
+  /(^|\.)agentpaymentsprotocol\.info(\/|$)/i,
+  /(^|\.)ucp\.dev(\/|$)/i,
+  /(^|\.)www\.ucp\.dev(\/|$)/i,
+  /(^|\.)stablecoinlaws\.org(\/|$)/i,
+  // Payment-rail authorities publishing protocol/dev docs on their own surfaces
+  /(^|\.)coinbase\.com(\/|$)/i,
+  /(^|\.)docs\.cdp\.coinbase\.com(\/|$)/i,
+  /(^|\.)cdp\.coinbase\.com(\/|$)/i,
+  /(^|\.)facilitator\.coinbase\.com(\/|$)/i,
+  /(^|\.)visa\.com(\/|$)/i,
+  /(^|\.)developer\.visa\.com(\/|$)/i,
+  /(^|\.)mastercard\.com(\/|$)/i,
+  /(^|\.)developer\.mastercard\.com(\/|$)/i,
+  /(^|\.)stripe\.com(\/|$)/i,
+  /(^|\.)docs\.stripe\.com(\/|$)/i,
+  /(^|\.)paypal\.com(\/|$)/i,
+  /(^|\.)developer\.paypal\.com(\/|$)/i,
+];
+
+const AGENT_PAYMENT_STACK_SECONDARY_PATTERNS: RegExp[] = [
+  // Reference-implementation hosts
+  /(^|\.)x402\.browserbase\.com(\/|$)/i,
+  // Payment trade press
+  /(^|\.)paymentsdive\.com(\/|$)/i,
+  /(^|\.)www\.paymentsdive\.com(\/|$)/i,
+  /(^|\.)retaildive\.com(\/|$)/i,
+  /(^|\.)www\.retaildive\.com(\/|$)/i,
+  /(^|\.)modernretail\.co(\/|$)/i,
+  /(^|\.)www\.modernretail\.co(\/|$)/i,
+  /(^|\.)retailtouchpoints\.com(\/|$)/i,
+  /(^|\.)www\.retailtouchpoints\.com(\/|$)/i,
+  // Crypto/stablecoin trade press
+  /(^|\.)coindesk\.com(\/|$)/i,
+  /(^|\.)theblock\.co(\/|$)/i,
+  /(^|\.)decrypt\.co(\/|$)/i,
+  // Agent-payments analyst publications
+  /(^|\.)majormatters\.co(\/|$)/i,
+  /(^|\.)www\.majormatters\.co(\/|$)/i,
+  /(^|\.)agentsdb\.com(\/|$)/i,
+  /(^|\.)hypertrends\.com(\/|$)/i,
+  /(^|\.)www\.hypertrends\.com(\/|$)/i,
+  // E-commerce + digital commerce trade press
+  /(^|\.)digitalcommerce360\.com(\/|$)/i,
+  /(^|\.)www\.digitalcommerce360\.com(\/|$)/i,
+  /(^|\.)pnyxhill\.co(\/|$)/i,
+  /(^|\.)www\.pnyxhill\.co(\/|$)/i,
+  // Stablecoin / crypto compliance reporting
+  /(^|\.)stablecoininsider\.org(\/|$)/i,
+  /(^|\.)stablekya\.com(\/|$)/i,
+  /(^|\.)ethnews\.com(\/|$)/i,
+  /(^|\.)www\.ethnews\.com(\/|$)/i,
+  /(^|\.)helpnetsecurity\.com(\/|$)/i,
+  /(^|\.)www\.helpnetsecurity\.com(\/|$)/i,
+];
+
 const MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate / Seller Central / Brand Services / Selling Partners
   /(^|\.)amazon\.com(\/|$)/i,
@@ -4184,6 +4280,18 @@ export function classifyTier(
   for (const re of EU_AI_ACT_ARTICLE_14_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:eu-ai-act-article-14-secondary" };
   }
+  for (const re of GEO_2026_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:geo-2026-primary" };
+  }
+  for (const re of GEO_2026_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:geo-2026-secondary" };
+  }
+  for (const re of AGENT_PAYMENT_STACK_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:agent-payment-stack-primary" };
+  }
+  for (const re of AGENT_PAYMENT_STACK_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-payment-stack-secondary" };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -4540,6 +4648,70 @@ function hedgedProseShare(claims: ClaimSpan[]): number {
 }
 
 /**
+ * Layer 2c — salt-shaker citation cluster detector.
+ *
+ * Flags body paragraphs that stack ≥5 distinct `[^N]` reference markers, a
+ * pattern that tends to surface when an author games the inline-coverage gate
+ * by piling refs on a single statistic instead of having each ref support its
+ * own claim.
+ *
+ * Quotable Findings sections are exempt: those are deliberately ref-dense for
+ * downstream syndication and use one ref per quotable fact.
+ *
+ * Returns up to 3 offender excerpts. Scans only the body (anything before the
+ * References section); footnote-definition lines are skipped.
+ */
+export function detectSaltShaker(body: string, refsSectionStart: number): string[] {
+  const lines = body.split("\n");
+  const limit =
+    refsSectionStart >= 0 ? Math.min(refsSectionStart, lines.length) : lines.length;
+  const offenders: string[] = [];
+
+  let i = 0;
+  let inQuotable = false;
+  while (i < limit) {
+    const line = lines[i];
+    // Track Quotable Findings exemption only at H2 boundaries (don't reset on H3).
+    const h2Match = /^##\s+(.*)$/.exec(line);
+    if (h2Match && !line.startsWith("###")) {
+      inQuotable = /^Quotable( Findings)?\b/i.test(h2Match[1].trim());
+    }
+    if (line.trim() === "" || line.startsWith("#") || /^\[\^\d+\]:/.test(line)) {
+      i++;
+      continue;
+    }
+    if (inQuotable) {
+      i++;
+      continue;
+    }
+    let j = i;
+    const buf: string[] = [];
+    while (j < limit) {
+      const lj = lines[j];
+      if (lj.trim() === "") break;
+      if (lj.startsWith("#")) break;
+      if (/^\[\^\d+\]:/.test(lj)) break;
+      buf.push(lj);
+      j++;
+    }
+    const paragraph = buf.join(" ");
+    const ids = new Set<number>();
+    const re = /\[\^(\d+)\]/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(paragraph)) !== null) {
+      ids.add(parseInt(m[1], 10));
+    }
+    if (ids.size >= 5) {
+      const excerpt = paragraph.length > 180 ? paragraph.slice(0, 180) + "…" : paragraph;
+      offenders.push(`${ids.size} refs: ${excerpt}`);
+      if (offenders.length >= 3) break;
+    }
+    i = j + 1;
+  }
+  return offenders;
+}
+
+/**
  * Layer 1+2 hard gate. Returns pass=false with failure list on any blocking issue.
  * Quotas vary by `profile` (declared in frontmatter); defaults to `authority-survey`.
  */
@@ -4548,6 +4720,8 @@ export function runVerifyGate(
   claims: ClaimSpan[],
   profile: PaperProfile = "authority-survey",
   bodyWordCount?: number,
+  body?: string,
+  refsSectionStart?: number,
 ): VerifyGateResult {
   const metrics = computeMetrics(refs, claims);
   const quotas = PROFILE_QUOTAS[profile];
@@ -4585,6 +4759,34 @@ export function runVerifyGate(
     }
   }
 
+  // Layer 1c / 1c-bis — source concentration. Only enforced once a paper has
+  // enough references for concentration to be a meaningful signal.
+  if (refs.length >= 20) {
+    const domainCounts = new Map<string, number>();
+    for (const r of refs) {
+      if (!r.domain) continue;
+      domainCounts.set(r.domain, (domainCounts.get(r.domain) ?? 0) + 1);
+    }
+    const sorted = [...domainCounts.entries()].sort((a, b) => b[1] - a[1]);
+    if (sorted.length > 0) {
+      const [topDomain, topCount] = sorted[0];
+      const topShare = topCount / refs.length;
+      if (topShare > 0.25) {
+        failures.push(
+          `Layer 1c: source concentration ${(topShare * 100).toFixed(0)}% from ${topDomain} (>25% cap)`,
+        );
+      }
+      if (sorted.length >= 2) {
+        const top2Share = (sorted[0][1] + sorted[1][1]) / refs.length;
+        if (top2Share > 0.4) {
+          failures.push(
+            `Layer 1c-bis: top-2 domain concentration ${(top2Share * 100).toFixed(0)}% (${sorted[0][0]} + ${sorted[1][0]}) (>40% cap)`,
+          );
+        }
+      }
+    }
+  }
+
   // Layer 2 — coverage
   if (metrics.claimsDetected >= 10 && metrics.citationCoverage < quotas.citationCoverageMin) {
     failures.push(
@@ -4608,6 +4810,17 @@ export function runVerifyGate(
     if (share < 0.9) {
       failures.push(
         `Layer 2b: hedged profile requires attributed-prose pattern ("Per X, Y") on ≥90% of forward-dated claims; only ${(share * 100).toFixed(0)}% qualify`,
+      );
+    }
+  }
+
+  // Layer 2c — salt-shaker citation cluster (only when caller passes body text).
+  if (typeof body === "string") {
+    const sectionStart = typeof refsSectionStart === "number" ? refsSectionStart : -1;
+    const offenders = detectSaltShaker(body, sectionStart);
+    if (offenders.length > 0) {
+      failures.push(
+        `Layer 2c: salt-shaker citation cluster (≥5 distinct refs in one paragraph): ${offenders.slice(0, 3).join(" | ")}`,
       );
     }
   }

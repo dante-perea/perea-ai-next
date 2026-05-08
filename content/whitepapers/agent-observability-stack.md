@@ -10,6 +10,7 @@ audience: "Engineering leaders, agent platform architects, ML/LLM ops practition
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "A field manual for the third infrastructure leg of the agent economy — observability and evaluation. Synthesizes 97 primary sources spanning the six-stage eval pipeline (instrument → trace → dataset → evaluator → score → CI gate), the OpenTelemetry GenAI Semantic Conventions stabilizing in 2026, the post-acquisition platform landscape (ClickHouse + Langfuse Jan 16 2026, Helicone + Mintlify maintenance mode, LiteLLM supply-chain attack), pairwise LLM-as-judge calibration (CalibraEval ACL 2025, CJE 99% accuracy at 14× lower cost), tail-based sampling for agent traces (10-50× volume vs traditional REST), production deployment patterns (canary 1%→100%, shadow mode hysteresis, SLO-driven rollback), and enterprise ROI evidence (Slack >$20M savings + 90% cost reduction, Marsh McLennan 87% of 90K employees + 25M req/year + 1M hours saved). Closes the observability thread the MCP Server Playbook and Agent Payment Stack 2026 papers opened."
+profile: "field-manual"
 ---
 
 ## Foreword

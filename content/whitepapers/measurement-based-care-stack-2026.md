@@ -10,6 +10,7 @@ audience: "Behavioral-health founders, MBC platform builders, payer + ACO contra
 length: "~5,500 words"
 license: "CC BY 4.0"
 description: "An authority survey of measurement-based care in 2026: the validated-instrument library (PHQ-9, GAD-7, PCL-5, ORS, OQ-45), the CMS + HEDIS + SAMHSA reimbursement stack, the NeuroFlow + Owl + Greenspace + Blueprint vendor cohort, and the founder wedges still open in 2026."
+profile: "field-manual"
 ---
 
 ## Foreword

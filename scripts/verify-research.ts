@@ -63,6 +63,19 @@ async function verifyOne(slug: string): Promise<Outcome> {
   const { refs, sectionStart } = extractReferences(content);
   const claims = extractClaims(content, sectionStart);
 
+  // Essay opt-out. Papers framed as opinionated essays (rather than research)
+  // bypass the verify gate. This is the only opt-out and editorial review must
+  // approve any frontmatter that uses it.
+  if (fm.status === "Essay") {
+    return {
+      slug,
+      pass: true,
+      failures: [],
+      shapeOK,
+      metricsLine: "[essay] skipped verify gate",
+    };
+  }
+
   // Resolve profile from frontmatter; default authority-survey.
   const declaredProfile = (fm.profile as string | undefined) || "authority-survey";
   const profile: PaperProfile =
@@ -75,7 +88,7 @@ async function verifyOne(slug: string): Promise<Outcome> {
       : content;
   const bodyWordCount = bodyText.split(/\s+/).filter(Boolean).length;
 
-  const gate = runVerifyGate(refs, claims, profile, bodyWordCount);
+  const gate = runVerifyGate(refs, claims, profile, bodyWordCount, content, sectionStart);
 
   // Layer 4: URL liveness (env-gated)
   let fidelityFailures: string[] = [];

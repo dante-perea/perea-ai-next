@@ -10,6 +10,7 @@ audience: "API designers, platform engineers, and SaaS founders building public 
 length: "~6,000 words"
 license: "CC BY 4.0"
 description: "MCP made every API addressable by agents. Agent-ready API design is the contract layer that determines whether your API is also reliable, governable, and safe to call. This paper covers: machine-readable error contracts (RFC 9457 Problem Details), capability manifests (LLM-LD, Agent Manifest, Microsoft Entra Agent Registry), the OpenAPI-as-source-of-truth pattern for generating MCP/function-calling/LangChain views, and the versioning discipline that defends against tool-poisoning rug pulls (mcpdiff, Cisco ETDI, version pinning). Closes with a 90-day playbook for shipping an agent-ready API."
+profile: "field-manual"
 ---
 
 ## Foreword

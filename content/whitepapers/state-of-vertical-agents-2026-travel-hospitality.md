@@ -10,6 +10,7 @@ audience: "Travel-tech founders, hotel operators, OTA executives, GDS product le
 length: "~5,200 words"
 license: "CC BY 4.0"
 description: "A field map of vertical AI agents in travel and hospitality: where Booking + Expedia + Marriott + Hilton are already deploying agents, how Sabre and Amadeus are exposing agentic-ready APIs, why Mindtrip + Layla + Navan + Spotnana have raised institutional capital from airline and card-network corporate VCs, and the GTM playbook that wins in OTA + GDS + property + corporate-travel segments."
+profile: "field-manual"
 ---
 
 ## Foreword

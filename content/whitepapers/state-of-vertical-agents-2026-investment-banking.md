@@ -10,6 +10,7 @@ audience: "Capital-markets technology founders, investment banking heads of inno
 length: "~4,800 words"
 license: "CC BY 4.0"
 description: "A field map of vertical AI agents in capital markets and investment banking: Rogo's $160M Series D and Felix agent, Hebbia's billion-page processing footprint at Centerview/KKR/MetLife/Oak Hill, the M&A-diligence-AI inflection (16% to projected 80% in three years), and the GTM playbook that wins through bulge-bracket pilots, elite-boutique partnerships, asset-manager beachheads, and the SOC 2 / SEC / FINRA audit gates that determine which AI agents reach production at financial institutions."
+profile: "field-manual"
 ---
 
 ## Foreword

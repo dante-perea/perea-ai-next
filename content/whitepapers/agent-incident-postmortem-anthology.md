@@ -10,6 +10,7 @@ audience: "ML platform engineers, SRE leads, agent ops teams running agents in p
 length: "~6,000 words"
 license: "CC BY 4.0"
 description: "Twenty-plus documented agent production failures from 2024-2026 — the Kiro 13-hour AWS outage, Claude Code Issue #15909 (27M tokens / 4.6h / npm install 300+ times), the March-April 2026 token furnace bug (10-20× cache inflation), AWS Bedrock AgentCore $72.67 / 58-min runaway with no kill switch, LangGraph 0.1 customer-support outage ($12,400 SLA penalties / 412 enterprise breaches) — all map to a finite set of runtime controls. This is the offensive-side companion to prompt-injection-defense-2026: the postmortem anthology + control mapping + 90-day safety playbook."
+profile: "failure-mode"
 ---
 
 # The Agent Incident Postmortem Anthology

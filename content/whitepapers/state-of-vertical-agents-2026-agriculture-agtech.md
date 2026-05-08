@@ -10,6 +10,7 @@ audience: "AgTech founders, precision-ag operators, ag-input executives, farm co
 length: "~5,200 words"
 license: "CC BY 4.0"
 description: "A field map of vertical AI agents in agriculture: who is winning the autonomous-tractor and laser-weeding races (John Deere, Carbon Robotics, Ecorobotix), where digital-farming platforms (Climate FieldView, Indigo) compound advantage, the failure modes the vertical-farming collapse exposed, and the GTM playbook that wins in row-crop, specialty-crop, and indoor-farming segments."
+profile: "field-manual"
 ---
 
 ## Foreword

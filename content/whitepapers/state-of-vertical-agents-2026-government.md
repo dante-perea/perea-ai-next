@@ -10,6 +10,7 @@ audience: "Founders, GTM leads, and product teams selling AI agents into U.S. fe
 length: "~5,400 words"
 license: "CC BY 4.0"
 description: "The seventh entry in the State of Vertical Agents series, mapping the U.S. government and public-sector AI-agent market as it exists in May 2026. Covers the Pentagon's $200M-each agentic AI awards to Anthropic, OpenAI, Google, and xAI; the GSA OneGov Strategy and USAi free FedRAMP-compliant evaluation suite; the Pentagon's GenAI.mil platform with 100,000+ agents built; Palantir's $10B+ Army contract ceiling and Maven program-of-record designation; the 41 agencies / 3,600 use cases / 5x growth since 2023 in the Federal AI Use Case Inventory; state and local CIO priorities; the three failure modes (vendor-policy refusals, 30% autonomous-task ceiling, accountability gap); MLP communities (federal CIO Council, NASCIO, FedScoop, StateTech, FedTech); and a six-path GTM decision tree (DoD vs civilian vs state vs local vs intel vs international-ally). Closes the open vertical thread in the perea.ai canon — every other major vertical has shipped, government had not."
+profile: "field-manual"
 ---
 
 ## Foreword

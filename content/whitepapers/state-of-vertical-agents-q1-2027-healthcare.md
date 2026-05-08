@@ -10,6 +10,7 @@ audience: "Founders evaluating healthcare-vertical agent market entry. Operators
 length: "~6,500 words"
 license: "CC BY 4.0"
 description: "The third entry in the State of Vertical Agents quarterly series. Maps healthcare as the highest-CAGR agent-economy vertical (43.96% AI-in-healthcare market growth) with the only 4-AI-native-unicorn density in the 6-vertical scan — Hippocratic AI ($3.5B), Abridge ($5.3B), OpenEvidence ($12B), Ambience Healthcare ($1.25B). Houston Methodist 80%/40%/33%/27% canonical case study. Mount Sinai February 2026 inflection. 5-framework compliance overhead 1.5-1.7x harder than insurance Three-State Test. EHR-incumbent commoditization counter-positions: sub-vertical specialty / payor-side / patient-facing / international."
+profile: "field-manual"
 ---
 
 # State of Vertical Agents Q1 2027: Healthcare
