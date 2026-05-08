@@ -2005,6 +2005,15 @@ const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)osu-nlp-group\.github\.io(\/|$)/i,
   /(^|\.)webarena\.dev(\/|$)/i,
   /(^|\.)arxiv\.org(\/|$)/i,
+  /(^|\.)www\.arxiv\.org(\/|$)/i,
+  /(^|\.)openreview\.net(\/|$)/i,
+  /(^|\.)iclr\.cc(\/|$)/i,
+  /(^|\.)huggingface\.co(\/|$)/i,
+  /(^|\.)snap-research\.github\.io(\/|$)/i,
+  /(^|\.)docs\.letta\.com(\/|$)/i,
+  /(^|\.)docs\.mem0\.ai(\/|$)/i,
+  /(^|\.)help\.getzep\.com(\/|$)/i,
+  /(^|\.)langchain-ai\.github\.io(\/|$)/i,
 ];
 
 const PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
