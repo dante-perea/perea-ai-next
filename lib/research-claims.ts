@@ -1445,11 +1445,17 @@ const IDEMPOTENCY_ORCHESTRATION_SECONDARY_PATTERNS: RegExp[] = [
 const FRIA_METHODOLOGY_PRIMARY_PATTERNS: RegExp[] = [
   // EU AI Act regulation mirrors
   /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)artificialintelligenceact\.com(\/|$)/i,
   /(^|\.)en\.ai-act\.io(\/|$)/i,
   /(^|\.)ai-act\.io(\/|$)/i,
   /(^|\.)ai-eu-act\.eu(\/|$)/i,
   /(^|\.)artificial-intelligence-act\.com(\/|$)/i,
   /(^|\.)eurlexa\.com(\/|$)/i,
+  // EU public buyers / AI Office canonical sources
+  /(^|\.)public-buyers-community\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)digital-strategy\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)link\.europa\.eu(\/|$)/i,
+  /(^|\.)code-of-practice\.ai(\/|$)/i,
   // EU institutional + national-DPA + Council of Europe
   /(^|\.)edps\.europa\.eu(\/|$)/i,
   /(^|\.)fra\.europa\.eu(\/|$)/i,
@@ -1491,6 +1497,56 @@ const FRIA_METHODOLOGY_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)eudigitallaw\.com(\/|$)/i,
   /(^|\.)socialimpactassessment\.com(\/|$)/i,
   /(^|\.)cadeproject\.org(\/|$)/i,
+];
+
+const VENDOR_CONTRACT_PRIMARY_PATTERNS: RegExp[] = [
+  // Major law firms (canonical practitioner authority for EU vendor contracts)
+  /(^|\.)stephensonharwood\.com(\/|$)/i,
+  /(^|\.)freshfields\.com(\/|$)/i,
+  /(^|\.)taylorwessing\.com(\/|$)/i,
+  /(^|\.)mishcon\.com(\/|$)/i,
+  /(^|\.)cms-digitallaws\.com(\/|$)/i,
+  /(^|\.)trowers\.com(\/|$)/i,
+  /(^|\.)burges-salmon\.com(\/|$)/i,
+  /(^|\.)slaughterandmay\.com(\/|$)/i,
+  /(^|\.)thelens\.slaughterandmay\.com(\/|$)/i,
+  /(^|\.)insideprivacy\.com(\/|$)/i,
+  /(^|\.)cooley\.com(\/|$)/i,
+  /(^|\.)ictlc\.com(\/|$)/i,
+  /(^|\.)nicfab\.eu(\/|$)/i,
+  // Vendor canonical legal pages (DPAs, supplier addenda)
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)legal\.mistral\.ai(\/|$)/i,
+  /(^|\.)mistral\.ai(\/|$)/i,
+];
+
+const VENDOR_CONTRACT_SECONDARY_PATTERNS: RegExp[] = [
+  // Practitioner clause libraries + procurement guides
+  /(^|\.)pertamapartners\.com(\/|$)/i,
+  /(^|\.)lawsnap\.com(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)vendorbenchmark\.com(\/|$)/i,
+  /(^|\.)njbusiness-attorney\.com(\/|$)/i,
+  /(^|\.)atonementlicensing\.com(\/|$)/i,
+  /(^|\.)gc\.ai(\/|$)/i,
+  /(^|\.)mondaq\.com(\/|$)/i,
+  /(^|\.)redresscompliance\.com(\/|$)/i,
+  /(^|\.)support\.secureprivacy\.ai(\/|$)/i,
+  /(^|\.)forensicmark\.com(\/|$)/i,
+  /(^|\.)isms\.online(\/|$)/i,
+  /(^|\.)eh\.at(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)tzafon\.ai(\/|$)/i,
+  /(^|\.)beamon\.ai(\/|$)/i,
+  /(^|\.)docs\.molin\.ai(\/|$)/i,
+  /(^|\.)elnora\.ai(\/|$)/i,
+  /(^|\.)bbos\.ai(\/|$)/i,
+  /(^|\.)quantamixsolutions\.com(\/|$)/i,
+  /(^|\.)gdprregister\.eu(\/|$)/i,
+  /(^|\.)digitalpolicyalert\.org(\/|$)/i,
+  /(^|\.)digitalcompliance\.snellman\.com(\/|$)/i,
+  /(^|\.)snellman\.com(\/|$)/i,
 ];
 
 const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
@@ -2600,6 +2656,9 @@ export function classifyTier(
   for (const re of FRIA_METHODOLOGY_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:fria-methodology-primary" };
   }
+  for (const re of VENDOR_CONTRACT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:vendor-contract-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2625,6 +2684,9 @@ export function classifyTier(
   }
   for (const re of FRIA_METHODOLOGY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:fria-methodology-secondary" };
+  }
+  for (const re of VENDOR_CONTRACT_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:vendor-contract-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
