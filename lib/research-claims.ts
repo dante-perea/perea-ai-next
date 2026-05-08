@@ -1370,6 +1370,50 @@ const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bensbites\.com(\/|$)/i,
 ];
 
+const MCP_OAUTH_PRIMARY_PATTERNS: RegExp[] = [
+  // OAuth + IETF + RFC primary
+  /(^|\.)datatracker\.ietf\.org(\/|$)/i,
+  /(^|\.)ftp\.ripe\.net(\/|$)/i,
+  /(^|\.)ietf\.org(\/|$)/i,
+  // IDP vendor primary
+  /(^|\.)auth0\.com(\/|$)/i,
+  /(^|\.)okta\.com(\/|$)/i,
+  /(^|\.)keycloak\.org(\/|$)/i,
+  /(^|\.)goauthentik\.io(\/|$)/i,
+  /(^|\.)ory\.sh(\/|$)/i,
+  /(^|\.)workos\.com(\/|$)/i,
+  /(^|\.)descope\.com(\/|$)/i,
+  /(^|\.)stytch\.com(\/|$)/i,
+  // Microsoft auth
+  /(^|\.)login\.microsoftonline\.com(\/|$)/i,
+  /(^|\.)entra\.microsoft\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  // MCP gateway / proxy primary
+  /(^|\.)agentgateway\.dev(\/|$)/i,
+  /(^|\.)solo\.io(\/|$)/i,
+  /(^|\.)docs\.solo\.io(\/|$)/i,
+  /(^|\.)docs\.aigateway\.cequence\.ai(\/|$)/i,
+  /(^|\.)cequence\.ai(\/|$)/i,
+  /(^|\.)microsoft\.github\.io(\/|$)/i,
+  /(^|\.)stacklok\.com(\/|$)/i,
+  /(^|\.)toolhive\.dev(\/|$)/i,
+  /(^|\.)permit\.io(\/|$)/i,
+];
+
+const MCP_OAUTH_SECONDARY_PATTERNS: RegExp[] = [
+  // Practitioner blogs + analyst sites
+  /(^|\.)dasroot\.net(\/|$)/i,
+  /(^|\.)getlarge\.eu(\/|$)/i,
+  /(^|\.)huuhka\.net(\/|$)/i,
+  /(^|\.)curity\.io(\/|$)/i,
+  /(^|\.)connect2id\.com(\/|$)/i,
+  /(^|\.)scottbrady\.io(\/|$)/i,
+  /(^|\.)leastprivilege\.com(\/|$)/i,
+  /(^|\.)oauth\.net(\/|$)/i,
+  /(^|\.)aaronpk\.com(\/|$)/i,
+  /(^|\.)stackoverflow\.com(\/|$)/i,
+];
+
 const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
   // Regulators + standards bodies
   /(^|\.)govt\.westlaw\.com(\/|$)/i,
@@ -2468,6 +2512,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of MCP_OAUTH_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:mcp-oauth-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2485,6 +2532,9 @@ export function classifyTier(
   }
   // Hoist topic-specific secondary domain matches above path-fragment heuristic
   // so that explicit secondary classification beats incidental "/resources/" matches.
+  for (const re of MCP_OAUTH_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:mcp-oauth-secondary" };
+  }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
   }
