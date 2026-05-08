@@ -1273,6 +1273,71 @@ const CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)adaptdigitalsolutions\.com(\/|$)/i,
 ];
 
+const MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS: RegExp[] = [
+  // Amazon corporate / Seller Central / Brand Services / Selling Partners
+  /(^|\.)amazon\.com(\/|$)/i,
+  /(^|\.)sellercentral\.amazon\.com(\/|$)/i,
+  /(^|\.)sell\.amazon\.com(\/|$)/i,
+  /(^|\.)brandservices\.amazon\.com(\/|$)/i,
+  /(^|\.)sellingpartners\.aboutamazon\.com(\/|$)/i,
+  /(^|\.)cdn-sellingpartners\.aboutamazon\.com(\/|$)/i,
+  /(^|\.)aboutamazon\.com(\/|$)/i,
+  /(^|\.)go\.amazonsellerservices\.com(\/|$)/i,
+  /(^|\.)amazonsellerservices\.com(\/|$)/i,
+  // Amazon-aggregator + research-tool corporate sites (vendor primary disclosures)
+  /(^|\.)helium10\.com(\/|$)/i,
+  /(^|\.)junglescout\.com(\/|$)/i,
+  /(^|\.)smartscout\.com(\/|$)/i,
+  /(^|\.)pacvue\.com(\/|$)/i,
+  /(^|\.)assembly\.com(\/|$)/i,
+  /(^|\.)carbon6\.io(\/|$)/i,
+  /(^|\.)threecolts\.com(\/|$)/i,
+  /(^|\.)spscommerce\.com(\/|$)/i,
+  /(^|\.)marketplacepulse\.com(\/|$)/i,
+  /(^|\.)sellerlabs\.com(\/|$)/i,
+  /(^|\.)sellerboard\.com(\/|$)/i,
+  /(^|\.)keepa\.com(\/|$)/i,
+  // 3PL + prep service vendor primaries
+  /(^|\.)amzprep\.com(\/|$)/i,
+  /(^|\.)goatconsulting\.com(\/|$)/i,
+  /(^|\.)deliverr\.com(\/|$)/i,
+  /(^|\.)shipbob\.com(\/|$)/i,
+  /(^|\.)shipmonk\.com(\/|$)/i,
+  /(^|\.)shipnetwork\.com(\/|$)/i,
+];
+
+const MARKETPLACE_AMAZON_SELLER_SECONDARY_PATTERNS: RegExp[] = [
+  // Amazon-seller legal firms + compliance practitioner blogs
+  /(^|\.)amazonsellerslawyer\.com(\/|$)/i,
+  /(^|\.)amazonsellers\.attorney(\/|$)/i,
+  /(^|\.)traverselegal\.com(\/|$)/i,
+  /(^|\.)damlawfirm\.com(\/|$)/i,
+  /(^|\.)dickinson-wright\.com(\/|$)/i,
+  /(^|\.)intellectualproperty\.dickinson-wright\.com(\/|$)/i,
+  /(^|\.)brandenforcementlaw\.com(\/|$)/i,
+  // AI-native compliance vendor blogs
+  /(^|\.)appealcraft\.ai(\/|$)/i,
+  /(^|\.)ave7lift\.ai(\/|$)/i,
+  /(^|\.)blogs\.ave7lift\.ai(\/|$)/i,
+  /(^|\.)sellersumbrella\.com(\/|$)/i,
+  /(^|\.)sequencecommerce\.com(\/|$)/i,
+  /(^|\.)riverbendconsulting\.com(\/|$)/i,
+  /(^|\.)mythosagency\.com(\/|$)/i,
+  // Amazon trade press + analyst blogs
+  /(^|\.)jordiob\.com(\/|$)/i,
+  /(^|\.)linkmybooks\.com(\/|$)/i,
+  /(^|\.)tamebay\.com(\/|$)/i,
+  /(^|\.)channelx\.world(\/|$)/i,
+  /(^|\.)ecommercebytes\.com(\/|$)/i,
+  /(^|\.)retailwire\.com(\/|$)/i,
+  /(^|\.)retaildive\.com(\/|$)/i,
+  /(^|\.)moderretail\.com(\/|$)/i,
+  /(^|\.)digitalcommerce360\.com(\/|$)/i,
+  // Funding databases (already partly covered)
+  /(^|\.)owler\.com(\/|$)/i,
+  /(^|\.)crunchbase\.com(\/|$)/i,
+];
+
 const MULTIFAMILY_PROPMGMT_PRIMARY_PATTERNS: RegExp[] = [
   // Multifamily/SFR REITs + operators (corporate + SEC + IR)
   /(^|\.)invitationhomes\.com(\/|$)/i,
@@ -2070,6 +2135,9 @@ export function classifyTier(
   for (const re of MULTIFAMILY_PROPMGMT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `multifamily-propmgmt primary: ${domain}` };
   }
+  for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -2107,6 +2175,9 @@ export function classifyTier(
   }
   for (const re of FREELANCE_FINANCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `freelance-finance secondary: ${domain}` };
+  }
+  for (const re of MARKETPLACE_AMAZON_SELLER_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `marketplace-amazon-seller secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
