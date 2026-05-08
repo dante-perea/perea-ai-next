@@ -1370,6 +1370,51 @@ const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bensbites\.com(\/|$)/i,
 ];
 
+const GDPR_CCPA_PRIMARY_PATTERNS: RegExp[] = [
+  // Regulators + standards bodies
+  /(^|\.)govt\.westlaw\.com(\/|$)/i,
+  /(^|\.)cppa\.ca\.gov(\/|$)/i,
+  /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+  /(^|\.)edpb\.europa\.eu(\/|$)/i,
+  /(^|\.)cnil\.fr(\/|$)/i,
+  /(^|\.)ico\.org\.uk(\/|$)/i,
+  /(^|\.)gpdp\.it(\/|$)/i,
+  /(^|\.)aiact-info\.eu(\/|$)/i,
+  /(^|\.)practical-ai-act\.eu(\/|$)/i,
+  // Vector DB vendor primary
+  /(^|\.)pinecone\.io(\/|$)/i,
+  /(^|\.)qdrant\.tech(\/|$)/i,
+  /(^|\.)weaviate\.io(\/|$)/i,
+  /(^|\.)databricks\.com(\/|$)/i,
+  /(^|\.)trychroma\.com(\/|$)/i,
+  /(^|\.)mem0\.ai(\/|$)/i,
+  /(^|\.)mem0docs\.xyz(\/|$)/i,
+  /(^|\.)kronvex\.io(\/|$)/i,
+];
+
+const GDPR_CCPA_SECONDARY_PATTERNS: RegExp[] = [
+  // Legal analysis + privacy practitioner blogs
+  /(^|\.)astraea\.law(\/|$)/i,
+  /(^|\.)skadden\.com(\/|$)/i,
+  /(^|\.)littler\.com(\/|$)/i,
+  /(^|\.)goodwinlaw\.com(\/|$)/i,
+  /(^|\.)cooley\.com(\/|$)/i,
+  /(^|\.)gibsondunn\.com(\/|$)/i,
+  // Independent privacy + AI compliance commentators
+  /(^|\.)tianpan\.co(\/|$)/i,
+  /(^|\.)notraced\.com(\/|$)/i,
+  /(^|\.)callsphere\.ai(\/|$)/i,
+  /(^|\.)everstoneai\.com(\/|$)/i,
+  /(^|\.)twig\.so(\/|$)/i,
+  /(^|\.)help\.twig\.so(\/|$)/i,
+  /(^|\.)agledger\.ai(\/|$)/i,
+  /(^|\.)systima\.ai(\/|$)/i,
+  /(^|\.)certifieddata\.io(\/|$)/i,
+  /(^|\.)ovidiusuciu\.com(\/|$)/i,
+  /(^|\.)rgpd\.com(\/|$)/i,
+  /(^|\.)theneuralbase\.com(\/|$)/i,
+];
+
 const AIBOM_SUPPLY_CHAIN_PRIMARY_PATTERNS: RegExp[] = [
   // CycloneDX standard
   /(^|\.)cyclonedx\.org(\/|$)/i,
@@ -2423,6 +2468,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
+  }
   for (const re of AIBOM_SUPPLY_CHAIN_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:aibom-supply-chain-primary" };
   }
@@ -2437,6 +2485,9 @@ export function classifyTier(
   }
   // Hoist topic-specific secondary domain matches above path-fragment heuristic
   // so that explicit secondary classification beats incidental "/resources/" matches.
+  for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
+  }
   for (const re of AIBOM_SUPPLY_CHAIN_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:aibom-supply-chain-secondary" };
   }
