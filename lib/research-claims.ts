@@ -1578,6 +1578,28 @@ const SPECIALIZED_JUDGE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)blog\.salesforceairesearch\.com(\/|$)/i,
 ];
 
+const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
+  // Microsoft tech-community + sub-domains
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  // NVIDIA + IBM corporate primary on own infrastructure
+  /(^|\.)docs\.api\.nvidia\.com(\/|$)/i,
+  /(^|\.)ibm\.com(\/|$)/i,
+  // arXiv mirrors
+  /(^|\.)arxiv\.gg(\/|$)/i,
+  // Distil Labs is the canonical productised distillation vendor
+  /(^|\.)distillabs\.ai(\/|$)/i,
+];
+
+const KNOWLEDGE_DISTILLATION_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)tianpan\.co(\/|$)/i,
+  /(^|\.)deepseekai\.guide(\/|$)/i,
+  /(^|\.)emergentmind\.com(\/|$)/i,
+  /(^|\.)dataopsschool\.com(\/|$)/i,
+  /(^|\.)docs\.inferless\.com(\/|$)/i,
+  /(^|\.)inferless\.com(\/|$)/i,
+  /(^|\.)decodethefuture\.org(\/|$)/i,
+];
+
 const SPECIALIZED_JUDGE_SECONDARY_PATTERNS: RegExp[] = [
   // Practitioner blogs + analyst sites
   /(^|\.)zylos\.ai(\/|$)/i,
@@ -2751,6 +2773,9 @@ export function classifyTier(
   for (const re of SPECIALIZED_JUDGE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:specialized-judge-primary" };
   }
+  for (const re of KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:knowledge-distillation-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2785,6 +2810,9 @@ export function classifyTier(
   }
   for (const re of SPECIALIZED_JUDGE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:specialized-judge-secondary" };
+  }
+  for (const re of KNOWLEDGE_DISTILLATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:knowledge-distillation-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
