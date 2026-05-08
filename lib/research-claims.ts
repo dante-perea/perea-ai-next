@@ -1806,6 +1806,47 @@ const A2A_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)infoworld\.com(\/|$)/i,
 ];
 
+const EDD_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)deepeval\.com(\/|$)/i,
+  /(^|\.)confident-ai\.com(\/|$)/i,
+  /(^|\.)braintrust\.dev(\/|$)/i,
+  /(^|\.)smith\.langchain\.com(\/|$)/i,
+  /(^|\.)blog\.langchain\.dev(\/|$)/i,
+  /(^|\.)langchain\.com(\/|$)/i,
+  /(^|\.)promptfoo\.dev(\/|$)/i,
+  /(^|\.)langfuse\.com(\/|$)/i,
+  /(^|\.)arize\.com(\/|$)/i,
+  /(^|\.)phoenix\.arize\.com(\/|$)/i,
+  /(^|\.)patronus\.ai(\/|$)/i,
+  /(^|\.)evidentlyai\.com(\/|$)/i,
+  /(^|\.)pypi\.org(\/|$)/i,
+  /(^|\.)clickpy\.clickhouse\.com(\/|$)/i,
+  /(^|\.)github\.com\/confident-ai(\/|$)/i,
+  /(^|\.)github\.com\/aotp-ventures(\/|$)/i,
+  /(^|\.)github\.com\/geminimir(\/|$)/i,
+  /(^|\.)github\.com\/synapsekit(\/|$)/i,
+  /(^|\.)github\.com\/ollieb89(\/|$)/i,
+  /(^|\.)tessl\.co(\/|$)/i,
+  /(^|\.)latitude\.so(\/|$)/i,
+  /(^|\.)helicone\.ai(\/|$)/i,
+];
+
+const EDD_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)agentpatterns\.ai(\/|$)/i,
+  /(^|\.)blog\.appxlab\.io(\/|$)/i,
+  /(^|\.)techsy\.io(\/|$)/i,
+  /(^|\.)medium\.com(\/|$)/i,
+  /(^|\.)dev\.to(\/|$)/i,
+  /(^|\.)markaicode\.com(\/|$)/i,
+  /(^|\.)llmversus\.com(\/|$)/i,
+  /(^|\.)myengineeringpath\.dev(\/|$)/i,
+  /(^|\.)genai\.qa(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)alexop\.dev(\/|$)/i,
+  /(^|\.)simonwillison\.net(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3469,6 +3510,9 @@ export function classifyTier(
   for (const re of A2A_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:a2a-primary" };
   }
+  for (const re of EDD_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:edd-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3557,6 +3601,9 @@ export function classifyTier(
   }
   for (const re of A2A_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:a2a-secondary" };
+  }
+  for (const re of EDD_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:edd-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
