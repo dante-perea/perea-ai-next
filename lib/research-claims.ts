@@ -1565,6 +1565,34 @@ const UNIFIED_GOVERNANCE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)downloads\.regulations\.gov(\/|$)/i,
 ];
 
+const SPECIALIZED_JUDGE_PRIMARY_PATTERNS: RegExp[] = [
+  // Academic/standards body canonical surfaces
+  /(^|\.)aclanthology\.org(\/|$)/i,
+  /(^|\.)openreview\.net(\/|$)/i,
+  /(^|\.)huggingface\.co(\/|$)/i,
+  /(^|\.)hf\.co(\/|$)/i,
+  /(^|\.)huggingface\.tw(\/|$)/i,
+  /(^|\.)api-inference\.hf-mirror\.com(\/|$)/i,
+  /(^|\.)sgl-project\.github\.io(\/|$)/i,
+  // Salesforce AI Research blog (corporate primary on own work)
+  /(^|\.)blog\.salesforceairesearch\.com(\/|$)/i,
+];
+
+const SPECIALIZED_JUDGE_SECONDARY_PATTERNS: RegExp[] = [
+  // Practitioner blogs + analyst sites
+  /(^|\.)zylos\.ai(\/|$)/i,
+  /(^|\.)booleanbeyond\.com(\/|$)/i,
+  /(^|\.)statsig\.com(\/|$)/i,
+  /(^|\.)particula\.tech(\/|$)/i,
+  /(^|\.)leaper\.dev(\/|$)/i,
+  /(^|\.)deploybase\.ai(\/|$)/i,
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
+  /(^|\.)distilabel\.argilla\.io(\/|$)/i,
+  /(^|\.)deepwiki\.com(\/|$)/i,
+  /(^|\.)cameronrwolfe\.substack\.com(\/|$)/i,
+  /(^|\.)eugeneyan\.com(\/|$)/i,
+];
+
 const UNIFIED_GOVERNANCE_SECONDARY_PATTERNS: RegExp[] = [
   // Governance platforms + AI risk management vendor surfaces
   /(^|\.)modulos\.ai(\/|$)/i,
@@ -2720,6 +2748,9 @@ export function classifyTier(
   for (const re of UNIFIED_GOVERNANCE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:unified-governance-primary" };
   }
+  for (const re of SPECIALIZED_JUDGE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:specialized-judge-primary" };
+  }
   for (const re of GDPR_CCPA_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:gdpr-ccpa-primary" };
   }
@@ -2751,6 +2782,9 @@ export function classifyTier(
   }
   for (const re of UNIFIED_GOVERNANCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:unified-governance-secondary" };
+  }
+  for (const re of SPECIALIZED_JUDGE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:specialized-judge-secondary" };
   }
   for (const re of GDPR_CCPA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:gdpr-ccpa-secondary" };
