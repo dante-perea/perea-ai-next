@@ -1732,6 +1732,29 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const VERIFIABLE_BOT_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)vercel\.com(\/|$)/i,
+  /(^|\.)bots\.fyi(\/|$)/i,
+  /(^|\.)kasada\.io(\/|$)/i,
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)developer\.cloudflare\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  /(^|\.)dt\.ietf\.org(\/|$)/i,
+  /(^|\.)datatracker\.ietf\.org(\/|$)/i,
+  /(^|\.)developers\.google\.com(\/|$)/i,
+  /(^|\.)privacy\.anthropic\.com(\/|$)/i,
+];
+
+const VERIFIABLE_BOT_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)stellagent\.ai(\/|$)/i,
+  /(^|\.)seoscanhq\.com(\/|$)/i,
+  /(^|\.)foglift\.io(\/|$)/i,
+  /(^|\.)seo\.yatna\.ai(\/|$)/i,
+  /(^|\.)growthscope\.io(\/|$)/i,
+  /(^|\.)aeoprobe\.com(\/|$)/i,
+  /(^|\.)aicrawlercheck\.com(\/|$)/i,
+];
+
 const TRUST_LAYER_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)ap2-protocol\.org(\/|$)/i,
   /(^|\.)ucp\.dev(\/|$)/i,
@@ -3332,6 +3355,9 @@ export function classifyTier(
   for (const re of TRUST_LAYER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:trust-layer-primary" };
   }
+  for (const re of VERIFIABLE_BOT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:verifiable-bot-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3408,6 +3434,9 @@ export function classifyTier(
   }
   for (const re of TRUST_LAYER_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:trust-layer-secondary" };
+  }
+  for (const re of VERIFIABLE_BOT_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:verifiable-bot-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
