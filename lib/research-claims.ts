@@ -1102,6 +1102,172 @@ const MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)paymentweek\.com(\/|$)/i,
 ];
 
+const LOCAL_SERVICE_AGGREGATORS_PRIMARY_PATTERNS: RegExp[] = [
+  // FSM SaaS corporate / IR
+  /(^|\.)servicetitan\.com(\/|$)/i,
+  /(^|\.)investors\.servicetitan\.com(\/|$)/i,
+  /(^|\.)ir\.servicetitan\.com(\/|$)/i,
+  /(^|\.)housecallpro\.com(\/|$)/i,
+  /(^|\.)getjobber\.com(\/|$)/i,
+  /(^|\.)workiz\.com(\/|$)/i,
+  /(^|\.)fieldedge\.com(\/|$)/i,
+  /(^|\.)servicefusion\.com(\/|$)/i,
+  /(^|\.)fieldroutes\.com(\/|$)/i,
+  // PE / IB corporate (sponsor publications on portfolio companies are primary issuer disclosures)
+  /(^|\.)apax\.com(\/|$)/i,
+  /(^|\.)blackstone\.com(\/|$)/i,
+  /(^|\.)kkr\.com(\/|$)/i,
+  /(^|\.)harvestpartners\.com(\/|$)/i,
+  /(^|\.)alpineinvestors\.com(\/|$)/i,
+  /(^|\.)alpine-investors\.com(\/|$)/i,
+  /(^|\.)summitpartners\.com(\/|$)/i,
+  /(^|\.)leadedge\.com(\/|$)/i,
+  /(^|\.)permira\.com(\/|$)/i,
+  /(^|\.)generalatlantic\.com(\/|$)/i,
+  /(^|\.)leonardgreen\.com(\/|$)/i,
+  /(^|\.)goldmansachs\.com(\/|$)/i,
+  /(^|\.)gs\.com(\/|$)/i,
+  /(^|\.)baincapital\.com(\/|$)/i,
+  /(^|\.)mubadala\.com(\/|$)/i,
+  /(^|\.)americansecurities\.com(\/|$)/i,
+  /(^|\.)odysseyinvestment\.com(\/|$)/i,
+  /(^|\.)oakhillcapital\.com(\/|$)/i,
+  /(^|\.)tsgconsumer\.com(\/|$)/i,
+  /(^|\.)gryphoninvestors\.com(\/|$)/i,
+  /(^|\.)skyknightcapital\.com(\/|$)/i,
+  /(^|\.)ares\.com(\/|$)/i,
+  /(^|\.)riversidecompany\.com(\/|$)/i,
+  /(^|\.)roarkcapital\.com(\/|$)/i,
+  /(^|\.)hl\.com(\/|$)/i,
+  // PE-backed roll-up / franchise platform corporate
+  /(^|\.)apexservicepartners\.com(\/|$)/i,
+  /(^|\.)wrenchgroup\.com(\/|$)/i,
+  /(^|\.)silaservices\.com(\/|$)/i,
+  /(^|\.)championsgroup\.com(\/|$)/i,
+  /(^|\.)servicelogic\.com(\/|$)/i,
+  /(^|\.)oriongroupholdings\.com(\/|$)/i,
+  /(^|\.)oriongrp\.com(\/|$)/i,
+  /(^|\.)firstcallmechanical\.com(\/|$)/i,
+  /(^|\.)southernhomeservices\.com(\/|$)/i,
+  /(^|\.)coolsysinc\.com(\/|$)/i,
+  /(^|\.)authoritybrands\.com(\/|$)/i,
+  /(^|\.)neighborly\.com(\/|$)/i,
+  /(^|\.)neighborlybrands\.com(\/|$)/i,
+  /(^|\.)premiumservicebrands\.com(\/|$)/i,
+  /(^|\.)servpro\.com(\/|$)/i,
+  /(^|\.)belfor\.com(\/|$)/i,
+  /(^|\.)servicemasterbrands\.com(\/|$)/i,
+  /(^|\.)rotorooter\.com(\/|$)/i,
+  /(^|\.)chemed\.com(\/|$)/i,
+  // Marketplaces corporate / IR
+  /(^|\.)yelp\.com(\/|$)/i,
+  /(^|\.)business\.yelp\.com(\/|$)/i,
+  /(^|\.)yelp-ir\.com(\/|$)/i,
+  /(^|\.)angi\.com(\/|$)/i,
+  /(^|\.)thumbtack\.com(\/|$)/i,
+  /(^|\.)porchgroup\.com(\/|$)/i,
+  /(^|\.)homeadvisor\.com(\/|$)/i,
+  /(^|\.)frontdoor\.com(\/|$)/i,
+  // AI vision corporate
+  /(^|\.)tractable\.ai(\/|$)/i,
+  /(^|\.)cccis\.com(\/|$)/i,
+  /(^|\.)prod\.cccis\.com(\/|$)/i,
+  /(^|\.)ir\.cccis\.com(\/|$)/i,
+  // State-level contractor licensing regulators (federal already in default PRIMARY_PATTERNS)
+  /(^|\.)cslb\.ca\.gov(\/|$)/i,
+  /(^|\.)web\.cslb\.ca\.gov(\/|$)/i,
+  /(^|\.)www2\.cslb\.ca\.gov(\/|$)/i,
+  /(^|\.)tdlr\.texas\.gov(\/|$)/i,
+  /(^|\.)dshs\.texas\.gov(\/|$)/i,
+  /(^|\.)dbpr\.state\.fl\.us(\/|$)/i,
+  /(^|\.)myfloridalicense\.com(\/|$)/i,
+  /(^|\.)dcwp\.nyc\.gov(\/|$)/i,
+  /(^|\.)nyc\.gov(\/|$)/i,
+  /(^|\.)dol\.ny\.gov(\/|$)/i,
+  // Press wires (treated as primary because they re-publish issuer text verbatim)
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+];
+
+const LOCAL_SERVICE_AGGREGATORS_SECONDARY_PATTERNS: RegExp[] = [
+  // Analyst / market-sizing firms
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)giiresearch\.com(\/|$)/i,
+  /(^|\.)researchandmarkets\.com(\/|$)/i,
+  /(^|\.)marketdataenterprises\.com(\/|$)/i,
+  /(^|\.)nationalhomeservicesauthority\.com(\/|$)/i,
+  /(^|\.)homeguild\.ai(\/|$)/i,
+  /(^|\.)kpmg\.com(\/|$)/i,
+  /(^|\.)deloitte\.com(\/|$)/i,
+  /(^|\.)ey\.com(\/|$)/i,
+  /(^|\.)pwc\.com(\/|$)/i,
+  /(^|\.)mckinsey\.com(\/|$)/i,
+  /(^|\.)bain\.com(\/|$)/i,
+  /(^|\.)bcg\.com(\/|$)/i,
+  // M&A databases / sponsor research / IB blogs
+  /(^|\.)privsource\.com(\/|$)/i,
+  /(^|\.)privatemarketsminute\.com(\/|$)/i,
+  /(^|\.)ctacquisitions\.com(\/|$)/i,
+  /(^|\.)theadvisoryib\.com(\/|$)/i,
+  /(^|\.)talk24\.ai(\/|$)/i,
+  /(^|\.)lightningpathpartners\.com(\/|$)/i,
+  /(^|\.)peprofessional\.com(\/|$)/i,
+  /(^|\.)pehub\.com(\/|$)/i,
+  /(^|\.)pe-insights\.com(\/|$)/i,
+  /(^|\.)privateequityinternational\.com(\/|$)/i,
+  /(^|\.)mergr\.com(\/|$)/i,
+  /(^|\.)mergermarket\.com(\/|$)/i,
+  /(^|\.)mergerlinks\.com(\/|$)/i,
+  /(^|\.)craftflow\.com(\/|$)/i,
+  /(^|\.)houlihanlokey\.com(\/|$)/i,
+  /(^|\.)capstonepartners\.com(\/|$)/i,
+  /(^|\.)dubinclark\.com(\/|$)/i,
+  /(^|\.)gfdata\.com(\/|$)/i,
+  // Trade press (HVAC / plumbing / electrical / restoration)
+  /(^|\.)randrmagonline\.com(\/|$)/i,
+  /(^|\.)hvacinsider\.com(\/|$)/i,
+  /(^|\.)achrnews\.com(\/|$)/i,
+  /(^|\.)contractormag\.com(\/|$)/i,
+  /(^|\.)pmengineer\.com(\/|$)/i,
+  /(^|\.)plumbingperspective\.com(\/|$)/i,
+  /(^|\.)reevesjournal\.com(\/|$)/i,
+  /(^|\.)ecmag\.com(\/|$)/i,
+  /(^|\.)tedmag\.com(\/|$)/i,
+  /(^|\.)nrcaonline\.org(\/|$)/i,
+  /(^|\.)roofingcontractor\.com(\/|$)/i,
+  /(^|\.)cleanlink\.com(\/|$)/i,
+  /(^|\.)cmmonline\.com(\/|$)/i,
+  /(^|\.)isaa\.org(\/|$)/i,
+  /(^|\.)cleaningandmaintenancemanagement\.com(\/|$)/i,
+  // Lead-gen / marketplace trade press + research
+  /(^|\.)leadgen-economy\.com(\/|$)/i,
+  /(^|\.)leadtruffle\.co(\/|$)/i,
+  /(^|\.)miracuves\.com(\/|$)/i,
+  /(^|\.)geo\.sig\.ai(\/|$)/i,
+  /(^|\.)beltstack\.com(\/|$)/i,
+  /(^|\.)foundationinc\.co(\/|$)/i,
+  // Law firms / regulatory commentary
+  /(^|\.)dale\.legal(\/|$)/i,
+  /(^|\.)haynesboone\.com(\/|$)/i,
+  /(^|\.)foley\.com(\/|$)/i,
+  /(^|\.)gibsondunn\.com(\/|$)/i,
+  /(^|\.)mwe\.com(\/|$)/i,
+  /(^|\.)kslaw\.com(\/|$)/i,
+  /(^|\.)dlapiper\.com(\/|$)/i,
+  /(^|\.)proskauer\.com(\/|$)/i,
+  /(^|\.)littler\.com(\/|$)/i,
+  /(^|\.)seyfarth\.com(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)law360\.com(\/|$)/i,
+  // PE firm corporate marketing / blog (treat as secondary — analyst-level commentary, not primary issuer disclosures)
+  /(^|\.)neweracp\.com(\/|$)/i,
+  /(^|\.)riverside\.com(\/|$)/i,
+  // Yelp partner intelligence sites
+  /(^|\.)reviewtrackers\.com(\/|$)/i,
+];
+
 const SECONDARY_PATTERNS: RegExp[] = [
   // Tier-1 general business + tech press
   /(^|\.)bloomberg\.com(\/|$)/i,
@@ -1460,6 +1626,9 @@ export function classifyTier(
   for (const re of BOOTCAMP_CREDENTIALING_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `bootcamp-credentialing primary: ${domain}` };
   }
+  for (const re of LOCAL_SERVICE_AGGREGATORS_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `local-service-aggregators primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1482,6 +1651,9 @@ export function classifyTier(
   }
   for (const re of BOOTCAMP_CREDENTIALING_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `bootcamp-credentialing secondary: ${domain}` };
+  }
+  for (const re of LOCAL_SERVICE_AGGREGATORS_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `local-service-aggregators secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
