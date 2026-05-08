@@ -1732,6 +1732,21 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const TRUST_LAYER_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)ap2-protocol\.org(\/|$)/i,
+  /(^|\.)ucp\.dev(\/|$)/i,
+  /(^|\.)rfc-editor\.org(\/|$)/i,
+  /(^|\.)datatracker\.ietf\.org(\/|$)/i,
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /(^|\.)cordum\.io(\/|$)/i,
+  /(^|\.)zylos\.ai(\/|$)/i,
+];
+
+const TRUST_LAYER_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)tianpan\.co(\/|$)/i,
+  /(^|\.)blog\.appxlab\.io(\/|$)/i,
+];
+
 const AGENT_INBOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)blog\.langchain\.com(\/|$)/i,
   /(^|\.)langchain\.com(\/|$)/i,
@@ -3314,6 +3329,9 @@ export function classifyTier(
   for (const re of AGENT_INBOX_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:agent-inbox-primary" };
   }
+  for (const re of TRUST_LAYER_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:trust-layer-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3387,6 +3405,9 @@ export function classifyTier(
   }
   for (const re of AGENT_INBOX_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-inbox-secondary" };
+  }
+  for (const re of TRUST_LAYER_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:trust-layer-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
