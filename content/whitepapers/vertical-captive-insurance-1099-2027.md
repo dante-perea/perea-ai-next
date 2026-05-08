@@ -245,20 +245,35 @@ Five threads this paper leaves open:
 ## Glossary
 
 - **Captive insurance company** — an insurance company owned and controlled by the business or businesses it insures, designed to retain insurance risk that would otherwise be transferred to a commercial insurer[^9][^14].
+
 - **IRC §831(b)** — Internal Revenue Code section permitting small non-life insurance companies (premiums ≤ $2.85M for 2026) to elect taxation only on investment income[^1][^17].
+
 - **T.D. 10029** — IRS Treasury Decision 10029, 90 FR 3534, RIN 1545-BQ44, finalizing micro-captive listed-transaction regulations effective January 14, 2025[^3][^4].
+
 - **Listed transaction** — under T.D. 10029, a transaction with both the Financing Factor and a loss ratio[^16] < 30% over the 10-year computation period, after meeting the 20% Relationship Test[^16][^17].
+
 - **Transaction of interest** — under T.D. 10029, a transaction with the Financing Factor OR a loss ratio < 60% over the 10-year period, after meeting the 20% Relationship Test[^17][^18].
+
 - **20% Relationship Test** — the gating definition: insured or related party owns ≥ 20% of voting power, stock value, or equity in the captive[^16][^32].
+
 - **Form 8886** — IRS Reportable Transaction Disclosure Statement, required from participants in listed transactions or transactions of interest[^4][^33].
+
 - **Form 8918** — IRS Material Advisor Disclosure Statement for material advisors to reportable transactions[^4].
+
 - **Protected cell captive insurance company (PCC)** — single legal insurance entity that allows legally segregated participants ("cells") to receive captive benefits without standalone setup costs; effective in Florida July 1, 2026 via SB 990 / CS/CS/HB 883[^14][^28].
+
 - **Risk retention group (RRG)** — captive insurance company that allows businesses with similar risks to pool together to insure themselves[^48].
+
 - **Special purpose captive insurer** — captive structured for a specific risk-financing or insurance need outside standard pure / association / industrial-insured categories[^9][^21].
+
 - **MultiPlan PHCS** — third-party PPO network spanning all 50 states, used as the provider network for Solo Health Collective[^11][^23].
+
 - **Reference-based pricing** — claim-payment methodology pricing services as a multiple of Medicare reimbursement; used by Fairos within the Solo Health Collective stack[^25][^40].
+
 - **OdysseyRe** — A-rated global reinsurer providing the catastrophe layer for Vault Health Captive[^11][^24].
+
 - **Self-procurement tax** — state-level tax imposed on captives domiciled outside the state but insuring in-state risks (e.g., Florida)[^15].
+
 - **NAIC OPTins** — National Association of Insurance Commissioners online premium-tax payment portal[^49].
 
 ## Related Research

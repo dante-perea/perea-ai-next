@@ -29,7 +29,11 @@ profile: field-manual
 
 The United States has roughly fifty million rental units distributed across fifty million-something landlords, and almost none of the popular discussion about "property tech" maps onto how those units are actually owned and run.[^4] The headlines are dominated by the institutional cohort — Greystar managing more than a million apartments, Invitation Homes operating 85,970 single-family rentals, the NMHC Top 50 collectively controlling 11% of US apartment stock.[^33][^5][^34] The reality is the other 89%: the family office with 800 doors across three metros, the regional operator with 4,200 garden-style units in one MSA, the SFR fund running 1,500 homes through a third-party manager. These are operators too big to run on spreadsheets and too small to build a proprietary stack — and 2026 is the year their tooling decisions stopped being optional.
 
-This manual is a working operator's view of the multi-location property stack as of May 2026. It covers the software triopoly (AppFolio, Yardi, RealPage) that runs the back office; the AI-native insurgents (EliseAI, Snappt, Colleen, Knock) that have moved from pilot to production; the RealPage antitrust settlement that has rewritten the rules of algorithmic rent-pricing; the fifty-state patchwork of rent-control and just-cause statutes layered onto the federal Fair Housing Act and HOTMA; the smart-home hardware cohort that survived the 2021 SPAC class; and five founder archetypes that explain how capital, distribution, and outcomes connect in this market.[^21][^23][^27][^39][^66] Sources are NMHC, the US Census Bureau Rental Housing Finance Survey, SEC filings from public operators and software vendors, DOJ pleadings, the Federal Register, and vendor pricing pages.[^33][^1][^9][^22][^21][^45]
+This manual is a working operator's view of the multi-location property stack as of May 2026.
+
+It covers the software triopoly (AppFolio, Yardi, RealPage) that runs the back office; the AI-native insurgents (EliseAI, Snappt, Colleen, Knock) that have moved from pilot to production; the RealPage antitrust settlement that has rewritten the rules of algorithmic rent-pricing; the fifty-state patchwork of rent-control and just-cause statutes layered onto the federal Fair Housing Act and HOTMA; the smart-home hardware cohort that survived the 2021 SPAC class; and five founder archetypes that explain how capital, distribution, and outcomes connect in this market.[^21][^23][^27][^39][^66]
+
+Sources are NMHC, the US Census Bureau Rental Housing Finance Survey, SEC filings from public operators and software vendors, DOJ pleadings, the Federal Register, and vendor pricing pages.[^33][^1][^9][^22][^21][^45]
 
 # Executive Summary — Top-Line Facts + Verdict
 
@@ -166,26 +170,47 @@ The end of this decade looks different from the beginning. Seven predictions for
 **Glossary**
 
 - **AB 1482** — California Tenant Protection Act of 2019 (5%+CPI cap, just-cause eviction).[^27]
+
 - **AFFH** — Affirmatively Furthering Fair Housing (Fair Housing Act §808(d)).[^66]
+
 - **AIRM** — RealPage AI Revenue Management (uses YieldStar codebase).[^21]
+
 - **ARR** — Annual Recurring Revenue.
+
 - **BTR** — Build-to-Rent.[^7]
+
 - **CFR** — Code of Federal Regulations.
+
 - **HCV** — Housing Choice Voucher (Section 8).[^68]
+
 - **HOTMA** — Housing Opportunity Through Modernization Act of 2016 (Pub. L. 114-201).[^69]
+
 - **HSTPA** — New York Housing Stability and Tenant Protection Act of 2019.[^28]
+
 - **LRO** — Lease Rent Options (RealPage product, sunset end 2024).[^21]
+
 - **MAA** — Mid-America Apartment Communities (NYSE: MAA).[^33]
+
 - **MCI** — Major Capital Improvement (NY rent-stabilized capital pass-through).[^28]
+
 - **NCREIF** — National Council of Real Estate Investment Fiduciaries.[^7]
+
 - **NMHC** — National Multifamily Housing Council.[^33]
+
 - **PBV** — Project-Based Voucher (24 CFR Part 983).[^68]
+
 - **PHA** — Public Housing Authority.[^67]
+
 - **PMS** — Property Management Software.
+
 - **RHFS** — Rental Housing Finance Survey (US Census Bureau).[^1]
+
 - **SEMAP** — Section 8 Management Assessment Program (24 CFR Part 985).[^67]
+
 - **SFR** — Single-Family Rental.[^4]
+
 - **VOR** — Verification of Rent.[^53]
+
 - **YieldStar** — RealPage revenue management product (sunset end 2024).[^21]
 
 **Related Research**

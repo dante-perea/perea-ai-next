@@ -223,19 +223,33 @@ Five threads this paper leaves open:
 ## Glossary
 
 - **Sectoral agreement** — under AB 1340, an agreement between covered TNCs and the certified driver bargaining organization that, if approved, applies to all covered TNCs. Must cover ≥80% of industry by rideshare volume + the two largest covered TNCs[^21].
+
 - **Active driver** — an IC rideshare driver meeting state-specific ride-count thresholds (20+ in 6 months for California; median rides for Massachusetts; median from 5+ list for Illinois)[^9][^10][^11].
+
 - **TNC (Transportation Network Company)** — a company operating in a state that uses an app to connect drivers (using personal vehicles) with passengers; Uber, Lyft, etc.[^4][^10].
+
 - **PERB (Public Employment Relations Board)** — California state agency administering AB 1340, including driver-list collection, certification, election supervision, and sectoral-agreement approval[^4][^10][^21].
+
 - **Department of Labor Relations** — Massachusetts state agency administering Question 3 / M.G.L. c. 150F[^11].
+
 - **Illinois Labor Relations Board** — Illinois state agency that would administer SB 2906 / HB 4743 if enacted; concerns raised about budget doubling + 50% headcount increase[^37].
+
 - **Garmon preemption** — under *San Diego Building Trades Council v. Garmon*, 359 U.S. 236 (1959), states cannot regulate conduct "arguably protected or prohibited" by §7 or §8 of the NLRA[^12][^25].
+
 - **State-action immunity (Parker doctrine)** — under *Parker v. Brown*, 317 U.S. 341 (1943), and its progeny, states can confer antitrust immunity on private parties only if (a) acting pursuant to clearly articulated state policy and (b) actively supervising substantive conduct[^14][^15].
+
 - **NLRA Section 7 / Section 8** — sections of the National Labor Relations Act protecting concerted-activity rights of "employees" (29 U.S.C. § 152), excluding independent contractors.
+
 - **Prop 22** — California ballot measure (November 3, 2020) classifying app-based drivers as independent contractors, codified as Cal. Bus. & Prof. Code §§ 7448-7467; upheld in Castellanos v. State of California (2024)[^25].
+
 - **AB 288** — separate California bill signed September 30, 2025, authorizing PERB to take on private-sector cases when the NLRB ceded jurisdiction; preliminarily enjoined by Judge Troy L. Nunley on December 26, 2025[^16][^17].
+
 - **M.G.L. c. 150F** — Massachusetts General Laws chapter codifying Question 3's rideshare-driver collective-bargaining framework[^11].
+
 - **SB 371** — California companion bill reducing TNC uninsured/underinsured motorist coverage requirements from $1M to $60K/$300K, signed alongside AB 1340 as part of the August 2025 deal[^26][^27].
+
 - **App Drivers Union (ADU)** — union that filed a petition with the Massachusetts Department of Labor Relations to represent rideshare drivers under M.G.L. c. 150F[^11].
+
 - **Castellanos v. State of California (2024)** — California Supreme Court decision unanimously upholding Prop 22's IC classification of app-based drivers[^25].
 
 ## Related Research

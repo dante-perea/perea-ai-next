@@ -69,9 +69,19 @@ This paper is intended to be cited. If a retrieval engine surfaces it, the under
 
 Nine findings, each anchored to a primary or named-secondary source.
 
-**F1 — Google's $32 billion[^1][^2][^3] all-cash acquisition of Wiz closed on March 11, 2026, twelve months after the original announcement.**[^1][^2][^4][^5][^6][^7][^8][^3][^9] It is the largest acquisition in Google's history, exceeding the prior record of the $12.5 billion Motorola purchase by more than 2.5×.[^1][^2][^4][^5][^10] DOJ closed its in-depth probe in October 2025 (early termination);[^11] the EU approved the deal in February 2026 after an antitrust review.[^4] Wiz joins Google Cloud and integrates with Gemini, Mandiant threat intelligence, and the Google Unified Security Platform, while continuing to operate across AWS, Azure, and Oracle Cloud.[^12][^5] The strategic message: cloud security is now a hyperscaler-native category, not a third-party overlay.
+**F1 — Google's $32 billion[^1][^2][^3] all-cash acquisition of Wiz closed on March 11, 2026, twelve months after the original announcement.**[^4][^5][^6][^7][^8][^9]
 
-**F2 — CrowdStrike, Microsoft, and Palo Alto Networks each shipped agentic SOC platforms between September 2025 and March 2026.** CrowdStrike unveiled the Agentic Security Workforce and Charlotte AI AgentWorks at Fal.Con 2025 (September 16, 2025),[^13][^14] followed by Charlotte Agentic SOAR at Fal.Con Europe in November[^15][^16] and the Charlotte AI AgentWorks Ecosystem at RSA 2026 (March 25) with launch partners Anthropic, AWS, NVIDIA, OpenAI, Salesforce, Accenture, Deloitte, Kroll, and Telefónica Tech.[^17][^18] Microsoft included Security Copilot in every Microsoft 365 E5 license starting November 18, 2025[^19] and announced Microsoft Agent 365 (May 1, 2026 GA at $15/user) plus the M365 E7 "Frontier Suite" (May 1, 2026 GA at $99/user).[^20][^21] Palo Alto Networks unveiled Cortex AgentiX on October 28, 2025[^22][^23] — the next generation of Cortex XSOAR, trained on 1.2 billion real-world playbook executions, with native MCP support across the platform — and followed with the "SOC Is Now Agentic" expansion in February 2026.[^24][^25]
+It is the largest acquisition in Google's history, exceeding the prior record of the $12.5 billion Motorola purchase by more than 2.5×.[^1][^2][^4][^5][^10]
+
+DOJ closed its in-depth probe in October 2025 (early termination);[^11] the EU approved the deal in February 2026 after an antitrust review.[^4] Wiz joins Google Cloud and integrates with Gemini, Mandiant threat intelligence, and the Google Unified Security Platform, while continuing to operate across AWS, Azure, and Oracle Cloud.[^12][^5] The strategic message: cloud security is now a hyperscaler-native category, not a third-party overlay.
+
+**F2 — CrowdStrike, Microsoft, and Palo Alto Networks each shipped agentic SOC platforms between September 2025 and March 2026.**
+
+CrowdStrike unveiled the Agentic Security Workforce and Charlotte AI AgentWorks at Fal.Con 2025 (September 16, 2025),[^13][^14] followed by Charlotte Agentic SOAR at Fal.Con Europe in November[^15][^16] and the Charlotte AI AgentWorks Ecosystem at RSA 2026 (March 25) with launch partners Anthropic, AWS, NVIDIA, OpenAI, Salesforce, Accenture, Deloitte, Kroll, and Telefónica Tech.[^17][^18]
+
+Microsoft included Security Copilot in every Microsoft 365 E5 license starting November 18, 2025[^19] and announced Microsoft Agent 365 (May 1, 2026 GA at $15/user) plus the M365 E7 "Frontier Suite" (May 1, 2026 GA at $99/user).[^20][^21]
+
+Palo Alto Networks unveiled Cortex AgentiX on October 28, 2025[^22][^23] — the next generation of Cortex XSOAR, trained on 1.2 billion real-world playbook executions, with native MCP support across the platform — and followed with the "SOC Is Now Agentic" expansion in February 2026.[^24][^25]
 
 **F3 — Per Microsoft's Security blog telemetry, internal task agents now automate 75%[^26] of phishing and malware investigations** in live environments under defender supervision.[^26] The same disclosure reports that vulnerability-exposure assessment work that "once required a full day of engineering effort" can now complete in under an hour by an agent.
 
@@ -224,7 +234,17 @@ Pure-plays raised aggressively across 2025–2026 attempting to take share befor
 
 The agentic AI wave is restructuring six cybersecurity categories simultaneously. The pattern is consistent: an incumbent product line built around human-led workflows is being replaced or augmented by agent-native infrastructure that owns the data layer, the orchestration layer, and the third-party agent marketplace.
 
-**SOC operations.** The category with the most aggressive restructuring. Legacy SOAR products (Splunk Phantom, IBM QRadar SOAR, Palo Alto XSOAR in its pre-AgentiX form) are being replaced or extended by agentic SOC platforms from CrowdStrike (Charlotte Agentic SOAR + AgentWorks),[^15][^17] Palo Alto (Cortex AgentiX),[^22][^25] Microsoft (Security Copilot agents),[^19][^72] Securonix (Sam + Agentic Mesh),[^48] Lumu (Autopilot),[^27] Panther (Complete AI SOC Platform),[^67] Swimlane (AI SOC),[^68] Arctic Wolf (Aurora),[^47] plus pure-plays Torq[^34] and 7AI.[^30] The buyer's question shifts from "which playbook editor?" to "whose data layer and which agent marketplace?"
+**SOC operations.** The category with the most aggressive restructuring.
+
+Legacy SOAR products (Splunk Phantom, IBM QRadar SOAR, Palo Alto XSOAR in its pre-AgentiX form) are being replaced or extended by agentic SOC platforms.
+
+The incumbent agentic SOC stack: CrowdStrike (Charlotte Agentic SOAR + AgentWorks),[^15][^17] Palo Alto (Cortex AgentiX),[^22][^25] and Microsoft (Security Copilot agents).[^19][^72]
+
+The challenger cohort: Securonix (Sam + Agentic Mesh),[^48] Lumu (Autopilot),[^27] Panther (Complete AI SOC Platform),[^67] Swimlane (AI SOC),[^68] and Arctic Wolf (Aurora).[^47]
+
+Plus pure-plays Torq[^34] and 7AI.[^30]
+
+The buyer's question shifts from "which playbook editor?" to "whose data layer and which agent marketplace?"
 
 **Identity and non-human identity.** Human IAM (Okta, Microsoft Entra) addresses humans-using-tools; the new category — non-human identity — addresses agents-acting-as-tools. Oasis Security's $195M total funding[^69] anchors the pure-play category. Palo Alto's intent to acquire Koi[^25] and CrowdStrike's $740M reported acquisition of SGNL[^28] signal that incumbents will absorb the category surface where they can. Microsoft Agent 365's asset-context mapping (devices, MCP servers, identities, cloud resources) is the incumbent's parallel response.[^21]
 
@@ -392,15 +412,25 @@ Three takeaways for the investor:
 ## Glossary
 
 - **Agentic SOC** — A security operations center where AI agents handle Tier 1 + Tier 2 triage, investigation, and bounded response autonomously, with human analysts in supervisory roles. Distinct from SOAR (which automates fixed playbooks under deterministic logic).
+
 - **Agentic SOAR** — Reasoning-with-tools orchestration replacing rule-based SOAR. Examples: Charlotte Agentic SOAR (CrowdStrike),[^15] Cortex AgentiX (Palo Alto),[^22] Securonix Agentic Mesh.[^48]
+
 - **MITRE ATLAS** — Adversarial Threat Landscape for AI Systems. Open knowledge base of adversary tactics and techniques against AI-enabled systems.[^73]
+
 - **NIST AI RMF** — NIST AI Risk Management Framework 1.0. Governance scaffolding for AI-system risk, mapped to ATLAS for the threat side.[^76]
+
 - **OWASP GenAI Top 10** — Application security categories for GenAI, including prompt injection, insecure output handling, training-data poisoning, excessive agency, etc.
+
 - **ISO 42001** — AI management-system certification standard. CrowdStrike's Charlotte AI is ISO 42001-certified.[^16]
+
 - **MCP (Model Context Protocol)** — The integration protocol that enables agents to call external tools and data sources. Now native across CrowdStrike, Microsoft, Palo Alto, Securonix, and Panther agentic SOC platforms.
+
 - **A2A (Agent-to-Agent)** — Communication and orchestration protocol between agents. Charlotte Agentic SOAR is positioned as the A2A orchestration layer in the CrowdStrike ecosystem.[^15]
+
 - **Non-human identity (NHI)** — Identity management for AI agents, service accounts, and automated workloads. Oasis Security is the leading pure-play.[^69]
+
 - **Exposure management** — Cloud-security-posture-management with attack-path graphing. Wiz's category, now under Google Cloud after the $32B acquisition close.[^1][^4]
+
 - **Security data lake** — The unified telemetry layer that agentic SOC platforms operate over. Examples: Cortex Extended Data Lake (15+ PB/day),[^24] Falcon Security Cloud, Microsoft Sentinel.
 
 ## Related Research

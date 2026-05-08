@@ -202,18 +202,31 @@ This paper is a survey, not a benchmark. Five threads it leaves open:
 ## Glossary
 
 - **MBC (measurement-based care)**: a clinical process that uses standardized, valid, repeated measurements to track a client's progress and inform treatment, fostering shared client-provider decision-making[^4].
+
 - **PHQ-9** (Patient Health Questionnaire-9): nine-item DSM-IV-aligned depression severity instrument, scored 0–27, cut-off ≥10 for moderate depression[^25][^11].
+
 - **GAD-7** (Generalized Anxiety Disorder-7): seven-item anxiety severity instrument, scored 0–21, cut-off ≥10[^26][^29].
+
 - **ECDS** (Electronic Clinical Data Systems): NCQA HEDIS reporting standard requiring electronic clinical data sources rather than chart review[^36].
+
 - **HCPCS G0568/G0569/G0570**: CY 2026 PFS BHI/CoCM add-on codes layered atop APCM base codes G0556/G0557/G0558[^13].
+
 - **APCM** (Advanced Primary Care Management): CMS payment category for longitudinal primary care; in 2026, BHI/CoCM add-on codes attach here[^13].
+
 - **CoCM** (psychiatric Collaborative Care Model): integrated behavioral-health-in-primary-care model billed via codes including 99492/99493/99494 and now G0568–G0570[^13].
+
 - **CCBHC** (Certified Community Behavioral Health Clinic): community behavioral-health clinic certified under PAMA Section 223 / BSCA Section 11001 with PPS-1/PPS-2/PPS-3/PPS-4 reimbursement options[^9][^40].
+
 - **PPS-1/PPS-2/PPS-3/PPS-4**: four CCBHC Prospective Payment System methodologies — daily (PPS-1, PPS-3 with required SCS rates) and monthly (PPS-2, PPS-4 with required QBPs)[^9].
+
 - **QBP** (Quality Bonus Payment): performance-based payment to CCBHCs from PPS-2 and PPS-4 states tied to measure thresholds[^9].
+
 - **DSF-E / DMS-E / DRR-E / PND-E / PDS-E**: HEDIS MY 2026 ECDS-reported PHQ-9-anchored measures for depression screening, monitoring, remission, prenatal, postpartum[^36].
+
 - **HEDIS MY 2026** (Measure Year 2026): NCQA's 2026 measure set used by health plans nationwide to evaluate quality of care[^2].
+
 - **eCQM** (electronic Clinical Quality Measure): CMS quality measures specified for electronic reporting, e.g., CMS159v14 (Depression Remission at 12 Months)[^37].
+
 - **DMHT** (digital mental health treatment device): FDA-cleared software treatment device, billed via HCPCS G0552/G0553/G0554, expanded to ADHD in CY 2026[^13].
 
 ## Related Research

@@ -112,7 +112,9 @@ The Anthropic reference architecture for safe Computer Use deployment — dispos
 
 ## Conclusion: the fallback chain replaces the dichotomy
 
-The 2026 shape is a layered stack. Direct REST and function calling for simple, single-tool integrations.[^28] MCP servers (with dynamic toolsets, gateways, and code-execution mode) for the multi-tool middle.[^8][^29][^30][^36] Browser agents — Computer Use 2.0,[^4] ChatGPT Agent,[^43] Project Mariner,[^17] Browser Use,[^6] Stagehand,[^6] Skyvern[^6] — for the work no API covers. WebMCP[^44] as the soft convergence between the two when sites cooperate.
+The 2026 shape is a layered stack. Direct REST and function calling for simple, single-tool integrations.[^28] MCP servers (with dynamic toolsets, gateways, and code-execution mode) for the multi-tool middle.[^8][^29][^30][^36] Browser agents — Computer Use 2.0,[^4] ChatGPT Agent,[^43] Project Mariner,[^17] Browser Use,[^6] Stagehand,[^6] Skyvern[^6] — for the work no API covers.
+
+WebMCP[^44] as the soft convergence between the two when sites cooperate.
 
 The architectural choice is no longer "pick browser or protocol." It is "design the fallback chain so the model lands on the cheapest sufficient surface for each call, and design the gateway so the chain stays observable, governed, and bounded." The 2026 production stacks that ship are the ones that get the chain right.
 

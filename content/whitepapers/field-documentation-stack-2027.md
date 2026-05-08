@@ -18,8 +18,11 @@ profile: "field-manual"
 A "field documentation stack" is the layer of software that converts what a worker sees, says, and touches at a job site into a structured, defensible record — a clinical note, an inspection report, a daily safety log, an invoice attachment — without that worker returning to a desk. As of mid-2026, it has crystallized into four parallel cohorts that share a workflow shape but diverge on buyer, regulator, and economics:
 
 1. **Trades FSM** (HVAC, plumbing, electrical, roofing): ServiceTitan, Jobber, Housecall Pro, FieldEdge, Workiz, BuildOps, Simpro.[^1][^2][^3]
+
 2. **Construction photo-doc**: CompanyCam, the dominant horizontal wedge.[^4][^5]
+
 3. **Real-estate inspection**: Spectora, Spectacular, InspectorData and a long tail of state-specific report writers.[^6][^7][^8]
+
 4. **Clinical ambient documentation**: Microsoft Dragon Copilot, Abridge, Suki, Nabla, DeepScribe, Ambience.[^9][^10][^11]
 
 What unifies them is the same physical loop: a worker stands somewhere they cannot type comfortably, captures evidence (photo, voice, scan, GPS), and a platform converts that evidence into a record the back office, regulator, customer, payer, or insurer will accept. The differences live in who pays, what the regulator demands, and how forgiving the workflow is when the AI is wrong.

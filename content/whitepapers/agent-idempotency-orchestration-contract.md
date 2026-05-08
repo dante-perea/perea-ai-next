@@ -22,10 +22,15 @@ This field manual is the production-engineering counterpart to Tianpan's framing
 The manual is organized as six recipes, each ending with a concrete contract you can paste into a code review checklist:
 
 1. **Four-tuple identity** — why a single `Idempotency-Key` is wrong for agents.
+
 2. **The Stripe pattern, decomposed** — atomic phases, recovery points, and what survives the network.[^3][^4][^5][^40]
+
 3. **Durable steps over retry loops** — Temporal and Restate as the actual orchestration substrate.[^6][^7][^8][^9][^10][^11]
+
 4. **The outbox commit** — writing intent before action, the only safe path to at-most-once side effects.[^14][^28]
+
 5. **Saga compensation** — when forward retry stops being correct.[^15][^27]
+
 6. **The Claude Agent SDK production posture** — 429 retries, 529 cascades, Full Jitter, and circuit breakers.[^12][^13][^14][^15][^16][^21][^22]
 
 The closing section is a 12-item production checklist mapped to RFC 9457 Problem Details, RFC 7231 method semantics, and the IETF Idempotency-Key draft.[^17][^18][^19] The audience is engineers who must ship this in a quarter, not architects sketching for a steering committee.
@@ -201,16 +206,27 @@ The companion post on Temporal × Claude Agent SDK does the same pairing under a
 Map every entry to a code owner and an artifact (a test, a query, a runbook):
 
 1. **Four-tuple envelope.** Every tool call in the codebase carries `(agent_run_id, step_id, tool_name, business_scope)`. Grep for tool dispatchers; fail PRs that omit any element.[^1][^2]
+
 2. **Idempotency-Key header**, falling back to the IETF draft semantics, on every outbound HTTP tool call. The header value is a stable hash of the four-tuple.[^4][^5][^19]
+
 3. **Stripe four-phase pattern** on every state-mutating endpoint your agents call into. Recovery point persisted before side effect; response cached after.[^3][^4][^40]
+
 4. **Outbox table** in the agent service's database, with `(four_tuple PRIMARY KEY, payload JSONB, status, next_attempt_at)`.[^14][^28]
+
 5. **Outbox drainer** with `SELECT FOR UPDATE SKIP LOCKED`. Concurrent drainers are safe; restart is safe; long-running rows are visible in dashboards.[^14]
+
 6. **`ON CONFLICT (four_tuple) DO NOTHING`** on every recipient insert, including downstream queue handoffs and event tables.[^14][^37]
+
 7. **Durable orchestration.** The agent loop runs under Temporal, Restate, or an equivalent substrate. No long-lived in-process retry loops own the durability boundary.[^6][^7][^10][^11]
+
 8. **Saga compensations** registered for every state-mutating step. Compensation runs under the orchestrator. `compensation_failed` pages on-call.[^15][^27]
+
 9. **Full Jitter retry** on 429, with `retry-after` as a floor. Three attempts, then circuit-break.[^12][^13][^16]
+
 10. **Circuit breaker + model cascade** on 529. Open after N consecutive failures, cascade to a smaller model for non-critical reasoning, dead-letter when the cascade exhausts.[^16][^22]
+
 11. **RFC 9457 Problem Details** on every error response your agent's tools emit. Errors carry `type`, `title`, `detail`, and `retry-after` as appropriate.[^17]
+
 12. **Replay tests in CI.** For Temporal Workflows, run the replay test against historical event histories on every PR; for Restate, validate that `ctx.run` and `ctx.uuid` calls are deterministic across the test suite.[^6][^9][^11]
 
 ---

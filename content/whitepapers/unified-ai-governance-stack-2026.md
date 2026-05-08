@@ -17,11 +17,23 @@ description: "A field manual for running NIST AI RMF, ISO/IEC 42001, and the EU 
 
 This is a working manual for organisations that have to operate three AI governance frameworks at once: the NIST AI Risk Management Framework, ISO/IEC 42001, and the EU AI Act.[^1][^2][^3] As of 2026, that is the realistic posture for any enterprise selling into both the United States and the EU, any public-sector AI deployer, and any AI vendor whose customers ask about ISO certification. The frameworks overlap in roughly 70–80% of their substantive requirements,[^4][^5][^6] but they diverge in structure, certifiability, and legal force in ways that punish organisations which treat them as alternatives. The pattern that survives audit and procurement scrutiny is a single, harmonised governance program with one risk register, one technical file, one incident-response runbook, and one evidence library — tagged so that auditors from any framework can pull the same artifact and accept it.
 
-That pattern is not aspirational. NIST published the official NIST AI RMF ↔ ISO/IEC FDIS 42001 Crosswalk in 2023 and maintains a public crosswalks library covering ISO 23894, ISO 42005, AIUC-1, Singapore IMDA AI Verify, Korea's TTA Guidebook, Japan AISI, BSA, and ISO 5338/5339.[^7][^8] The Singapore IMDA published a joint NIST mapping in October 2023 and an ISO/IEC 42001 mapping in June 2024,[^9][^10] then nationally adopted ISO 42001 as SS ISO/IEC 42001:2024 with an informative Annex ZA describing AI Verify as the implementation toolkit.[^11] Academic and platform vendors (COMPEL, UGAF-ITS, Modulos, Strac, FairNow, Lenavix, SafeguardsAI) have built crosswalk-driven implementations.[^12][^13][^14][^15][^16][^17] What the field has been missing is the integration manual a 50-person GRC team can run against. This paper is that manual.
+That pattern is not aspirational.
+
+NIST published the official NIST AI RMF ↔ ISO/IEC FDIS 42001 Crosswalk in 2023 and maintains a public crosswalks library covering ISO 23894, ISO 42005, AIUC-1, Singapore IMDA AI Verify, Korea's TTA Guidebook, Japan AISI, BSA, and ISO 5338/5339.[^7][^8] The Singapore IMDA published a joint NIST mapping in October 2023 and an ISO/IEC 42001 mapping in June 2024,[^9][^10] then nationally adopted ISO 42001 as SS ISO/IEC 42001:2024 with an informative Annex ZA describing AI Verify as the implementation toolkit.[^11]
+
+Academic and platform vendors (COMPEL, UGAF-ITS, Modulos, Strac, FairNow, Lenavix, SafeguardsAI) have built crosswalk-driven implementations.[^12][^13][^14][^15][^16][^17] What the field has been missing is the integration manual a 50-person GRC team can run against.
+
+This paper is that manual.
 
 ## Executive Summary
 
-The three frameworks are complementary layers, not alternatives.[^18][^19] **NIST AI RMF** organises AI risk work into four functions — Govern, Map, Measure, Manage — and was released January 26, 2023 through a consensus process involving 240+ contributing organisations.[^1][^20][^21] **ISO/IEC 42001:2023** is the first international management system standard for AI, published December 2023, with 10 clauses and 38 Annex A controls organised across nine control groups (A.2 Policies, A.3 Internal Organization, A.4 Resources, A.5 Impact Assessments, A.6 Lifecycle, A.7 Data, A.8 Information, A.9 Use, A.10 Third-Party).[^2][^22][^23] **The EU AI Act** is binding regulation, with high-risk obligations applying from 2 August 2026 and operator-tier penalties up to €15M or 3%[^25] of global turnover for Articles 9–27 violations and up to €35M or 7% for Article 5 prohibition violations.[^3][^24][^25]
+The three frameworks are complementary layers, not alternatives.[^18][^19]
+
+**NIST AI RMF** organises AI risk work into four functions — Govern, Map, Measure, Manage — and was released January 26, 2023 through a consensus process involving 240+ contributing organisations.[^1][^20][^21]
+
+**ISO/IEC 42001:2023** is the first international management system standard for AI, published December 2023, with 10 clauses and 38 Annex A controls organised across nine control groups (A.2 Policies, A.3 Internal Organization, A.4 Resources, A.5 Impact Assessments, A.6 Lifecycle, A.7 Data, A.8 Information, A.9 Use, A.10 Third-Party).[^2][^22][^23]
+
+**The EU AI Act** is binding regulation, with high-risk obligations applying from 2 August 2026 and operator-tier penalties up to €15M or 3%[^25] of global turnover for Articles 9–27 violations and up to €35M or 7% for Article 5 prohibition violations.[^3][^24][^25]
 
 **Overlap.** Roughly 70–80% of operational requirements overlap across the three frameworks.[^4][^5][^6] EU AI Act Article 9 (Risk Management) maps cleanly to ISO 42001 Clause 6.1 / Annex A.5, and to NIST AI RMF Govern + Map functions.[^26][^27] Article 17 (Quality Management) is substantially satisfied by the entire ISO 42001 management-system structure (Clauses 4–10).[^4][^5] Article 11 + Annex IV (Technical Documentation) maps to ISO 42001 Clause 7.5 and Annex A.6.2.7, but the EU AI Act adds prescriptive granularity that voluntary standards leave to organisational choice.[^28][^29]
 
@@ -153,7 +165,11 @@ The single-evidence-base methodology is the operational pivot of unified AI gove
 
 **Phase 2 — 91 to 180 days (Operationalisation).** Implement the harmonised risk register with two-tag schema (NIST + ISO).[^14] Stand up the technical-file template aligned to EU AI Act Annex IV and ISO 42001 Clause 7.5.[^28] Deploy the incident-response runbook with the EU AI Act Article 73 15-day reporting window built in.[^41] Run the first internal audit cycle. Train product teams on FRIA per the [Article 27 FRIA Methodology Field Manual](https://www.perea.ai/research/article-27-fria-methodology-field-manual).[^31]
 
-**Phase 3 — 181 to 365 days (Certification + Continuous Improvement).** Engage ISO 42001 certification body (BSI, SGS, DNV, Kiwa, Q-Cert, Pacific Cert, Orion) for Stage 1 readiness review.[^39][^64][^65][^66][^67] Complete the Stage 2 effectiveness assessment.[^39][^41] For EU-in-scope deployers, prepare for the 2 August 2026 deadline (or December 2027 if the Digital Omnibus extension is adopted).[^43][^25] For US organisations seeking federal-procurement readiness, complete the AI RMF profile self-assessment.[^20][^21] Begin Singapore AI Verify pilot if the organisation has Asia-Pacific exposure.[^53][^54]
+**Phase 3 — 181 to 365 days (Certification + Continuous Improvement).**
+
+Engage ISO 42001 certification body (BSI, SGS, DNV, Kiwa, Q-Cert, Pacific Cert, Orion) for Stage 1 readiness review.[^39][^64][^65][^66][^67] Complete the Stage 2 effectiveness assessment.[^39][^41]
+
+For EU-in-scope deployers, prepare for the 2 August 2026 deadline (or December 2027 if the Digital Omnibus extension is adopted).[^43][^25] For US organisations seeking federal-procurement readiness, complete the AI RMF profile self-assessment.[^20][^21] Begin Singapore AI Verify pilot if the organisation has Asia-Pacific exposure.[^53][^54]
 
 **Vendor selection criteria.** When evaluating GRC platforms for unified AI governance, prioritise: (i) pre-mapped controls library covering NIST AI RMF + ISO 42001 + EU AI Act Articles 9–15 + 27 + 50 + 72–73 at minimum; (ii) two-tag evidence-tagging architecture (NIST function + ISO control + framework-requirement-ID); (iii) continuous evidence generation rather than periodic assembly; (iv) ISO 42001 audit-ready report generation; (v) EU AI Act Annex IV documentation template support.[^15][^60][^61][^68]
 

@@ -189,18 +189,31 @@ This paper is a survey, not a comparison benchmark. Five threads it leaves open:
 ## Glossary
 
 - **Solo 401(k)** (also "individual 401(k)", "i401(k)", "Solo-k", "one-participant 401(k)"): a 401(k) plan for a self-employed individual with no full-time employees other than a spouse[^23][^24].
+
 - **Form 8881**: IRS form filed by employers to claim the small-employer pension plan startup costs credit (capped at $5,000/year) plus the employer contributions credit (up to $1,000 per employee for years 1–2)[^1].
+
 - **Form 5500-EZ**: IRS form filed annually for one-participant plans with assets above $250,000 (paper filing only)[^28][^29].
+
 - **Form 5500-SF**: electronic version of Form 5500 for smaller multi-participant plans; some self-directed Solo 401(k) providers file Form 5500-SF on behalf of clients with under $250K in assets[^28].
+
 - **SECURE 2.0 Act of 2022**: federal legislation expanding tax incentives for small-business retirement plans, raising catch-up contribution limits, and creating the part-time eligibility (500h × 2y) requirement[^2][^18].
+
 - **PEP (Pooled Employer Plan)**: multi-employer plan structure that pools fiduciary and administrative responsibilities across multiple unrelated employers[^2][^21].
+
 - **MEP (Multiple Employer Plan)**: similar to PEP but typically with a common nexus among the participating employers[^2].
+
 - **CC PPS** (Solo 401(k) version): not applicable; Solo 401(k) plans use a clinic-style PPS only in the broader CCBHC context — Solo 401(k) economics use direct-fee pricing instead.
+
 - **Mega Backdoor Roth Solo 401(k)**: strategy of contributing post-tax dollars beyond the elective-deferral limit and converting them in-plan to Roth; requires a custom plan document[^17].
+
 - **3(38) / 3(16) fiduciary**: ERISA fiduciary roles for investment selection (3(38)) and plan administration (3(16))[^15][^26].
+
 - **UDFI (Unrelated Debt-Financed Income)**: tax on debt-financed income inside a self-directed retirement account; Solo 401(k) is exempt from UDFI on real-estate leverage, unlike Self-Directed IRAs[^42].
+
 - **ERISA Title I exemption**: one-participant plans are exempt from ERISA Title I fiduciary, reporting, and disclosure requirements[^32].
+
 - **SECURE 2.0 part-time eligibility**: provision requiring employees with 500+ hours over two consecutive years to be offered participation, voiding Solo 401(k) status when triggered[^2].
+
 - **Vestwell**: independent recordkeeping platform powering JP Morgan's Everyday 401(k) + Solo 401(k), plus other advisor-channel offerings[^6][^26].
 
 ## Related Research

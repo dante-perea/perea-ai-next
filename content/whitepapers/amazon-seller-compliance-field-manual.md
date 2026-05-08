@@ -199,23 +199,41 @@ Five archetypes describe how capital and outcomes connect in the Amazon-seller c
 **Glossary**
 
 - **AHR** — Account Health Rating program; Amazon's metric-based seller performance system.[^35]
+
 - **ASIN** — Amazon Standard Identification Number; unique identifier for each product on Amazon.
+
 - **BSA** — Business Solutions Agreement; Amazon's seller contract.[^9]
+
 - **CSDR** — Customer Service Dissatisfaction Rate; secondary AHR metric (<25%).[^38]
+
 - **FBA** — Fulfillment by Amazon; Amazon's logistics service.[^16]
+
 - **FNSKU** — Fulfillment Network SKU; Amazon's barcode for FBA inventory.[^19]
+
 - **IP Accelerator** — Amazon's program connecting sellers with vetted IP legal service providers.[^22]
+
 - **LILF** — Low-Inventory-Level Fee; charged on standard/bulky products below 28 days historical supply.[^21]
+
 - **LSR** — Late Shipment Rate; primary AHR metric (<4%).[^38]
+
 - **OCR** — Pre-Fulfillment Cancel Rate; primary AHR metric (<2.5%).[^38]
+
 - **ODR** — Order Defect Rate; primary AHR metric (<1%, 60-day rolling).[^38]
+
 - **OTDR** — On-Time Delivery Rate; secondary AHR metric (>97% over 90 days).[^40]
+
 - **POA** — Plan of Action; required reinstatement document.[^11]
+
 - **Project Zero** — Amazon's self-service counterfeit removal tool requiring 99% accuracy.[^23]
+
 - **RAV** — Report a Violation; Brand Registry's IP-violation-reporting tool.[^25]
+
 - **RDR** — Return Dissatisfaction Rate; secondary AHR metric (<10%).[^38]
+
 - **Section 3** — Term and Termination clause of the BSA; Amazon's broad authority to suspend/terminate.[^9]
+
 - **Transparency** — Amazon's serialization program for unit-level counterfeit prevention.[^23]
+
 - **VTR** — Valid Tracking Rate; secondary AHR metric (>95%).[^38]
 
 **Related Research**

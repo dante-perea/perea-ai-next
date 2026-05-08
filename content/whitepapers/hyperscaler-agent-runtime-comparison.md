@@ -28,11 +28,17 @@ The shared architectural insight: agents spend 30–70%[^9][^5] of session wall-
 The shared list of enabling features that every runtime now ships:
 
 - Session isolation (microVM, container, or per-session sandbox) preventing cross-session data contamination.[^1][^10][^11]
+
 - Multi-hour execution windows for long-running agent workflows (8 hours[^1] AgentCore, comparable on Vertex/Foundry).
+
 - Framework agnosticism — every runtime supports LangChain/LangGraph, CrewAI, LlamaIndex plus its own native framework.[^1][^2][^3][^4]
+
 - OpenTelemetry-compatible observability with traces, metrics, dashboards.[^12][^13]
+
 - Native MCP and A2A protocol support (or Responses API for OpenAI).[^1][^14][^15]
+
 - Identity / OAuth integration with enterprise IdPs.[^1][^2]
+
 - VPC/PrivateLink/BYO-VNet for enterprise-grade network isolation.[^1][^16]
 
 The differences live in pricing per resource, framework defaults, cross-product integration, and a few architectural details — particularly the choice between *direct code deployment* (AgentCore, AgentKit) and *container deployment* (Foundry hosted agents, AgentCore container option).

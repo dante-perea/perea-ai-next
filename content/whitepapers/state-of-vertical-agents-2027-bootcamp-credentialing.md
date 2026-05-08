@@ -276,7 +276,9 @@ The distribution channels for the next decade — in rough order of capital effi
 
 ### Exit comparables
 
-The next-decade exit comparables, sorted by transaction value: Coursera IPO (NYSE: COUR, 2021, ~$2.4B at IPO, FY2024 $694.7M revenue + first positive Adjusted EBITDA)[^23]; Pluralsight $3.5B PE take-private (December 2020, total writedown by May 2024)[^29][^31]; 2U $945M-debt-to-private-restructuring (July-September 2024, ~$200M new capital, 87% debt-holder pre-pack)[^78][^80]; 2U-Trilogy $750 million bootcamp acquisition (April 2019, now in restructured estate)[^61]; Skillsoft-Codecademy $525 million at 12.5x revenue (December 2021)[^33]; General Assembly $412.5 million to Adecco (April 2018, 50K alumni, 300+ Fortune 500 clients)[^87][^88]; K12/Stride-Galvanize $165 million all-cash (January 2020, includes Hack Reactor)[^90]; and an undisclosed mid-2020 Carrick-Flatiron transaction[^91][^92].
+The next-decade exit comparables, sorted by transaction value: Coursera IPO (NYSE: COUR, 2021, ~$2.4B at IPO, FY2024 $694.7M revenue + first positive Adjusted EBITDA)[^23]; Pluralsight $3.5B PE take-private (December 2020, total writedown by May 2024)[^29][^31]; 2U $945M-debt-to-private-restructuring (July-September 2024, ~$200M new capital, 87% debt-holder pre-pack)[^78][^80]; 2U-Trilogy $750 million bootcamp acquisition (April 2019, now in restructured estate)[^61];
+
+Skillsoft-Codecademy $525 million at 12.5x revenue (December 2021)[^33]; General Assembly $412.5 million to Adecco (April 2018, 50K alumni, 300+ Fortune 500 clients)[^87][^88]; K12/Stride-Galvanize $165 million all-cash (January 2020, includes Hack Reactor)[^90]; and an undisclosed mid-2020 Carrick-Flatiron transaction[^91][^92].
 
 ## Part X — Predictions for 2027-2030
 

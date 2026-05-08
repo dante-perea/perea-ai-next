@@ -17,7 +17,13 @@ profile: "field-manual"
 
 In May 2025, Coinbase shipped a small developer preview of a payment protocol that revived the dormant HTTP 402 status code. The reference implementation was a single middleware function. The whitepaper was twelve pages. The hype was muted. By April 2026, x402 was processing roughly 75 million transactions every thirty days across Base and Solana, with 94,000 active buyers, and Coinbase had transferred governance of the protocol to the Linux Foundation under a twelve-member coalition that included Stripe, Visa, Mastercard, American Express, Google, AWS, Microsoft, Cloudflare, Shopify, Circle, and Polygon Labs[^1][^2][^3].
 
-A year before that, the question was whether autonomous AI agents would ever be allowed to spend money. Twelve months later, every major payment company on earth has shipped a protocol, framework, or developer kit to make sure they can. Stripe and OpenAI launched the Agentic Commerce Protocol on September 29, 2025, alongside Etsy and Shopify[^4][^5]; Google launched the Agent Payments Protocol with Mastercard, American Express, PayPal, Adyen, Worldpay, and 60+ partners shortly after[^6][^7]; Visa unveiled the Trusted Agent Protocol with Cloudflare and twelve infrastructure partners on October 14, 2025[^8][^9][^10]; and Stripe and Tempo launched the Machine Payments Protocol on March 18, 2026 alongside Tempo's mainnet, backed by a $500 million Series A at a $5 billion valuation[^11][^12][^13].
+A year before that, the question was whether autonomous AI agents would ever be allowed to spend money.
+
+Twelve months later, every major payment company on earth has shipped a protocol, framework, or developer kit to make sure they can.
+
+Stripe and OpenAI launched the Agentic Commerce Protocol on September 29, 2025, alongside Etsy and Shopify[^4][^5]; Google launched the Agent Payments Protocol with Mastercard, American Express, PayPal, Adyen, Worldpay, and 60+ partners shortly after[^6][^7];
+
+Visa unveiled the Trusted Agent Protocol with Cloudflare and twelve infrastructure partners on October 14, 2025[^8][^9][^10]; and Stripe and Tempo launched the Machine Payments Protocol on March 18, 2026 alongside Tempo's mainnet, backed by a $500 million Series A at a $5 billion valuation[^11][^12][^13].
 
 In the same window, OpenAI's ChatGPT Instant Checkout went live with Etsy, expanded to Shopify, then added Salesforce Commerce Cloud (L'Oréal, Pandora, Saks), PayPal's global merchant network, and Walmart[^14][^15][^16]. Klarna issued the first stablecoin on Tempo. Mastercard Agent Pay completed live transactions across nine APAC markets and a Latin America wave spanning thirteen issuers[^17]. Visa Intelligent Commerce Connect launched April 8, 2026 with AWS, Highnote, and Mesh; American Express published its Developers Kit on April 14, with the EVP for the program publicly committing that "we're standing behind the agents" on transaction errors[^17].
 
@@ -45,13 +51,21 @@ The thesis is short. **Agent payments are not a single protocol decision. They a
 **The evidence.**
 
 - **x402 momentum.** Coinbase transferred x402 to the Linux Foundation on April 2, 2026 with 12 founding members from card networks, hyperscalers, and crypto[^2][^3]. Cumulative volume reached ~150M transactions across Base (119M) and Solana (35M); approximate annualized volume ~$600M[^1]. Cloudflare integrated x402 into its Agents SDK; Coinbase Payments MCP exposes x402 as a callable LLM tool[^18][^19].
+
 - **ACP production.** ChatGPT Instant Checkout went live on Sept 29, 2025 with Etsy. By Oct 14, 2025 it had expanded to Salesforce Commerce Cloud (L'Oréal, Pandora, Saks); by holiday 2025 it covered Walmart and 1M+ Shopify merchants; by Feb 2026 PayPal joined[^14][^15][^16]. OpenAI shut down the original Instant Checkout in early March 2026 (~12 merchants live, conversion below target) but ACP itself continues with Shopify, Salesforce, PayPal, and Worldpay[^17].
+
 - **AP2 ecosystem.** Google's AP2 ships with 100+ partners — Mastercard, American Express, PayPal, Adyen, Worldpay, Visa, Coinbase, Solana, Tether, Circle, Klarna, Shopify, Salesforce, Walmart, ServiceNow, Intuit, Revolut, and dozens more[^6]. Revolut Pay went live with AP2 across UK/EEA on January 19, 2026 — among the earliest live AP2 integrations from a European-licensed payment institution[^17].
+
 - **MPP and Tempo.** Tempo mainnet launched March 18, 2026 — incubated by Stripe and Paradigm, $500M Series A at $5B valuation, EVM-compatible, 100,000+ TPS target, sub-second finality, stablecoin-native gas[^11][^12][^13]. MPP launched same day with Anthropic, OpenAI, Alchemy, Dune Analytics, fal.ai, Browserbase, DoorDash, Ramp, Revolut, Shopify, and Stripe Climate among the 100+ integrated services[^11][^20][^21].
+
 - **TAP at the edge.** Visa's Trusted Agent Protocol uses RFC 9421 HTTP Message Signatures and aligns with WebAuthn — built with Cloudflare and ecosystem feedback from Adyen, Ant International, Checkout.com, Coinbase, CyberSource, Elavon, Fiserv, Microsoft, Nuvei, Shopify, Stripe, Worldpay[^8][^9][^10]. Akamai joined as the latest TAP integrator in December 2025; Visa explicitly committed to interoperability with x402[^17][^22].
+
 - **Card network alignment.** All three major US card networks shipped agent infrastructure by April 2026. Visa Intelligent Commerce Connect (April 8, 2026), Mastercard Verifiable Intent (live across LATAM and ASEAN), American Express Developers Kit (April 14, 2026) with Amex covering AI agent errors. Morgan Stanley projects US agentic commerce reaches $385B by 2030[^17].
+
 - **Conversion data.** Hashmeta's panel of 47 e-commerce businesses found ChatGPT Instant Checkout converting at 43.7% versus 2.3% on traditional e-commerce — a 19× lift[^23]. Pew clocked 8% click rate when AI Overview is present vs 15% otherwise (separate data point but corroborates the agent-mediated discovery shift)[^24]. ChatGPT reached 700M weekly active users by August 2025; ~2.8% of messages are product-related, implying ~126M weekly product conversations[^14][^25].
+
 - **Sub-cent economics.** Circle Nanopayments launched on testnet March 3, 2026 enabling gas-free USDC transfers as small as $0.000001 via offchain aggregation and batched onchain settlement[^26][^27][^28]. Standard onchain x402 settles at near-zero fees for amounts above ~$0.05; below that, batching architectures (Cloudflare deferred settlement, Circle Gateway) become necessary.
+
 - **The honest counter-evidence.** Bloomberg's March 7, 2026 exposé documented the gap between investment and adoption: ~$50M total agentic commerce volume against stablecoins' $46T annual transaction volume; ~40,000 agents transacting; x402 ~$24M over 30 days against $6.88T global e-commerce[^29]. The infrastructure is ahead of the demand; the demand is real but small.
 
 **The five protocols, one-line each.**
@@ -79,10 +93,15 @@ The protocols are not competing for the same job. They are layered. x402 is a se
 The cross-membership of the partner lists is the cleanest evidence that the protocols are designed to compose:
 
 - **Stripe** is a co-author of ACP (with OpenAI), a co-author of MPP (with Tempo/Paradigm), an x402 Foundation founding member, and an AP2 partner[^2][^4][^11][^6].
+
 - **Mastercard** is an x402 Foundation founding member, runs Agent Pay on its own SD-JWT credential set, is an AP2 partner, and delegates agent identity to Cloudflare's Web Bot Auth — the same RFC 9421 primitive Visa TAP uses[^2][^6][^32][^17].
+
 - **Adyen, American Express, and Shopify** appear in the x402 Foundation, the AP2 partner list, and the UCP roster simultaneously[^2][^6][^33].
+
 - **Visa** runs TAP, partnered with Cloudflare, is collaborating with Coinbase on x402 interoperability, is an AP2 partner, and a UCP partner[^8][^17][^33].
+
 - **Google** runs AP2 and UCP, ships A2A x402 extension via Coinbase, and is an x402 Foundation founding member[^2][^6][^33].
+
 - **PayPal** is in AP2 and UCP, integrated with ChatGPT for Instant Checkout, and *absent* from the x402 Foundation — the most strategically interesting non-membership in the stack[^15][^31].
 
 The question for a SaaS founder in 2026 is not which protocol to bet on. It is which layer of which protocol stack to ship first, and how to architect so the other three layers slot in cleanly when needed.

@@ -17,23 +17,40 @@ description: "A working clause library for B2B AI vendor contracts under the EU 
 
 This is a working clause library for negotiating B2B AI vendor contracts under the EU AI Act, written for the in-house counsel and procurement teams that have to ship signed contracts before the high-risk regime applies on 2 August 2026.[^1][^2] The premise is simple: a SaaS MSA written in 2022 does not address what AI vendor contracts must address in 2026.[^3][^4][^5] Standard GDPR Data Processing Agreements do not cover training-data permission, model-improvement rights, the deployer-to-provider re-qualification under Article 25, the supplier-side cooperation duties for fundamental rights impact assessments, the Article 50 marking and labelling cooperation, or the GPAI Code of Practice signatory representation that downstream integrators now want their suppliers to provide.[^6][^7][^8][^9]
 
-The European Commission's Public Buyers Community has done the public-sector heavy lifting. The Model Contractual Clauses for the Procurement of AI (MCC-AI), updated 5 March 2025 to align with the final AI Act and translated into all 24 EU languages by 16 June 2025, are now the canonical baseline a private-sector counsel can paste into a procurement template and adapt.[^10][^11][^12][^13] Independent academic and law-firm guidance — Bird & Bird, Trowers & Hamlins, Burges Salmon, Slaughter and May, Covington / Inside Privacy, Snellman, Mishcon de Reya, Stephenson Harwood, ICTLC, Legalithm — has converged on a recognisable twelve-clause shape that this paper codifies.[^14][^15][^16][^17][^18][^19][^20][^21][^22] The vendor side has converged too: OpenAI, Anthropic, Mistral AI, and the second-tier of agent-platform vendors have published DPAs and supplier addenda whose structure the procurement side now negotiates against.[^23][^24][^25]
+The European Commission's Public Buyers Community has done the public-sector heavy lifting.
+
+The Model Contractual Clauses for the Procurement of AI (MCC-AI), updated 5 March 2025 to align with the final AI Act and translated into all 24 EU languages by 16 June 2025, are now the canonical baseline a private-sector counsel can paste into a procurement template and adapt.[^10][^11][^12][^13]
+
+Independent academic and law-firm guidance — Bird & Bird, Trowers & Hamlins, Burges Salmon, Slaughter and May, Covington / Inside Privacy, Snellman, Mishcon de Reya, Stephenson Harwood, ICTLC, Legalithm — has converged on a recognisable twelve-clause shape that this paper codifies.[^14][^15][^16][^17][^18][^19][^20][^21][^22]
+
+The vendor side has converged too: OpenAI, Anthropic, Mistral AI, and the second-tier of agent-platform vendors have published DPAs and supplier addenda whose structure the procurement side now negotiates against.[^23][^24][^25]
 
 ## Executive Summary
 
 The 2026 EU AI Act vendor contract has twelve negotiation surfaces, each anchored to a specific statutory hook:[^14][^17][^26][^27]
 
 1. **Compliance-status warranty** — the supplier represents whether the system is high-risk under Article 6(2) and Annex III and warrants compliance with Chapter III duties applicable to its provider role.[^11][^28]
+
 2. **Data use and training restrictions** — training, fine-tuning, or "service improvement" use of customer data is prohibited unless contractually opted in.[^4][^5][^29]
+
 3. **Output ownership** — explicit assignment of inputs, outputs, and derived insights to the customer.[^30][^31][^4]
+
 4. **Liability and indemnities for hallucinations + IP infringement + bias** — modification-exclusion kill-switch removed, indemnity scope explicitly extended to AI outputs.[^4][^5][^32]
+
 5. **Model change notification** — minimum advance-notice window before substantial model versions or behaviour changes.[^32][^33]
+
 6. **Log access for Article 26(6)** — supplier-side log retention and access for the deployer's six-month-minimum logging duty.[^28][^34]
+
 7. **Substantial-modification boundary** — defined Article 25(b)/(c) thresholds; what the deployer can and cannot change before re-qualification.[^7][^35][^36]
+
 8. **Audit rights** — controller and authority audit cooperation, including under Article 26(7).[^11][^17]
+
 9. **FRIA cooperation** — supplier provides architecture, safety measures, data-handling, and model-provider dependencies for the deployer's Article 27 FRIA.[^37][^38][^39]
+
 10. **GPAI Code-signatory representation** — supplier represents whether it (or its upstream GPAI provider) is a signatory of the Code, with an alternative-equivalent-measures fallback.[^40][^41][^9]
+
 11. **Article 50 transparency cooperation** — supplier implements multilayered marking (C2PA + watermarking + fingerprinting/logging) per the Code of Practice and contractually prohibits removal of markings.[^42][^43][^44][^45]
+
 12. **Termination and transition** — data return + deletion certification + 90–180-day transition assistance + fine-tuned-model-weight extraction rights.[^46][^47][^48]
 
 The structural insight is that none of these clauses sit cleanly inside a traditional MSA. They live in an **AI Addendum** that incorporates by reference into the MSA, supplements (not replaces) the GDPR DPA, and runs in parallel with any sector-specific data agreements (e.g., financial-services third-party risk, healthcare BAAs).[^49][^50] The MCC-AI High-Risk template is the closest public template; the twelve-clause structure in Part VII below is the operational refinement.

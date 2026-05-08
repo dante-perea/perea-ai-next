@@ -15,7 +15,11 @@ profile: "field-manual"
 
 ## Executive summary
 
-The horizontal AI-scribe market for solo therapists is saturated. Mentalyc serves 30,000+ therapists at USD 14.99–USD 119.99/month,[^1][^2] with Alliance Genie therapeutic-alliance analytics,[^3] SOC 2 Type II compliance, and templates spanning SOAP, DAP, BIRP, PIRP, GIRP, PIE, SIRP, and 100+ custom formats.[^1][^2][^3] Upheal raised USD 14.35 million (USD 10M Series A[^4] November 2024 led by Headline, with Credo Ventures and Kaya Ventures)[^4][^5] at 36,000+ providers[^4] and a 55% reduction[^4][^5] in session processing time.[^4][^5][^6] Heidi Health closed a USD 65 million Series B[^7][^8] in October 2025 at a USD 465 million valuation,[^7][^8] supporting 2 million+ weekly consults across 116 countries with USD 96.6 million in total funding.[^7][^8] DeepCura offers a USD 129/month all-features plan with ambient listening, multi-speaker detection, and bidirectional EHR write-back across Epic, athena, eCW, AdvancedMD, OptiMantra, Veradigm, and CharmHealth.[^9][^10] Twofold Health markets directly to LMFTs, LCSWs, LPCs, and psychologists at USD 19/month with a signed BAA, end-to-end encryption, never-stored audio, and templates for couples and family sessions.[^11][^12][^13]
+The horizontal AI-scribe market for solo therapists is saturated.
+
+Mentalyc serves 30,000+ therapists at USD 14.99–USD 119.99/month,[^1][^2] with Alliance Genie therapeutic-alliance analytics,[^3] SOC 2 Type II compliance, and templates spanning SOAP, DAP, BIRP, PIRP, GIRP, PIE, SIRP, and 100+ custom formats.[^1][^2][^3] Upheal raised USD 14.35 million (USD 10M Series A[^4] November 2024 led by Headline, with Credo Ventures and Kaya Ventures)[^4][^5] at 36,000+ providers[^4] and a 55% reduction[^4][^5] in session processing time.[^4][^5][^6]
+
+Heidi Health closed a USD 65 million Series B[^7][^8] in October 2025 at a USD 465 million valuation,[^7][^8] supporting 2 million+ weekly consults across 116 countries with USD 96.6 million in total funding.[^7][^8] DeepCura offers a USD 129/month all-features plan with ambient listening, multi-speaker detection, and bidirectional EHR write-back across Epic, athena, eCW, AdvancedMD, OptiMantra, Veradigm, and CharmHealth.[^9][^10] Twofold Health markets directly to LMFTs, LCSWs, LPCs, and psychologists at USD 19/month with a signed BAA, end-to-end encryption, never-stored audio, and templates for couples and family sessions.[^11][^12][^13]
 
 But these vendors solve the solo-therapist documentation problem, not the niche. There are three structurally distinct CPT-coded session types where multi-speaker disambiguation is the load-bearing primitive:
 
@@ -99,14 +103,22 @@ The horizontal scribe cohort has not closed any of these:
 
 For a clinical leader evaluating the cohort today:
 
-| Practice profile | Best vendor | Rationale | Source |
-|---|---|---|---|
-| Solo MFT, in-person + telehealth couples and family | Twofold (USD 19/mo) | Purpose-built for MFTs; couples/family templates; HIPAA/BAA at signup; recordings never stored | [^11][^12] |
-| Solo therapist, mixed individual + couples + family | Mentalyc Super (USD 119.99/mo) | Best modality breadth (100+ formats), Alliance Genie, group notes per participant | [^1][^2] |
-| Telehealth-heavy private practice | Upheal (free or paid) | Integrated video + AI notes; free tier covers basics; weakness in modality-specific templates is acceptable for individual-heavy caseloads | [^4][^5] |
-| Group practice 3-8 clinicians with billing/coding burden | DeepCura (USD 129/mo, 10-22% volume discount) | Bidirectional EHR write-back across 7+ EHRs; AI receptionist; CPT/E&M coding reasoning | [^9][^22] |
-| Multi-state agency with 100+ clinicians, mixed modalities | Mentalyc Team (USD 49.99/seat annual) | Org-wide BAA; supervisor co-sign workflows; flat per-seat unlimited notes | [^28] |
-| Group-therapy-heavy IOP/PHP center running CPT 90853 | Build (or partner with Mentalyc) | No vendor solves 5-15-voice diarization at production WDER; the wedge is open | [^18][^14] |
+| Practice profile | Best vendor | Rationale |
+|---|---|---|
+| Solo MFT, in-person + telehealth couples and family | Twofold (USD 19/mo) | Purpose-built for MFTs; couples/family templates; HIPAA/BAA at signup; recordings never stored |
+| Solo therapist, mixed individual + couples + family | Mentalyc Super (USD 119.99/mo) | Best modality breadth (100+ formats), Alliance Genie, group notes per participant |
+| Telehealth-heavy private practice | Upheal (free or paid) | Integrated video + AI notes; free tier covers basics; weakness in modality-specific templates is acceptable for individual-heavy caseloads |
+| Group practice 3-8 clinicians with billing/coding burden | DeepCura (USD 129/mo, 10-22% volume discount) | Bidirectional EHR write-back across 7+ EHRs; AI receptionist; CPT/E&M coding reasoning |
+| Multi-state agency with 100+ clinicians, mixed modalities | Mentalyc Team (USD 49.99/seat annual) | Org-wide BAA; supervisor co-sign workflows; flat per-seat unlimited notes |
+| Group-therapy-heavy IOP/PHP center running CPT 90853 | Build (or partner with Mentalyc) | No vendor solves 5-15-voice diarization at production WDER; the wedge is open |
+
+Source attributions for the matrix (each cited in Part I above):
+
+- Twofold[^11][^12] and Mentalyc Super[^1][^2].
+
+- Upheal[^4][^5] and DeepCura[^9][^22].
+
+- Mentalyc Team[^28] and the IOP/PHP build path[^14][^18].
 
 ## What this paper does not cover
 

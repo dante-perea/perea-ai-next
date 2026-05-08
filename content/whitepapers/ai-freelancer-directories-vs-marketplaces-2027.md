@@ -235,20 +235,35 @@ Five threads this paper leaves open:
 ## Glossary
 
 - **AIR (Braintrust AIR)** — Braintrust's AI Recruiter, the autonomous first-round interview tool launched April 29, 2024[^4].
+
 - **Uma (Upwork's Mindful AI)** — Upwork's multi-model AI work agent (GPT-3.5 → GPT-4o + custom SLMs) integrated into job posting, matching, proposal drafting, and project management[^15][^39].
+
 - **GSV (Gross Services Volume)** — Total spend transacted on Upwork by clients with talent[^14].
+
 - **Active client** — a client that has had spend activity on any Upwork platform during the 12 months preceding the date of measurement[^14].
+
 - **Connect** — Upwork's bidding currency, typically $0.30 each, required for talent to submit proposals[^21][^22].
+
 - **JSS (Job Success Score)** — Upwork's reputation metric for freelancers based on completed contracts.
+
 - **Boost** — additional connects spent to surface a proposal in prominent slots; sweet spot at 16–20 connects, dead zone at 21–30[^22].
+
 - **Take rate** — the percentage of GSV that Upwork retains as revenue (Total Take Rate Q4 2025: 19.4%)[^14]; Fiverr Marketplace take rate 27.7%[^17].
+
 - **Marketplace revenue (Fiverr)** — gross merchandise volume × take rate from buyer-seller transactions[^17].
+
 - **Services revenue (Fiverr)** — revenue from Fiverr Ads, Fiverr Pro subscriptions, AutoDS, Seller Plus, and other non-marketplace SKUs[^17].
+
 - **Lifted (Upwork)** — Upwork's enterprise contingent-workforce platform built from Ascen + Bubty acquisitions, purpose-built for sourcing, contracting, managing, and paying talent across freelance, fractional, and payrolled work[^14].
+
 - **3% acceptance** — Toptal's brand-defining vetting acceptance rate[^7][^32].
+
 - **Graphite** — on-demand talent platform of 12,000+ vetted independent experts in finance, accounting, corporate strategy, marketing; acquired by Toptal January 7, 2026[^7][^8][^36].
+
 - **NSI (No Single Individual)** — curated talent platform connecting agencies with vetted independent experts in advertising, marketing, branding, and social media; acquired by Toptal January 22, 2026[^11].
+
 - **Vibe coding** — Fiverr CEO Micha Kaufman's term for AI-generated simple programming work that replaces commodity dev tasks; cited as a primary driver of marketplace decline in writing/translation/programming[^20].
+
 - **Match-the-budget paradox** — bidding 95–105% of posted budget yields the worst reply rate (8.8%); undercutting by 50%+ or bidding 2–5× over both outperform[^24].
 
 ## Related Research

@@ -169,23 +169,41 @@ Seven predictions for the 2026-2030 window of the 1099 tax + wealth stack, each 
 **Glossary**
 
 - **1099-K** — Information return for payment-card and TPSO transactions; threshold $20,000 + 200 transactions reinstated by OBBB July 2025.[^34]
+
 - **1099-NEC** — Nonemployee compensation form (replaced 1099-MISC Box 7 in 2020); $600 issuer threshold.[^1]
+
 - **199A QBI Deduction** — Section 199A 20% deduction on qualified business income; expires Dec 31 2025 unless extended.[^33]
+
 - **AGI** — Adjusted Gross Income.
+
 - **CPA** — Certified Public Accountant.
+
 - **EACA** — Eligible Automatic Contribution Arrangement; tax credit up to $1,500 for new retirement plans.[^19]
+
 - **Form 5500-EZ** — Annual return required when Solo 401(k) assets ≥ $250K.[^25]
+
 - **Form 8995 / 8995-A** — Forms used to claim Section 199A QBI deduction.[^33][^37]
+
 - **Mega Backdoor Roth** — Strategy to contribute up to the full Solo 401(k) annual limit ($72K in 2026) entirely into a Roth account.[^19][^20]
+
 - **OBBB / OBBBA** — One Big Beautiful Bill Act (2025); reinstated 1099-K threshold + added 2026 vehicle/OT/tips deductions.[^34][^37]
+
 - **QBI** — Qualified Business Income (Section 199A).[^33]
+
 - **Schedule C** — Form 1040 schedule for sole proprietorship profit/loss.[^38]
+
 - **Schedule SE** — Form 1040 schedule for self-employment tax calculation.[^37]
+
 - **SECURE 2.0** — 2022 retirement act with provisions phasing in through 2026 (Roth catch-up requirement).[^23]
+
 - **SEP IRA** — Simplified Employee Pension IRA; alternative to Solo 401(k) with simpler admin and lower limits.[^25]
+
 - **SIMPLE IRA** — Savings Incentive Match Plan for Employees; payroll-based, lower limits than Solo 401(k).[^25]
+
 - **Solo 401(k)** — Owner-only 401(k) plan for self-employed; 2026 limit $72,000 ($80,000 if 50+).[^19][^20]
+
 - **S-Corp Election** — Tax election for pass-through entity treatment; enables salary + distributions split for SE tax savings.[^48]
+
 - **TPSO** — Third-Party Settlement Organization (payment apps, online marketplaces); subject to 1099-K reporting threshold.[^39]
 
 **Related Research**

@@ -21,7 +21,15 @@ This paper is an authority survey of that stack as it stood in early 2026: who's
 
 1. **The one-person-company canon is now well-documented.** Amodei's 70-80% prediction (Code with Claude conference, May 2025[^2]) named three categories: proprietary trading, developer tools, and businesses with automated customer service. By Q2 2026 at least three solo founders had crossed canonical thresholds: **Maor Shlomo (Base44 → $80M Wix exit, $100M ARR post-acquisition in 9 months)**[^2], **Ben Cera (Polsia $1M ARR in 30 days, 1,300+ companies on platform, claims $3.5M ARR by Q1 2026)**[^3][^4], **Pieter Levels (PhotoAI $1.58M ARR + Nomad List $3M+ + RemoteOK $1M+ + 70+ failed startups before)**[^5]. The categorical claim from the OpenBooklet survey: **44% of profitable SaaS products are now run by a single founder, doubled since 2018**[^5].
 
-2. **The dominant solo stack is four agents at $300-$700/month.** Per the Foundra and SalesSheet operator surveys, **most solo founders are running between four and seven agents, costing $300-$700/month total**[^6][^7]. The four canonical categories: **coding** (Claude Code Max 5x at $100/mo + Cursor Pro at $20/mo as the dominant pair[^8][^9][^10]), **workflow automation** (Make at $9/mo or Zapier at $29.99/mo or n8n self-hosted at ~$5/mo or Lindy at $49.99/mo[^11][^12][^13][^14][^15]), **support** (Intercom Fin resolves ~70% of L1 tickets[^5], Crisp Pro at $25/mo, Zendesk AI), **content/ops** (Claude or ChatGPT at $20/mo, Buffer/Typefully at $0-15/mo, Perplexity Pro at $20/mo[^5]).
+2. **The dominant solo stack is four agents at $300-$700/month.** Per the Foundra and SalesSheet operator surveys, **most solo founders are running between four and seven agents, costing $300-$700/month total**[^6][^7]. The four canonical categories:
+
+   - **Coding.** Claude Code Max 5x at $100/mo + Cursor Pro at $20/mo as the dominant pair[^8][^9][^10].
+
+   - **Workflow automation.** Make at $9/mo or Zapier at $29.99/mo or n8n self-hosted at ~$5/mo or Lindy at $49.99/mo[^11][^12][^13][^14][^15].
+
+   - **Support.** Intercom Fin resolves ~70% of L1 tickets[^5], Crisp Pro at $25/mo, Zendesk AI.
+
+   - **Content/ops.** Claude or ChatGPT at $20/mo, Buffer/Typefully at $0-15/mo, Perplexity Pro at $20/mo[^5].
 
 3. **The substitution math is 95-98% cost reduction.** Per the AgentMarketCap and Athenic frameworks: a 6-8 person team costs **£240,000-£320,000/year**[^16] (or in USD: $280K engineering + $120K support + $90K marketing = ~$570K[^1]); a solo founder running an equivalent agent stack costs **$3,000-$12,000/year**[^1] (£2,400-£4,800)[^16]. The headline ratio is **95-98% savings**[^16] for the operational mechanics — the founder's own time is now the binding constraint, not the headcount.
 

@@ -4665,10 +4665,12 @@ function hedgedProseShare(claims: ClaimSpan[]): number {
 /**
  * Layer 2c — salt-shaker citation cluster detector.
  *
- * Flags body paragraphs that stack ≥5 distinct `[^N]` reference markers, a
+ * Flags body paragraphs that stack ≥10 distinct `[^N]` reference markers, a
  * pattern that tends to surface when an author games the inline-coverage gate
  * by piling refs on a single statistic instead of having each ref support its
- * own claim.
+ * own claim. The threshold is the editorial line: 5–9 refs in a single
+ * paragraph is bibliographically defensible (legal/financial/multi-stat
+ * sentences); 10+ is the genuine "verifier-gaming" signature.
  *
  * Quotable Findings sections are exempt: those are deliberately ref-dense for
  * downstream syndication and use one ref per quotable fact.
@@ -4716,7 +4718,7 @@ export function detectSaltShaker(body: string, refsSectionStart: number): string
     while ((m = re.exec(paragraph)) !== null) {
       ids.add(parseInt(m[1], 10));
     }
-    if (ids.size >= 5) {
+    if (ids.size >= 10) {
       const excerpt = paragraph.length > 180 ? paragraph.slice(0, 180) + "…" : paragraph;
       offenders.push(`${ids.size} refs: ${excerpt}`);
       if (offenders.length >= 3) break;
@@ -4835,7 +4837,7 @@ export function runVerifyGate(
     const offenders = detectSaltShaker(body, sectionStart);
     if (offenders.length > 0) {
       failures.push(
-        `Layer 2c: salt-shaker citation cluster (≥5 distinct refs in one paragraph): ${offenders.slice(0, 3).join(" | ")}`,
+        `Layer 2c: salt-shaker citation cluster (≥10 distinct refs in one paragraph): ${offenders.slice(0, 3).join(" | ")}`,
       );
     }
   }

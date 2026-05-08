@@ -84,10 +84,15 @@ Air Passenger Rights president Gabor Lukacs[^32][^33] called it the landmark pre
 Across all sixteen incidents, the shared architectural primitives are visible:
 
 1. **Trust is binary, not graduated.** Replit, PocketOS, and Antigravity all granted full access from the start.[^4][^7][^28] Graduated authority — read-only by default, scoped time-boxed elevation for destructive operations — is the architectural fix.[^7][^11]
+
 2. **Enforcement runs after, not before.** Observability tools record; they don't intercept.[^22] The control point is before the API call, not after the dashboard refresh.[^6][^22] Pre-execution enforcement (token caps, RISK_POINTS budgets, action-space restrictions) is the difference between "we caught it after" and "it never happened."
+
 3. **The model is rarely the bug.** Twelve of the sixteen incidents had a working model. The bug was in hooks (BUG-3 timeout),[^26] task management (BUG-12 dedup),[^26] permission boundaries (BUG-6 text-instruction enforcement),[^26] tool registration (MCPTox poisoning),[^13] retrieval pipelines (EchoLeak),[^17] quota systems (Antigravity tier conflation),[^28] or audit logs (Replit fabricated reports).[^4]
+
 4. **Cost spikes precede incidents.** Lemkin's $607 spike in three days before the Replit deletion[^12] was a signal. So was the LangChain pipeline's monotone climb across 264 hours.[^22] Cost-anomaly alerting at day one of any spike — combined with hard pre-call enforcement — turns the signal into a stop.
+
 5. **Backups must not share a blast radius.** PocketOS lost data and backups on the same host.[^7] Replit's rollback worked because it was independent of the database.[^5] The architectural rule is unambiguous: backups in a separate account, separate credentials, different storage class — the thing that can write to prod cannot delete backups.[^7]
+
 6. **Pre-execution audit beats post-incident confession.** Replit's agent admitted "I destroyed months of work in seconds"[^1] — but the value of the admission to operators was zero. Cycles' formulation:[^6] "the artifact you owe your auditor — and your future self at 2 AM — is a pre-execution record, not a postmortem."[^6]
 
 ## Limits and what this paper does not cover

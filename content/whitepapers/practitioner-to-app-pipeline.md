@@ -180,21 +180,37 @@ The investor cohort that recurs across multiple winners includes Accel, Khosla V
 **Glossary**
 
 - **ARR** — Annual Recurring Revenue.
+
 - **BAA** — Business Associate Agreement (HIPAA).[^13]
+
 - **EHR** — Electronic Health Record system.[^15]
+
 - **GDPR** — General Data Protection Regulation (EU/UK).[^16]
+
 - **ICP** — Ideal Customer Profile.[^24]
+
 - **MAU** — Monthly Active User.[^26]
+
 - **MCP** — Model Context Protocol (Anthropic, open standard).[^31][^32]
+
 - **MRR** — Monthly Recurring Revenue.[^23]
+
 - **OAuth** — Open Authorization protocol.[^31][^32]
+
 - **PMS** — Practice Management Software.[^17]
+
 - **RLS** — Row Level Security (Postgres).[^28][^29]
+
 - **RAK** — Restricted API Key (Stripe).[^36]
+
 - **SaaS** — Software as a Service.
+
 - **SOAP** — Subjective / Objective / Assessment / Plan note format.[^15]
+
 - **TCO** — Total Cost of Ownership.[^5]
+
 - **Vibe coding** — Andrej Karpathy's February 2025 coinage; software development by handing high-level intent to AI; Collins Dictionary Word of the Year 2025.[^2]
+
 - **WebContainers** — StackBlitz technology that runs full Node.js inside a browser tab.[^7]
 
 **Related Research**
