@@ -27,6 +27,7 @@ import {
   PROFILE_QUOTAS,
   type PaperProfile,
 } from "../lib/research-claims";
+import { checkRegression as checkCitationMagnetismRegression } from "./citation-magnetism-score";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "whitepapers");
 
@@ -102,7 +103,21 @@ async function verifyOne(slug: string): Promise<Outcome> {
     }
   }
 
-  const failures = [...shapeFailures, ...gate.failures, ...fidelityFailures];
+  // Layer 5: Citation-magnetism regression gate. If a sidecar score exists
+  // for this paper, recompute the score and fail if any gated metric (i.e.,
+  // every metric except freshness_days) regressed. New papers without a
+  // sidecar pass through and write the baseline.
+  const cmFailures: string[] = [];
+  if (process.env.SKIP_CITATION_MAGNETISM_GATE !== "1") {
+    const cm = checkCitationMagnetismRegression(slug);
+    if (!cm.pass) {
+      for (const reg of cm.regressions) {
+        cmFailures.push(`Layer 5: citation-magnetism regression — ${reg}`);
+      }
+    }
+  }
+
+  const failures = [...shapeFailures, ...gate.failures, ...fidelityFailures, ...cmFailures];
   const m = gate.metrics;
   const metricsLine = `[${profile}] refs ${m.refsTotal} (P${m.refsByTier.primary}/S${m.refsByTier.secondary}/T${m.refsByTier.tertiary}/U${m.refsByTier.unknown}), claims ${m.claimsDetected}, cited ${m.claimsCited} (${(m.citationCoverage * 100).toFixed(0)}%), fwd-uncited ${m.forwardDatedUncited}, words ${bodyWordCount}`;
 

@@ -3690,6 +3690,14 @@ const LOCAL_SERVICE_AGGREGATORS_SECONDARY_PATTERNS: RegExp[] = [
 ];
 
 const SECONDARY_PATTERNS: RegExp[] = [
+  // Reddit. Reclassified from default-tertiary to secondary because the
+  // empirical citation-economy reality (per content/whitepapers/geo-2026.md)
+  // is that Reddit is the #1 source on every major AI engine at ~40% citation
+  // share — AI engines treat well-upvoted Reddit threads as authoritative for
+  // practitioner-experience questions. This is a citation-magnetism call,
+  // not a traditional source-authority hierarchy call.
+  /(^|\.)reddit\.com(\/|$)/i,
+  /(^|\.)old\.reddit\.com(\/|$)/i,
   // Tier-1 general business + tech press
   /(^|\.)bloomberg\.com(\/|$)/i,
   /(^|\.)reuters\.com(\/|$)/i,
