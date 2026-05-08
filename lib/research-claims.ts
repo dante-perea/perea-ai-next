@@ -1232,6 +1232,150 @@ const CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)adaptdigitalsolutions\.com(\/|$)/i,
 ];
 
+const MULTIFAMILY_PROPMGMT_PRIMARY_PATTERNS: RegExp[] = [
+  // Multifamily/SFR REITs + operators (corporate + SEC + IR)
+  /(^|\.)invitationhomes\.com(\/|$)/i,
+  /(^|\.)amh\.com(\/|$)/i,
+  /(^|\.)triconresidential\.com(\/|$)/i,
+  /(^|\.)avalonbay\.com(\/|$)/i,
+  /(^|\.)equityapartments\.com(\/|$)/i,
+  /(^|\.)maac\.com(\/|$)/i,
+  /(^|\.)greystar\.com(\/|$)/i,
+  /(^|\.)morganproperties\.com(\/|$)/i,
+  /(^|\.)cortland\.com(\/|$)/i,
+  /(^|\.)related\.com(\/|$)/i,
+  /(^|\.)quarterra\.com(\/|$)/i,
+  /(^|\.)monarchinvestment\.com(\/|$)/i,
+  /(^|\.)bozzuto\.com(\/|$)/i,
+  /(^|\.)venterraliving\.com(\/|$)/i,
+  // Third-party PM operators
+  /(^|\.)cushwakeliving\.com(\/|$)/i,
+  /(^|\.)cushmanwakefield\.com(\/|$)/i,
+  /(^|\.)fsresidential\.com(\/|$)/i,
+  /(^|\.)firstservicecorp\.com(\/|$)/i,
+  /(^|\.)willowbridgepc\.com(\/|$)/i,
+  // Multifamily AI vendors corporate (front-of-house + fraud + collections)
+  /(^|\.)snappt\.com(\/|$)/i,
+  /(^|\.)knockcrm\.com(\/|$)/i,
+  /(^|\.)leasehawk\.com(\/|$)/i,
+  /(^|\.)colleen\.ai(\/|$)/i,
+  /(^|\.)funnel\.com(\/|$)/i,
+  /(^|\.)funnelleasing\.com(\/|$)/i,
+  /(^|\.)showmojo\.com(\/|$)/i,
+  /(^|\.)anyone\.com(\/|$)/i,
+  /(^|\.)flexliving\.com(\/|$)/i,
+  /(^|\.)getflex\.com(\/|$)/i,
+  // Smart-home + property hardware vendors
+  /(^|\.)butterflymx\.com(\/|$)/i,
+  /(^|\.)latch\.com(\/|$)/i,
+  /(^|\.)door\.com(\/|$)/i,
+  /(^|\.)brivo\.com(\/|$)/i,
+  /(^|\.)alarm\.com(\/|$)/i,
+  /(^|\.)assaabloy\.com(\/|$)/i,
+  /(^|\.)resideo\.com(\/|$)/i,
+  /(^|\.)sightplan\.com(\/|$)/i,
+  /(^|\.)residentiq\.com(\/|$)/i,
+  // SMB PMS vendors (corporate + pricing pages are primary issuer disclosures)
+  /(^|\.)doorloop\.com(\/|$)/i,
+  /(^|\.)tenantcloud\.com(\/|$)/i,
+  /(^|\.)avail\.co(\/|$)/i,
+  /(^|\.)turbotenant\.com(\/|$)/i,
+  /(^|\.)innago\.com(\/|$)/i,
+  /(^|\.)stessa\.com(\/|$)/i,
+  /(^|\.)hemlane\.com(\/|$)/i,
+  /(^|\.)rentredi\.com(\/|$)/i,
+  /(^|\.)leaserunner\.com(\/|$)/i,
+  /(^|\.)rentec\.com(\/|$)/i,
+  /(^|\.)rentecdirect\.com(\/|$)/i,
+  /(^|\.)propertyware\.com(\/|$)/i,
+  /(^|\.)resman\.com(\/|$)/i,
+  /(^|\.)rentmanager\.com(\/|$)/i,
+  /(^|\.)rentmaximizer\.com(\/|$)/i,
+  // Compliance / regulatory primary
+  /(^|\.)caanet\.org(\/|$)/i,
+  /(^|\.)nationaltenantauthority\.com(\/|$)/i,
+  /(^|\.)fhfca\.org(\/|$)/i,
+  /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+  /(^|\.)housing\.lacity\.gov(\/|$)/i,
+  /(^|\.)dhcd\.dc\.gov(\/|$)/i,
+  /(^|\.)oregon\.gov(\/|$)/i,
+  /(^|\.)hcr\.ny\.gov(\/|$)/i,
+  /(^|\.)hudexchange\.info(\/|$)/i,
+  // Investor data primary (PR distributors + SEC EDGAR)
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+  /(^|\.)q4cdn\.com(\/|$)/i,
+  // VC/PE primary (Sapphire + Insight + Hercules + Fifth Wall + Madrona + Wilshire Lane + Navitas + Koch + JLL Spark)
+  /(^|\.)sapphireventures\.com(\/|$)/i,
+  /(^|\.)insightpartners\.com(\/|$)/i,
+  /(^|\.)htgc\.com(\/|$)/i,
+  /(^|\.)herculescapital\.com(\/|$)/i,
+  /(^|\.)fifthwall\.com(\/|$)/i,
+  /(^|\.)madrona\.com(\/|$)/i,
+  /(^|\.)navitascap\.com(\/|$)/i,
+  /(^|\.)kochrealestate\.com(\/|$)/i,
+  /(^|\.)spark\.jll\.com(\/|$)/i,
+  /(^|\.)wilshirelanecap\.com(\/|$)/i,
+  /(^|\.)wilshirelanecapital\.com(\/|$)/i,
+];
+
+const MULTIFAMILY_PROPMGMT_SECONDARY_PATTERNS: RegExp[] = [
+  // Multifamily / housing trade press
+  /(^|\.)multifamilyexecutive\.com(\/|$)/i,
+  /(^|\.)multifamilydive\.com(\/|$)/i,
+  /(^|\.)multihousingnews\.com(\/|$)/i,
+  /(^|\.)multifamilybiz\.com(\/|$)/i,
+  /(^|\.)globest\.com(\/|$)/i,
+  /(^|\.)commercialobserver\.com(\/|$)/i,
+  /(^|\.)bisnow\.com(\/|$)/i,
+  /(^|\.)inman\.com(\/|$)/i,
+  /(^|\.)crenews\.com(\/|$)/i,
+  /(^|\.)connectcre\.com(\/|$)/i,
+  /(^|\.)citybiz\.co(\/|$)/i,
+  /(^|\.)jayparsons\.com(\/|$)/i,
+  /(^|\.)therealdeal\.com(\/|$)/i,
+  /(^|\.)wolfstreet\.com(\/|$)/i,
+  // Real estate research + analyst houses
+  /(^|\.)capright\.com(\/|$)/i,
+  /(^|\.)hl\.com(\/|$)/i,
+  /(^|\.)cdn\.hl\.com(\/|$)/i,
+  /(^|\.)chandan\.com(\/|$)/i,
+  /(^|\.)costar\.com(\/|$)/i,
+  /(^|\.)yardimatrix\.com(\/|$)/i,
+  /(^|\.)cbre\.com(\/|$)/i,
+  /(^|\.)jll\.com(\/|$)/i,
+  /(^|\.)realpageanalytics\.com(\/|$)/i,
+  // PE-watch / antitrust + accountability
+  /(^|\.)pestakeholder\.org(\/|$)/i,
+  /(^|\.)privateequitystakeholder\.org(\/|$)/i,
+  /(^|\.)propublica\.org(\/|$)/i,
+  // Stock + market-cap analytics
+  /(^|\.)stockanalysis\.com(\/|$)/i,
+  /(^|\.)koalagains\.com(\/|$)/i,
+  /(^|\.)weissratings\.com(\/|$)/i,
+  // SaaS pricing + comparison sites for PMS
+  /(^|\.)vendr\.com(\/|$)/i,
+  /(^|\.)bcsolut\.com(\/|$)/i,
+  /(^|\.)softwaresuggest\.com(\/|$)/i,
+  /(^|\.)spotsaas\.com(\/|$)/i,
+  /(^|\.)getapp\.com(\/|$)/i,
+  /(^|\.)trustradius\.com(\/|$)/i,
+  // Funding databases / startup news
+  /(^|\.)parsers\.vc(\/|$)/i,
+  /(^|\.)pulse2\.com(\/|$)/i,
+  /(^|\.)pulse2\.0\.com(\/|$)/i,
+  /(^|\.)techcompanynews\.com(\/|$)/i,
+  /(^|\.)finsmes\.com(\/|$)/i,
+  // Distress + bankruptcy news
+  /(^|\.)distressedpro\.com(\/|$)/i,
+  // Law firms + regulatory commentary
+  /(^|\.)cooley\.com(\/|$)/i,
+  /(^|\.)gibsondunn\.com(\/|$)/i,
+  /(^|\.)ropesgray\.com(\/|$)/i,
+  /(^|\.)skadden\.com(\/|$)/i,
+];
+
 const THERAPIST_AI_SCRIBE_PRIMARY_PATTERNS: RegExp[] = [
   // AI scribe vendors corporate / IR
   /(^|\.)mentalyc\.com(\/|$)/i,
@@ -1882,6 +2026,9 @@ export function classifyTier(
   for (const re of CONSTRUCTION_COMPLIANCE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `construction-compliance primary: ${domain}` };
   }
+  for (const re of MULTIFAMILY_PROPMGMT_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `multifamily-propmgmt primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1913,6 +2060,9 @@ export function classifyTier(
   }
   for (const re of CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `construction-compliance secondary: ${domain}` };
+  }
+  for (const re of MULTIFAMILY_PROPMGMT_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `multifamily-propmgmt secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
