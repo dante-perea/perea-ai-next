@@ -1979,6 +1979,33 @@ const HYPERSCALER_RUNTIME_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)agentsindex\.ai(\/|$)/i,
 ];
 
+const SCITT_SIGNING_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)thenewstack\.io(\/|$)/i,
+  /(^|\.)infoq\.com(\/|$)/i,
+  /(^|\.)securityboulevard\.com(\/|$)/i,
+  /(^|\.)helpnetsecurity\.com(\/|$)/i,
+  /(^|\.)darkreading\.com(\/|$)/i,
+  /(^|\.)sdxcentral\.com(\/|$)/i,
+  /(^|\.)thehackernews\.com(\/|$)/i,
+  /(^|\.)theregister\.com(\/|$)/i,
+  /(^|\.)containerjournal\.com(\/|$)/i,
+  /(^|\.)devops\.com(\/|$)/i,
+  /(^|\.)chainguard\.dev(\/|$)/i,
+  /(^|\.)snyk\.io(\/|$)/i,
+  /(^|\.)cncf\.io(\/|$)/i,
+  /(^|\.)linuxfoundation\.org(\/|$)/i,
+  /(^|\.)aquasec\.com(\/|$)/i,
+  /(^|\.)sysdig\.com(\/|$)/i,
+  /(^|\.)jfrog\.com(\/|$)/i,
+  /(^|\.)anchore\.com(\/|$)/i,
+  /(^|\.)protect\.checkmarx\.com(\/|$)/i,
+  /(^|\.)endorlabs\.com(\/|$)/i,
+  /(^|\.)cyberark\.com(\/|$)/i,
+  /(^|\.)okta\.com(\/|$)/i,
+  /(^|\.)auth0\.com(\/|$)/i,
+  /(^|\.)cloudsecurityalliance\.org(\/|$)/i,
+];
+
 const REWARDBENCH_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)emergentmind\.com(\/|$)/i,
   /(^|\.)deeplearn\.org(\/|$)/i,
@@ -3795,6 +3822,9 @@ export function classifyTier(
   }
   for (const re of HYPERSCALER_RUNTIME_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:hyperscaler-runtime-secondary" };
+  }
+  for (const re of SCITT_SIGNING_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:scitt-signing-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
