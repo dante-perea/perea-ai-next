@@ -1273,6 +1273,103 @@ const CONSTRUCTION_COMPLIANCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)adaptdigitalsolutions\.com(\/|$)/i,
 ];
 
+const VIBECODING_PRACTITIONER_PRIMARY_PATTERNS: RegExp[] = [
+  // Vibe-coding platform vendors (corporate + docs)
+  /(^|\.)lovable\.dev(\/|$)/i,
+  /(^|\.)docs\.lovable\.dev(\/|$)/i,
+  /(^|\.)replit\.com(\/|$)/i,
+  /(^|\.)docs\.replit\.com(\/|$)/i,
+  /(^|\.)cursor\.com(\/|$)/i,
+  /(^|\.)v0\.dev(\/|$)/i,
+  /(^|\.)v0\.app(\/|$)/i,
+  /(^|\.)bolt\.new(\/|$)/i,
+  /(^|\.)stackblitz\.com(\/|$)/i,
+  /(^|\.)windsurf\.com(\/|$)/i,
+  /(^|\.)windsurf\.ai(\/|$)/i,
+  /(^|\.)codeium\.com(\/|$)/i,
+  /(^|\.)cognition\.ai(\/|$)/i,
+  /(^|\.)emergent\.sh(\/|$)/i,
+  /(^|\.)heyboss\.ai(\/|$)/i,
+  /(^|\.)base44\.com(\/|$)/i,
+  // Backend / infra primary
+  /(^|\.)supabase\.com(\/|$)/i,
+  /(^|\.)docs\.supabase\.com(\/|$)/i,
+  /(^|\.)stripe\.com(\/|$)/i,
+  /(^|\.)docs\.stripe\.com(\/|$)/i,
+  /(^|\.)dashboard\.stripe\.com(\/|$)/i,
+  /(^|\.)vercel\.com(\/|$)/i,
+  /(^|\.)mcp\.vercel\.com(\/|$)/i,
+  /(^|\.)mcp\.stripe\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)docs\.anthropic\.com(\/|$)/i,
+  /(^|\.)claude\.com(\/|$)/i,
+  /(^|\.)code\.claude\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)platform\.openai\.com(\/|$)/i,
+  /(^|\.)github\.com(\/|$)/i,
+  /(^|\.)docs\.github\.com(\/|$)/i,
+  /(^|\.)bubble\.io(\/|$)/i,
+  /(^|\.)flutterflow\.io(\/|$)/i,
+  /(^|\.)fuzen\.ai(\/|$)/i,
+  // Practitioner-built vendor sites (corporate primary)
+  /(^|\.)confidantnotes\.com(\/|$)/i,
+  /(^|\.)teja\.app(\/|$)/i,
+  /(^|\.)nora-health\.co\.uk(\/|$)/i,
+  /(^|\.)nora-health\.com(\/|$)/i,
+  /(^|\.)dentalbase\.com(\/|$)/i,
+  /(^|\.)dentivoice\.com(\/|$)/i,
+  /(^|\.)omnira\.com(\/|$)/i,
+  /(^|\.)nidrosoft\.com(\/|$)/i,
+  // Indie hacker + practitioner-vendor primaries
+  /(^|\.)bannerbear\.com(\/|$)/i,
+  /(^|\.)senja\.io(\/|$)/i,
+  /(^|\.)delightchat\.io(\/|$)/i,
+  /(^|\.)zapier\.com(\/|$)/i,
+  /(^|\.)indiehackers\.com(\/|$)/i,
+  /(^|\.)producthunt\.com(\/|$)/i,
+  /(^|\.)ycombinator\.com(\/|$)/i,
+  // Carta + funding-disclosure primary
+  /(^|\.)carta\.com(\/|$)/i,
+];
+
+const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
+  // Founder / practitioner essays + indie-hacker blogs
+  /(^|\.)medium\.com(\/|$)/i,
+  /(^|\.)substack\.com(\/|$)/i,
+  /(^|\.)flowjam\.com(\/|$)/i,
+  /(^|\.)indieradar\.app(\/|$)/i,
+  /(^|\.)foundra\.ai(\/|$)/i,
+  /(^|\.)foundevo\.com(\/|$)/i,
+  /(^|\.)pixelnthings\.com(\/|$)/i,
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
+  /(^|\.)infiniteany\.com(\/|$)/i,
+  /(^|\.)academiapilot\.com(\/|$)/i,
+  /(^|\.)makerstack\.co(\/|$)/i,
+  /(^|\.)indieradar\.com(\/|$)/i,
+  /(^|\.)solofounderhq\.com(\/|$)/i,
+  /(^|\.)microconf\.com(\/|$)/i,
+  // Vibe-coding analyst + comparison blogs
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)humai\.blog(\/|$)/i,
+  /(^|\.)aifundingtracker\.com(\/|$)/i,
+  /(^|\.)socialanimal\.dev(\/|$)/i,
+  /(^|\.)aitoolvs\.com(\/|$)/i,
+  /(^|\.)builder\.io(\/|$)/i,
+  /(^|\.)theinformation\.com(\/|$)/i,
+  /(^|\.)stackdiary\.com(\/|$)/i,
+  // Tech business press
+  /(^|\.)businessinsider\.com(\/|$)/i,
+  /(^|\.)bloomberg\.com(\/|$)/i,
+  /(^|\.)reuters\.com(\/|$)/i,
+  /(^|\.)wsj\.com(\/|$)/i,
+  /(^|\.)theverge\.com(\/|$)/i,
+  /(^|\.)wired\.com(\/|$)/i,
+  /(^|\.)engadget\.com(\/|$)/i,
+  /(^|\.)tomsguide\.com(\/|$)/i,
+  /(^|\.)arstechnica\.com(\/|$)/i,
+  /(^|\.)bensbites\.com(\/|$)/i,
+];
+
 const MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate / Seller Central / Brand Services / Selling Partners
   /(^|\.)amazon\.com(\/|$)/i,
@@ -2138,6 +2235,9 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of VIBECODING_PRACTITIONER_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `vibecoding-practitioner primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -2178,6 +2278,9 @@ export function classifyTier(
   }
   for (const re of MARKETPLACE_AMAZON_SELLER_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `marketplace-amazon-seller secondary: ${domain}` };
+  }
+  for (const re of VIBECODING_PRACTITIONER_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `vibecoding-practitioner secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
