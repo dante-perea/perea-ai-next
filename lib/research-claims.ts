@@ -1636,6 +1636,43 @@ const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)distillabs\.ai(\/|$)/i,
 ];
 
+const SOLO_401K_PRIMARY_PATTERNS: RegExp[] = [
+  // J.P. Morgan corporate + vendor
+  /(^|\.)am\.jpmorgan\.com(\/|$)/i,
+  /(^|\.)jpmorgansolo401k\.com(\/|$)/i,
+  /(^|\.)jpmorgan\.com(\/|$)/i,
+  // Vestwell + ForUsAll + IRA Financial + Rocket Dollar + Opolis vendor sites
+  /(^|\.)vestwell\.com(\/|$)/i,
+  /(^|\.)save\.with\.vestwell\.com(\/|$)/i,
+  /(^|\.)irafinancial\.com(\/|$)/i,
+  /(^|\.)rocketdollar\.com(\/|$)/i,
+  /(^|\.)learn\.rocketdollar\.com(\/|$)/i,
+  /(^|\.)support\.rocketdollar\.com(\/|$)/i,
+  /(^|\.)opolis\.co(\/|$)/i,
+  // Cerulli + retirement industry research firms
+  /(^|\.)cerulli\.com(\/|$)/i,
+  // Professional associations + trade press
+  /(^|\.)asppa-net\.org(\/|$)/i,
+  /(^|\.)plansponsor\.com(\/|$)/i,
+  /(^|\.)planadviser\.com(\/|$)/i,
+  /(^|\.)pionline\.com(\/|$)/i,
+  /(^|\.)investmentnews\.com(\/|$)/i,
+  /(^|\.)wealthmanagement\.com(\/|$)/i,
+  /(^|\.)401kspecialistmag\.com(\/|$)/i,
+];
+
+const SOLO_401K_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)selfemployed\.com(\/|$)/i,
+  /(^|\.)bestsolo401k\.com(\/|$)/i,
+  /(^|\.)solowealthlab\.com(\/|$)/i,
+  /(^|\.)millennialmoneyman\.com(\/|$)/i,
+  /(^|\.)financewonk\.com(\/|$)/i,
+  /(^|\.)wealthvieu\.com(\/|$)/i,
+  /(^|\.)wallethacks\.com(\/|$)/i,
+  /(^|\.)bankrate\.com(\/|$)/i,
+  /(^|\.)kron4\.com(\/|$)/i,
+];
+
 const MBC_VENDOR_PRIMARY_PATTERNS: RegExp[] = [
   // MBC vendor corporate sites
   /(^|\.)neuroflow\.com(\/|$)/i,
@@ -2860,6 +2897,9 @@ export function classifyTier(
   for (const re of MBC_VENDOR_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:mbc-vendor-primary" };
   }
+  for (const re of SOLO_401K_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:solo-401k-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -2906,6 +2946,9 @@ export function classifyTier(
   }
   for (const re of MBC_VENDOR_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:mbc-vendor-secondary" };
+  }
+  for (const re of SOLO_401K_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:solo-401k-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
