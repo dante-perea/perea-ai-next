@@ -356,6 +356,47 @@ const FREELANCE_FINANCE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)employer\.com(\/|$)/i,
 ];
 
+const FREELANCE_FINANCE_SECONDARY_PATTERNS: RegExp[] = [
+  // Workforce + payroll research houses (publish primary-tier datasets but secondary commentary)
+  /(^|\.)adpresearch\.com(\/|$)/i,
+  /(^|\.)adp\.com(\/|$)/i,
+  // Funding databases + startup directories
+  /(^|\.)cbinsights\.com(\/|$)/i,
+  /(^|\.)tracxn\.com(\/|$)/i,
+  /(^|\.)startupintros\.com(\/|$)/i,
+  /(^|\.)pulse2\.com(\/|$)/i,
+  /(^|\.)pulse2\.0\.com(\/|$)/i,
+  /(^|\.)techcompanynews\.com(\/|$)/i,
+  /(^|\.)finsmes\.com(\/|$)/i,
+  /(^|\.)exa\.ai(\/|$)/i,
+  // Fintech trade press
+  /(^|\.)fintech\.global(\/|$)/i,
+  /(^|\.)fintech\.am(\/|$)/i,
+  /(^|\.)bankingdive\.com(\/|$)/i,
+  /(^|\.)americanbanker\.com(\/|$)/i,
+  /(^|\.)pymnts\.com(\/|$)/i,
+  /(^|\.)thefintechtimes\.com(\/|$)/i,
+  /(^|\.)fastcompany\.com(\/|$)/i,
+  // Vendor + product comparison sites
+  /(^|\.)bestaitoolsforfinance\.com(\/|$)/i,
+  /(^|\.)banklist\.co(\/|$)/i,
+  /(^|\.)nerdwallet\.com(\/|$)/i,
+  /(^|\.)forbes\.com(\/|$)/i,
+  /(^|\.)forbesadvisor\.com(\/|$)/i,
+  /(^|\.)investopedia\.com(\/|$)/i,
+  // Personal finance + tax practitioner blogs
+  /(^|\.)wealthyinternet\.com(\/|$)/i,
+  /(^|\.)unclekam\.com(\/|$)/i,
+  /(^|\.)beancount\.io(\/|$)/i,
+  /(^|\.)thecollegeinvestor\.com(\/|$)/i,
+  /(^|\.)kitces\.com(\/|$)/i,
+  /(^|\.)whitecoatinvestor\.com(\/|$)/i,
+  // Solopreneur + creator economy press
+  /(^|\.)creatoreconomy\.so(\/|$)/i,
+  /(^|\.)passionfroot\.me(\/|$)/i,
+  /(^|\.)signalfire\.com(\/|$)/i,
+];
+
 const PORTABLE_BENEFITS_LEGISLATION_PRIMARY_PATTERNS: RegExp[] = [
   // Federal legislative + regulatory
   /(^|\.)congress\.gov(\/|$)/i,
@@ -2063,6 +2104,9 @@ export function classifyTier(
   }
   for (const re of MULTIFAMILY_PROPMGMT_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `multifamily-propmgmt secondary: ${domain}` };
+  }
+  for (const re of FREELANCE_FINANCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `freelance-finance secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
