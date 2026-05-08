@@ -916,7 +916,7 @@ function PrototypeSwitcher({ variant }: { variant: string }) {
 
 export function KnowledgeBaseTagMgmt({ files: initialFiles, currentUser, userId, teamId, teamName, userRole }: Props) {
   const searchParams  = useSearchParams();
-  const variant       = searchParams.get("variant") ?? "A";
+  const variant       = searchParams.get("variant") ?? "C";
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
   const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
   useEffect(() => { setFiles(initialFiles); }, [initialFiles]);
