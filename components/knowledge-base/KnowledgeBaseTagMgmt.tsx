@@ -696,7 +696,7 @@ function VariantC({ files, canWrite, userId, ops, uploadZoneRef, teamId }: Varia
   }
 
   const visibleFiles = tagList.length === 0
-    ? []
+    ? files
     : mode === "union"
       ? files.filter((f) => tagList.some((t) => f.tags.includes(t)))
       : files.filter((f) => tagList.every((t) => f.tags.includes(t)));
@@ -784,35 +784,29 @@ function VariantC({ files, canWrite, userId, ops, uploadZoneRef, teamId }: Varia
 
       {/* Right panel */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {tagList.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-            <p className="text-sm font-medium text-[var(--color-ink-soft)]">Click a tag to browse its files</p>
-            <p className="text-xs text-[var(--color-ink-faint)]">Hold ⇧ or ⌘ to select multiple tags and compare</p>
-            {canWrite && (
-              <div className="mt-4 space-y-2">
-                <UrlImport onSavedToKb={() => {}} />
-                <UploadZone ref={uploadZoneRef} userId={userId} teamId={teamId} onUploadComplete={() => {}} />
-              </div>
-            )}
-          </div>
-        ) : (
           <>
-            {/* Selected tags header */}
+            {/* Header */}
             <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-border)] px-5 py-3">
-              {tagList.map((t) => (
-                <span key={t} className="flex items-center gap-1 rounded-full bg-[var(--color-accent-bg)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">
-                  {t}
-                  <button onClick={() => setSelectedTags((p) => { const n = new Set(p); n.delete(t); return n; })} className="leading-none opacity-60 hover:opacity-100">×</button>
-                </span>
-              ))}
-              {tagList.length > 1 && (
-                <div className="ml-auto flex overflow-hidden rounded border border-[var(--color-border)]">
-                  {(["union", "intersection"] as const).map((m) => (
-                    <button key={m} onClick={() => setMode(m)} className={["px-2.5 py-0.5 text-xs transition-colors", mode === m ? "bg-[var(--color-accent)] font-medium text-white" : "text-[var(--color-ink-faint)] hover:bg-[var(--color-bg-card)]"].join(" ")}>
-                      {m === "union" ? "Any tag" : "All tags"}
-                    </button>
+              {tagList.length === 0 ? (
+                <span className="text-sm font-semibold text-[var(--color-ink)]">All files <span className="font-normal text-[var(--color-ink-faint)]">({files.length})</span></span>
+              ) : (
+                <>
+                  {tagList.map((t) => (
+                    <span key={t} className="flex items-center gap-1 rounded-full bg-[var(--color-accent-bg)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">
+                      {t}
+                      <button onClick={() => setSelectedTags((p) => { const n = new Set(p); n.delete(t); return n; })} className="leading-none opacity-60 hover:opacity-100">×</button>
+                    </span>
                   ))}
-                </div>
+                  {tagList.length > 1 && (
+                    <div className="ml-auto flex overflow-hidden rounded border border-[var(--color-border)]">
+                      {(["union", "intersection"] as const).map((m) => (
+                        <button key={m} onClick={() => setMode(m)} className={["px-2.5 py-0.5 text-xs transition-colors", mode === m ? "bg-[var(--color-accent)] font-medium text-white" : "text-[var(--color-ink-faint)] hover:bg-[var(--color-bg-card)]"].join(" ")}>
+                          {m === "union" ? "Any tag" : "All tags"}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -865,9 +859,14 @@ function VariantC({ files, canWrite, userId, ops, uploadZoneRef, teamId }: Varia
                   onDelete={() => { if (confirm(`Delete "${file.filename}"?`)) ops.updateFileTags(file.id, []); }}
                 />
               ))}
+              {tagList.length === 0 && canWrite && (
+                <div className="space-y-2 border-t border-[var(--color-border)] p-4">
+                  <UrlImport onSavedToKb={() => {}} />
+                  <UploadZone ref={uploadZoneRef} userId={userId} teamId={teamId} onUploadComplete={() => {}} />
+                </div>
+              )}
             </div>
           </>
-        )}
       </div>
     </div>
   );
