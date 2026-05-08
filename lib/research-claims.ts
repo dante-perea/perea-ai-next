@@ -2350,6 +2350,21 @@ const TRUST_LAYER_PRIMARY_PATTERNS: RegExp[] = [
 const TRUST_LAYER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)tianpan\.co(\/|$)/i,
   /(^|\.)blog\.appxlab\.io(\/|$)/i,
+  // Agent-payments analyst commentary + payments trade press
+  /(^|\.)thepaypers\.com(\/|$)/i,
+  /(^|\.)tomcn\.uk(\/|$)/i,
+  /(^|\.)fintechbrainfood\.com(\/|$)/i,
+  /(^|\.)www\.fintechbrainfood\.com(\/|$)/i,
+  /(^|\.)blueheadline\.com(\/|$)/i,
+  /(^|\.)agentpaytrend\.com(\/|$)/i,
+  /(^|\.)contentbase\.com(\/|$)/i,
+  /(^|\.)holter\.com(\/|$)/i,
+  /(^|\.)adam\.holter\.com(\/|$)/i,
+  // PDP/PEP architecture analysts
+  /(^|\.)devsecopsschool\.com(\/|$)/i,
+  /(^|\.)big-acl\.com(\/|$)/i,
+  /(^|\.)docs\.capisc\.io(\/|$)/i,
+  /(^|\.)capisc\.io(\/|$)/i,
 ];
 
 const AGENT_INBOX_PRIMARY_PATTERNS: RegExp[] = [
