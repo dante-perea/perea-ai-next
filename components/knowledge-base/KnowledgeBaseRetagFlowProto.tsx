@@ -220,6 +220,7 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
   const [lockedTags,    setLockedTags]    = useState<Set<string>>(new Set());
   const [fileStatuses,  setFileStatuses]  = useState<Record<string, FileStatus>>({});
   const [fileResults,   setFileResults]   = useState<Record<string, { before: string[]; after: string[] }>>({});
+  const [runFiles,      setRunFiles]      = useState<FileMetadata[]>([]);
 
   const tagList      = [...selectedTags];
   const collectedFiles = files.filter((f) => tagList.some((t) => f.tags.includes(t)));
@@ -231,6 +232,7 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
     setLockedTags(new Set(tagList));
     setFileStatuses({});
     setFileResults({});
+    setRunFiles([]);
   }, [selectedTags]);
 
   function toggleLock(tag: string) {
@@ -238,11 +240,14 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
   }
 
   async function run() {
+    // Freeze the collection now — AI may replace the sidebar tags, making
+    // collectedFiles re-derive to [] before the review step renders.
+    const snapshot = collectedFiles;
+    setRunFiles(snapshot);
     setStep("running");
-    const initStatuses = Object.fromEntries(collectedFiles.map((f) => [f.id, "pending" as FileStatus]));
-    setFileStatuses(initStatuses);
+    setFileStatuses(Object.fromEntries(snapshot.map((f) => [f.id, "pending" as FileStatus])));
 
-    for (const file of collectedFiles) {
+    for (const file of snapshot) {
       setFileStatuses((p) => ({ ...p, [file.id]: "running" }));
       const result = await retagWithLocks(file.id, [...lockedTags], ops.updateFileTags);
       if (result) {
@@ -255,6 +260,8 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
     setStep("review");
   }
 
+  // After run starts use the frozen snapshot so review stays stable
+  const activeFiles = (step === "running" || step === "review") ? runFiles : collectedFiles;
   const doneCount = Object.values(fileStatuses).filter((s) => s === "done").length;
 
   if (!tagList.length) {
@@ -309,10 +316,10 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
               {tagList.map((t) => (
                 <span key={t} className="rounded-full bg-[var(--color-accent-bg)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">{t}</span>
               ))}
-              <span className="text-xs text-[var(--color-ink-faint)] self-center ml-1">→ {collectedFiles.length} files</span>
+              <span className="text-xs text-[var(--color-ink-faint)] self-center ml-1">→ {activeFiles.length} files</span>
             </div>
           </div>
-          {collectedFiles.map((file) => (
+          {activeFiles.map((file) => (
             <div key={file.id} className="flex items-start gap-3 border-b border-[var(--color-border)] px-5 py-3">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap gap-1">
@@ -343,7 +350,7 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
           </div>
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] px-4 py-3 text-xs text-[var(--color-ink-soft)]">
             <strong className="text-[var(--color-ink)]">Keeping {lockedTags.size} tags</strong>
-            {" "}across {collectedFiles.length} files · AI will generate new tags for each document and merge with locked ones
+            {" "}across {activeFiles.length} files · AI will generate new tags for each document and merge with locked ones
           </div>
         </div>
       )}
@@ -354,18 +361,18 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
             <div className="border-b border-[var(--color-border)] px-5 py-3">
               <div className="flex items-center gap-3">
                 <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-border)]">
-                  <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${collectedFiles.length > 0 ? (doneCount / collectedFiles.length) * 100 : 0}%` }} />
+                  <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${activeFiles.length > 0 ? (doneCount / activeFiles.length) * 100 : 0}%` }} />
                 </div>
-                <span className="shrink-0 text-xs text-[var(--color-ink-faint)]">{doneCount} / {collectedFiles.length}</span>
+                <span className="shrink-0 text-xs text-[var(--color-ink-faint)]">{doneCount} / {activeFiles.length}</span>
               </div>
             </div>
           )}
           {step === "review" && (
             <div className="border-b border-[var(--color-border)] bg-emerald-50 px-5 py-2.5">
-              <p className="text-xs font-medium text-emerald-700">{doneCount} of {collectedFiles.length} files re-tagged</p>
+              <p className="text-xs font-medium text-emerald-700">{doneCount} of {activeFiles.length} files re-tagged</p>
             </div>
           )}
-          {collectedFiles.map((file) => (
+          {activeFiles.map((file) => (
             <FileStatusRow
               key={file.id}
               file={file}
@@ -390,16 +397,19 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
   const [lockedTags,   setLockedTags]   = useState<Set<string>>(new Set());
   const [fileStatuses, setFileStatuses] = useState<Record<string, FileStatus>>({});
   const [fileResults,  setFileResults]  = useState<Record<string, { before: string[]; after: string[] }>>({});
+  const [runFiles,     setRunFiles]     = useState<FileMetadata[]>([]);
 
   const tagList        = [...selectedTags];
   const collectedFiles = files.filter((f) => tagList.some((t) => f.tags.includes(t)));
   const allTagsInCollection = [...new Set(collectedFiles.flatMap((f) => f.tags))].sort();
+  const activeFiles = step !== "configure" && runFiles.length > 0 ? runFiles : collectedFiles;
 
   function openDrawer() {
     setLockedTags(new Set(tagList));
     setStep("configure");
     setFileStatuses({});
     setFileResults({});
+    setRunFiles([]);
     setDrawerOpen(true);
   }
 
@@ -408,9 +418,11 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
   }
 
   async function run() {
+    const snapshot = collectedFiles;
+    setRunFiles(snapshot);
     setStep("running");
-    setFileStatuses(Object.fromEntries(collectedFiles.map((f) => [f.id, "pending" as FileStatus])));
-    for (const file of collectedFiles) {
+    setFileStatuses(Object.fromEntries(snapshot.map((f) => [f.id, "pending" as FileStatus])));
+    for (const file of snapshot) {
       setFileStatuses((p) => ({ ...p, [file.id]: "running" }));
       const result = await retagWithLocks(file.id, [...lockedTags], ops.updateFileTags);
       if (result) {
@@ -438,17 +450,17 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
             <div className="flex items-center justify-between border-b border-[var(--color-border)] px-5 py-3">
               <div className="flex flex-wrap items-center gap-1">
                 {tagList.map((t) => <span key={t} className="rounded-full bg-[var(--color-accent-bg)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">{t}</span>)}
-                <span className="text-xs text-[var(--color-ink-faint)]">· {collectedFiles.length} files</span>
+                <span className="text-xs text-[var(--color-ink-faint)]">· {activeFiles.length} files</span>
               </div>
               {!drawerOpen && (
                 <button onClick={openDrawer} className="ml-2 flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--color-accent)] px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)]">
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                  Re-tag {collectedFiles.length} files
+                  Re-tag {activeFiles.length} files
                 </button>
               )}
             </div>
             <div className="flex-1 overflow-y-auto">
-              {collectedFiles.map((file) => (
+              {activeFiles.map((file) => (
                 <div key={file.id} className={["flex items-start gap-3 border-b border-[var(--color-border)] px-5 py-3 transition-colors", fileStatuses[file.id] === "done" ? "bg-emerald-50/30" : ""].join(" ")}>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap gap-1">
@@ -484,7 +496,7 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
               </p>
               <TagLockGrid allTags={allTagsInCollection} lockedTags={lockedTags} sidebarTags={tagList} onToggle={toggleLock} />
               <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-2 text-xs text-[var(--color-ink-soft)]">
-                Keeping <strong className="text-[var(--color-ink)]">{lockedTags.size}</strong> tags · AI regenerates the rest for {collectedFiles.length} files
+                Keeping <strong className="text-[var(--color-ink)]">{lockedTags.size}</strong> tags · AI regenerates the rest for {activeFiles.length} files
               </div>
               <button onClick={run} disabled={!canWrite} className="w-full rounded-xl bg-[var(--color-accent)] py-2.5 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-40">
                 Run re-tag
@@ -497,12 +509,12 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
               <div className="border-b border-[var(--color-border)] px-4 py-2.5">
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-border)]">
-                    <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${collectedFiles.length > 0 ? (doneCount / collectedFiles.length) * 100 : 0}%` }} />
+                    <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${activeFiles.length > 0 ? (doneCount / activeFiles.length) * 100 : 0}%` }} />
                   </div>
-                  <span className="shrink-0 text-xs text-[var(--color-ink-faint)]">{doneCount}/{collectedFiles.length}</span>
+                  <span className="shrink-0 text-xs text-[var(--color-ink-faint)]">{doneCount}/{activeFiles.length}</span>
                 </div>
               </div>
-              {collectedFiles.map((f) => (
+              {activeFiles.map((f) => (
                 <FileStatusRow key={f.id} file={f} status={fileStatuses[f.id] ?? "pending"} before={fileResults[f.id]?.before ?? f.tags} after={fileResults[f.id]?.after} />
               ))}
             </div>
@@ -511,9 +523,9 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
           {step === "review" && (
             <div className="flex-1 overflow-y-auto">
               <div className="border-b border-[var(--color-border)] bg-emerald-50 px-4 py-2.5">
-                <p className="text-xs font-medium text-emerald-700">{doneCount}/{collectedFiles.length} files updated</p>
+                <p className="text-xs font-medium text-emerald-700">{doneCount}/{activeFiles.length} files updated</p>
               </div>
-              {collectedFiles.map((f) => (
+              {activeFiles.map((f) => (
                 <FileStatusRow key={f.id} file={f} status={fileStatuses[f.id] ?? "pending"} before={fileResults[f.id]?.before ?? f.tags} after={fileResults[f.id]?.after} />
               ))}
               <div className="border-t border-[var(--color-border)] p-4">
@@ -538,16 +550,19 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
   const [step,         setStep]         = useState<"configure" | "running" | "review">("configure");
   const [fileStatuses, setFileStatuses] = useState<Record<string, FileStatus>>({});
   const [fileResults,  setFileResults]  = useState<Record<string, { before: string[]; after: string[] }>>({});
+  const [runFiles,     setRunFiles]     = useState<FileMetadata[]>([]);
 
   const tagList        = [...selectedTags];
   const collectedFiles = files.filter((f) => tagList.some((t) => f.tags.includes(t)));
   const allTagsInCollection = [...new Set(collectedFiles.flatMap((f) => f.tags))].sort();
+  const activeFiles = step !== "configure" && runFiles.length > 0 ? runFiles : collectedFiles;
 
   useEffect(() => {
     setLockedTags(new Set(tagList));
     setStep("configure");
     setFileStatuses({});
     setFileResults({});
+    setRunFiles([]);
   }, [selectedTags]);
 
   function toggleLock(tag: string) {
@@ -555,9 +570,11 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
   }
 
   async function run() {
+    const snapshot = collectedFiles;
+    setRunFiles(snapshot);
     setStep("running");
-    setFileStatuses(Object.fromEntries(collectedFiles.map((f) => [f.id, "pending" as FileStatus])));
-    for (const file of collectedFiles) {
+    setFileStatuses(Object.fromEntries(snapshot.map((f) => [f.id, "pending" as FileStatus])));
+    for (const file of snapshot) {
       setFileStatuses((p) => ({ ...p, [file.id]: "running" }));
       const result = await retagWithLocks(file.id, [...lockedTags], ops.updateFileTags);
       if (result) {
@@ -587,10 +604,10 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
       <div className="flex w-3/5 flex-col overflow-hidden border-r border-[var(--color-border)]">
         <div className="flex flex-wrap items-center gap-1 border-b border-[var(--color-border)] px-4 py-3">
           {tagList.map((t) => <span key={t} className="rounded-full bg-[var(--color-accent-bg)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-accent)]">{t}</span>)}
-          <span className="text-xs text-[var(--color-ink-faint)]">· {collectedFiles.length} files</span>
+          <span className="text-xs text-[var(--color-ink-faint)]">· {activeFiles.length} files</span>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {collectedFiles.map((file) => (
+          {activeFiles.map((file) => (
             <div key={file.id} className={["flex items-start gap-3 border-b border-[var(--color-border)] px-4 py-3 transition-colors", fileStatuses[file.id] === "done" ? "bg-emerald-50/30" : ""].join(" ")}>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap gap-1 mb-0.5">
@@ -617,7 +634,7 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
       <div className="flex w-2/5 shrink-0 flex-col bg-[var(--color-bg-card)]">
         <div className="border-b border-[var(--color-border)] px-4 py-3">
           <p className="text-sm font-semibold text-[var(--color-ink)]">
-            {step === "configure" ? "Lock tags to keep" : step === "running" ? "Re-tagging…" : `Done · ${doneCount}/${collectedFiles.length} updated`}
+            {step === "configure" ? "Lock tags to keep" : step === "running" ? "Re-tagging…" : `Done · ${doneCount}/${activeFiles.length} updated`}
           </p>
         </div>
 
@@ -634,7 +651,7 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
                 disabled={!canWrite}
                 className="w-full rounded-xl bg-[var(--color-accent)] py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-40"
               >
-                Re-tag {collectedFiles.length} files · keep {lockedTags.size} tags
+                Re-tag {activeFiles.length} files · keep {lockedTags.size} tags
               </button>
             </div>
           </div>
@@ -643,11 +660,11 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
         {step === "running" && (
           <div className="flex flex-1 flex-col p-4 gap-3">
             <div className="h-2 overflow-hidden rounded-full bg-[var(--color-border)]">
-              <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${collectedFiles.length > 0 ? (doneCount / collectedFiles.length) * 100 : 0}%` }} />
+              <div className="h-full rounded-full bg-[var(--color-accent)] transition-all duration-500" style={{ width: `${activeFiles.length > 0 ? (doneCount / activeFiles.length) * 100 : 0}%` }} />
             </div>
-            <p className="text-xs text-[var(--color-ink-faint)]">{doneCount} of {collectedFiles.length} files analyzed</p>
+            <p className="text-xs text-[var(--color-ink-faint)]">{doneCount} of {activeFiles.length} files analyzed</p>
             <div className="flex-1 overflow-y-auto space-y-1">
-              {collectedFiles.map((f) => {
+              {activeFiles.map((f) => {
                 const s = fileStatuses[f.id] ?? "pending";
                 return (
                   <div key={f.id} className="flex items-center gap-2 rounded-lg px-2 py-1.5">
