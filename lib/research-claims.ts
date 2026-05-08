@@ -1667,6 +1667,51 @@ const CAPTIVE_INSURANCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)lexology\.com(\/|$)/i,
 ];
 
+const SECTORAL_BARGAINING_PRIMARY_PATTERNS: RegExp[] = [
+  // Bill text + legislation primary distribution
+  /(^|\.)legiscan\.com(\/|$)/i,
+  /(^|\.)trackbill\.com(\/|$)/i,
+  /(^|\.)billtexts\.s3\.amazonaws\.com(\/|$)/i,
+  // Coalition + advocacy official sites (primary on own bill mechanics)
+  /(^|\.)illinoisdriversalliance\.org(\/|$)/i,
+  // Law-firm primary bylines (attorneys writing primary legal analysis)
+  /(^|\.)altshulerberzon\.com(\/|$)/i,
+  /(^|\.)theantitrustattorney\.lawblogger\.net(\/|$)/i,
+  /(^|\.)callaborlaw\.com(\/|$)/i,
+  /(^|\.)calemploymentlawupdate\.proskauer\.com(\/|$)/i,
+  /(^|\.)employmentlawletter\.com(\/|$)/i,
+  /(^|\.)masslawyersweekly\.com(\/|$)/i,
+  // Major firm publishing surfaces (primary on own published opinions)
+  /(^|\.)foley\.com(\/|$)/i,
+  /(^|\.)littler\.com(\/|$)/i,
+  /(^|\.)seyfarth\.com(\/|$)/i,
+  /(^|\.)ogletree\.com(\/|$)/i,
+  /(^|\.)jacksonlewis\.com(\/|$)/i,
+  /(^|\.)morganlewis\.com(\/|$)/i,
+  /(^|\.)davispolk\.com(\/|$)/i,
+  /(^|\.)whitecase\.com(\/|$)/i,
+  /(^|\.)skadden\.com(\/|$)/i,
+  /(^|\.)lw\.com(\/|$)/i,
+  /(^|\.)wsgr\.com(\/|$)/i,
+  /(^|\.)cooley\.com(\/|$)/i,
+  /(^|\.)kirkland\.com(\/|$)/i,
+  /(^|\.)gibsondunn\.com(\/|$)/i,
+  /(^|\.)sullcrom\.com(\/|$)/i,
+  /(^|\.)cravath\.com(\/|$)/i,
+];
+
+const SECTORAL_BARGAINING_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)mondaq\.com(\/|$)/i,
+  /(^|\.)iclg\.com(\/|$)/i,
+  /(^|\.)thecentersquare\.com(\/|$)/i,
+  /(^|\.)commonwealthbeacon\.org(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)shrm\.org(\/|$)/i,
+  /(^|\.)law360\.com(\/|$)/i,
+  /(^|\.)dailyjournal\.com(\/|$)/i,
+  /(^|\.)blockclubchicago\.org(\/|$)/i,
+];
+
 const FREELANCE_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
   // Freelance platform vendor corporate
   /(^|\.)usebraintrust\.com(\/|$)/i,
@@ -2966,6 +3011,9 @@ export function classifyTier(
   for (const re of CAPTIVE_INSURANCE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:captive-insurance-primary" };
   }
+  for (const re of SECTORAL_BARGAINING_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:sectoral-bargaining-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3021,6 +3069,9 @@ export function classifyTier(
   }
   for (const re of CAPTIVE_INSURANCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:captive-insurance-secondary" };
+  }
+  for (const re of SECTORAL_BARGAINING_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:sectoral-bargaining-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
