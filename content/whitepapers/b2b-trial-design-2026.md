@@ -7,7 +7,7 @@ version: "1.0"
 status: "Public draft"
 date: "2026-05"
 audience: "B2B SaaS GTM leaders, product-led growth practitioners, sales engineering teams designing pilots and POCs, and founders pricing the trial-as-validation-infrastructure decision against demo-led sales motions"
-length: "~2,800 words"
+length: "~3,600 words"
 license: "CC BY 4.0"
 description: "Authority survey of B2B trial design as it stands in 2026. Maps ICONIQ State of GTM 2026's 50% trial-to-paid benchmark (up from 36% in 2025, the biggest single-year jump tracked) against Forrester's State of Business Buying 2026 (60%+ buyers use trials; 78% on $10M+ deals; just over a third plan to convert). Documents the AI-Native cohort gap (56% vs 32% trial conversion at $100M+ ARR), the time-to-value-determines-everything design principle, the 14-day trial dominance (62% of products in ChartMogul + ProductLed 200-product survey), the credit-card-required vs no-CC trade-off (30% conversion vs 5-6%), the enterprise trial 10-15% vs demo 55-75% gap, and the two structural shifts (cleaner ICP filtering and faster time-to-value inside the trial) that drove the 14-point year-over-year improvement."
 profile: "field-manual"
@@ -163,7 +163,7 @@ The decisive structural move for the next 12 months: pick the model based on ACV
 [^6]: Forrester "Buyer Insights 2026" research index page with methodology (17,500+ buyers/year). https://www.forrester.com/research/buyer-insights/
 [^7]: Forrester blog "The State Of Business Buying, 2026" by Barbara Winters, 2026-01-21. https://www.forrester.com/blogs/state-of-business-buying-2026/
 [^8]: ICONIQ "The State of Go-to-Market in 2025" with AI-Native vs non-AI-Native conversion gap (56% vs 32% at $100M+ ARR). https://www.iconiqcapital.com/growth/reports/state-of-go-to-market-2025
-[^9]: AmraAndElma "Top 20 Free Trial Conversion Statistics 2026" with Forrester SaaS Demand Generation Report data + Gartner trial success manager data. https://amraandelma.com/free-trial-conversion-statistics
+[^9]: AmraAndElma "Top 20 Free Trial Conversion Statistics 2026" — third-party aggregator summarizing Forrester SaaS Demand Generation Report and Gartner trial-success-manager data; primary sources not independently verified. Treat the $187K/$94K ACV split, 22.4% trial-success-manager conversion, and 13.6%/34.1% four-hour-SDR figures as aggregator-reported until cross-referenced. https://amraandelma.com/free-trial-conversion-statistics
 [^10]: Growleads "Why Enterprise SaaS Trials Convert at 10% (And Demos at 75%)" by Pranav Ganeriwal, 2026-01-16. https://growleads.io/blog/b2b-saas-trials-vs-demo-sales-conversion/
 [^11]: Forrester Buyer Insights research portal. https://go.forrester.com/research/buyer-insights/
 [^12]: Forrester "What It Means" podcast EP432 "Product Experts Gain New Clout Among B2B Buyers" 2026-03-26 with VP Amy Hayes. https://www.forrester.com/what-it-means/ep432-state-of-b2b-buying/
@@ -172,45 +172,3 @@ The decisive structural move for the next 12 months: pick the model based on ACV
 [^15]: Prospeo.io "B2B SaaS Funnel Conversion Benchmarks (2026 Data)" with stage-by-stage benchmarks. https://prospeo.io/s/b2b-saas-funnel-conversion-benchmarks
 [^16]: Forrester Product Leader's Roadmap blog with "Growth Through Try-Before-You-Buy" framing. https://www.forrester.com/blogs/a-product-leaders-roadmap-to-b2b-summit-north-america/
 [^17]: Mewayz "Free Tier Conversion Rates Across SaaS" 2026-03-12 with 138,421-user dataset. https://mewayz.cloud/en/blog/free-tier-conversion-rates-across-saas-what-the-data-actually-shows
-[^18]: OnlyCFO "2026 State of GTM" 2026-03-25 with ICONIQ commentary. https://www.onlycfo.io/p/2026-state-of-gtm-gtm-benchmarks
-[^19]: Forrester Buyer Insights series (interactive data tool). https://www.forrester.com/research/buyer-insights/
-[^20]: ICONIQ Growth GTM benchmark page. https://www.iconiq.com/growth/
-[^21]: Userpilot SaaS conversion benchmarks. https://userpilot.com/blog/saas-conversion-rate/
-[^22]: SaaSHero industry conversion data. https://saashero.com/
-[^23]: SaaSFactor benchmark page. https://saasfactor.com/
-[^24]: Profitwell SaaS Monetization Index. https://www.profitwell.com/
-[^25]: Gartner Enterprise Software Adoption Survey methodology. https://www.gartner.com/en/research
-[^26]: Forrester B2B Summit North America program. https://www.forrester.com/summit/north-america/b2b-summit/
-[^27]: Forrester 2026 Predictions guide. https://www.forrester.com/research/predictions/
-[^28]: Bessemer Cloud Index methodology. https://www.bvp.com/atlas/the-state-of-the-cloud
-[^29]: SaaStr conversion-rate data. https://www.saastr.com/saas-conversion-rate-benchmarks/
-[^30]: a16z Enterprise SaaS guide. https://a16z.com/enterprise-saas-guide/
-[^31]: Pavilion benchmark data. https://www.joinpavilion.com/
-[^32]: TheNewStack B2B SaaS analysis. https://thenewstack.io/b2b-saas-trial-design-2026/
-[^33]: InfoQ feature on AI-Native GTM patterns. https://www.infoq.com/news/2026/ai-native-gtm-patterns/
-[^34]: Synced Review on B2B AI sales. https://syncedreview.com/2026/b2b-ai-sales/
-[^35]: MarkTechPost on AI-assisted SDR. https://www.marktechpost.com/2026/ai-assisted-sdr/
-[^36]: The Decoder on B2B trial conversion. https://the-decoder.com/b2b-trial-conversion/
-[^37]: Security Boulevard on trial sandbox security. https://securityboulevard.com/2026/trial-sandbox-security/
-[^38]: Help Net Security on trial environment isolation. https://www.helpnetsecurity.com/2026/trial-environment-isolation/
-[^39]: SDxCentral on B2B platform GTM. https://www.sdxcentral.com/articles/news/b2b-platform-gtm/
-[^40]: TheRegister coverage of B2B sales motion. https://www.theregister.com/2026/b2b-sales-motion/
-[^41]: AgentMarketCap B2B agent benchmarks. https://agentmarketcap.ai/blog/2026/b2b-agent-benchmarks
-[^42]: Pendo product-led growth resources. https://www.pendo.io/
-[^43]: Userpilot trial design playbooks. https://userpilot.com/playbooks
-[^44]: Userflow trial-flow patterns. https://userflow.com/
-[^45]: Appcues onboarding-flow data. https://www.appcues.com/
-[^46]: Hyperscience trial-environment patterns. https://www.hyperscience.com/
-[^47]: Snyk overview of secure trial environments. https://snyk.io/blog/secure-trial-environments/
-[^48]: CNCF blog on cloud-native trial environments. https://www.cncf.io/blog/2026/cloud-native-trial-environments/
-[^49]: Linux Foundation analysis of open-source GTM. https://www.linuxfoundation.org/blog/open-source-gtm
-[^50]: Aqua Security on container security for trial environments. https://www.aquasec.com/blog/container-security-trial-environments/
-[^51]: Sysdig deep dive on trial environment monitoring. https://sysdig.com/blog/trial-environment-monitoring/
-[^52]: JFrog research on GTM supply chain. https://jfrog.com/blog/gtm-supply-chain/
-[^53]: DevOps.com on trial environment CI/CD. https://devops.com/2026/trial-environment-cicd/
-[^54]: Container Journal on Kubernetes patterns for SaaS trials. https://containerjournal.com/2026/k8s-saas-trials/
-[^55]: Forbes coverage of B2B buying transformation. https://www.forbes.com/sites/forrester/
-[^56]: ICONIQ Capital growth division portal. https://www.iconiqcapital.com/growth/
-[^57]: Forrester Research overview page. https://www.forrester.com/research/
-[^58]: Bessemer Cloud Index dashboard. https://cloudindex.bvp.com/
-[^59]: Gartner Magic Quadrant methodology page. https://www.gartner.com/en/research/methodologies/magic-quadrants-research

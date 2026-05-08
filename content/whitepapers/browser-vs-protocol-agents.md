@@ -29,11 +29,11 @@ The architectural difference is not subtle. Browser agents see what humans see (
 
 WebVoyager — 643 tasks across 15 live consumer-grade websites, evaluated by GPT-4V judge — is the most widely tracked browser-agent benchmark.[^14][^15] As of March 22, 2026, the Steel.dev leaderboard shows:[^1][^15]
 
-- **Surfer 2 (H Company)**: 97.1%[^1] — pure vision, Holo architecture
+- **Jina (Om Labs)**: 98.9%[^1] — multi-model self-hosted system, current leaderboard top
 - **Alumnium**: 98.6%[^1] — accessibility-tree + visual-reasoning hybrid
-- **Jina (Om Labs)**: 98.9%[^1] — multi-model self-hosted system
 - **Magnitude**: 93.9%[^1] — open-source modular agentic stack
 - **AIME Browser-Use**: 92.34%[^1]
+- **Surfer 2 (H Company)**: 97.1%[^1] — pure vision, Holo architecture; widely deployed but no longer leaderboard SOTA
 - **Browser Use** (open source): 89.1%[^1]
 - **OpenAI Operator**: 87.0%[^1] (deprecated August 31, 2025[^16])
 - **Skyvern 2.0**: 85.85%[^1]
@@ -118,7 +118,7 @@ The architectural choice is no longer "pick browser or protocol." It is "design 
 
 ## References
 
-[^1]: Steel.dev "WebVoyager Leaderboard" updated 2026-03-22 with Surfer 2 97.1% SOTA, 21 entries tracked. https://leaderboard.steel.dev/leaderboards/webvoyager/
+[^1]: Steel.dev "WebVoyager Leaderboard" updated 2026-03-22 — public leaderboard with 21 entries (Jina 98.9% top, Alumnium 98.6%, Surfer 2 97.1%, Browser Use 89.1%). https://leaderboard.steel.dev/leaderboards/webvoyager/
 [^2]: Awesome Agents "Web Agent Benchmarks Leaderboard: Apr 2026" with WebVoyager saturation analysis. https://awesomeagents.ai/leaderboards/web-agent-benchmarks-leaderboard/
 [^3]: Steel.dev OSWorld leaderboard with Mythos Preview 79.6% top score, human baseline 72.36%. https://leaderboard.steel.dev/registry/benchmarks/osworld
 [^4]: airank.dev "OSWorld Benchmark: Complete Leaderboard & Performance Analysis (2026)" with Anthropic Claude Opus 4.6 72.7%. https://airank.dev/benchmarks/os-world
@@ -163,12 +163,3 @@ The architectural choice is no longer "pick browser or protocol." It is "design 
 [^43]: AgentMarketCap "OpenAI's Operator-First Pivot: When Agents Replace Conversations as the Primary Interface" 2026-04-08 with GPT-5.4 native computer use, Aug 26 2026 Assistants API deprecation. https://agentmarketcap.ai/blog/2026/04/08/openai-operator-first-api-agents-primary-product-interface
 [^44]: AI Crawler Check "Google-Agent & Project Mariner: Complete Guide for Website Owners" 2026-03-26 with Google-Agent UA Mar 2026, WebMCP Chrome 146 Canary Feb 2026, Tool Contracts. https://aicrawlercheck.com/blog/google-agent-project-mariner-guide
 [^45]: AgentsIndex "Anthropic Computer Use vs Playwright MCP (2026)" comparison with security and isolation patterns. https://agentsindex.ai/compare/anthropic-computer-use-vs-playwright-mcp
-[^46]: OpenAI "Introducing ChatGPT agent: bridging research and action" with unified visual-browser, text-browser, terminal architecture. https://openai.com/index/introducing-chatgpt-agent
-[^47]: OpenAI "Introducing Operator" with original CUA model release Jan 23 2025, ChatGPT Pro $200/mo. https://openai.com/blog/introducing-operator
-[^48]: Buttondown/Verified "From 'Operator' to 'Agent Mode': Inside OpenAI's Open-Source SDK and the Future of Browser Orchestration" 2026-03-26 with ChatGPT Agent 87% WebVoyager. https://buttondown.com/verified/archive/from-operator-to-agent-mode-inside-openais-open/
-[^49]: TheLinuxCode "ChatGPT Operator: How to Use OpenAI's Computer-Using Agent" 2026-02-10 with Agent Mode rollout to all paid plans. https://thelinuxcode.com/chatgpt-operator-how-to-use-openais-computerusing-agent/
-[^50]: Hackernoon "I Added an MCP Server to My Browser-Based Tool Suite. Agents Found It Immediately." 2026-04-29. https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
-[^51]: Bleeping Computer "Leak: OpenAI's browser will use ChatGPT Agent to control the browser" 2025-08-14 with Chromium browser strategy. https://www.bleepingcomputer.com/news/artificial-intelligence/leak-openais-browser-will-use-chatgpt-agent-to-control-the-browser/
-[^52]: ZDNET "What is Google's Project Mariner? This AI agent can navigate the web for you" 2024-12-12 with original Mariner Chrome extension launch. https://www.zdnet.com/article/what-is-googles-project-mariner-this-ai-agent-can-navigate-the-web-for-you/
-[^53]: GitHub google-gemini/gemini-cli PR #24794 "fix: isolate concurrent browser agent instances" 2026-04-06 with VM-isolation architecture details. https://github.com/google-gemini/gemini-cli/pull/24794
-[^54]: CallSphere "Computer Use 2.0 vs Playwright Scripts: When to Pick Which" 2026-04-16 with API-first decision rule. https://callsphere.ai/blog/td30-anth-cu-vs-playwright
