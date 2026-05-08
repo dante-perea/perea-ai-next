@@ -1102,6 +1102,123 @@ const MARKETPLACE_SELLER_OPS_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)paymentweek\.com(\/|$)/i,
 ];
 
+const THERAPIST_AI_SCRIBE_PRIMARY_PATTERNS: RegExp[] = [
+  // AI scribe vendors corporate / IR
+  /(^|\.)mentalyc\.com(\/|$)/i,
+  /(^|\.)trytwofold\.com(\/|$)/i,
+  /(^|\.)twofoldhealth\.com(\/|$)/i,
+  /(^|\.)upheal\.io(\/|$)/i,
+  /(^|\.)blueprint\.ai(\/|$)/i,
+  /(^|\.)blueprint-health\.com(\/|$)/i,
+  /(^|\.)eleos\.health(\/|$)/i,
+  /(^|\.)freed\.ai(\/|$)/i,
+  /(^|\.)athelas\.com(\/|$)/i,
+  /(^|\.)berries\.health(\/|$)/i,
+  /(^|\.)deepcura\.com(\/|$)/i,
+  /(^|\.)joinheard\.com(\/|$)/i,
+  /(^|\.)heard\.com(\/|$)/i,
+  /(^|\.)heardtech\.com(\/|$)/i,
+  // EHR vendors corporate
+  /(^|\.)simplepractice\.com(\/|$)/i,
+  /(^|\.)support\.simplepractice\.com(\/|$)/i,
+  /(^|\.)therapynotes\.com(\/|$)/i,
+  /(^|\.)jane\.app(\/|$)/i,
+  /(^|\.)sessionshealth\.com(\/|$)/i,
+  /(^|\.)icanotes\.com(\/|$)/i,
+  /(^|\.)theranest\.com(\/|$)/i,
+  /(^|\.)valant\.io(\/|$)/i,
+  /(^|\.)practicebetter\.io(\/|$)/i,
+  /(^|\.)kareo\.com(\/|$)/i,
+  /(^|\.)nextgen\.com(\/|$)/i,
+  /(^|\.)advancedmd\.com(\/|$)/i,
+  // Network/platform corporate
+  /(^|\.)headway\.co(\/|$)/i,
+  /(^|\.)sondermind\.com(\/|$)/i,
+  /(^|\.)alma\.com(\/|$)/i,
+  /(^|\.)helloalma\.com(\/|$)/i,
+  /(^|\.)growtherapy\.com(\/|$)/i,
+  /(^|\.)rula\.com(\/|$)/i,
+  /(^|\.)talkspace\.com(\/|$)/i,
+  /(^|\.)betterhelp\.com(\/|$)/i,
+  /(^|\.)spring\.health(\/|$)/i,
+  /(^|\.)ableto\.com(\/|$)/i,
+  /(^|\.)openloop\.com(\/|$)/i,
+  // Professional associations (primary issuer of membership data)
+  /(^|\.)aamft\.org(\/|$)/i,
+  /(^|\.)apa\.org(\/|$)/i,
+  /(^|\.)connectguide\.apa\.org(\/|$)/i,
+  /(^|\.)socialworkers\.org(\/|$)/i,
+  /(^|\.)counseling\.org(\/|$)/i,
+  /(^|\.)nbcc\.org(\/|$)/i,
+  /(^|\.)amftrb\.org(\/|$)/i,
+  /(^|\.)aappp\.org(\/|$)/i,
+  /(^|\.)aapc\.org(\/|$)/i,
+  /(^|\.)aatbs\.com(\/|$)/i,
+  // Federal agencies + regulators (HHS, SAMHSA, CMS, BLS, ecfr already covered in default PRIMARY but reinforce)
+  /(^|\.)samhsa\.gov(\/|$)/i,
+  /(^|\.)nimh\.nih\.gov(\/|$)/i,
+  /(^|\.)data\.bls\.gov(\/|$)/i,
+  /(^|\.)akaprod-www\.hhs\.gov(\/|$)/i,
+  /(^|\.)careeronestop\.org(\/|$)/i,
+  // VC + investor primary publications on portfolio cos
+  /(^|\.)ensemble\.vc(\/|$)/i,
+  /(^|\.)footwork\.vc(\/|$)/i,
+  /(^|\.)summitpartners\.com(\/|$)/i,
+  /(^|\.)spark\.capital(\/|$)/i,
+  /(^|\.)thrivecap\.com(\/|$)/i,
+  /(^|\.)f-prime\.com(\/|$)/i,
+  /(^|\.)eightroads\.com(\/|$)/i,
+  /(^|\.)menlovc\.com(\/|$)/i,
+  /(^|\.)greenfield\.com(\/|$)/i,
+  /(^|\.)amoonfund\.com(\/|$)/i,
+  /(^|\.)loolventures\.com(\/|$)/i,
+  /(^|\.)berkeleyskydeck\.com(\/|$)/i,
+];
+
+const THERAPIST_AI_SCRIBE_SECONDARY_PATTERNS: RegExp[] = [
+  // Behavioral health trade press
+  /(^|\.)bhbusiness\.com(\/|$)/i,
+  /(^|\.)beckersbehavioralhealth\.com(\/|$)/i,
+  /(^|\.)beckershospitalreview\.com(\/|$)/i,
+  /(^|\.)mobihealthnews\.com(\/|$)/i,
+  /(^|\.)firstwordhealthtech\.com(\/|$)/i,
+  /(^|\.)healthtechmagazines\.com(\/|$)/i,
+  /(^|\.)hitconsultant\.net(\/|$)/i,
+  /(^|\.)hitconsultant\.com(\/|$)/i,
+  /(^|\.)medcitynews\.com(\/|$)/i,
+  /(^|\.)healthcareitnews\.com(\/|$)/i,
+  /(^|\.)healthcaredive\.com(\/|$)/i,
+  /(^|\.)fiercehealthcare\.com(\/|$)/i,
+  // Funding databases / company profiles
+  /(^|\.)finsmes\.com(\/|$)/i,
+  /(^|\.)geekwire\.com(\/|$)/i,
+  // Therapy-vendor blogs (peer review of competitors)
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
+  /(^|\.)commure\.com(\/|$)/i,
+  /(^|\.)leveragerx\.com(\/|$)/i,
+  // EHR comparison sites
+  /(^|\.)ehrinsider\.com(\/|$)/i,
+  /(^|\.)ehrsource\.com(\/|$)/i,
+  /(^|\.)softwareadvice\.com(\/|$)/i,
+  /(^|\.)capterra\.com(\/|$)/i,
+  /(^|\.)g2\.com(\/|$)/i,
+  // CPT / billing trade press
+  /(^|\.)medsolercm\.com(\/|$)/i,
+  /(^|\.)neolytix\.com(\/|$)/i,
+  /(^|\.)behavehealth\.com(\/|$)/i,
+  /(^|\.)medfeeschedule\.com(\/|$)/i,
+  /(^|\.)drherz\.us(\/|$)/i,
+  /(^|\.)psychotherapynotes\.com(\/|$)/i,
+  /(^|\.)apaservices\.org(\/|$)/i,
+  // Healthcare law firms / regulatory commentary
+  /(^|\.)crowell\.com(\/|$)/i,
+  /(^|\.)hhcs\.org(\/|$)/i,
+  /(^|\.)samhsa-gov\.org(\/|$)/i,
+  // Mental-health-vertical newsletters
+  /(^|\.)moderntherapist\.com(\/|$)/i,
+  /(^|\.)psychotherapyacademy\.org(\/|$)/i,
+];
+
 const LOCAL_SERVICE_AGGREGATORS_PRIMARY_PATTERNS: RegExp[] = [
   // FSM SaaS corporate / IR
   /(^|\.)servicetitan\.com(\/|$)/i,
@@ -1629,6 +1746,9 @@ export function classifyTier(
   for (const re of LOCAL_SERVICE_AGGREGATORS_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `local-service-aggregators primary: ${domain}` };
   }
+  for (const re of THERAPIST_AI_SCRIBE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `therapist-ai-scribe primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1654,6 +1774,9 @@ export function classifyTier(
   }
   for (const re of LOCAL_SERVICE_AGGREGATORS_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `local-service-aggregators secondary: ${domain}` };
+  }
+  for (const re of THERAPIST_AI_SCRIBE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `therapist-ai-scribe secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
