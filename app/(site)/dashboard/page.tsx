@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { listPersonalFiles, listTeamFiles } from "@/lib/knowledge-base/meta";
 import { getTeamRole, getTeam, listTeamsForUser } from "@/lib/knowledge-base/teams";
-import { KnowledgeBaseClient } from "@/components/knowledge-base/KnowledgeBaseClient";
+import { KnowledgeBaseProto as KnowledgeBaseClient } from "@/components/knowledge-base/KnowledgeBaseProto";
 import type { TeamRole } from "@/lib/knowledge-base/teams";
 
 export const dynamic = "force-dynamic";
