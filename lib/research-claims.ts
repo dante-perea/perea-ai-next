@@ -1759,6 +1759,53 @@ const MCP_BUYERS_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)victorinollc\.com(\/|$)/i,
 ];
 
+const A2A_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)a2a-protocol\.org(\/|$)/i,
+  /(^|\.)a2aproject\.github\.io(\/|$)/i,
+  /(^|\.)github\.com\/a2aproject(\/|$)/i,
+  /(^|\.)github\.com\/google\/a2a(\/|$)/i,
+  /(^|\.)developers\.googleblog\.com(\/|$)/i,
+  /(^|\.)googledevelopers\.blogspot\.com(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  /(^|\.)linuxfoundation\.org(\/|$)/i,
+  /(^|\.)lfaidata\.foundation(\/|$)/i,
+  /(^|\.)salesforce\.com(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)news\.microsoft\.com(\/|$)/i,
+  /(^|\.)sap\.com(\/|$)/i,
+  /(^|\.)news\.sap\.com(\/|$)/i,
+  /(^|\.)servicenow\.com(\/|$)/i,
+  /(^|\.)ibm\.com(\/|$)/i,
+  /(^|\.)research\.ibm\.com(\/|$)/i,
+  /(^|\.)aws\.amazon\.com(\/|$)/i,
+  /(^|\.)atlassian\.com(\/|$)/i,
+  /(^|\.)mongodb\.com(\/|$)/i,
+  /(^|\.)workday\.com(\/|$)/i,
+  /(^|\.)langchain\.com(\/|$)/i,
+  /(^|\.)blog\.langchain\.dev(\/|$)/i,
+  /(^|\.)agent2agent\.info(\/|$)/i,
+  /(^|\.)a2acn\.com(\/|$)/i,
+];
+
+const A2A_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)agentrank-ai\.com(\/|$)/i,
+  /(^|\.)chatforest\.com(\/|$)/i,
+  /(^|\.)airbyte\.com(\/|$)/i,
+  /(^|\.)siliconangle\.com(\/|$)/i,
+  /(^|\.)agentandcopilot\.com(\/|$)/i,
+  /(^|\.)machinebrief\.com(\/|$)/i,
+  /(^|\.)apiscout\.dev(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)chaitanyaprabuddha\.com(\/|$)/i,
+  /(^|\.)hackernoon\.com(\/|$)/i,
+  /(^|\.)zdnet\.com(\/|$)/i,
+  /(^|\.)thenewstack\.io(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)venturebeat\.com(\/|$)/i,
+  /(^|\.)theregister\.com(\/|$)/i,
+  /(^|\.)infoworld\.com(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3419,6 +3466,9 @@ export function classifyTier(
   for (const re of MCP_BUYERS_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:mcp-buyers-primary" };
   }
+  for (const re of A2A_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:a2a-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3504,6 +3554,9 @@ export function classifyTier(
   }
   for (const re of MCP_BUYERS_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:mcp-buyers-secondary" };
+  }
+  for (const re of A2A_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:a2a-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
