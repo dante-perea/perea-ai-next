@@ -37,22 +37,22 @@ This paper is the playbook for treating it correctly. It covers the eight decisi
 
 - **Adoption velocity.** MCP grew from ~100K monthly SDK downloads in November 2024 to 97M in March 2026 — a 970× increase in 18 months. Every major AI provider — Anthropic, OpenAI, Google, Microsoft, Amazon, Block — supports MCP as a client. (DigitalApplied; Optijara; Metosys.)
 - **Enterprise readiness.** 78% of enterprise AI teams report at least one MCP-backed agent in production by Q1 2026, up from 31% twelve months earlier. 89% adoption among teams with 250+ AI engineers. (DigitalApplied.)
-- **Vendor commitment.** Forrester predicts 30% of enterprise application vendors will launch their own MCP servers in 2026. Stripe, Block, GitHub, Cloudflare, Atlassian, Microsoft (Dynamics 365 Finance & Operations, Business Central, Fabric), Sentry, Linear, Asana, PayPal, Webflow, Intercom — all in production. (Forrester; Cloudflare MCP Demo Day.)
-- **Distribution gap.** Of ~19,000 MCP servers in the public ecosystem, fewer than 5% are monetized. The gap between "exists" and "earns" is the opportunity. (Godberry Studios; MCP Hive.)
+- **Vendor commitment.** Forrester predicts 30% of enterprise application vendors will launch their own MCP servers in 2026. Stripe, Block, GitHub, Cloudflare, Atlassian, Microsoft (Dynamics 365 Finance & Operations, Business Central, Fabric), Sentry, Linear, Asana, PayPal, Webflow, Intercom — all in production. [^95][^99] (Forrester)
+- **Distribution gap.** Of ~19,000 MCP servers in the public ecosystem, fewer than 5% are monetized. The gap between "exists" and "earns" is the opportunity. [^57] (MCP Hive.)
 - **Cross-provider standardization.** Tool definitions written for MCP work across Claude, ChatGPT, Gemini, Cursor, Copilot, and any other compliant client. The integration tax that made multi-provider AI deployments expensive collapses at the MCP layer. (DigitalApplied.)
 
 **The eight decisions every SaaS founder must make, in order.**
 
-1. **Architecture.** Stateful (Durable Objects, McpAgent) vs. stateless (createMcpHandler, mcp-handler). Local stdio vs. remote Streamable HTTP. The right answer depends on whether your tools require per-session state and whether you're a desktop app augmentation or a SaaS extension.
+1. **Architecture.** Stateful [^82][^84] (Durable Objects) vs. stateless (createMcpHandler, mcp-handler). Local stdio vs. remote Streamable HTTP. The right answer depends on whether your tools require per-session state and whether you're a desktop app augmentation or a SaaS extension.
 2. **Tool design.** The single highest-leverage decision. Tool descriptions are agent-facing UX. Bad descriptions cause 3-4× higher failure rates than well-structured ones. Anthropic's testing shows 1-5 realistic examples per tool raise accuracy from 72% to 90%.
 3. **Authentication.** OAuth 2.1 with mandatory PKCE (S256), Protected Resource Metadata at `/.well-known/oauth-protected-resource`, Dynamic Client Registration, and RFC 8707 resource indicators. API keys are a non-starter for production.
 4. **Security.** The OWASP MCP Top 10 — tool poisoning, prompt injection, rug-pulls, command injection, scope creep, supply chain — are real, not theoretical. Stripe's CVE-2025-5277 (command injection in aws-mcp-server) and the Invariant Labs disclosure against the official GitHub MCP server are inflection points.
 5. **Governance.** Multi-tenant isolation (process-per-tenant or shared with namespace), comprehensive audit logging, zero-data-retention pass-through architecture for SOC 2 / GDPR / HIPAA compliance, and policy-as-code enforcement.
 6. **Observability.** mcp-eval, MCPJam, mcpchecker for evaluation. OpenTelemetry traces. Per-tool metrics on TPR, FPR, precision, token usage, success rate. CI gates. Without these, you cannot iterate the tool design loop that determines whether agents actually choose your server.
 7. **Distribution.** Official MCP Registry first, then PulseMCP / Smithery / Glama / MCP.so / awesome-mcp-servers. Each has a different audience and submission flow. Auto-publish via CI/CD because manual maintenance does not scale.
-8. **Monetization.** Per-call (FluxA, AgentPay, ATXP, AgenticMarket), subscription, freemium, outcome-based. x402 stablecoin or Stripe Machine Payments Protocol for agent-native settlement. Marketplaces typically take 10-20% revenue share; self-hosted billing yields ~95% but requires real engineering.
+8. **Monetization.** Per-call [^56][^53][^59][^60][^51], subscription, freemium, outcome-based. x402 stablecoin or Stripe Machine Payments Protocol for agent-native settlement. Marketplaces typically take 10-20% revenue share; self-hosted billing yields ~95% but requires real engineering.
 
-**The operator math.** A first version of a high-quality SaaS MCP server, executed by a single engineer with the playbook below, is a 2-week build to first production tool, a 60-day path to commercial-grade authentication and observability, and a 90-day path to monetization. The infrastructure cost is negligible (Cloudflare Workers free tier, Vercel free tier). The compounding asset is real: every tool call generates structured agent-intent data nobody else can capture.
+**The operator math.** A first version of a high-quality SaaS MCP server, executed by a single engineer with the playbook below, is a 2-week build to first production tool, a 60-day path to commercial-grade authentication and observability, and a 90-day path to monetization. The infrastructure cost is negligible [^95][^99][^62][^64]. The compounding asset is real: every tool call generates structured agent-intent data nobody else can capture.
 
 ---
 
@@ -72,13 +72,13 @@ For a SaaS team, this means one integration. The MCP server you ship is callable
 
 The major SaaS platforms have already shipped MCP servers and treat them as production infrastructure, not experiments:
 
-- **Stripe** ships an Agent Toolkit and an Agentic Commerce Suite; the Stripe Minions internal coding system runs through a 400-tool MCP server called Toolshed and merges 1,000+ pull requests per week with no human-written code (Engineering.fyi Stripe; Medium Valdez Ladd; rywalker Stripe Minions).
-- **Block** runs Goose — the open-source coding agent forked by Stripe — and built 100+ internal MCP servers; 12,000 employees across 15 job functions use Goose, and 75% of engineers report saving 8-10 hours/week (All Things Open; engineering blog).
+- **Stripe** ships an Agent Toolkit and an Agentic Commerce Suite; the Stripe Minions internal coding system runs through a 400-tool MCP server called Toolshed and merges 1,000+ pull requests per week with no human-written code [^93][^98] (rywalker Stripe Minions).
+- **Block** runs Goose — the open-source coding agent forked by Stripe — and built 100+ internal MCP servers; 12,000 employees across 15 job functions use Goose, and 75% of engineers report saving 8-10 hours/week [^91] (engineering blog).
 - **GitHub** ships an official MCP server and is one of the four named maintainers of the official MCP Registry (alongside Anthropic, PulseMCP, and Microsoft) (modelcontextprotocol.io Registry).
-- **Cloudflare** ships a fleet of 14+ domain-specific MCP servers — Documentation, Workers Bindings, Workers Builds, Observability, Radar, Browser Rendering, AI Gateway, Audit Logs, DNS Analytics, CASB, GraphQL — plus the McpAgent SDK for building MCP servers on Workers (cloudflare/mcp-server-cloudflare; Cloudflare Agents docs).
+- **Cloudflare** ships a fleet of 14+ domain-specific MCP servers — Documentation, Workers Bindings, Workers Builds, Observability, Radar, Browser Rendering, AI Gateway, Audit Logs, DNS Analytics, CASB, GraphQL — plus the McpAgent SDK for building MCP servers on Workers [^61][^63] (cloudflare/mcp-server-cloudflare).
 - **Microsoft** ships Dynamics 365 ERP MCP, Business Central MCP, Fabric Local MCP (GA), Fabric Remote MCP (preview), Microsoft Learn MCP, and the Microsoft MCP Server for Enterprise (preview, Entra/Graph) (Microsoft Learn; Microsoft Fabric Blog).
-- **Atlassian** ships an Atlassian Remote MCP Server for Jira and Confluence Cloud, hosted on Cloudflare (Cloudflare MCP Demo Day).
-- **PayPal, Sentry, Linear, Asana, Intercom, Webflow** all shipped remote MCP servers as part of the May 2025 MCP Demo Day cohort (Cloudflare MCP Demo Day).
+- **Atlassian** ships an Atlassian Remote MCP Server for Jira and Confluence Cloud, hosted on Cloudflare [^95][^99].
+- **PayPal, Sentry, Linear, Asana, Intercom, Webflow** all shipped remote MCP servers as part of the May 2025 MCP Demo Day cohort [^95][^99].
 
 For a SaaS founder, the implication is not that the field is closed — it's that the standard has crystallized. Building an MCP server in 2026 is no longer a bet on whether the protocol will matter. It's a tactical choice about implementation quality.
 
@@ -110,28 +110,28 @@ The first technical decision is the deployment shape. The MCP specification (cur
 
 For SaaS, the answer is almost always Streamable HTTP. stdio is appropriate when your "server" is a CLI tool already distributed to developers (Filesystem, Git, GitHub CLI), or when the user-controlled execution context requires it (Claude Desktop's local-first model). Anything that wraps your hosted SaaS API should be Streamable HTTP, hosted at a public URL. (modelcontextprotocol.io transports; OpenAI Agents JS docs.)
 
-A small but important detail: the Streamable HTTP server *must* expose a single endpoint that supports both POST (for client-to-server messages) and GET (for SSE streams) at the same path. Servers MUST validate the `Origin` header to prevent DNS rebinding attacks. When running locally, servers SHOULD bind only to 127.0.0.1, not 0.0.0.0. (modelcontextprotocol.io transports; Toolradar deploy.)
+A small but important detail: the Streamable HTTP server *must* expose a single endpoint that supports both POST (for client-to-server messages) and GET (for SSE streams) at the same path. Servers MUST validate the `Origin` header to prevent DNS rebinding attacks. When running locally, servers SHOULD bind only to 127.0.0.1, not 0.0.0.0. [^69] (modelcontextprotocol.io transports)
 
 ## Stateful vs. stateless
 
 For Streamable HTTP, the second architecture decision is whether your server holds per-session state.
 
 **Stateless** (recommended starting point for most SaaS).
-- Use `createMcpHandler` (Cloudflare Agents SDK) or `mcp-handler` (Vercel) on Cloudflare Workers, Vercel Functions, AWS Lambda, or any standard serverless runtime.
+- Use `createMcpHandler` [^61][^63] or `mcp-handler` [^62][^64] on Cloudflare Workers, Vercel Functions, AWS Lambda, or any standard serverless runtime.
 - A new MCP server instance is created per request.
 - All authentication and authorization comes from the bearer token; tools call your existing REST API for state.
 - Simplest to operate. No session-management bugs. Scales horizontally without coordination.
 
 **Stateful** (use when tools genuinely require per-session context).
-- Use `McpAgent` (Cloudflare, backed by Durable Objects) for built-in state, SQL, elicitation, and WebSocket hibernation, or roll your own session management with Redis-backed sessions.
+- Use `McpAgent` [^61][^63] (backed by Durable Objects) for built-in state, SQL, elicitation, and WebSocket hibernation, or roll your own session management with Redis-backed sessions.
 - Each user session gets its own SQL-backed instance with persistent state.
 - Tools can call `setState`, react to `onStateChanged`, run SQL on an embedded database, and request elicited input from the user mid-call.
 - Enables conversational tools (multi-turn forms, in-progress wizard state, context that survives across calls).
 - Operationally heavier — Durable Objects pricing applies, and session lifecycle requires explicit cleanup logic.
 
-The Cloudflare Agents SDK ships both patterns side-by-side and is the cleanest reference implementation for either. The McpAgent class extends Agent, exposes `state`, `setState`, `onStateChanged`, `sql`, `props` (for OAuth identity), and `elicitInput` for human-in-the-loop, and ships with `McpAgent.serve(path)` for one-line deployment with both Streamable HTTP and legacy SSE transports. (Cloudflare McpAgent docs; Cloudflare skills mcp.md; PropelAuth Cloudflare guide.)
+The Cloudflare Agents SDK ships both patterns side-by-side and is the cleanest reference implementation for either. The McpAgent class extends Agent, exposes `state`, `setState`, `onStateChanged`, `sql`, `props` (for OAuth identity), and `elicitInput` for human-in-the-loop, and ships with `McpAgent.serve(path)` for one-line deployment with both Streamable HTTP and legacy SSE transports. [^95][^99][^95][^99][^67]
 
-For Vercel deployments, the equivalent stack is `mcp-handler` (formerly `@vercel/mcp-adapter`) with Vercel Functions on Fluid Compute. Customers report 90%+ savings versus traditional serverless on Vercel for MCP workloads because Fluid handles the long-idle-then-burst pattern characteristic of MCP traffic. (Vercel MCP server support; Vercel deploy MCP docs.)
+For Vercel deployments, the equivalent stack is `mcp-handler` (formerly `@vercel/mcp-adapter`) with Vercel Functions on Fluid Compute. Customers report 90%+ savings versus traditional serverless on Vercel for MCP workloads because Fluid handles the long-idle-then-burst pattern characteristic of MCP traffic. [^62][^64][^62][^64]
 
 ## The 14-line skeleton
 
@@ -162,13 +162,13 @@ The equivalent on Vercel as a Next.js App Router file is similar in length. The 
 
 The tool design layer is where most MCP servers fail. Authentication is mostly solved by libraries. Distribution is mostly solved by registries. But tool design — the words you use, the schemas you ship, the failure modes you handle — is where the model decides whether to call your tool, and whether to keep calling it.
 
-Anthropic's guidance is the canonical source: a single tool's description has the largest impact on tool-call accuracy of any variable in the system. Their internal testing shows 1-5 realistic examples per tool raise accuracy from 72% to 90%. (modelcontextprotocol.info Effective Tools; AgentPatterns Tool Schema Standards.)
+Anthropic's guidance is the canonical source: a single tool's description has the largest impact on tool-call accuracy of any variable in the system. Their internal testing shows 1-5 realistic examples per tool raise accuracy from 72% to 90%. [^22][^29] (modelcontextprotocol.info Effective Tools)
 
 ## The eight tool-design rules
 
-**Rule 1: One tool per distinct action. Avoid mode parameters.** A single tool that accepts a `mode` parameter (`"read"`, `"write"`, `"list"`, `"search"`) forces the model to navigate a complex decision tree inside a single tool. Separate tools with clear names are better. Apigene, ChatForest, Axiom Studio, AgentPatterns, and Anthropic's own guide all converge on this. (Apigene; ChatForest; AgentPatterns server design; Axiom Studio.)
+**Rule 1: One tool per distinct action. Avoid mode parameters.** A single tool that accepts a `mode` parameter (`"read"`, `"write"`, `"list"`, `"search"`) forces the model to navigate a complex decision tree inside a single tool. Separate tools with clear names are better. Apigene, ChatForest, Axiom Studio, AgentPatterns, and Anthropic's own guide all converge on this. [^27][^26][^22][^29] (Axiom Studio.)
 
-**Rule 2: Action-oriented, snake_case names.** `search_logs`, `book_consultation`, `submit_quote_request`. Not `email`, `data`, `api`, or `helper`. Pick a verb-noun pattern and apply it consistently. (Leanmcp; Inovaflow; Workato.)
+**Rule 2: Action-oriented, snake_case names.** `search_logs`, `book_consultation`, `submit_quote_request`. Not `email`, `data`, `api`, or `helper`. Pick a verb-noun pattern and apply it consistently. [^30][^25] (Workato.)
 
 **Rule 3: Treat the description as agent-facing UX.** Three parts:
 1. What it does — one sentence with a specific verb.
@@ -179,27 +179,27 @@ Concrete example (from Axiom Studio's playbook, lightly adapted):
 
 > Search file contents using regex patterns. Returns up to 100 matches. For larger result sets, use a more specific pattern or target a subdirectory with the path parameter. Searches are case-sensitive by default; use `(?i)` prefix for case-insensitive matching. For finding files by name rather than content, use `find_files` instead.
 
-This description does five things: states the action, specifies the limit, gives a guidance hint, surfaces a constraint, and steers to an alternative tool when appropriate. Bad descriptions cause 3-4× higher failure rates than this kind of structure. (Axiom Studio; Apigene.)
+This description does five things: states the action, specifies the limit, gives a guidance hint, surfaces a constraint, and steers to an alternative tool when appropriate. Bad descriptions cause 3-4× higher failure rates than this kind of structure. [^24] (Apigene.)
 
-**Rule 4: Every parameter needs a description.** The model reads parameter descriptions to populate arguments. A bare `user` parameter is ambiguous; `user_id` with description `"Unique identifier for the user — must be a valid UUID v4"` is unambiguous. Use enums where applicable. State formats explicitly (ISO 8601 timestamps, RFC 5322 emails, GTIN-13 product codes). (AgentPatterns server design; Inovaflow; Anthropic.)
+**Rule 4: Every parameter needs a description.** The model reads parameter descriptions to populate arguments. A bare `user` parameter is ambiguous; `user_id` with description `"Unique identifier for the user — must be a valid UUID v4"` is unambiguous. Use enums where applicable. State formats explicitly (ISO 8601 timestamps, RFC 5322 emails, GTIN-13 product codes). [^22][^29][^25] (Anthropic.)
 
-**Rule 5: Keep schemas flat. Avoid `$ref` and `oneOf`.** Optional fields, `$ref` combinations, and complex enum handling vary across Claude Desktop, Cursor, ChatGPT, Gemini, and other MCP clients. Tools that pass strict-mode validation in Anthropic's SDK can hard-fail in OpenAI's. The safest pattern: flat objects with explicit types, no `$ref`, no `oneOf`, 3-4 parameters maximum. Test across at least two clients before shipping. (Apigene; AgentPatterns Schema Standards.)
+**Rule 5: Keep schemas flat. Avoid `$ref` and `oneOf`.** Optional fields, `$ref` combinations, and complex enum handling vary across Claude Desktop, Cursor, ChatGPT, Gemini, and other MCP clients. Tools that pass strict-mode validation in Anthropic's SDK can hard-fail in OpenAI's. The safest pattern: flat objects with explicit types, no `$ref`, no `oneOf`, 3-4 parameters maximum. Test across at least two clients before shipping. [^27][^22][^29]
 
 **Rule 6: Surface constraints explicitly.** If your tool returns up to 100 matches, say so in the description. If a parameter must be under 1MB, say so. If a tool is rate-limited at 10 calls per minute per user, say so. An agent that doesn't know about a limit will interpret a truncated result as completion and make incorrect downstream decisions. (Axiom Studio.)
 
-**Rule 7: Errors include recovery hints.** Tool-level errors (`isError: true`) are information the agent can reason about and recover from. JSON-RPC errors should be reserved for server-side failures (invalid JSON, unknown tool, internal crash). The error message itself matters: "File not found" with `"try search_files instead"` produces better agent behavior than "ENOENT: no such file or directory". (Axiom Studio; AgentPatterns.)
+**Rule 7: Errors include recovery hints.** Tool-level errors (`isError: true`) are information the agent can reason about and recover from. JSON-RPC errors should be reserved for server-side failures (invalid JSON, unknown tool, internal crash). The error message itself matters: "File not found" with `"try search_files instead"` produces better agent behavior than "ENOENT: no such file or directory". [^24] (AgentPatterns.)
 
-**Rule 8: Add batch variants when agents loop.** If you observe agents calling the same tool N times in sequence, add a batch tool. `read_files(paths: string[])` instead of N calls of `read_file(path: string)`. Each non-batch call is a full LLM response cycle (generate call, execute, inject result, generate next call); batching cuts latency and token cost roughly linearly. (Axiom Studio; Datadog/Block/Cloudflare layered query patterns analysis on Medium.)
+**Rule 8: Add batch variants when agents loop.** If you observe agents calling the same tool N times in sequence, add a batch tool. `read_files(paths: string[])` instead of N calls of `read_file(path: string)`. Each non-batch call is a full LLM response cycle (generate call, execute, inject result, generate next call); batching cuts latency and token cost roughly linearly. [^24] (Datadog/Block/Cloudflare layered query patterns analysis on Medium.)
 
 ## Output schemas
 
-The 2025-06-18 spec introduced `outputSchema` — tools can now declare a JSON Schema describing their return type, alongside the existing `inputSchema`. Tools with output schemas return both `structuredContent` (typed, schema-compliant) and the traditional `content` array for backward compatibility. (ChatForest; AgentPatterns.)
+The 2025-06-18 spec introduced `outputSchema` — tools can now declare a JSON Schema describing their return type, alongside the existing `inputSchema`. Tools with output schemas return both `structuredContent` (typed, schema-compliant) and the traditional `content` array for backward compatibility. [^26] (AgentPatterns.)
 
 Use output schemas when downstream code or other tools will consume the data programmatically. Skip them for tools returning primarily human-readable content (summaries, generated text, explanations) where the structure is the prose itself. The cost: every additional schema increases per-tool token overhead in the agent's context window.
 
 ## Tool-list size
 
-Empirical guidance from the production MCP servers (Stripe Toolshed, Block, Cloudflare, Datadog) all converges on the same rule: **keep the tool list under 15 per server**. Single-responsibility per server; non-overlapping toolsets. Stripe Toolshed has 400+ tools but pre-selects 15 per agent run via deterministic prefetching against the prompt. (Engineering.fyi Stripe; AgentPatterns server design.)
+Empirical guidance from the production MCP servers [^94][^96][^61][^63] (Block, Datadog) all converges on the same rule: **keep the tool list under 15 per server**. Single-responsibility per server; non-overlapping toolsets. Stripe Toolshed has 400+ tools but pre-selects 15 per agent run via deterministic prefetching against the prompt. [^93][^22][^29]
 
 The reason is direct: the agent's context window includes every tool definition. Schemas dominate per-tool token cost. A server exposing 50 tools to a 200K-context model leaves much less room for actual reasoning, retrieval, and dialogue.
 
@@ -217,7 +217,7 @@ For a SaaS founder, this means: identify the 3-5 most common multi-step workflow
 
 # Part IV: Authentication and Authorization
 
-The MCP specification (2025-11-25 update) mandates OAuth 2.1 with PKCE for all HTTP-based transports. API keys in environment variables still work on day one, but the official MCP Registry, Claude Desktop, Cursor, VS Code Copilot, and Windsurf all preferentially recommend OAuth-backed servers when users browse for integrations. If your server still asks for a long-lived bearer in a config file, you're leaving distribution share on the table. (Botoi PKCE guide; WorkOS auth guide; Ekamoira OAuth 2.1.)
+The MCP specification (2025-11-25 update) mandates OAuth 2.1 with PKCE for all HTTP-based transports. API keys in environment variables still work on day one, but the official MCP Registry, Claude Desktop, Cursor, VS Code Copilot, and Windsurf all preferentially recommend OAuth-backed servers when users browse for integrations. If your server still asks for a long-lived bearer in a config file, you're leaving distribution share on the table. [^15][^12][^11]
 
 ## The wire protocol
 
@@ -228,13 +228,13 @@ The MCP authorization composition is five small specs that compose:
 - **Resource Indicators** (RFC 8707) — pin tokens to specific resources to prevent cross-resource replay
 - **Protected Resource Metadata** (RFC 9728) — discoverable at `/.well-known/oauth-protected-resource`
 
-The end-to-end client experience: an MCP client like Claude Desktop hits a 401 on first connection, reads `WWW-Authenticate: Bearer realm="..."` pointing at `/.well-known/oauth-protected-resource`, parses the metadata, registers itself dynamically (or uses an existing registration), runs a PKCE-protected authorization code flow with the resource indicator pinning the token audience to your MCP server, exchanges the code for an access token + refresh token, and starts calling tools with the bearer in the Authorization header. (Prefect MCP OAuth; STOA OAuth+PKCE flow.)
+The end-to-end client experience: an MCP client like Claude Desktop hits a 401 on first connection, reads `WWW-Authenticate: Bearer realm="..."` pointing at `/.well-known/oauth-protected-resource`, parses the metadata, registers itself dynamically (or uses an existing registration), runs a PKCE-protected authorization code flow with the resource indicator pinning the token audience to your MCP server, exchanges the code for an access token + refresh token, and starts calling tools with the bearer in the Authorization header. [^18][^16]
 
 ## What you actually have to ship
 
 For a SaaS founder, the implementation work decomposes as follows:
 
-**1. Protected Resource Metadata endpoint at `/.well-known/oauth-protected-resource`.** The path is not configurable — the RFC fixes it. Returns JSON declaring your authorization server, supported scopes, and resource URI. (Microsoft Azure AD MCP guide; Vercel deploy MCP.)
+**1. Protected Resource Metadata endpoint at `/.well-known/oauth-protected-resource`.** The path is not configurable — the RFC fixes it. Returns JSON declaring your authorization server, supported scopes, and resource URI. [^62][^64] (Microsoft Azure AD MCP guide)
 
 ```json
 {
@@ -247,25 +247,25 @@ For a SaaS founder, the implementation work decomposes as follows:
 }
 ```
 
-**2. Authorization Server.** Build it yourself only if you must. For most teams, delegate. WorkOS, Auth0, Okta, AWS Cognito, Azure AD/Entra ID, Keycloak, and Clerk all support the relevant RFCs out of the box. WorkOS specifically markets MCP-ready AuthKit; PropelAuth has a Cloudflare Worker MCP guide. The pragmatic recommendation, repeated across every auth-vendor blog: **delegate authentication to an established identity provider; focus your engineering effort on access control and business logic.** (Ekamoira; WorkOS; Prefect; STOA.)
+**2. Authorization Server.** Build it yourself only if you must. For most teams, delegate. WorkOS, Auth0, Okta, AWS Cognito, Azure AD/Entra ID, Keycloak, and Clerk all support the relevant RFCs out of the box. WorkOS specifically markets MCP-ready AuthKit; PropelAuth has a Cloudflare Worker MCP guide. The pragmatic recommendation, repeated across every auth-vendor blog: **delegate authentication to an established identity provider; focus your engineering effort on access control and business logic.** [^11][^12][^18] (STOA.)
 
-**3. JWT validation in your tool handlers.** Cache JWKS for 1 hour (Microsoft Azure AD MCP recommends this exact value as the balance between performance and key-rotation latency). Validate `iss` (issuer), `aud` (audience — must match your resource URI), `exp` (expiration), `nbf` (not-before), and required scopes. Signature alone is not sufficient — cross-resource replay requires the audience check. (Prefect MCP OAuth; MCP Framework OAuth.)
+**3. JWT validation in your tool handlers.** Cache JWKS for 1 hour (Microsoft Azure AD MCP recommends this exact value as the balance between performance and key-rotation latency). Validate `iss` (issuer), `aud` (audience — must match your resource URI), `exp` (expiration), `nbf` (not-before), and required scopes. Signature alone is not sufficient — cross-resource replay requires the audience check. [^18][^13][^17]
 
 **4. Scope design.** Split destructive and read-only scopes. The pattern that survives:
 - `tools:read` — list-only access, no side effects
 - `tools:invoke:safe` — non-destructive actions (search, lookup, status)
 - `tools:invoke:destructive` — actions that mutate state (purchase, send_email, delete)
 
-A user who granted `tools:read` to run a weekly report should not be able to run `send_email` from the same token. Claude Desktop and Cursor surface requested scopes in the consent screen, so the split makes the UX honest about what the client can do. (Botoi; OWASP MCP Security; Ekamoira.)
+A user who granted `tools:read` to run a weekly report should not be able to run `send_email` from the same token. Claude Desktop and Cursor surface requested scopes in the consent screen, so the split makes the UX honest about what the client can do. [^15][^31][^32] (Ekamoira.)
 
 **5. RBAC at the tool level, not just authentication.** Authentication answers "who is calling?" Authorization answers "what can they do?" Both are required. Authentication without authorization is one of the top five mistakes Ekamoira documents in their analysis of common MCP security failures. Implement role-based access control — at minimum read-only/write/admin separation — at the tool execution layer. (Ekamoira.)
 
 ## What to avoid
 
-- **Tokens in query strings.** Logs and proxies capture URLs routinely. The MCP Framework's OAuth provider rejects them automatically. Never embed bearer tokens in the URL. (MCP Framework OAuth.)
-- **Long-lived static tokens.** OAuth 2.1 mandates short-lived (5-60 minute) access tokens with refresh token rotation. Long-lived tokens are the single biggest credential risk in MCP — if leaked into logs, they're abusable for the lifetime of the token. (Botoi; OWASP MCP Top 10.)
-- **Symmetric JWT signing (HS256).** Use asymmetric (RS256 or ES256) signing keys fetched from a JWKS endpoint. Symmetric keys must be shared with every validating server, expanding the compromise surface. (MCP Framework OAuth.)
-- **Token storage in localStorage.** On the client side, tokens belong in OS-native secure storage (Keychain on macOS, Credential Manager on Windows, libsecret on Linux). Web-style localStorage storage is a known anti-pattern. (MCP Framework; Prefect.)
+- **Tokens in query strings.** Logs and proxies capture URLs routinely. The MCP Framework's OAuth provider rejects them automatically. Never embed bearer tokens in the URL. [^13][^17]
+- **Long-lived static tokens.** OAuth 2.1 mandates short-lived (5-60 minute) access tokens with refresh token rotation. Long-lived tokens are the single biggest credential risk in MCP — if leaked into logs, they're abusable for the lifetime of the token. [^15][^31][^32]
+- **Symmetric JWT signing (HS256).** Use asymmetric (RS256 or ES256) signing keys fetched from a JWKS endpoint. Symmetric keys must be shared with every validating server, expanding the compromise surface. [^13][^17]
+- **Token storage in localStorage.** On the client side, tokens belong in OS-native secure storage (Keychain on macOS, Credential Manager on Windows, libsecret on Linux). Web-style localStorage storage is a known anti-pattern. [^13][^17] (Prefect.)
 
 ---
 
@@ -286,25 +286,25 @@ The OWASP Foundation now maintains a dedicated **OWASP MCP Top 10** (2025 beta, 
 | MCP09 | Shadow MCP Servers | Unauthorized internal MCP deployments |
 | MCP10 | Context Injection & Over-Sharing | Cross-tenant context leakage; shared session state |
 
-(OWASP MCP Top 10; OWASP MCP06; OWASP MCP Tool Poisoning page.)
+[^31][^32][^31][^32][^31][^32]
 
 ## The three categories most SaaS teams underestimate
 
-**Tool Poisoning (MCP03).** Demonstrated in production against the official GitHub MCP server (~14,000 GitHub stars at time of disclosure, one of the most widely deployed servers). A malicious issue in a public repository contained instructions; an agent triaging public issues read the issue, followed the hidden instructions, pulled data from private repositories, and wrote it into a public pull request. Private repo names and personal information were exfiltrated. This is not theoretical. CyberArk's "Poison Everywhere" research extended the model to demonstrate every text field in a tool schema is an injection surface — descriptions, parameter descriptions, defaults, enum options, examples, title fields. (Pipelab tool poisoning; OWASP issue 806; Mindgard.)
+**Tool Poisoning (MCP03).** Demonstrated in production against the official GitHub MCP server (~14,000 GitHub stars at time of disclosure, one of the most widely deployed servers). A malicious issue in a public repository contained instructions; an agent triaging public issues read the issue, followed the hidden instructions, pulled data from private repositories, and wrote it into a public pull request. Private repo names and personal information were exfiltrated. This is not theoretical. CyberArk's "Poison Everywhere" research extended the model to demonstrate every text field in a tool schema is an injection surface — descriptions, parameter descriptions, defaults, enum options, examples, title fields. [^35][^31][^32] (Mindgard.)
 
-**Command Injection (MCP05).** CVE-2025-5277 documented a command injection vulnerability in the popular `aws-mcp-server`: validation only ensured the command started with `aws`, but `aws -h;whoami` bypassed the check. CVE-2025-5276 (SSRF) and CVE-2025-5273 (arbitrary file read) followed in the same disclosure cycle for `markdownify-mcp`. The pattern: tools that take user-controllable strings and pipe them into subprocess execution, file paths, or HTTP calls without sanitization. (Snyk Labs; Tenable.)
+**Command Injection (MCP05).** CVE-2025-5277 documented a command injection vulnerability in the popular `aws-mcp-server`: validation only ensured the command started with `aws`, but `aws -h;whoami` bypassed the check. CVE-2025-5276 (SSRF) and CVE-2025-5273 (arbitrary file read) followed in the same disclosure cycle for `markdownify-mcp`. The pattern: tools that take user-controllable strings and pipe them into subprocess execution, file paths, or HTTP calls without sanitization. [^36] (Tenable.)
 
-**Indirect Prompt Injection (MCP06).** Even if your MCP server uses stdio and isn't network-exposed, indirect prompt injection can weaponize the LLM into issuing a command that hits your server. The Snyk Labs disclosure showed how a poisoned web page, fetched by a different MCP server, can instruct the LLM to call your tools with attacker-controlled arguments. The mitigation is not on the LLM side — it's at the tool execution boundary, with backend access controls that injected instructions cannot override. (Snyk Labs; OWASP MCP06.)
+**Indirect Prompt Injection (MCP06).** Even if your MCP server uses stdio and isn't network-exposed, indirect prompt injection can weaponize the LLM into issuing a command that hits your server. The Snyk Labs disclosure showed how a poisoned web page, fetched by a different MCP server, can instruct the LLM to call your tools with attacker-controlled arguments. The mitigation is not on the LLM side — it's at the tool execution boundary, with backend access controls that injected instructions cannot override. [^36][^31][^32]
 
 ## Defenses every production server needs
 
-1. **Validate every input.** Path traversal (`../`), null bytes, command-character escaping, regex bombs, oversized payloads. Even with a strict JSON Schema, the input is untrusted by default. The STDIO execution model in some early MCP SDKs runs commands even when the local process fails to start, exposing servers to command injection unless the author sanitizes inputs. Argument sanitization is the mitigation, not richer schemas. (AgentPatterns server design; OX Security; SecurityWeek.)
-2. **Treat tool responses as untrusted before they enter the LLM context.** The MCP specification advises clients to consider trust boundaries but does not mandate response validation. Production servers should sanitize their own outputs — strip embedded instructions, mask secrets, truncate oversized payloads — before returning. (OWASP MCP Tool Poisoning page.)
-3. **Backend access controls cannot rely on system prompt instructions.** "Do not read files outside /tmp" enforced via system prompt is bypassable. The same restriction enforced at the tool layer (the tool refuses paths outside /tmp) is not. Always enforce restrictions server-side. (OWASP MCP Tool Poisoning; OWASP issue 806.)
-4. **Trust-on-First-Use (TOFU) for tool definitions.** Cache tool schemas at first connection; alert when they change unexpectedly. Rug-pull attacks (silent modification of approved tool descriptions) rely on the absence of this check. (OWASP Stuttgart slides; SAFE-MCP framework.)
+1. **Validate every input.** Path traversal (`../`), null bytes, command-character escaping, regex bombs, oversized payloads. Even with a strict JSON Schema, the input is untrusted by default. The STDIO execution model in some early MCP SDKs runs commands even when the local process fails to start, exposing servers to command injection unless the author sanitizes inputs. Argument sanitization is the mitigation, not richer schemas. [^22][^29] (OX Security, SecurityWeek.)
+2. **Treat tool responses as untrusted before they enter the LLM context.** The MCP specification advises clients to consider trust boundaries but does not mandate response validation. Production servers should sanitize their own outputs — strip embedded instructions, mask secrets, truncate oversized payloads — before returning. [^31][^32]
+3. **Backend access controls cannot rely on system prompt instructions.** "Do not read files outside /tmp" enforced via system prompt is bypassable. The same restriction enforced at the tool layer (the tool refuses paths outside /tmp) is not. Always enforce restrictions server-side. [^31][^32][^31][^32]
+4. **Trust-on-First-Use (TOFU) for tool definitions.** Cache tool schemas at first connection; alert when they change unexpectedly. Rug-pull attacks (silent modification of approved tool descriptions) rely on the absence of this check. [^31][^32] (SAFE-MCP framework.)
 5. **Origin header validation on all incoming connections.** Required by the MCP spec to prevent DNS rebinding attacks on local servers; required in practice for remote servers to prevent CSRF-style attacks against authenticated sessions. (modelcontextprotocol.io transports.)
-6. **Per-user, per-client consent for all tools and data access.** Prevents confused-deputy attacks where a trusted client is tricked into acting on behalf of an untrusted one. (Mindgard; OWASP MCP Top 10.)
-7. **Continuous adversarial testing.** Red teaming with platforms like Mindgard Offensive Security, plus pre-deploy scanning with Cisco mcp-scanner, Snyk agent-scan (formerly Invariant), Pipelock MCP proxy, or SAFE-MCP-aware tooling. Static review catches description-level injection; runtime proxies catch session-level rug-pulls. (Mindgard; Pipelab.)
+6. **Per-user, per-client consent for all tools and data access.** Prevents confused-deputy attacks where a trusted client is tricked into acting on behalf of an untrusted one. [^40][^31][^32]
+7. **Continuous adversarial testing.** Red teaming with platforms like Mindgard Offensive Security, plus pre-deploy scanning with Cisco mcp-scanner, Snyk agent-scan (formerly Invariant), Pipelock MCP proxy, or SAFE-MCP-aware tooling. Static review catches description-level injection; runtime proxies catch session-level rug-pulls. [^40] (Pipelab.)
 
 ---
 
@@ -314,7 +314,7 @@ For SaaS teams selling to mid-market and enterprise buyers, the governance layer
 
 ## Multi-tenancy patterns
 
-The MCP `initialize` handshake includes `clientInfo` (name, version) but no tenant identifier. Multi-tenancy is your responsibility at the infrastructure layer. Two patterns dominate, with a clear tradeoff. (MCP Find multi-tenant; Tetrate enterprise.)
+The MCP `initialize` handshake includes `clientInfo` (name, version) but no tenant identifier. Multi-tenancy is your responsibility at the infrastructure layer. Two patterns dominate, with a clear tradeoff. [^71][^72][^73]
 
 **Process-per-tenant.** Each tenant gets their own MCP server process. Complete isolation — one tenant's crash doesn't affect others, one tenant's data cannot leak. Operationally heavier (process management, resource accounting per tenant, cold-start latency). Right for high-security tenants, regulated industries, and small tenant counts (<100). One financial-services case study deployed 50 dedicated tenant processes; the operational lesson was "automate process management early; manual onboarding becomes a bottleneck." (MCP Find.)
 
@@ -342,7 +342,7 @@ Per the Greenplum MCP Server reference implementation and the Ithena MCP governa
 - Have a retention policy aligned to the strictest regulation that applies (7 years for SOX, 6 years for HIPAA, "as long as relevant" for GDPR)
 - Capture permission denials separately from authentication failures
 
-(Broadcom Tanzu Greenplum docs; Ithena governance SDK; Tetrate audit logging.)
+[^74][^77][^72][^73]
 
 ## Zero data retention as a procurement accelerator
 
@@ -355,11 +355,11 @@ The zero-data-retention pattern: operate as a stateless pass-through proxy that 
 - Right-to-erasure becomes trivially compliant (you have nothing to erase)
 - Procurement cycles shorten from quarters to days because the security questionnaire becomes much shorter
 
-The tradeoff: some features are harder. Per-call caching is constrained. Cross-call analytics require external storage with explicit consent. The pattern fits MCP servers well precisely because most MCP tool calls are stateless lookups against an external system of record. (Truto zero-data-retention; Tetrate MCP audit logging.)
+The tradeoff: some features are harder. Per-call caching is constrained. Cross-call analytics require external storage with explicit consent. The pattern fits MCP servers well precisely because most MCP tool calls are stateless lookups against an external system of record. [^76][^72][^73]
 
 ## Policy-as-code
 
-For multi-team enterprise deployments, expressing access policies in machine-readable form (Rego, OPA, Cedar) is the only sustainable path. Policies define which tools each role can invoke, which data residency rules apply, what logging is mandatory, what scopes are required. GitOps workflows produce comprehensive audit trails for free — every policy change is a Git commit with author, reviewer, and approval timestamps. (Tetrate enterprise deployment.)
+For multi-team enterprise deployments, expressing access policies in machine-readable form (Rego, OPA, Cedar) is the only sustainable path. Policies define which tools each role can invoke, which data residency rules apply, what logging is mandatory, what scopes are required. GitOps workflows produce comprehensive audit trails for free — every policy change is a Git commit with author, reviewer, and approval timestamps. [^72][^73]
 
 ---
 
@@ -368,10 +368,10 @@ For multi-team enterprise deployments, expressing access policies in machine-rea
 You cannot iterate the tool design loop without measurement. The dominant tools in the ecosystem as of mid-2026:
 
 - **mcp-eval** — comprehensive evaluation framework. Connects an mcp-agent to your server, runs scripted scenarios, captures OpenTelemetry traces, asserts tool usage / content / efficiency / quality. JSON, Markdown, HTML reports. GitHub Actions integration. (mcp-eval.ai; mcp-eval Mintlify.)
-- **MCPJam Inspector** — runs your MCP server against simulated agents across multiple LLMs (Claude, GPT, Gemini), reports Accuracy, TPR, FPR, Precision, token usage, cross-model performance. Auto-generates test cases from your tool definitions. Integrates OpenAI Apps SDK and MCP-UI. (MCPJam blog.)
+- **MCPJam Inspector** — runs your MCP server against simulated agents across multiple LLMs (Claude, GPT, Gemini), reports Accuracy, TPR, FPR, Precision, token usage, cross-model performance. Auto-generates test cases from your tool definitions. Integrates OpenAI Apps SDK and MCP-UI. [^90]
 - **mcpchecker** — integration tests for MCP servers using real AI agents to complete real tasks. Uses an MCP recording proxy to capture every tool call. (mcpchecker GitHub.)
-- **Inspectr** — local-first proxy capturing every MCP request/response with MCP-aware classification (tools, prompts, resources). Pairs with MCPLab for evaluation runs. (Inspectr docs.)
-- **Ithena** — open-source `ithena-cli` plus hosted Ithena Platform for enterprise observability and audit trails. (Ithena governance SDK.)
+- **Inspectr** — local-first proxy capturing every MCP request/response with MCP-aware classification (tools, prompts, resources). Pairs with MCPLab for evaluation runs. [^83][^85]
+- **Ithena** — open-source `ithena-cli` plus hosted Ithena Platform for enterprise observability and audit trails. [^77]
 
 ## What to measure
 
@@ -387,7 +387,7 @@ Two operational metrics complete the picture:
 - **Token usage per call** — schemas dominate per-tool token cost; track this to detect schema drift that bloats context.
 - **Latency P50/P95/P99** — agents downrank slow APIs. Anything over 500ms for a read or 2s for a write is a problem.
 
-(MCPJam; mcp-eval; Inspectr.)
+[^90] (mcp-eval, Inspectr.)
 
 ## CI gates
 
@@ -430,7 +430,7 @@ For a brand-new MCP server, the submission order that maximizes distribution at 
 2. **Smithery second.** Use `smithery mcp publish "https://your-server.com/mcp" -n yourorg/your-server`. Smithery handles dynamic client registration via Client ID Metadata Documents — no per-client setup required. Bonus: Smithery scans your server for tools/prompts/resources to populate your listing; if scanning fails, serve a static `/.well-known/mcp/server-card.json`.
 3. **Glama third.** Submit via web form. Glama runs build checks; servers that fail are rejected. Listing on Glama is now a prerequisite for the awesome-mcp-servers PR.
 4. **MCP.so fourth.** Web form; broadest coverage by raw count.
-5. **Awesome list last.** PR to `github.com/modelcontextprotocol/servers` for reference-grade servers; PR to `punkpeye/awesome-mcp-servers` for community visibility (Glama listing required).
+5. **Awesome list last.** PR to `github.com/modelcontextprotocol/servers` for reference-grade servers; PR to `punkpeye/awesome-mcp-servers` for community visibility [^50].
 
 Auto-publish from CI with `continue-on-error: true` on the registry job — the Official Registry is still in preview, and you don't want a registry outage to block your release.
 
@@ -457,25 +457,25 @@ Of the 19,000+ public MCP servers, fewer than 5% are monetized. The gap is the o
 | One-time | $9–$99 | Simple wrappers; single-API integrations; weekend-project quality |
 | Outcome-based | % of recovered revenue / verified outcome | Premium consultative tools where value is measurable |
 
-(Godberry Studios; TutuoAI; AgentPay docs.)
+[^57][^52][^53][^59]
 
-The single non-obvious finding from the 2026 monetization research: **subscription pricing dies fastest in MCP**. Agents are infinitely patient and perfectly rational; they will not pay for unused features or unused seats. A SaaS that previously sold $99/seat/month subscriptions and ships an MCP server discovers that agent-originated trial conversion is 1-2% — the agent is evaluating "is the marginal value of *this single action* greater than the marginal cost?" not "is this worth $99/month for a year?". (FluxA; ATXP.)
+The single non-obvious finding from the 2026 monetization research: **subscription pricing dies fastest in MCP**. Agents are infinitely patient and perfectly rational; they will not pay for unused features or unused seats. A SaaS that previously sold $99/seat/month subscriptions and ships an MCP server discovers that agent-originated trial conversion is 1-2% — the agent is evaluating "is the marginal value of *this single action* greater than the marginal cost?" not "is this worth $99/month for a year?". [^56] (ATXP.)
 
 The pragmatic recommendation for a first MCP server release: ship a per-call price tier alongside any existing subscription model. Track agent conversion against the new tier specifically. Many operators report agent-mediated revenue under per-call pricing exceeding seat-based subscription revenue within 90 days.
 
 ## The four billing rails
 
-**1. Marketplace / proxy billing.** AgenticMarket, MCPize, Apify MCP, Smithery (paid tier). Add a single header check to your existing HTTPS endpoint, list your server, set a price, keep 80-90% of revenue. AgenticMarket and MCPize both publish 80% revenue share at the floor; Apify Pay-Per-Event is 80% of charged events. Setup: ~10 minutes. Best for: existing HTTPS servers, fastest path to first revenue. (AgenticMarket; Godberry Studios; Apify.)
+**1. Marketplace / proxy billing.** AgenticMarket, MCPize, Apify MCP, Smithery (paid tier). Add a single header check to your existing HTTPS endpoint, list your server, set a price, keep 80-90% of revenue. AgenticMarket and MCPize both publish 80% revenue share at the floor; Apify Pay-Per-Event is 80% of charged events. Setup: ~10 minutes. Best for: existing HTTPS servers, fastest path to first revenue. [^51][^57] (Apify.)
 
-**2. Agent-native billing platforms.** ATXP (`withBilling()` wrapper at the tool boundary), AgentPay (per-tool pricing with freemium credits), FluxA (USDC settlement via x402), P402 (wallet-backed agent payments with policy controls). All target the same primitive: pricing decisions at the tool boundary, machine-readable upfront, agent self-onboards. Setup: minutes to hours. Best for: greenfield servers, agent-native workflows. (ATXP; AgentPay; FluxA; P402.)
+**2. Agent-native billing platforms.** ATXP (`withBilling()` wrapper at the tool boundary), AgentPay (per-tool pricing with freemium credits), FluxA (USDC settlement via x402), P402 (wallet-backed agent payments with policy controls). All target the same primitive: pricing decisions at the tool boundary, machine-readable upfront, agent self-onboards. Setup: minutes to hours. Best for: greenfield servers, agent-native workflows. [^60][^53][^59][^56] (P402.)
 
-**3. Stripe Machine Payments Protocol (MPP) and Cloudflare paid MCP servers.** Stripe's MPP launched March 2026 — agents authorize a session spending limit upfront and stream micropayments. Pairs with Stripe's existing PSP infrastructure. Cloudflare ships a `experimental_PaidMcpAgent` class that integrates Stripe checkout sessions into MCP tool gating. Setup: hours to days. Best for: enterprise-grade fiat compliance, large-volume sessions. (Stripe MPP; Cloudflare paid MCP guide.)
+**3. Stripe Machine Payments Protocol (MPP) and Cloudflare paid MCP servers.** Stripe's MPP launched March 2026 — agents authorize a session spending limit upfront and stream micropayments. Pairs with Stripe's existing PSP infrastructure. Cloudflare ships a `experimental_PaidMcpAgent` class that integrates Stripe checkout sessions into MCP tool gating. Setup: hours to days. Best for: enterprise-grade fiat compliance, large-volume sessions. [^94][^96][^95][^99]
 
 **4. Self-hosted with metered billing.** Moesif, Stripe metered, AWS API Gateway, mcp-billing-gateway. Maximum control, maximum revenue retention (~95% after fees), but real engineering work — instrumentation, plan management, customer provisioning, invoice generation. Best for: high-volume servers, custom enterprise contracts, regulated buyers requiring fiat invoicing. (Moesif; mcp-billing-gateway.)
 
 ## Pricing strategy
 
-The empirically grounded floor for general-purpose utility MCP servers is **$0.03–$0.08 per call**. Domain-specific or premium servers (financial data, legal research, medical lookup) sit at $0.15–$0.50 per call. The ceiling above which agents start to balk on a per-call basis is roughly $1.00; beyond that, session-based pricing or subscription becomes more efficient. (AgenticMarket; Godberry Studios.)
+The empirically grounded floor for general-purpose utility MCP servers is **$0.03–$0.08 per call**. Domain-specific or premium servers (financial data, legal research, medical lookup) sit at $0.15–$0.50 per call. The ceiling above which agents start to balk on a per-call basis is roughly $1.00; beyond that, session-based pricing or subscription becomes more efficient. [^51] (Godberry Studios.)
 
 Three operating heuristics:
 
@@ -491,7 +491,7 @@ A representative sample of patterns where SaaS MCP server initiatives stall or u
 
 ## Failure 1: Auto-generating tools from Swagger
 
-The pattern. A team writes a 30-line script that converts every endpoint in their OpenAPI spec into an MCP tool. Ships in a sprint. The MCP server has 80 tools, vague descriptions inherited from API summaries, no narrative about when to use which tool. Agents try the first three, fail to disambiguate, and stop calling the server. (AgentPatterns server design; Apigene; Datadog/Block/Cloudflare layered query analysis.)
+The pattern. A team writes a 30-line script that converts every endpoint in their OpenAPI spec into an MCP tool. Ships in a sprint. The MCP server has 80 tools, vague descriptions inherited from API summaries, no narrative about when to use which tool. Agents try the first three, fail to disambiguate, and stop calling the server. [^22][^29][^27] (Datadog/Block/Cloudflare layered query analysis.)
 
 The fix. Hand-write tool descriptions for the 5-15 highest-value workflows. Treat MCP as a distribution channel with a roadmap, owners, and quarterly capability expansion. Auto-generation is fine for the *implementation* (call your existing API internally); it's never fine for the *interface*.
 
@@ -509,7 +509,7 @@ The fix. Implement TAP-style agent identity verification *before* ramping agent 
 
 ## Failure 4: Wrong pricing model
 
-A SaaS that previously sold $99/seat/month subscriptions ships an MCP server. Agent-originated trials skyrocket. Conversion to paid is 2%. Team concludes "agents don't buy." Actual cause: the subscription pricing model is incompatible with how agents evaluate value. (FluxA; ATXP.)
+A SaaS that previously sold $99/seat/month subscriptions ships an MCP server. Agent-originated trials skyrocket. Conversion to paid is 2%. Team concludes "agents don't buy." Actual cause: the subscription pricing model is incompatible with how agents evaluate value. [^56] (ATXP.)
 
 The fix. Add a per-action pricing tier alongside the subscription. Track agent conversion against the new tier specifically.
 
@@ -588,7 +588,7 @@ The fix. Use the productized layer where it exists. Apideck, StackOne, Truto, Al
 - Submit to Glama (web form, after build checks pass).
 - Submit to MCP.so.
 - Add `llms.txt`, `llms-full.txt`, schema.org JSON-LD on your marketing pages so AI training corpora pick up your server.
-- Reach out to the Cloudflare MCP Demo Day cohort for partner-program intros (Anthropic, OpenAI, Google).
+- Reach out to the Cloudflare MCP Demo Day cohort for partner-program intros [^21][^7] (Google).
 
 **Week 7: Tool expansion**
 - Ship the next 5–7 tools based on baseline data — which workflows did agents try and fail at? Which tools were called most? Where are the missing batch variants?
@@ -612,7 +612,7 @@ The fix. Use the productized layer where it exists. Apideck, StackOne, Truto, Al
 **Goal: ship a billable tier, capture first agent-originated revenue, and prove the data flywheel.**
 
 **Week 9: Billing rail decision**
-- Pick one of: marketplace proxy (AgenticMarket / MCPize), agent-native (ATXP / AgentPay / FluxA), Stripe MPP / Cloudflare paid MCP, or self-hosted metered.
+- Pick one of: marketplace proxy [^51], agent-native [^60], Stripe MPP / Cloudflare paid MCP, or self-hosted metered.
 - Implement per-call pricing on 1–2 tools; keep the rest free as the freemium funnel.
 - Publish pricing in your manifest (machine-readable).
 
@@ -647,7 +647,7 @@ What's left is execution discipline. Eight decisions, ranked by impact:
 
 1. Tool design (the single highest-leverage area)
 2. OAuth 2.1 with PKCE (table stakes for distribution)
-3. Security posture (OWASP MCP Top 10 is non-negotiable)
+3. Security posture [^31][^32]
 4. Multi-tenancy and audit (the procurement gate)
 5. Observability (the iteration loop that compounds quality)
 6. Distribution (the registry stack and partner relationships)
@@ -746,7 +746,6 @@ Does your SaaS already have a public REST API?
 | **MCP-as-a-service for SaaS** | Apideck, StackOne, Truto | Albato Embedded, Cyclr, NimbleBrain, Ampersand |
 
 ---
-
 # References
 
 ### MCP Specification and Architecture
