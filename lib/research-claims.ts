@@ -1732,6 +1732,55 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const AGENT_INBOX_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)blog\.langchain\.com(\/|$)/i,
+  /(^|\.)langchain\.com(\/|$)/i,
+  /(^|\.)copilotkit\.ai(\/|$)/i,
+  /(^|\.)docs\.copilotkit\.ai(\/|$)/i,
+  /(^|\.)docs\.showcase\.copilotkit\.ai(\/|$)/i,
+  /(^|\.)ag-ui\.com(\/|$)/i,
+  /(^|\.)docs\.ag-ui\.com(\/|$)/i,
+  /(^|\.)a2ui\.org(\/|$)/i,
+  /(^|\.)google\.github\.io(\/|$)/i,
+  /(^|\.)developers\.googleblog\.com(\/|$)/i,
+  /(^|\.)github\.com(\/|$)/i,
+  /(^|\.)docs\.ag2\.ai(\/|$)/i,
+  /(^|\.)vercel\.com(\/|$)/i,
+  /(^|\.)sdk\.vercel\.ai(\/|$)/i,
+  /(^|\.)ai-sdk-patterns\.vercel\.app(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)support\.claude\.com(\/|$)/i,
+  /(^|\.)console\.anthropic\.com(\/|$)/i,
+  /(^|\.)hashbrown\.dev(\/|$)/i,
+  /(^|\.)developers\.openai\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)npmjs\.com(\/|$)/i,
+  /(^|\.)cursor\.com(\/|$)/i,
+  /(^|\.)cursor\.so(\/|$)/i,
+  /(^|\.)docs\.cursor\.com(\/|$)/i,
+  /(^|\.)cognition\.ai(\/|$)/i,
+  /(^|\.)devin\.ai(\/|$)/i,
+  /(^|\.)perplexity\.ai(\/|$)/i,
+];
+
+const AGENT_INBOX_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)ai\.agentmail\.to(\/|$)/i,
+  /(^|\.)frenxt\.com(\/|$)/i,
+  /(^|\.)podcasttranscript\.ai(\/|$)/i,
+  /(^|\.)callsphere\.ai(\/|$)/i,
+  /(^|\.)sdd\.sh(\/|$)/i,
+  /(^|\.)akshayghalme\.com(\/|$)/i,
+  /(^|\.)morphllm\.com(\/|$)/i,
+  /(^|\.)iamraghuveer\.com(\/|$)/i,
+  /(^|\.)adwaitx\.com(\/|$)/i,
+  /(^|\.)builder\.io(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)inferencebysequoia\.substack\.com(\/|$)/i,
+  /(^|\.)linkedin\.com(\/|$)/i,
+  /(^|\.)youtube\.com(\/|$)/i,
+  /(^|\.)npmjs\.com(\/|$)/i,
+];
+
 const FIELD_DOCUMENTATION_PRIMARY_PATTERNS: RegExp[] = [
   // FSM + field-doc vendor corporate sites
   /(^|\.)servicetitan\.com(\/|$)/i,
@@ -3262,6 +3311,9 @@ export function classifyTier(
   for (const re of FIELD_DOCUMENTATION_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:field-documentation-primary" };
   }
+  for (const re of AGENT_INBOX_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:agent-inbox-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3332,6 +3384,9 @@ export function classifyTier(
   }
   for (const re of FIELD_DOCUMENTATION_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:field-documentation-secondary" };
+  }
+  for (const re of AGENT_INBOX_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-inbox-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
