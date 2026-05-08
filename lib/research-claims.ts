@@ -862,6 +862,171 @@ const SENIOR_CARE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)pehub\.com(\/|$)/i,
 ];
 
+const BOOTCAMP_CREDENTIALING_PRIMARY_PATTERNS: RegExp[] = [
+  // Federal regulators and gov
+  /(^|\.)consumerfinance\.gov(\/|$)/i,
+  /(^|\.)files\.consumerfinance\.gov(\/|$)/i,
+  /(^|\.)fsapartners\.ed\.gov(\/|$)/i,
+  /(^|\.)studentaid\.gov(\/|$)/i,
+  /(^|\.)ftc\.gov(\/|$)/i,
+  /(^|\.)dol\.gov(\/|$)/i,
+  /(^|\.)dfpi\.ca\.gov(\/|$)/i,
+  /(^|\.)bppe\.ca\.gov(\/|$)/i,
+  /(^|\.)goldwaterscholarship\.gov(\/|$)/i,
+  // SEC and SEC-content hosts
+  /(^|\.)content\.edgar-online\.com(\/|$)/i,
+  /(^|\.)last10k\.com(\/|$)/i,
+  /(^|\.)q4cdn\.com(\/|$)/i,
+  /(^|\.)s27\.q4cdn\.com(\/|$)/i,
+  // Court / bankruptcy filing hosts
+  /(^|\.)courtlistener\.com(\/|$)/i,
+  /(^|\.)storage\.courtlistener\.com(\/|$)/i,
+  /(^|\.)epiq11\.com(\/|$)/i,
+  /(^|\.)document\.epiq11\.com(\/|$)/i,
+  // Coursera (NYSE: COUR) corporate
+  /(^|\.)coursera\.com(\/|$)/i,
+  /(^|\.)coursera\.org(\/|$)/i,
+  /(^|\.)investor\.coursera\.com(\/|$)/i,
+  // Pluralsight corporate
+  /(^|\.)pluralsight\.com(\/|$)/i,
+  // Skillsoft (NYSE: SKIL) corporate
+  /(^|\.)skillsoft\.com(\/|$)/i,
+  /(^|\.)investor\.skillsoft\.com(\/|$)/i,
+  // UWorld corporate
+  /(^|\.)uworld\.com(\/|$)/i,
+  /(^|\.)newsroom\.uworld\.com(\/|$)/i,
+  /(^|\.)medical\.uworld\.com(\/|$)/i,
+  /(^|\.)gradschool\.uworld\.com(\/|$)/i,
+  /(^|\.)accounting\.uworld\.com(\/|$)/i,
+  // Khan Academy / Microsoft / OpenAI corporate
+  /(^|\.)khanacademy\.org(\/|$)/i,
+  /(^|\.)blog\.khanacademy\.org(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)aka\.ms(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  // Pearson / Credly / Accredible / Sertifier corporate
+  /(^|\.)pearson\.com(\/|$)/i,
+  /(^|\.)credly\.com(\/|$)/i,
+  /(^|\.)info\.credly\.com(\/|$)/i,
+  /(^|\.)accredible\.com(\/|$)/i,
+  /(^|\.)sertifier\.org(\/|$)/i,
+  /(^|\.)sertifier\.com(\/|$)/i,
+  /(^|\.)stateofcredentialing\.com(\/|$)/i,
+  // Workforce-development nonprofits + education orgs
+  /(^|\.)perscholas\.org(\/|$)/i,
+  /(^|\.)yearup\.org(\/|$)/i,
+  // Bootcamp incumbents and PE acquirers
+  /(^|\.)adeccogroup\.com(\/|$)/i,
+  /(^|\.)carrickcapitalpartners\.com(\/|$)/i,
+  /(^|\.)stridelearning\.com(\/|$)/i,
+  /(^|\.)investors\.stridelearning\.com(\/|$)/i,
+  /(^|\.)k12\.com(\/|$)/i,
+  /(^|\.)bloomtech\.com(\/|$)/i,
+  /(^|\.)flatironschool\.com(\/|$)/i,
+  /(^|\.)generalassemb\.ly(\/|$)/i,
+  /(^|\.)springboard\.com(\/|$)/i,
+  /(^|\.)hackreactor\.com(\/|$)/i,
+  /(^|\.)galvanize\.com(\/|$)/i,
+  /(^|\.)thinkful\.com(\/|$)/i,
+  /(^|\.)codecademy\.com(\/|$)/i,
+  // Press-release distribution (when used by listed companies for primary disclosures)
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+  // Test-prep and credentialing primary issuers
+  /(^|\.)collegeboard\.org(\/|$)/i,
+  /(^|\.)ets\.org(\/|$)/i,
+  /(^|\.)lsac\.org(\/|$)/i,
+  /(^|\.)aamc\.org(\/|$)/i,
+  /(^|\.)nbme\.org(\/|$)/i,
+  /(^|\.)usmle\.org(\/|$)/i,
+  /(^|\.)aicpa\.org(\/|$)/i,
+  /(^|\.)nasba\.org(\/|$)/i,
+  /(^|\.)cfainstitute\.org(\/|$)/i,
+  /(^|\.)ncsbn\.org(\/|$)/i,
+  /(^|\.)1edtech\.org(\/|$)/i,
+  // DEAC and accreditors
+  /(^|\.)deac\.org(\/|$)/i,
+  /(^|\.)wscuc\.org(\/|$)/i,
+];
+
+const BOOTCAMP_CREDENTIALING_SECONDARY_PATTERNS: RegExp[] = [
+  // Bootcamp / EdTech trade press
+  /(^|\.)coursereport\.com(\/|$)/i,
+  /(^|\.)talentinc\.com(\/|$)/i,
+  /(^|\.)edsurge\.com(\/|$)/i,
+  /(^|\.)edscoop\.com(\/|$)/i,
+  /(^|\.)highereddive\.com(\/|$)/i,
+  /(^|\.)educationdive\.com(\/|$)/i,
+  /(^|\.)chalkbeat\.org(\/|$)/i,
+  /(^|\.)the74million\.org(\/|$)/i,
+  /(^|\.)insidehighered\.com(\/|$)/i,
+  /(^|\.)chronicle\.com(\/|$)/i,
+  /(^|\.)edweek\.org(\/|$)/i,
+  /(^|\.)k12dive\.com(\/|$)/i,
+  // Tier-1 and Tier-2 generalist business / tech press
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)bloomberg\.com(\/|$)/i,
+  /(^|\.)news\.bloomberglaw\.com(\/|$)/i,
+  /(^|\.)bloomberglaw\.com(\/|$)/i,
+  /(^|\.)theverge\.com(\/|$)/i,
+  /(^|\.)reuters\.com(\/|$)/i,
+  /(^|\.)forbes\.com(\/|$)/i,
+  /(^|\.)wsj\.com(\/|$)/i,
+  /(^|\.)nytimes\.com(\/|$)/i,
+  /(^|\.)washingtonpost\.com(\/|$)/i,
+  /(^|\.)cbsnews\.com(\/|$)/i,
+  /(^|\.)axios\.com(\/|$)/i,
+  /(^|\.)sfgate\.com(\/|$)/i,
+  /(^|\.)aol\.com(\/|$)/i,
+  /(^|\.)cnbc\.com(\/|$)/i,
+  /(^|\.)marketwatch\.com(\/|$)/i,
+  // Legal trade press for ISA / TILA / CFPB analysis
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)consumerfinancemonitor\.com(\/|$)/i,
+  /(^|\.)bankersonline\.com(\/|$)/i,
+  /(^|\.)law360\.com(\/|$)/i,
+  /(^|\.)americanbanker\.com(\/|$)/i,
+  // Test-prep / coding-bootcamp / EdTech analyst houses
+  /(^|\.)360iresearch\.com(\/|$)/i,
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)researchandmarkets\.com(\/|$)/i,
+  /(^|\.)verifiedmarketresearch\.com(\/|$)/i,
+  /(^|\.)futuremarketreport\.com(\/|$)/i,
+  /(^|\.)htfmarketinsights\.com(\/|$)/i,
+  /(^|\.)technavio\.com(\/|$)/i,
+  /(^|\.)credenceresearch\.com(\/|$)/i,
+  /(^|\.)6wresearch\.com(\/|$)/i,
+  /(^|\.)industryresearch\.biz(\/|$)/i,
+  /(^|\.)marketresearch\.com(\/|$)/i,
+  /(^|\.)zipdo\.co(\/|$)/i,
+  /(^|\.)reqodata\.com(\/|$)/i,
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)precedenceresearch\.com(\/|$)/i,
+  /(^|\.)alliedmarketresearch\.com(\/|$)/i,
+  /(^|\.)marketsandmarkets\.com(\/|$)/i,
+  /(^|\.)cbinsights\.com(\/|$)/i,
+  /(^|\.)pitchbook\.com(\/|$)/i,
+  /(^|\.)crunchbase\.com(\/|$)/i,
+  /(^|\.)similarweb\.com(\/|$)/i,
+  /(^|\.)statista\.com(\/|$)/i,
+  /(^|\.)ibisworld\.com(\/|$)/i,
+  // Investing / financial-news (used as secondary citations)
+  /(^|\.)investing\.com(\/|$)/i,
+  /(^|\.)benzinga\.com(\/|$)/i,
+  /(^|\.)financierworldwide\.com(\/|$)/i,
+  // Education / philanthropy trade
+  /(^|\.)gatesfoundation\.org(\/|$)/i,
+  /(^|\.)koch\.foundation(\/|$)/i,
+  /(^|\.)apollooppfdn\.org(\/|$)/i,
+  /(^|\.)leonlevinefoundation\.org(\/|$)/i,
+  /(^|\.)blackrockfoundation\.org(\/|$)/i,
+  /(^|\.)common-sense\.org(\/|$)/i,
+  /(^|\.)commonsense\.org(\/|$)/i,
+  /(^|\.)commonsensemedia\.org(\/|$)/i,
+];
+
 const MARKETPLACE_SELLER_OPS_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate
   /(^|\.)amazon\.com(\/|$)/i,
@@ -1292,6 +1457,9 @@ export function classifyTier(
   for (const re of DENTAL_OPS_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `dental-ops primary: ${domain}` };
   }
+  for (const re of BOOTCAMP_CREDENTIALING_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `bootcamp-credentialing primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1311,6 +1479,9 @@ export function classifyTier(
   }
   for (const re of DENTAL_OPS_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `dental-ops secondary: ${domain}` };
+  }
+  for (const re of BOOTCAMP_CREDENTIALING_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `bootcamp-credentialing secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
