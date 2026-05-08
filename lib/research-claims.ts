@@ -1732,6 +1732,34 @@ const TRUMP_EO_401K_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)sbs\.ox\.ac\.uk(\/|$)/i,
 ];
 
+const VERTICAL_PRICING_PRIMARY_PATTERNS: RegExp[] = [
+  // Vertical pricing benchmark + analyst sites (primary on own datasets)
+  /(^|\.)vertice\.one(\/|$)/i,
+  /(^|\.)getpulsesignal\.com(\/|$)/i,
+  /(^|\.)knowledgelib\.io(\/|$)/i,
+  /(^|\.)costbench\.com(\/|$)/i,
+  /(^|\.)getmonetizely\.com(\/|$)/i,
+  /(^|\.)openviewpartners\.com(\/|$)/i,
+  // AI agent + vertical SaaS corporate pricing pages
+  /(^|\.)azeon\.ai(\/|$)/i,
+  /(^|\.)buena\.ai(\/|$)/i,
+  /(^|\.)lyzr\.ai(\/|$)/i,
+  /(^|\.)matrixlabx\.com(\/|$)/i,
+  /(^|\.)incamera\.ai(\/|$)/i,
+  /(^|\.)vairetail\.com(\/|$)/i,
+  /(^|\.)montr\.io(\/|$)/i,
+  /(^|\.)noraai\.app(\/|$)/i,
+  /(^|\.)voraiq\.com(\/|$)/i,
+  /(^|\.)withserena\.ai(\/|$)/i,
+  /(^|\.)nomi\.so(\/|$)/i,
+  /(^|\.)swa-ai\.com(\/|$)/i,
+  /(^|\.)v7labs\.com(\/|$)/i,
+  /(^|\.)oliveai\.com(\/|$)/i,
+  /(^|\.)legalmation\.com(\/|$)/i,
+  /(^|\.)procore\.com(\/|$)/i,
+  /(^|\.)stripe\.com(\/|$)/i,
+];
+
 const SOLO_OPERATOR_PRIMARY_PATTERNS: RegExp[] = [
   // Agent platform corporate sites
   /(^|\.)cursor\.so(\/|$)/i,
@@ -3144,6 +3172,9 @@ export function classifyTier(
   }
   for (const re of SOLO_OPERATOR_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:solo-operator-primary" };
+  }
+  for (const re of VERTICAL_PRICING_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:vertical-pricing-primary" };
   }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
