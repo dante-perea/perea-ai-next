@@ -1889,6 +1889,38 @@ const PROCUREMENT_PILOT_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)raindrop\.com(\/|$)/i,
 ];
 
+const GUI_GROUNDING_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)arxiv\.org(\/|$)/i,
+  /(^|\.)aclanthology\.org(\/|$)/i,
+  /(^|\.)openreview\.net(\/|$)/i,
+  /(^|\.)github\.com\/inclusionai(\/|$)/i,
+  /(^|\.)github\.com\/osu-nlp-group(\/|$)/i,
+  /(^|\.)github\.com\/os-copilot(\/|$)/i,
+  /(^|\.)github\.com\/zai-org(\/|$)/i,
+  /(^|\.)github\.com\/samsungsds-research-papers(\/|$)/i,
+  /(^|\.)github\.com\/ariaui(\/|$)/i,
+  /(^|\.)github\.com\/xlang-ai(\/|$)/i,
+  /(^|\.)ui-venus\.github\.io(\/|$)/i,
+  /(^|\.)ariaui\.github\.io(\/|$)/i,
+  /(^|\.)osatlas\.github\.io(\/|$)/i,
+  /(^|\.)osworld-grounding\.github\.io(\/|$)/i,
+  /(^|\.)gui-agent\.github\.io(\/|$)/i,
+  /(^|\.)huggingface\.co(\/|$)/i,
+  /(^|\.)ui\.adsabs\.harvard\.edu(\/|$)/i,
+];
+
+const GUI_GROUNDING_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)opencodepapers-b7572d\.gitlab\.io(\/|$)/i,
+  /(^|\.)papers-with-code\.com(\/|$)/i,
+  /(^|\.)paperswithcode\.com(\/|$)/i,
+  /(^|\.)the-decoder\.com(\/|$)/i,
+  /(^|\.)synced\.com(\/|$)/i,
+  /(^|\.)marktechpost\.com(\/|$)/i,
+  /(^|\.)medium\.com(\/|$)/i,
+  /(^|\.)alphaxiv\.org(\/|$)/i,
+  /(^|\.)labs\.adept\.ai(\/|$)/i,
+];
+
 const SUBSCRIPTION_PARADOX_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)stripe\.com(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
@@ -3558,6 +3590,9 @@ export function classifyTier(
   for (const re of PROCUREMENT_PILOT_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:procurement-pilot-primary" };
   }
+  for (const re of GUI_GROUNDING_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:gui-grounding-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -3652,6 +3687,9 @@ export function classifyTier(
   }
   for (const re of PROCUREMENT_PILOT_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:procurement-pilot-secondary" };
+  }
+  for (const re of GUI_GROUNDING_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:gui-grounding-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
