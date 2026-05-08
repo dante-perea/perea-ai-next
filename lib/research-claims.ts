@@ -591,6 +591,132 @@ const CASTELLANOS_CLASSIFICATION_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.sandiegouniontribune\.com(\/|$)/i,
 ];
 
+const DENTAL_OPS_PRIMARY_PATTERNS: RegExp[] = [
+  // Federal government - health, courts, Congress, CBO
+  /(^|\.)congress\.gov(\/|$)/i,
+  /(^|\.)cbo\.gov(\/|$)/i,
+  /(^|\.)accessdata\.fda\.gov(\/|$)/i,
+  /(^|\.)510k\.innolitics\.com(\/|$)/i,
+  // ADA + dental trade associations + state associations (primary trade)
+  /(^|\.)ada\.org(\/|$)/i,
+  /(^|\.)adanews\.ada\.org(\/|$)/i,
+  /(^|\.)nadp\.org(\/|$)/i,
+  /(^|\.)nysdental\.org(\/|$)/i,
+  // State legislatures
+  /(^|\.)leg\.colorado\.gov(\/|$)/i,
+  // Dental vendor corporate sites - PMS / EHR
+  /(^|\.)pearl\.com(\/|$)/i,
+  /(^|\.)hellopearl\.com(\/|$)/i,
+  /(^|\.)overjet\.com(\/|$)/i,
+  /(^|\.)videahealth\.com(\/|$)/i,
+  /(^|\.)videa\.ai(\/|$)/i,
+  /(^|\.)nexhealth\.com(\/|$)/i,
+  /(^|\.)blog\.nexhealth\.com(\/|$)/i,
+  /(^|\.)planetdds\.com(\/|$)/i,
+  /(^|\.)pacificdentalservices\.com(\/|$)/i,
+  /(^|\.)pdshealth\.com(\/|$)/i,
+  /(^|\.)heartland\.com(\/|$)/i,
+  /(^|\.)blog\.heartland\.com(\/|$)/i,
+  /(^|\.)aspendental\.mediaroom\.com(\/|$)/i,
+  /(^|\.)smiledoctorspartners\.com(\/|$)/i,
+  /(^|\.)investor\.henryschein\.com(\/|$)/i,
+  /(^|\.)investors\.dentalcorp\.ca(\/|$)/i,
+  /(^|\.)dentalpracticetransitions\.henryschein\.com(\/|$)/i,
+  /(^|\.)patterson\.eaglesoft\.net(\/|$)/i,
+  /(^|\.)carestreamdental\.com(\/|$)/i,
+  /(^|\.)vynedental\.com(\/|$)/i,
+  /(^|\.)sunbit\.com(\/|$)/i,
+  /(^|\.)carecredit\.com(\/|$)/i,
+  /(^|\.)deltadentalks\.com(\/|$)/i,
+  /(^|\.)withcherry\.com(\/|$)/i,
+  // Court records and legal primary
+  /(^|\.)healthcarelawmatters\.foxrothschild\.com(\/|$)/i,
+  // Press release wires (primary corporate communications)
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  // Think tanks / advocacy primary
+  /(^|\.)economicliberties\.us(\/|$)/i,
+];
+
+const DENTAL_OPS_SECONDARY_PATTERNS: RegExp[] = [
+  // Dental trade press
+  /(^|\.)beckersdental\.com(\/|$)/i,
+  /(^|\.)dentistrytoday\.com(\/|$)/i,
+  /(^|\.)themolarreport\.com(\/|$)/i,
+  /(^|\.)practicesignal\.com(\/|$)/i,
+  /(^|\.)dentistdecoded\.com(\/|$)/i,
+  /(^|\.)dentalstack\.io(\/|$)/i,
+  /(^|\.)daydream\.dental(\/|$)/i,
+  /(^|\.)firststopdental\.com(\/|$)/i,
+  /(^|\.)checklistguro\.com(\/|$)/i,
+  /(^|\.)drbicuspid\.com(\/|$)/i,
+  /(^|\.)portosalute\.com(\/|$)/i,
+  /(^|\.)homecaremag\.com(\/|$)/i,
+  // Healthcare M&A and PE trade
+  /(^|\.)healthcare\.levinassociates\.com(\/|$)/i,
+  /(^|\.)mergr\.com(\/|$)/i,
+  /(^|\.)pestakeholder\.org(\/|$)/i,
+  /(^|\.)pitchbook\.com(\/|$)/i,
+  /(^|\.)cbinsights\.com(\/|$)/i,
+  /(^|\.)parsers\.vc(\/|$)/i,
+  /(^|\.)getlatka\.com(\/|$)/i,
+  /(^|\.)mergerlinks\.com(\/|$)/i,
+  /(^|\.)app\.mergerlinks\.com(\/|$)/i,
+  /(^|\.)bizbuysell\.com(\/|$)/i,
+  /(^|\.)sovdoc\.com(\/|$)/i,
+  /(^|\.)focusbankers\.com(\/|$)/i,
+  // Tech/healthcare press
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)siliconangle\.com(\/|$)/i,
+  /(^|\.)fiercebiotech\.com(\/|$)/i,
+  /(^|\.)fierce-biotech\.com(\/|$)/i,
+  /(^|\.)hitconsultant\.net(\/|$)/i,
+  /(^|\.)medcitynews\.com(\/|$)/i,
+  /(^|\.)finsmes\.com(\/|$)/i,
+  /(^|\.)digitalhealthwire\.com(\/|$)/i,
+  // Dental analyst firms
+  /(^|\.)mordorintelligence\.com(\/|$)/i,
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)giiresearch\.com(\/|$)/i,
+  /(^|\.)towardshealthcare\.com(\/|$)/i,
+  /(^|\.)cervicornconsulting\.com(\/|$)/i,
+  /(^|\.)marketsandmarkets\.com(\/|$)/i,
+  /(^|\.)precedenceresearch\.com(\/|$)/i,
+  // Health policy and law trade
+  /(^|\.)kffhealthnews\.org(\/|$)/i,
+  /(^|\.)kff\.org(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)leechtishman\.com(\/|$)/i,
+  /(^|\.)lilesparker\.com(\/|$)/i,
+  /(^|\.)hklaw\.com(\/|$)/i,
+  /(^|\.)goodwinlaw\.com(\/|$)/i,
+  /(^|\.)sidley\.com(\/|$)/i,
+  /(^|\.)ama-assn\.org(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)ffis\.org(\/|$)/i,
+  /(^|\.)stateline\.org(\/|$)/i,
+  // Funding tracking, professional intelligence
+  /(^|\.)moneygeek\.com(\/|$)/i,
+  /(^|\.)comparemedicareadvantageplans\.org(\/|$)/i,
+  /(^|\.)mercercapital\.com(\/|$)/i,
+  /(^|\.)beneschlaw\.com(\/|$)/i,
+  /(^|\.)healthaffairs\.org(\/|$)/i,
+  /(^|\.)carequest\.org(\/|$)/i,
+  /(^|\.)nmdha\.org(\/|$)/i,
+  /(^|\.)adha\.org(\/|$)/i,
+  /(^|\.)nevada\.public\.law(\/|$)/i,
+  /(^|\.)law\.justia\.com(\/|$)/i,
+  /(^|\.)revisor\.mn\.gov(\/|$)/i,
+  // Corporate-tracking publishers + SaaS comparisons
+  /(^|\.)trends\.builtwith\.com(\/|$)/i,
+  /(^|\.)data\.landbase\.com(\/|$)/i,
+  /(^|\.)sourceforge\.net(\/|$)/i,
+  /(^|\.)leadiq\.com(\/|$)/i,
+  /(^|\.)technologyevaluation\.com(\/|$)/i,
+  /(^|\.)extruct\.ai(\/|$)/i,
+  /(^|\.)no\.linkedin\.com(\/|$)/i,
+];
+
 const SENIOR_CARE_PRIMARY_PATTERNS: RegExp[] = [
   // Federal government — health, aging, labor, courts, statutes
   /(^|\.)acl\.gov(\/|$)/i,
@@ -1163,6 +1289,9 @@ export function classifyTier(
   for (const re of SENIOR_CARE_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `senior-care primary: ${domain}` };
   }
+  for (const re of DENTAL_OPS_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: `dental-ops primary: ${domain}` };
+  }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
       return { tier: "primary", reason: `primary path fragment: ${fragment}` };
@@ -1179,6 +1308,9 @@ export function classifyTier(
   }
   for (const re of SENIOR_CARE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `senior-care secondary: ${domain}` };
+  }
+  for (const re of DENTAL_OPS_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: `dental-ops secondary: ${domain}` };
   }
   for (const re of SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `secondary domain: ${domain}` };
