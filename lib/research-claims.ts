@@ -1636,6 +1636,38 @@ const KNOWLEDGE_DISTILLATION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)distillabs\.ai(\/|$)/i,
 ];
 
+const MBC_VENDOR_PRIMARY_PATTERNS: RegExp[] = [
+  // MBC vendor corporate sites
+  /(^|\.)neuroflow\.com(\/|$)/i,
+  /(^|\.)owl\.health(\/|$)/i,
+  /(^|\.)owlinsights\.com(\/|$)/i,
+  /(^|\.)greenspacehealth\.com(\/|$)/i,
+  /(^|\.)bridgecalm\.com(\/|$)/i,
+  /(^|\.)mindyra\.com(\/|$)/i,
+  /(^|\.)hiboop\.com(\/|$)/i,
+  /(^|\.)tynet\.io(\/|$)/i,
+  // Peer-reviewed publishers (academic primary)
+  /(^|\.)frontiersin\.org(\/|$)/i,
+  /(^|\.)public-pages-files-2025\.frontiersin\.org(\/|$)/i,
+  /(^|\.)springer\.com(\/|$)/i,
+  /(^|\.)link\.springer\.com(\/|$)/i,
+  /(^|\.)biomedcentral\.com(\/|$)/i,
+  /(^|\.)bmcpsychiatry\.biomedcentral\.com(\/|$)/i,
+  // PHQ-9/GAD-7 instrument distribution
+  /(^|\.)phqscreeners\.com(\/|$)/i,
+];
+
+const MBC_VENDOR_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)mha\.org(\/|$)/i,
+  /(^|\.)lac\.org(\/|$)/i,
+  /(^|\.)chroniccareiq\.com(\/|$)/i,
+  /(^|\.)cmhisupport\.org(\/|$)/i,
+  /(^|\.)memorialcareinnovationfund\.com(\/|$)/i,
+  /(^|\.)vator\.tv(\/|$)/i,
+  /(^|\.)privsource\.com(\/|$)/i,
+  /(^|\.)priorityhealth\.stylelabs\.cloud(\/|$)/i,
+];
+
 const KNOWLEDGE_DISTILLATION_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)tianpan\.co(\/|$)/i,
   /(^|\.)deepseekai\.guide(\/|$)/i,
@@ -2825,6 +2857,9 @@ export function classifyTier(
   for (const re of EDGE_AI_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:edge-ai-primary" };
   }
+  for (const re of MBC_VENDOR_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:mbc-vendor-primary" };
+  }
   for (const re of PART2_HEALTH_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:part2-health-primary" };
   }
@@ -2868,6 +2903,9 @@ export function classifyTier(
   }
   for (const re of EDGE_AI_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:edge-ai-secondary" };
+  }
+  for (const re of MBC_VENDOR_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:mbc-vendor-secondary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
