@@ -82,6 +82,21 @@ The protocol stack is converging fast. The brands that ship the full layered arc
 
 ---
 
+
+## Quotable Findings
+
+1. Stripe and Tempo launched the Machine Payments Protocol on March 18, 2026 alongside Tempo's mainnet, backed by a $500 million Series A at a $5 billion valuation[^11][^12][^13].
+
+2. Hashmeta's panel of 47 e-commerce businesses found ChatGPT Instant Checkout converting at 43.7% versus 2.3% on traditional e-commerce — a 19× lift[^23].
+
+3. Circle Nanopayments launched on testnet March 3, 2026 enabling gas-free USDC transfers as small as $0.000001 via offchain aggregation and batched onchain settlement[^26][^27][^28].
+
+4. Bloomberg's March 7, 2026 exposé documented the gap between investment and adoption: ~$50M total agentic commerce volume against stablecoins' $46T annual transaction volume; ~40,000 agents transacting; x402 ~$24M over 30 days against $6.88T global e-commerce[^29].
+
+5. Stablecoin circulation reached $312B by Q4 2025 (Circle USDC at $75.3B, +72% YoY). On-chain transaction volume reached $11.9T (+247%). 99% of AI agent payments at Circle's measurement layer use USDC[^71][^72].
+
+6. By December 2025, only 17 EMT issuers had been authorized across the EU; 45% of stablecoin applications had been rejected[^78].
+
 # Part I — Why a Stack, Not a Standard
 
 ## 1.1 The interoperability myth

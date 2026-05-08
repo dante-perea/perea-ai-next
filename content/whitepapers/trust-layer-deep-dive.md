@@ -13,6 +13,19 @@ description: "An authority survey of the cryptographic and authorization stack u
 profile: "failure-mode"
 ---
 
+
+## Quotable Findings
+
+1. AP2 was launched in September 2025 alongside payments and technology partners as an open protocol for initiating and transacting agent-led payments.[^24]
+
+2. As of mid-2026, that stack has crystallized around three primitives: SD-JWT+KB as defined in IETF RFC 9901,[^1] AP2's Mandate model as published by Google's `google-agentic-commerce/AP2`,[^2] and the PEP/PDP authorization split popularized by Microsoft, Cordum, and the OPA community.[^3][^4]
+
+3. AP2 inherits its credential format from RFC 9901, "Selective Disclosure for JSON Web Tokens," published November 2025.[^1]
+
+4. The IETF working group repository (`oauth-wg/oauth-selective-disclosure-jwt`) ships reference implementations in Python, Kotlin (two), Swift (two), Rust (two), TypeScript (six), Java, Go (two), and Haskell, with EU Digital Identity Wallet libraries in the Kotlin and Swift sets.[^12]
+
+5. GitHub issue #180 (March 17, 2026) on the AP2 repository proposes restricting IntentMandate visibility to the User ↔ Shopping Agent boundary, partly to bound the blast radius if a Shopping Agent is later found to have been compromised.[^21]
+
 ## 1. The category, in one sentence
 
 When an autonomous agent buys something, four parties — user, agent, merchant, payment processor — must each be able to prove what they authorized, against whom, and within what scope. The Trust Layer is the cryptographic stack that makes those proofs verifiable without any of them needing to trust the others.

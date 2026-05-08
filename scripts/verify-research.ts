@@ -24,6 +24,7 @@ import {
   extractClaims,
   runVerifyGate,
   checkUrlLiveness,
+  stripQuotableFindingsSection,
   PROFILE_QUOTAS,
   type PaperProfile,
 } from "../lib/research-claims";
@@ -82,11 +83,14 @@ async function verifyOne(slug: string): Promise<Outcome> {
   const profile: PaperProfile =
     declaredProfile in PROFILE_QUOTAS ? (declaredProfile as PaperProfile) : "authority-survey";
 
-  // Body word count (excluding refs section)
-  const bodyText =
+  // Body word count (excluding refs section AND Quotable Findings, which is
+  // syndicated metadata composed of literal substrings already counted in
+  // the body — counting it again would double-count toward the word ceiling).
+  const preRefs =
     sectionStart >= 0
       ? content.split("\n").slice(0, sectionStart).join("\n")
       : content;
+  const bodyText = stripQuotableFindingsSection(preRefs);
   const bodyWordCount = bodyText.split(/\s+/).filter(Boolean).length;
 
   const gate = runVerifyGate(refs, claims, profile, bodyWordCount, content, sectionStart);

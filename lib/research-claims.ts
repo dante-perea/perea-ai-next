@@ -4470,8 +4470,9 @@ function scanInlineCitation(ctx: string): {
 
 export function extractClaims(body: string, refsSectionStart: number): ClaimSpan[] {
   const lines = body.split("\n");
-  const bodyOnly =
+  const preRefs =
     refsSectionStart >= 0 ? lines.slice(0, refsSectionStart).join("\n") : body;
+  const bodyOnly = stripQuotableFindingsSection(preRefs);
   const claims: ClaimSpan[] = [];
   const seen = new Set<string>();
   for (const { type, pattern } of CLAIM_PATTERNS) {
@@ -4734,6 +4735,36 @@ export function detectSaltShaker(body: string, refsSectionStart: number): string
     i = j + 1;
   }
   return offenders;
+}
+
+/**
+ * Removes the `## … Quotable Findings` section content from the body string,
+ * leaving only the section heading. Used by claim extraction and body word
+ * counting so the inserted Quotable section (literal substrings of the body)
+ * isn't double-counted as new claims or pushed against the word ceiling.
+ */
+export function stripQuotableFindingsSection(body: string): string {
+  const lines = body.split("\n");
+  const out: string[] = [];
+  let inQuotable = false;
+  for (const line of lines) {
+    // End the Quotable section on any new H1 or H2 heading.
+    const isH1 = /^#\s+\S/.test(line);
+    const isH2 = /^##\s+\S/.test(line) && !line.startsWith("###");
+    if (isH1 || isH2) {
+      const heading = line.replace(/^#+\s+/, "").trim();
+      const isQuotable = /(^|\d+\.\s+)Quotable( Findings)?\b/i.test(heading);
+      if (isQuotable) {
+        inQuotable = true;
+        out.push(line);
+        continue;
+      }
+      inQuotable = false;
+    }
+    if (inQuotable) continue;
+    out.push(line);
+  }
+  return out.join("\n");
 }
 
 /**

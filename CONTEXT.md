@@ -22,6 +22,12 @@ Per-paper measurement of AI-citation-magnetism drivers, run before/after any con
 ### Tie-break rule
 When editorial-defensible and citation-magnetism point in the same direction (both want primary sources, both want clean structure, etc.), **citation magnetism is the primary axis** — pick the lever that moves citation magnetism more, even if editorial gain is smaller.
 
+### Quotable fact (strict)
+A standalone sentence extracted from a paper's body that earns inclusion in the `## Quotable Findings` section. Must satisfy: (1) contains a quantifiable claim — number, %, currency, ×, named regulation/protocol/company; (2) cites a source via `[^N]` marker; (3) reads as a complete sentence with no forward-pointing prose ("below" / "see Section X" / "as we'll see"); (4) 15–40 words; (5) makes a claim about the world (not internal paper structure). Extraction is LLM-judged (Claude Sonnet 4.6) within these criteria, not regex-only — semantic judgment of "quotable hook" beats pattern matching.
+
+### Faithfulness gate (Quotable extraction)
+The LLM extractor (Claude Sonnet 4.6) must return findings as `{quote: "…", source_refs: […], h2_section: "…", reason: "…"}` where `quote` is a **literal substring** of the paper body. Validation uses **normalized equality**: smart quotes → straight quotes, runs of whitespace collapsed to a single space, then compared. Any finding whose normalized quote isn't found in the normalized body is rejected. The model selects, never generates.
+
 ### Reddit and Wikipedia tier reclassification
 The classifier in `lib/research-claims.ts` treats Wikipedia as **primary** (per `(^|\.)wikipedia\.org(\/|$)` already in `PRIMARY_PATTERNS`). Reddit is reclassified as **secondary** (will be added). The reclassification reflects the empirical citation-economy reality (per `geo-2026.md`: Reddit is the #1 source on every major AI engine at ~40% citation share; Wikipedia accounts for 26-48% of ChatGPT's top-10 citation share), not the traditional source-authority hierarchy.
 
