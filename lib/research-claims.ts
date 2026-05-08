@@ -1979,6 +1979,38 @@ const HYPERSCALER_RUNTIME_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)agentsindex\.ai(\/|$)/i,
 ];
 
+const PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)stridehealth\.com(\/|$)/i,
+  /(^|\.)patreon\.stridehealth\.com(\/|$)/i,
+  /(^|\.)aon\.stridehealth\.com(\/|$)/i,
+  /(^|\.)blog\.stridehealth\.com(\/|$)/i,
+  /(^|\.)catch\.co(\/|$)/i,
+  /(^|\.)hbgsolo\.com(\/|$)/i,
+  /(^|\.)vaultmedicalplan\.com(\/|$)/i,
+  /(^|\.)opolis\.co(\/|$)/i,
+  /(^|\.)about\.doordash\.com(\/|$)/i,
+  /(^|\.)wesfarmers\.com\.au(\/|$)/i,
+  /(^|\.)www3\.wesfarmers\.com\.au(\/|$)/i,
+  /(^|\.)freelancersunion\.org(\/|$)/i,
+  /(^|\.)blog\.freelancersunion\.org(\/|$)/i,
+  /(^|\.)healthcare\.gov(\/|$)/i,
+  /(^|\.)help\.senate\.gov(\/|$)/i,
+  /(^|\.)ncsl\.org(\/|$)/i,
+  /(^|\.)aspeninstitute\.org(\/|$)/i,
+  /(^|\.)cassidy\.senate\.gov(\/|$)/i,
+  /(^|\.)congress\.gov(\/|$)/i,
+  /(^|\.)le\.utah\.gov(\/|$)/i,
+  /(^|\.)capitol\.tn\.gov(\/|$)/i,
+  /(^|\.)docs\.legis\.wisconsin\.gov(\/|$)/i,
+  /(^|\.)lao\.ca\.gov(\/|$)/i,
+  /(^|\.)federalregister\.gov(\/|$)/i,
+  /(^|\.)bls\.gov(\/|$)/i,
+  /(^|\.)nber\.org(\/|$)/i,
+  /(^|\.)ncdoi\.gov(\/|$)/i,
+  /(^|\.)kff\.org(\/|$)/i,
+  /(^|\.)cigna\.com(\/|$)/i,
+];
+
 const SCITT_SIGNING_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)thenewstack\.io(\/|$)/i,
   /(^|\.)infoq\.com(\/|$)/i,
@@ -3825,6 +3857,9 @@ export function classifyTier(
   }
   for (const re of SCITT_SIGNING_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:scitt-signing-secondary" };
+  }
+  for (const re of PORTABLE_BENEFITS_PLATFORM_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:portable-benefits-platform-primary" };
   }
   for (const re of PART2_HEALTH_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:part2-health-secondary" };
