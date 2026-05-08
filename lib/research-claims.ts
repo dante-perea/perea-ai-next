@@ -1370,6 +1370,97 @@ const VIBECODING_PRACTITIONER_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bensbites\.com(\/|$)/i,
 ];
 
+const CAPABILITY_AGENT_SECURITY_PRIMARY_PATTERNS: RegExp[] = [
+  // Academic publishers + canonical OCap source authors
+  /(^|\.)cacm\.acm\.org(\/|$)/i,
+  /(^|\.)queue\.acm\.org(\/|$)/i,
+  /(^|\.)dl\.acm\.org(\/|$)/i,
+  /(^|\.)arxiv\.org(\/|$)/i,
+  /(^|\.)erights\.org(\/|$)/i,
+  /(^|\.)files\.spritely\.institute(\/|$)/i,
+  /(^|\.)spritely\.institute(\/|$)/i,
+  // Capability-runtime + AI-agent-security vendor primary
+  /(^|\.)zylos\.ai(\/|$)/i,
+  /(^|\.)ailang\.sunholo\.com(\/|$)/i,
+  /(^|\.)sunholo\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)deepmind\.google(\/|$)/i,
+  /(^|\.)research\.google(\/|$)/i,
+  /(^|\.)research\.microsoft\.com(\/|$)/i,
+  // Standards bodies + protocol primary
+  /(^|\.)modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)owasp\.org(\/|$)/i,
+  /(^|\.)w3c\.github\.io(\/|$)/i,
+  // Formal-verification + secure-OS academic
+  /(^|\.)trustworthy\.systems(\/|$)/i,
+  /(^|\.)pdos\.csail\.mit\.edu(\/|$)/i,
+  /(^|\.)cseweb\.ucsd\.edu(\/|$)/i,
+  /(^|\.)cl\.cam\.ac\.uk(\/|$)/i,
+  /(^|\.)wiki\.freebsd\.org(\/|$)/i,
+  // Cloud + AWS prescriptive guidance + Deno docs
+  /(^|\.)docs\.aws\.amazon\.com(\/|$)/i,
+  /(^|\.)docs\.deno\.com(\/|$)/i,
+  /(^|\.)deno\.land(\/|$)/i,
+  /(^|\.)deno\.com(\/|$)/i,
+  /(^|\.)wasi\.dev(\/|$)/i,
+  /(^|\.)bytecodealliance\.org(\/|$)/i,
+];
+
+const CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS: RegExp[] = [
+  // Bibliographic indexes + author bibliography pages (demoted from primary)
+  /(^|\.)researchr\.org(\/|$)/i,
+  /(^|\.)ui\.adsabs\.harvard\.edu(\/|$)/i,
+  /(^|\.)papers\.agoric\.com(\/|$)/i,
+  /(^|\.)agoric\.com(\/|$)/i,
+  // Package registries + project history pages (verified releases / version history)
+  /(^|\.)crates\.io(\/|$)/i,
+  /(^|\.)docs\.rs(\/|$)/i,
+  /(^|\.)pypi\.org(\/|$)/i,
+  /(^|\.)npmjs\.com(\/|$)/i,
+  /(^|\.)sel4\.systems(\/|$)/i,
+  /(^|\.)sigops\.org(\/|$)/i,
+  /(^|\.)usenix\.org(\/|$)/i,
+  /(^|\.)modelcontextprotocol\.info(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)developer\.microsoft\.com(\/|$)/i,
+  // AI-security analyst + practitioner blogs
+  /(^|\.)replyant\.com(\/|$)/i,
+  /(^|\.)winbuzzer\.com(\/|$)/i,
+  /(^|\.)wraith\.sh(\/|$)/i,
+  /(^|\.)securityelites\.com(\/|$)/i,
+  /(^|\.)blog\.alexewerlof\.com(\/|$)/i,
+  /(^|\.)alexewerlof\.com(\/|$)/i,
+  /(^|\.)appropri8\.com(\/|$)/i,
+  /(^|\.)safeguard\.sh(\/|$)/i,
+  /(^|\.)permit\.io(\/|$)/i,
+  /(^|\.)agent\.security(\/|$)/i,
+  /(^|\.)reflect\.run(\/|$)/i,
+  /(^|\.)chikuwa\.it(\/|$)/i,
+  // Capability + security history blogs
+  /(^|\.)spritely\.community(\/|$)/i,
+  /(^|\.)foresight\.org(\/|$)/i,
+  /(^|\.)norhardy\.com(\/|$)/i,
+  // Secure-OS + research lab analyst commentary
+  /(^|\.)cprover\.org(\/|$)/i,
+  /(^|\.)dafny\.org(\/|$)/i,
+  /(^|\.)leanprover\.github\.io(\/|$)/i,
+  /(^|\.)verus-lang\.org(\/|$)/i,
+  /(^|\.)hax-rs\.github\.io(\/|$)/i,
+  /(^|\.)kani-verifier\.org(\/|$)/i,
+  // Cybersecurity trade press
+  /(^|\.)darkreading\.com(\/|$)/i,
+  /(^|\.)threatpost\.com(\/|$)/i,
+  /(^|\.)scmagazine\.com(\/|$)/i,
+  /(^|\.)bleepingcomputer\.com(\/|$)/i,
+  /(^|\.)krebsonsecurity\.com(\/|$)/i,
+  /(^|\.)thehackernews\.com(\/|$)/i,
+  /(^|\.)scopely\.com(\/|$)/i,
+  /(^|\.)troyhunt\.com(\/|$)/i,
+  /(^|\.)portswigger\.net(\/|$)/i,
+  /(^|\.)tldrsec\.com(\/|$)/i,
+];
+
 const MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS: RegExp[] = [
   // Amazon corporate / Seller Central / Brand Services / Selling Partners
   /(^|\.)amazon\.com(\/|$)/i,
@@ -2235,8 +2326,16 @@ export function classifyTier(
   for (const re of MARKETPLACE_AMAZON_SELLER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `marketplace-amazon-seller primary: ${domain}` };
   }
+  for (const re of CAPABILITY_AGENT_SECURITY_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:capability-agent-security-primary" };
+  }
   for (const re of VIBECODING_PRACTITIONER_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: `vibecoding-practitioner primary: ${domain}` };
+  }
+  // Hoist topic-specific secondary domain matches above path-fragment heuristic
+  // so that explicit secondary classification beats incidental "/resources/" matches.
+  for (const re of CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:capability-agent-security-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
@@ -2278,6 +2377,9 @@ export function classifyTier(
   }
   for (const re of MARKETPLACE_AMAZON_SELLER_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `marketplace-amazon-seller secondary: ${domain}` };
+  }
+  for (const re of CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:capability-agent-security-secondary" };
   }
   for (const re of VIBECODING_PRACTITIONER_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: `vibecoding-practitioner secondary: ${domain}` };
