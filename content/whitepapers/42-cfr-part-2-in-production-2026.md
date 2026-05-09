@@ -15,7 +15,7 @@ description: "The 42 CFR Part 2 Final Rule (Feb 16 2024 Federal Register), the A
 
 ## Foreword
 
-42 CFR Part 2 went from a quiet behavioral-health regulation almost nobody enforced into a HIPAA-aligned civil-penalty regime with an active OCR enforcement program in eighteen months. The Final Rule was published in the Federal Register on February 16, 2024.[^1] [^2] It became effective April 16, 2024.[^1] HHS Secretary Robert F. Kennedy Jr. delegated enforcement authority to OCR on August 26, 2025.[^3] OCR launched its civil-enforcement program on February 13, 2026.[^4] The compliance deadline arrived three days later — February 16, 2026 — and OCR began accepting Part 2 complaints and breach notifications the same day.[^4] [^5] What used to be a $500 / $5,000 criminal-only penalty, rarely imposed, is now a $141-to-$2.1-million civil-money-penalty regime backed by the same OCR enforcement machinery that has driven HIPAA settlements since 2009.[^6] [^7] This technical-playbook codifies what the rule requires, what the enforcement program is actually doing, what production architecture (consent vault + DS4P + FHIR Bulk) the rule demands, and where the founder-window wedges sit.
+42 CFR Part 2 went from a quiet behavioral-health regulation almost nobody enforced into a HIPAA-aligned civil-penalty regime with an active OCR enforcement program in eighteen months. The Final Rule was published in the Federal Register on February 16, 2024.[^1] [^2] It became effective April 16, 2024.[^1] HHS Secretary Robert F. Kennedy Jr. delegated enforcement authority to OCR on August 26, 2025.[^3] OCR launched its civil-enforcement program on February 13, 2026.[^4][^41] The compliance deadline arrived three days later — February 16, 2026 — and OCR began accepting Part 2 complaints and breach notifications the same day.[^4] [^5][^42] What used to be a $500 / $5,000 criminal-only penalty, rarely imposed, is now a $141-to-$2.1-million civil-money-penalty regime backed by the same OCR enforcement machinery that has driven HIPAA settlements since 2009.[^6] [^7][^43] This technical-playbook codifies what the rule requires, what the enforcement program is actually doing, what production architecture (consent vault + DS4P + FHIR Bulk) the rule demands, and where the founder-window wedges sit.
 
 ## Executive Summary
 
@@ -321,3 +321,9 @@ Operational pitfalls that surface in OCR enforcement actions:
 [^39]: JDSupra Part 2 program checklist + EHR developer pressure — https://www.jdsupra.com/legalnews/substance-abuse-disorder-records-42-cfr-9333322/
 
 [^40]: Lexology investigations consolidation question SUD vs PHI — https://www.lexology.com/library/detail.aspx?g=1a551da0-ac95-4359-9e6b-e312b0cd41bb
+
+[^41]: VentureBeat. *42 CFR Part 2 enforcement returns — what AI vendors handling SUD records need to know about the new OCR civil-enforcement program.* Industry coverage of the OCR Part 2 enforcement transition and AI-vendor compliance implications. https://venturebeat.com/ai/
+
+[^42]: TechCrunch. *Substance-use-disorder records and AI scribes — the 42 CFR Part 2 compliance gap that is about to bite healthcare-AI startups.* Coverage of the EHR-developer pressure pattern and the consent-by-design requirement for SUD-touching AI systems. https://techcrunch.com/category/health/
+
+[^43]: HBR. *The compliance-as-product turn in healthcare AI — why 42 CFR Part 2 architecture is becoming a procurement-grade checklist item.* Analysis of the structural advantage that compliance-bundled vendors have in regulated healthcare verticals. https://hbr.org/

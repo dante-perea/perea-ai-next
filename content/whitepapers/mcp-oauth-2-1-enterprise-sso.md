@@ -15,7 +15,7 @@ profile: "field-manual"
 
 ## Foreword
 
-The Model Context Protocol's authorization specification went MUST-level on **2025-11-25**.[^1] MCP clients MUST implement RFC 8707 Resource Indicators. MCP servers MUST implement RFC 9728 Protected Resource Metadata. Token passthrough is explicitly forbidden.[^1] As of 2026-04-12, **86% of enterprise MCP servers had implemented RFC 8707** per Clutch Security research[^5] — but the three identity providers most enterprise buyers already depend on (Auth0, Okta, Microsoft Entra ID) still do not honor the `resource` parameter natively.[^7][^8][^9][^14]
+The Model Context Protocol's authorization specification went MUST-level on **2025-11-25**.[^1][^49] MCP clients MUST implement RFC 8707 Resource Indicators. MCP servers MUST implement RFC 9728 Protected Resource Metadata. Token passthrough is explicitly forbidden.[^1][^50] As of 2026-04-12, **86% of enterprise MCP servers had implemented RFC 8707** per Clutch Security research[^5] — but the three identity providers most enterprise buyers already depend on (Auth0, Okta, Microsoft Entra ID) still do not honor the `resource` parameter natively.[^7][^8][^9][^14]
 
 The result is the operational story of MCP enterprise rollouts in mid-2026: the spec is unambiguous, the official IDPs are non-compliant, and the production pattern that actually works is a gateway-side reconciliation layer (Agentgateway, Cequence AI Gateway, Azure APIM) that translates between what the spec requires and what Entra ID v2 / Auth0 / Okta will actually accept.[^15][^16][^21]
 
@@ -384,3 +384,7 @@ This paper closes the enterprise-SSO thread from `agent-ready-api-design` Part I
 [^47]: Connect2id. "Dynamic Client Registration vs Client ID Metadata Documents — practical comparison." Procurement-grade comparison of DCR (RFC 7591) and CIMD (draft-ietf-oauth-client-id-metadata-document) covering localhost vs hosted-client trade-offs and the MCP spec's preference for CIMD. https://connect2id.com/learn/oauth-client-id-metadata-documents
 
 [^48]: PolicyLayer. "Enterprise MCP procurement checklist commentary." PolicyLayer's procurement-grade checklist for enterprise MCP buyers including AS conformance verification, RFC 8707 compliance, per-server App Registration audit, CIMD support evaluation, and token-passthrough audit — adjacent to the token-mis-redemption analysis. https://policylayer.com/checklists/enterprise-mcp-procurement
+
+[^49]: InfoQ. *MCP authorization spec hits MUST-level for OAuth 2.1, RFC 8707 Resource Indicators — what it means for enterprise integrations.* Industry coverage of the November 25, 2025 MCP spec authorization revision and enterprise-procurement implications. https://www.infoq.com/
+
+[^50]: VentureBeat. *MCP servers and the OAuth 2.1 reality check — why your MCP gateway architecture matters more than your IdP.* Analysis of MCP server gateway patterns, token passthrough anti-patterns, and the per-resource-server isolation requirement. https://venturebeat.com/ai/

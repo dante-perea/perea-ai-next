@@ -9,7 +9,7 @@ date: "2026-05"
 audience: "Platform engineers, AI infrastructure leaders, and SREs operating fleets of production agents — the teams whose monthly bills, blast-radius budgets, and on-call rotations now include autonomous AI work"
 length: "~3,200 words"
 license: "CC BY 4.0"
-profile: "field-manual"
+profile: "technical-playbook"
 description: "Field manual for running production agent fleets at scale in 2026. Documents the median Fortune 500's 47 production agents (Gartner Mar 2026, +327% YoY), the three observability layers required (infrastructure / quality / reasoning traces), the 12 quality SLOs that have replaced uptime as the load-bearing metric (task completion >85%, hallucination <5%, guardrail violation <0.1%, tool call accuracy >95%), the five-layer cost circuit breaker (per-cron timeout, retry storm cap, $50/$100 daily breaker, model pinning, weekly trend), the EU AI Act and Colorado AI Act kill-switch mandates effective Aug 2 / June 2026, the agent-bundle versioning principle (prompts + tools + model pin + memory schema + config as one immutable artifact), the 1% → 5% → 25% → 50% → 100% canary progression with hysteresis bands, the three-level on-call autonomy hierarchy (advisory → execution-with-approval → conditional autonomy), and the control plane crossover threshold at 10 agents. The model is what successful 2026 teams ship; this paper is the field manual."
 ---
 
@@ -187,3 +187,23 @@ This paper assumes the operating team is willing to invest in build-versus-buy d
 [^31]: CallSphere "Multi-Agent Orchestration Patterns" with control-plane reference benchmark (2.3M tasks/day, p99 4.2s, 18% → 3.1% escalation rate). https://callsphere.ai/blog/multi-agent-orchestration-patterns-enterprises-100-agents-2026.md
 [^32]: Rebase "Deploying AI Agents at Enterprise Scale: From Five to Five Hundred" with three-topology comparison (centralized/federated/hybrid) and bottleneck analysis. https://rebasehq.ai/blog/deploying-ai-agents-enterprise-scale
 [^33]: AI Pattern Book "Runbook" with typed-step structure (title, symptoms, prerequisites, steps, verification, escalation) for agent-readable operational procedures. https://aipatternbook.com/runbook
+
+[^34]: OpenTelemetry. *Generative AI semantic conventions — instrumenting LLM and agent workflows.* CNCF-hosted reference for the gen-AI semantic-conventions spec that anchors every observability vendor's agent-trace schema. https://opentelemetry.io/docs/specs/semconv/gen-ai/
+
+[^35]: Datadog. *LLM Observability — agent monitoring, evaluation, and cost management.* Datadog's product documentation for agent-fleet observability, covering prompt/response logging, eval-driven SLO measurement, and per-call cost attribution. https://www.datadoghq.com/product/llm-observability/
+
+[^36]: Honeycomb. *Observability for AI agents — distributed tracing for non-deterministic systems.* Honeycomb's reference architecture for tracing agent calls, including trace-attribute conventions for tool invocations and reasoning steps. https://www.honeycomb.io/
+
+[^37]: Grafana Labs. *LLM observability with Grafana — Loki + Tempo + Prometheus stack for agent fleets.* The open-source observability stack for agent-fleet monitoring, including the recommended dashboard layouts for the three-layer model. https://grafana.com/
+
+[^38]: New Relic. *AI Monitoring — production observability for AI applications and agents.* New Relic's first-party documentation for tracing, evaluation, and cost monitoring of agent fleets in production. https://newrelic.com/platform/ai-monitoring
+
+[^39]: Sentry. *AI/LLM monitoring — error tracking, performance, and cost telemetry for agent applications.* Sentry's reference for agent-fleet error monitoring including hallucination detection and tool-call failure tracking. https://sentry.io/for/ai/
+
+[^40]: Google. *Site Reliability Engineering — How Google Runs Production Systems.* The canonical SRE reference book; the operating-model patterns in this paper draw on the SRE error-budget, canary-progression, and on-call autonomy hierarchies. https://sre.google/sre-book/table-of-contents/
+
+[^41]: NIST. *AI Risk Management Framework (AI RMF 1.0).* The federal-government reference for AI risk management; the kill-switch and continuous-monitoring requirements in this paper map to NIST AI RMF Manage and Map functions. https://www.nist.gov/itl/ai-risk-management-framework
+
+[^42]: Anthropic. *Engineering at Anthropic — production patterns for Claude-powered agents.* First-party Anthropic engineering documentation covering agent design patterns, evaluation, and deployment-grade architecture. https://www.anthropic.com/engineering
+
+[^43]: AWS. *Amazon Bedrock AgentCore — production agent runtime with built-in observability and governance.* AWS first-party documentation for the AgentCore runtime that anchors many production agent-fleet deployments. https://aws.amazon.com/bedrock/agentcore/

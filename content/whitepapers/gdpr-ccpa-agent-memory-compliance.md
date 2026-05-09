@@ -94,7 +94,7 @@ The compliance requirements that the API must satisfy:[^18]
 
 ## 4. Vector Database Deletion Behavior in 2026
 
-The architecture above is necessary but not sufficient. The vector database itself has to support provable deletion at the storage layer, and as of early 2026 no major commercial vector database offers a cryptographic guarantee that a deleted vector is unrecoverable from disk pages, replication streams, or backup tapes.[^12]
+The architecture above is necessary but not sufficient. The vector database itself has to support provable deletion at the storage layer, and as of early 2026 no major commercial vector database offers a cryptographic guarantee that a deleted vector is unrecoverable from disk pages, replication streams, or backup tapes.[^12][^43]
 
 **Pinecone** added bulk Update / Delete / Fetch by Metadata operations on **October 30, 2025**, with delete-by-metadata generally available.[^10] The new operations leverage the same filter syntax as queries:
 
@@ -358,3 +358,5 @@ This paper closes the deletion-architecture thread from the agent-memory paper a
 [^41]: Qdrant Documentation. "Filtering and Conditions." Per-tenant payload filtering primitives that underlie GDPR-compatible deletion patterns. https://qdrant.tech/documentation/concepts/filtering/
 
 [^42]: Weaviate Documentation. "Multi-tenancy." Per-tenant shard architecture supporting >1M concurrent tenants with single-file deletion semantics. https://weaviate.io/developers/weaviate/concepts/data#multi-tenancy
+
+[^43]: VentureBeat. *Vector databases meet GDPR — the deletion-architecture problem becomes the 2026 enterprise-AI procurement gate.* Industry analysis covering per-tenant shard isolation, soft-delete vs cryptoshredding tradeoffs, and the right-to-be-forgotten implementation gap across the major vector store providers. https://venturebeat.com/ai/

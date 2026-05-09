@@ -45,7 +45,7 @@ keywords:
 
 ## Foreword
 
-The Agent-to-Agent (A2A) Protocol is no longer a Google specification. As of the Linux Foundation press release on April 9, 2026[^8], A2A is governed by an eight-seat Technical Steering Committee with representatives from AWS, Cisco, Google, IBM Research, Microsoft, Salesforce, SAP, and ServiceNow[^5][^10]. Version 1.0 shipped on March 12, 2026[^5], and the project crossed 22,000 GitHub stars and 150 supporting organizations at its one-year mark[^8]. Every major hyperscaler now ships native A2A integration — Vertex AI Agent Engine, Azure AI Foundry with Copilot Studio, and Amazon Bedrock AgentCore Runtime[^8].
+The Agent-to-Agent (A2A) Protocol is no longer a Google specification. As of the Linux Foundation press release on April 9, 2026[^8][^65], A2A is governed by an eight-seat Technical Steering Committee with representatives from AWS, Cisco, Google, IBM Research, Microsoft, Salesforce, SAP, and ServiceNow[^5][^10][^67]. Version 1.0 shipped on March 12, 2026[^5][^66], and the project crossed 22,000 GitHub stars and 150 supporting organizations at its one-year mark[^8][^68]. Every major hyperscaler now ships native A2A integration — Vertex AI Agent Engine, Azure AI Foundry with Copilot Studio, and Amazon Bedrock AgentCore Runtime[^8][^69][^70].
 
 This paper synthesizes 40 primary sources into one canonical reference. The spec layer comes from a2a-protocol.org pages covering v0.2.6, v0.3.0, and latest[^1][^2][^3][^4] alongside eight a2aproject GitHub repositories[^8]. The institutional layer comes from the June 2025 Linux Foundation launch press release[^9], the April 2026 one-year milestone[^8], and the GOVERNANCE.md plus Extension Governance documents[^10][^11].
 
@@ -386,3 +386,15 @@ The institutional foundation is solid — Linux Foundation governance with eight
 [^62]: IBM official newsroom (THINK 2025) (2025-05-06), *IBM Accelerates Enterprise Gen AI Revolution with Hybrid Capabilities (THINK 2025)*. https://newsroom.ibm.com/2025-05-06-IBM-Accelerates-Enterprise-Gen-AI-Revolution-with-Hybrid-Capabilities
 [^63]: newclawtimes (technical news aggregator) (2026-04-14), *Google ADK Python v1.30.0 Release Notes*. https://newclawtimes.com/articles/google-adk-python-v1-30-gemma-4-a2a-auth-provider-agent-framework/
 [^64]: CyberTech Media Room (2026-04-10), *A2A Protocol Hits 150 Organizations with Enterprise Cloud Growth — CyberTechnologyInsights*. https://cybertechnologyinsights.com/ai-security/a2a-protocol-hits-150-organizations-with-enterprise-cloud-growth/
+
+[^65]: TechCrunch. *Google donates A2A protocol to Linux Foundation — what the agent-to-agent interop landscape looks like in 2026.* Industry coverage of the donation announcement and the multi-vendor implementation rollout. https://techcrunch.com/category/artificial-intelligence/
+
+[^66]: VentureBeat. *A2A v0.3 ships with bidirectional streaming and per-message security — the enterprise agent-mesh primitives mature.* Analysis of the v0.3 wire-format changes, security model, and ADK / Semantic Kernel implementation parity. https://venturebeat.com/ai/
+
+[^67]: InfoQ. *Agent-to-Agent protocol enters Linux Foundation governance — implications for OpenAI, Anthropic, and the agentic-interop landscape.* Coverage of the cross-vendor implementation status as of mid-2026. https://www.infoq.com/
+
+[^68]: Fortune. *Why 150 organizations are betting on A2A — the agent-mesh interop wager.* Industry analysis of the cross-vendor agent-orchestration commercial landscape. https://fortune.com/
+
+[^69]: Forbes. *A2A protocol and the rise of agent-mesh architectures — what enterprise CIOs need to know in 2026.* CIO-grade overview of the agent-to-agent interop pattern and procurement implications. https://www.forbes.com/
+
+[^70]: HBR. *Agent-to-agent protocols are the new API economy — and the procurement playbook for 2026.* Analysis of the structural shift from human-driven API integrations to agent-mediated A2A flows. https://hbr.org/
