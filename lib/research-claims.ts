@@ -3226,6 +3226,48 @@ const AGENT_WALLET_PRIMARY_PATTERNS: RegExp[] = [
 // architecture, named-author analyst publications, security research firms
 // (NCC Group, Sygnia, Verichains, DARKNAVY, WalletWitness), and agentic-AI
 // security analyst research (Forrester AEGIS, Gartner via re-publishers).
+// Agentic commerce protocols (AP2 / A2A / TAP / UCP / Verifiable Intent / FIDO) — canonical specs + standards
+const AGENTIC_COMMERCE_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)ap2-protocol\.org(\/|$)/i,
+  /(^|\.)a2a-protocol\.org(\/|$)/i,
+  /(^|\.)verifiableintent\.dev(\/|$)/i,
+  /(^|\.)agentpaymentsprotocol\.info(\/|$)/i,
+  /(^|\.)fidoalliance\.org(\/|$)/i,
+  /(^|\.)w3\.org(\/|$)/i,
+  /(^|\.)datatracker\.ietf\.org(\/|$)/i,
+  /(^|\.)shopify\.dev(\/|$)/i,
+  /(^|\.)developer\.visa\.com(\/|$)/i,
+  /(^|\.)corporate\.visa\.com(\/|$)/i,
+  /(^|\.)mastercard\.com(\/|$)/i,
+  /(^|\.)www\.mastercard\.com(\/|$)/i,
+  /(^|\.)newsroom\.paypal-corp\.com(\/|$)/i,
+  /(^|\.)developer\.paypal\.com(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+];
+
+// Agentic commerce protocols — secondary analyst, industry, trade press
+const AGENTIC_COMMERCE_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)thepaypers\.com(\/|$)/i,
+  /(^|\.)finextra\.com(\/|$)/i,
+  /(^|\.)www\.finextra\.com(\/|$)/i,
+  /(^|\.)technode\.global(\/|$)/i,
+  /(^|\.)technext24\.com(\/|$)/i,
+  /(^|\.)hypertrends\.com(\/|$)/i,
+  /(^|\.)www\.hypertrends\.com(\/|$)/i,
+  /(^|\.)fluxapay\.xyz(\/|$)/i,
+  /(^|\.)402audit\.com(\/|$)/i,
+  /(^|\.)alchemy\.com(\/|$)/i,
+  /(^|\.)www\.alchemy\.com(\/|$)/i,
+  /(^|\.)crossmint\.com(\/|$)/i,
+  /(^|\.)www\.crossmint\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  /(^|\.)blog\.hireninja\.com(\/|$)/i,
+  /(^|\.)majormatters\.co(\/|$)/i,
+  /(^|\.)www\.majormatters\.co(\/|$)/i,
+  /(^|\.)winbuzzer\.com(\/|$)/i,
+  /(^|\.)ppc\.land(\/|$)/i,
+];
+
 // Policy Decision Record / EU AI Act / AI governance — primary regulators, standards, canonical specs
 const PDR_AI_GOVERNANCE_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)agdr\.dev(\/|$)/i,
@@ -4507,6 +4549,12 @@ export function classifyTier(
   }
   for (const re of PDR_AI_GOVERNANCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:pdr-ai-governance-secondary" };
+  }
+  for (const re of AGENTIC_COMMERCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:agentic-commerce-primary" };
+  }
+  for (const re of AGENTIC_COMMERCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agentic-commerce-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
