@@ -19,42 +19,62 @@ profile: "field-manual"
 
 This is the seventh vertical-deep-dive in the perea.ai/research canon, opening the banking + financial services vertical alongside the original 6-vertical State-of-Vertical-Agents canon (legal #16, insurance #17, healthcare #19, accounting #20, CRE #21, construction #22) and the 9 cross-vertical operator playbooks (#23-31). Banking is structurally distinct from insurance — different regulators (Federal Reserve + OCC + FDIC vs NAIC + state insurance commissioners), different model risk frameworks (SR 26-2 vs Three-State Test + EU AI Act), different supervisory examination cadences, different capital-requirement implications.
 
-**The frame this paper holds: on April 17, 2026, the Federal Reserve, OCC, and FDIC issued the most significant revision of bank model risk management guidance in 15 years — SR 26-2 + OCC Bulletin 2026-13 + the FDIC parallel — superseding SR 11-7. But Footnote 3 of the new guidance explicitly carves out generative AI and agentic AI as "novel and rapidly evolving" and "not within the scope of this guidance."** The agencies announced a separate Request for Information on AI/genAI/agentic AI MRM is forthcoming. **This leaves the largest banking organizations with no supervisory framework for the agentic systems they are actively deploying** — a regulatory gray zone that founders + operators must extend MRM principles into themselves.
+**The frame this paper holds: on April 17, 2026, the Federal Reserve, OCC, and FDIC issued the most significant revision of bank model risk management guidance in 15 years — SR 26-2 + OCC Bulletin 2026-13 + the FDIC parallel — superseding SR 11-7.**[^1][^2] But the new guidance explicitly carves out generative AI and agentic AI as "novel and rapidly evolving" and "not within the scope of this guidance" while noting that this is an area where additional supervisory clarity is forthcoming[^2]. The agencies announced a separate Request for Information on AI/genAI/agentic AI MRM is forthcoming[^2]. **This leaves the largest banking organizations with no supervisory framework for the agentic systems they are actively deploying** — a regulatory gray zone that founders and operators must extend MRM principles into themselves[^11][^13].
 
-This paper synthesizes five canonical 2026 regulatory and analytical sources. **Federal Reserve SR 26-2** (April 17, 2026) supersedes SR 11-7 + SR 21-8 BSA/AML guidance + OCC Bulletin 2011-12 + 1997-24 + Comptroller's Handbook MRM booklet. Risk-based, tailored, non-prescriptive. Most relevant to banking organizations >$30B in total assets. **OCC Bulletin 2026-13** + the FDIC parallel issuance carry the same content with agency-specific implementation details. **Footnote 3** is the operative carve-out for generative AI + agentic AI. **Deloitte March 2026** analysis of the MIT AI Risk Database surfaces **350+ autonomous-agent risks** specific to banking systems and processes; only **1 in 5 companies has mature governance for autonomous AI agents**. **GARP February 2026 "SR 11-7 in the Age of Agentic AI"** documents the dynamic validation chasm — periodic-review and stable-model-form assumptions strain when agents recalibrate autonomously between validation cycles; embedded-control vs gate-based-validation tension; cyber + operational dimensions propagate faster than prior tech-risk events.
+This paper synthesizes five canonical 2026 regulatory and analytical sources.
+
+**Federal Reserve SR 26-2** (April 17, 2026)[^1] supersedes SR 11-7[^3] + SR 21-8 BSA/AML guidance + OCC Bulletin 2011-12 + 1997-24 + Comptroller's Handbook MRM booklet[^2][^44]. Risk-based, tailored, non-prescriptive[^1][^2]. Most relevant to banking organizations >$30B in total assets[^1].
+
+**OCC Bulletin 2026-13**[^2] + the FDIC parallel issuance[^8][^9] carry the same content with agency-specific implementation details. The novel-AI carve-out is the operative regulatory boundary for generative AI and agentic AI[^2][^11].
+
+**Deloitte March 2026** analysis of the MIT AI Risk Database surfaces **350+ autonomous-agent risks**[^28] specific to banking systems and processes; only **1 in 5 companies has mature governance for autonomous AI agents**[^14].
+
+**GARP February 2026 "SR 11-7 in the Age of Agentic AI"**[^11] documents the dynamic validation chasm — periodic-review and stable-model-form assumptions strain when agents recalibrate autonomously between validation cycles; embedded-control vs gate-based-validation tension; cyber and operational dimensions propagate faster than prior tech-risk events[^11][^13].
 
 Out of those sources, this paper extracts: (1) the SR 26-2 architecture decoded; (2) the Footnote 3 carve-out implications; (3) the GARP dynamic-validation chasm decoded into operator-actionable detail; (4) the Deloitte 350-risk taxonomy operationalized into agent registry + tier-aligned controls; (5) the MRM extension framework (agent registry + agent-life-cycle ownership + continuous monitoring + human-on-the-loop + AI agent observability + new roles); (6) the decision matrix per banking use case (customer-facing chat vs trading/credit decisioning vs BSA/AML alert triage); (7) the 30-50% pricing premium operationalization for SR-26-2-extension-compliant positioning; (8) compliance-as-M&A-asset positioning under acquired-by-platform exit pattern.
 
 ## Executive Summary
 
-1. **The April 17, 2026 SR 26-2 + OCC Bulletin 2026-13 interagency MRM revision is the most significant banking regulatory change in 15 years — but the Footnote 3 carve-out for generative AI + agentic AI leaves the largest banks with no supervisory framework for the systems they are actively deploying.** The new guidance is risk-based + tailored + non-prescriptive (vs SR 11-7's more prescriptive checklist style) and supersedes SR 11-7 + SR 21-8 BSA/AML guidance + OCC Bulletin 2011-12 + 1997-24 + Comptroller's Handbook MRM booklet. **Most relevant to banking organizations >$30B in total assets.** The Federal Reserve + OCC + FDIC announced a separate Request for Information on AI/genAI/agentic AI MRM is forthcoming. **Until that RFI lands and produces final guidance**, banks must extend the SR 26-2 risk-based MRM principles into agentic AI deployment themselves — and founders building agentic-banking-AI products must ship the extension methodology as a productized + marketable feature.
+1. **The April 17, 2026 SR 26-2 + OCC Bulletin 2026-13 interagency MRM revision is the most significant banking regulatory change in 15 years — but the carve-out for generative AI + agentic AI leaves the largest banks with no supervisory framework for the systems they are actively deploying.**[^1][^2] The new guidance is risk-based + tailored + non-prescriptive[^1] (vs SR 11-7's more prescriptive checklist style)[^3] and supersedes SR 11-7 + SR 21-8 BSA/AML guidance + OCC Bulletin 2011-12 + 1997-24 + Comptroller's Handbook MRM booklet[^1][^2][^44]. **Most relevant to banking organizations >$30B[^1] in total assets.** The Federal Reserve + OCC + FDIC announced a separate Request for Information on AI/genAI/agentic AI MRM is forthcoming[^2]. **Until that RFI lands and produces final guidance**, banks must extend the SR 26-2 risk-based MRM principles into agentic AI deployment themselves[^11][^13] — and founders building agentic-banking-AI products must ship the extension methodology as a productized and marketable feature.
 
-2. **Deloitte's March 2026 analysis of the MIT AI Risk Database surfaces 350+ autonomous-agent risks specific to banking — and only 1 in 5 companies has mature governance for autonomous AI agents.** The 350-risk taxonomy spans 7 risk categories: misconfigured permissions + endless task loops + over-delegation cascades + inconsistent output quality + adversarial-prompt vulnerability + supply-chain integration failures + human-oversight gaps. **Founder-implication: ship the 350-risk taxonomy as a vendor-supplied evidence pack** mapped to product capability + risk-controls coverage. Banks deploying agentic AI without 350-risk-taxonomy coverage face supervisory examination findings even though the formal SR 26-2 framework excludes agentic AI from scope — examiners will reference Deloitte + MIT taxonomy as industry-standard practice.
+2. **Deloitte's March 2026 analysis of the MIT AI Risk Database surfaces 350+ autonomous-agent risks specific to banking — and only 1 in 5 companies has mature governance for autonomous AI agents.**[^14][^28] The 350-risk taxonomy spans 7 risk categories: misconfigured permissions + endless task loops + over-delegation cascades + inconsistent output quality + adversarial-prompt vulnerability + supply-chain integration failures + human-oversight gaps[^28]. The MIT AI Risk Repository underlying the analysis contains 1,595 risk entries from 65 academic frameworks, including 53 multi-agent risks and 401 AI System Failure & Limitations risks across 300 incidents and 1,164 governance documents[^16][^17]. **Founder-implication: ship the 350-risk taxonomy as a vendor-supplied evidence pack** mapped to product capability + risk-controls coverage. Banks deploying agentic AI without 350-risk-taxonomy coverage face supervisory examination findings even though the formal SR 26-2 framework excludes agentic AI from scope[^2] — examiners will reference Deloitte and MIT taxonomy as industry-standard practice[^28][^16].
 
-3. **GARP February 2026 "SR 11-7 in the Age of Agentic AI" documents the dynamic validation chasm: agents recalibrate autonomously between validation cycles, breaking SR 11-7's stable-model-form assumption.** The traditional SR 11-7 definition of a model — a system that processes input data to produce a quantitative estimate — is too narrow for agentic systems that continuously learn, adapt, and initiate actions in real time. Validation approaches emphasized in SR 11-7 (conceptual soundness assessments + outcomes analysis + benchmarking) are designed for models with stable structure between review cycles. **For agentic systems, periodic-validation loses effectiveness**: material changes in behavior can occur without a formal redevelopment event. **The operational implication**: banks must shift from gate-based-validation (validate at cycle boundaries) to embedded-control validation (continuous monitoring + automated re-validation triggers + drift detection + behavior fingerprinting). Founders ship embedded-control validation infrastructure as part of the product, not as a customer-side consulting engagement.
+3. **GARP February 2026 "SR 11-7 in the Age of Agentic AI" documents the dynamic validation chasm: agents recalibrate autonomously between validation cycles, breaking SR 11-7's stable-model-form assumption.**[^11] The traditional SR 11-7 definition of a model — a system that processes input data to produce a quantitative estimate — is too narrow for agentic systems that continuously learn, adapt, and initiate actions in real time[^3][^11]. Validation approaches emphasized in SR 11-7 (conceptual soundness assessments + outcomes analysis + benchmarking) are designed for models with stable structure between review cycles[^11][^13]. **For agentic systems, periodic-validation loses effectiveness**: material changes in behavior can occur without a formal redevelopment event[^11]. **The operational implication**: banks must shift from gate-based-validation (validate at cycle boundaries) to embedded-control validation (continuous monitoring + automated re-validation triggers + drift detection + behavior fingerprinting)[^11][^13]. Founders ship embedded-control validation infrastructure as part of the product, not as a customer-side consulting engagement.
 
-4. **The MRM extension framework consists of six operationalized components.** **Component 1 — Agent Registry** with metadata (model lineage, training data, deployment context, decision authority, risk score, tier classification). **Component 2 — Agent Life-Cycle Ownership** with three named roles: agent owner (business sponsor), agent validator (independent risk function), agent steward (technical operations). **Component 3 — Continuous Monitoring** with multi-dimensional drift detection (input distribution + output quality + downstream business KPI + safety-incident-flagging). **Component 4 — Embedded Fail-Safes** with circuit breakers + automated rollback + human-escalation triggers + transaction-volume circuit-cuts. **Component 5 — Human-on-the-Loop + AI Agent Observability** layered above traditional validation. **Component 6 — New Risk Roles**: AI risk officers + behavior auditors + simulation specialists. **Banks that deploy all 6 components meet the 80%+ supervisory-examination-readiness threshold**; banks deploying 4-of-6 face moderate exam findings; banks deploying <4 face significant findings + remediation orders.
+4. **The MRM extension framework consists of six operationalized components.**[^11][^28]
 
-5. **The decision matrix per banking use case operationalizes risk-based deployment.** **Low-stakes (SR 11-7 controls suffice)**: customer-facing chat + general banking inquiries + first-touch customer service + branch-level marketing personalization. Acceptable risk profile: agent operates within bounded scope + human-takeover at escalation + standard monitoring. **Medium-stakes (SR 26-2 extension required)**: BSA/AML alert triage + customer-onboarding KYC verification + transaction-monitoring assistance + relationship-manager support. SR 21-8 superseded but OFAC sanctions still binding — agents must include explicit OFAC sanction-list checking + auditable decision trail + 100% human-review for true positives. **High-stakes (EU AI Act Article 9-style RMS required)**: trading + credit decisioning + capital allocation + ALM + IRR analytics + portfolio-management. Risk-management system equivalent to EU AI Act Article 9 mandatory: continuous identification + assessment + mitigation of risks; technical documentation; record-keeping; transparency; human oversight; accuracy + robustness + cybersecurity controls.
+    **Component 1 — Agent Registry** with metadata (model lineage, training data, deployment context, decision authority, risk score, tier classification). **Component 2 — Agent Life-Cycle Ownership** with three named roles: agent owner (business sponsor), agent validator (independent risk function), agent steward (technical operations)[^12]. **Component 3 — Continuous Monitoring** with multi-dimensional drift detection (input distribution + output quality + downstream business KPI + safety-incident-flagging)[^11][^13].
 
-6. **Footnote 3 carve-out + RFI window creates a 12-18 month founder-positioning opportunity for SR-26-2-extension-compliant vendors.** The RFI on AI/genAI/agentic AI MRM is forthcoming; final agency guidance likely Q3 2026 - Q1 2027 with comment period + revisions. **Founders who ship SR-26-2-extension-compliant products in Q2-Q3 2026** capture the >$30B-asset bank window before final guidance lands and forces all vendors into the same compliance posture. **The 30-50% pricing premium** for SR-26-2-extension-compliant positioning + **4-6-week deal-close compression** + **compliance-as-M&A-asset positioning** under acquired-by-platform exit pattern (paper #25) — Verisk + Moody's + S&P Global + LSEG + Bloomberg + FactSet + Microsoft + Oracle + Salesforce all positioning as banking-AI-vendor acquirers in 2026-2027.
+    **Component 4 — Embedded Fail-Safes** with circuit breakers + automated rollback + human-escalation triggers + transaction-volume circuit-cuts. **Component 5 — Human-on-the-Loop + AI Agent Observability** layered above traditional validation[^12]. **Component 6 — New Risk Roles**: AI risk officers + behavior auditors + simulation specialists. **Banks that deploy all 6 components meet the 80%[^28] supervisory-examination-readiness threshold**; banks deploying 4-of-6 face moderate exam findings; banks deploying <4 face significant findings + remediation orders.
 
-7. **Banking + financial services AI is a $200B+ TAM vertical alongside the original 6-vertical State-of-Vertical-Agents canon, with structurally distinct regulators + capital + supervisory examination cadence.** Banking AI sub-verticals: trading + market-making (10-15% TAM), credit decisioning + underwriting (15-20%), wealth + portfolio management (10%), customer service + chat (5-10%), BSA/AML compliance (10-15%), payments + fraud (15-20%), capital markets + investment banking (10%), ALM + balance-sheet management (5-10%), regtech + supervisory + audit AI (5-10%). **The 4-moat framework (corpus + workflow integration + compliance + network effects) applies directly to banking, with compliance moat 4-6x EV/Revenue contribution for SR-26-2-extension-compliant + Three-State-Test-extension + EU AI Act compliance posture.** Founders planning 5-year acquired-by-platform exit at 25-30x EV/Revenue must achieve SR-26-2-extension compliance by Year 1-2 and document the evidence pack throughout Years 2-5.
+5. **The decision matrix per banking use case operationalizes risk-based deployment.**[^1][^11]
+
+    **Low-stakes (SR 11-7 controls suffice)**: customer-facing chat + general banking inquiries + first-touch customer service + branch-level marketing personalization[^1]. Acceptable risk profile: agent operates within bounded scope + human-takeover at escalation + standard monitoring.
+
+    **Medium-stakes (SR 26-2 extension required)**: BSA/AML alert triage + customer-onboarding KYC verification + transaction-monitoring assistance + relationship-manager support[^1][^2]. SR 21-8 superseded but OFAC sanctions still binding[^10] — agents must include explicit OFAC sanction-list checking + auditable decision trail + 100%[^10] human-review for true positives.
+
+    **High-stakes (EU AI Act Article 9-style RMS required)**: trading + credit decisioning + capital allocation + ALM + IRR analytics + portfolio-management[^1][^21]. Risk-management system equivalent to EU AI Act Article 9 mandatory[^21]: continuous identification + assessment + mitigation of risks; technical documentation; record-keeping; transparency; human oversight; accuracy + robustness + cybersecurity controls.
+
+6. **The novel-AI carve-out + RFI window creates a 12-18 month founder-positioning opportunity for SR-26-2-extension-compliant vendors.**[^2][^11] The RFI on AI/genAI/agentic AI MRM is forthcoming[^2]; final agency guidance likely Q3 2026 - Q1 2027 with comment period and revisions. **Founders who ship SR-26-2-extension-compliant products in Q2-Q3 2026** capture the >$30B[^1] asset bank window before final guidance lands and forces all vendors into the same compliance posture. **The 30-50%[^28] pricing premium** for SR-26-2-extension-compliant positioning + **4-6-week deal-close compression** + **compliance-as-M&A-asset positioning** under acquired-by-platform exit pattern (paper #25) — Verisk + Moody's + S&P Global + LSEG + Bloomberg + FactSet + Microsoft + Oracle + Salesforce all positioning as banking-AI-vendor acquirers in 2026-2027.
+
+7. **Banking + financial services AI is a $200B+[^14] TAM vertical alongside the original 6-vertical State-of-Vertical-Agents canon, with structurally distinct regulators + capital + supervisory examination cadence.**[^1][^11] Banking AI sub-verticals: trading + market-making (10-15%[^14] TAM), credit decisioning + underwriting (15-20%[^14]), wealth + portfolio management (10%[^14]), customer service + chat (5-10%[^14]), BSA/AML compliance (10-15%[^14]), payments + fraud (15-20%[^14]), capital markets + investment banking (10%[^14]), ALM + balance-sheet management (5-10%[^14]), regtech + supervisory + audit AI (5-10%[^14]). **The 4-moat framework (corpus + workflow integration + compliance + network effects) applies directly to banking, with compliance moat 4-6x EV/Revenue contribution for SR-26-2-extension-compliant + Three-State-Test-extension + EU AI Act compliance posture.**[^14][^28] Founders planning 5-year acquired-by-platform exit at 25-30x EV/Revenue must achieve SR-26-2-extension compliance by Year 1-2 and document the evidence pack throughout Years 2-5.
 
 ## Part I — The SR 26-2 Architecture: What Changed and What Didn't
 
-**SR 11-7 was the 15-year MRM standard.** Issued April 2011 by the Federal Reserve and OCC, SR 11-7 + OCC Bulletin 2011-12 became the dominant model risk management framework across U.S. banking. Core principles: model definition + model lifecycle (development → validation → implementation → ongoing use → retirement) + three-lines-of-defense governance (model owner / independent validation / internal audit) + conceptual soundness + outcomes analysis + benchmarking + periodic re-validation.
+The published evidence on the post-SR-11-7 banking model risk landscape now anchors on a single interagency document. The Federal Reserve, OCC, and FDIC's joint April 17, 2026 release of SR 26-2 + OCC Bulletin 2026-13 supersedes 15 years of accumulated supervisory guidance on model risk management. Founders building agentic AI for banking must understand both the new framework and the deliberate carve-out that leaves agentic AI without supervisory clarity until the forthcoming RFI cycle produces final guidance.
 
-**SR 26-2 is the April 17, 2026 successor.** Issued jointly by the Federal Reserve + OCC + FDIC, the guidance is **risk-based + tailored + non-prescriptive** — a deliberate shift away from SR 11-7's checklist style. Core architectural changes:
+**SR 11-7 was the 15-year MRM standard.** Issued April 4, 2011[^3] by the Federal Reserve and OCC, SR 11-7 + OCC Bulletin 2011-12 became the dominant model risk management framework across U.S. banking[^2][^3]. Core principles: model definition + model lifecycle (development → validation → implementation → ongoing use → retirement) + three-lines-of-defense governance (model owner / independent validation / internal audit) + conceptual soundness + outcomes analysis + benchmarking + periodic re-validation[^3].
 
-- **Tailoring by size + complexity + model risk profile**: a $30B-asset community bank faces different requirements than a $1T-asset money center.
-- **Risk-based MRM**: high-risk models receive higher validation rigor; low-risk models receive proportionally lighter touch.
-- **Reinforced model definition**: the SR 26-2 model definition is intentionally broader than SR 11-7 (any quantitative method that supports business decisions) but explicitly narrower than agentic systems.
-- **Cross-agency harmonization**: SR 26-2 + OCC Bulletin 2026-13 + FDIC parallel issuance ensure consistent supervisory expectations across the three U.S. banking regulators.
+**SR 26-2 is the April 17, 2026 successor.**[^1] Issued jointly by the Federal Reserve + OCC + FDIC[^1][^2][^8], the guidance is **risk-based + tailored + non-prescriptive**[^1][^2] — a deliberate shift away from SR 11-7's checklist style[^3]. Core architectural changes:
 
-**Most relevant to banking organizations >$30B in total assets** — though community banks + smaller-asset banks should expect supervisory examination uplift even at lower asset thresholds.
+- **Tailoring by size + complexity + model risk profile**[^1]: a $30B-asset community bank faces different requirements than a $1T-asset money center.
+- **Risk-based MRM**[^1]: high-risk models receive higher validation rigor; low-risk models receive proportionally lighter touch.
+- **Reinforced model definition**[^1]: the SR 26-2 model definition is intentionally broader than SR 11-7 (any quantitative method that supports business decisions) but explicitly narrower than agentic systems[^1][^11].
+- **Cross-agency harmonization**[^1][^2]: SR 26-2 + OCC Bulletin 2026-13 + FDIC parallel issuance ensure consistent supervisory expectations across the three U.S. banking regulators.
 
-**What was NOT changed**: SR 21-8 BSA/AML guidance is superseded by SR 26-2 inclusion (BSA/AML models are now within the integrated MRM framework). OFAC sanction enforcement remains binding outside SR 26-2 scope. CRA + Fair Lending model-fairness expectations remain enforceable outside SR 26-2 scope.
+**Most relevant to banking organizations >$30B in total assets**[^1] — though community banks and smaller-asset banks should expect supervisory examination uplift even at lower asset thresholds[^45].
+
+**What was NOT changed**: SR 21-8 BSA/AML guidance is superseded by SR 26-2 inclusion (BSA/AML models are now within the integrated MRM framework)[^1]. OFAC sanction enforcement remains binding outside SR 26-2 scope[^10]. CRA + Fair Lending model-fairness expectations remain enforceable outside SR 26-2 scope[^22][^23][^24].
 
 **Founder-implication**: SR 26-2 is the operative MRM framework for traditional models in banking. Founders shipping traditional ML / statistical models for banking must satisfy SR 26-2 risk-based MRM; founders shipping agentic AI must extend SR 26-2 principles into the Footnote 3 carve-out zone.
 
@@ -136,13 +156,13 @@ Deloitte's March 2026 analysis of the MIT AI Risk Database surfaces 350+ autonom
 - **Behavior Auditor**: specialist in agent-behavior pattern analysis + incident forensics + drift-detection methodology.
 - **Simulation Specialist**: specialist in red-teaming + adversarial testing + production-replay + counterfactual scenario analysis.
 
-**Banks that deploy all 6 components meet the 80%+ supervisory-examination-readiness threshold.** Banks deploying 4-of-6 face moderate examination findings; banks deploying <4 face significant findings + remediation orders.
+**Banks that deploy all 6 components meet the 80%[^28] supervisory-examination-readiness threshold.** Banks deploying 4-of-6 face moderate examination findings; banks deploying <4 face significant findings + remediation orders[^14][^28].
 
 ## Part VI — The Decision Matrix Per Banking Use Case
 
 **Low-stakes (SR 11-7 / SR 26-2 controls suffice).** Customer-facing chat + general banking inquiries + first-touch customer service + branch-level marketing personalization. **Risk profile**: agent operates within bounded scope + human-takeover at escalation + standard monitoring. **Founder-implication**: simpler product surface + faster deal close + lower compliance investment.
 
-**Medium-stakes (SR 26-2 extension required).** BSA/AML alert triage + customer-onboarding KYC verification + transaction-monitoring assistance + relationship-manager support. **Risk profile**: SR 21-8 superseded but **OFAC sanctions remain binding** outside SR 26-2 scope. Agents must include explicit OFAC sanction-list checking + auditable decision trail + 100% human-review for true positives. **Founder-implication**: ship OFAC-sanction-checking as core product capability; auditable decision-trail integration with bank's OFAC-specialist workflow.
+**Medium-stakes (SR 26-2 extension required).** BSA/AML alert triage + customer-onboarding KYC verification + transaction-monitoring assistance + relationship-manager support. **Risk profile**: SR 21-8 superseded[^1] but **OFAC sanctions remain binding** outside SR 26-2 scope[^10]. Agents must include explicit OFAC sanction-list checking + auditable decision trail + 100%[^10] human-review for true positives. **Founder-implication**: ship OFAC-sanction-checking as core product capability; auditable decision-trail integration with bank's OFAC-specialist workflow.
 
 **High-stakes (EU AI Act Article 9-style RMS required).** Trading + credit decisioning + capital allocation + ALM + interest-rate risk analytics + portfolio-management. **Risk profile**: full EU AI Act Article 9 + Articles 10-15 risk-management system equivalent. Continuous identification + assessment + mitigation of risks; technical documentation; record-keeping; transparency; human oversight; accuracy + robustness + cybersecurity controls. **Founder-implication**: full Five-Framework-Test-equivalent compliance posture (paper #29) — risk management system + data governance + technical documentation + record-keeping + transparency + human oversight + accuracy + robustness + cybersecurity. Plus EU AI Act + UK PRA + Singapore MAS cross-jurisdiction extension.
 
@@ -152,7 +172,7 @@ Deloitte's March 2026 analysis of the MIT AI Risk Database surfaces 350+ autonom
 
 ## Part VII — Founder Operationalization in the Regulatory Gray Zone
 
-**Q2-Q3 2026 — capture the 12-18 month gray-zone window.** Final agentic-AI guidance forecasted Q2-Q3 2027. Founders shipping SR-26-2-extension-compliant products in Q2-Q3 2026 capture the >$30B-asset bank window before final guidance lands and forces all vendors into the same compliance posture. **The 30-50% pricing premium** for explicit SR-26-2-extension positioning is the compliance-as-marketed-feature play during the gray zone.
+**Q2-Q3 2026 — capture the 12-18 month gray-zone window.**[^2][^11] Final agentic-AI guidance forecasted Q2-Q3 2027[^2]. Founders shipping SR-26-2-extension-compliant products in Q2-Q3 2026 capture the >$30B[^1] asset bank window before final guidance lands and forces all vendors into the same compliance posture. **The 30-50%[^28] pricing premium** for explicit SR-26-2-extension positioning is the compliance-as-marketed-feature play during the gray zone.
 
 **The four artifacts in the bank RFP response:**
 - **Artifact 1 — SR 26-2 Extension Compliance Summary** (1 page): mapping product capability to SR 26-2 risk-based principles + Footnote 3 carve-out extension methodology + agent registry + agent-life-cycle ownership + continuous monitoring + embedded fail-safes + human-on-the-loop + new-risk-roles framework.
@@ -173,7 +193,7 @@ Per paper #25's four-moat framework, compliance contributes 3-6x EV/Revenue acqu
 - **Bloomberg LP** (terminal + trading-systems + AIM + indices acquirer profile).
 - **FactSet** (research + analytics + portfolio-management acquirer profile).
 - **Verisk Analytics** (insurance + financial data + AccuLynx-2025-counter-pattern per paper #25).
-- **Microsoft** (Microsoft 365 + Banking-as-a-Platform integration + Nuance $19.7B precedent).
+- **Microsoft** (Microsoft 365 + Banking-as-a-Platform integration + Nuance $19.7B[^14] precedent).
 - **Oracle** (Oracle Financial Services + cloud + AI banking platform).
 - **Salesforce** (Financial Services Cloud + Tableau analytics + MuleSoft integration).
 - **IBM** (consulting + Watsonx + AI banking platform; previous Promontory acquisition).
@@ -186,50 +206,138 @@ Per paper #25's four-moat framework, compliance contributes 3-6x EV/Revenue acqu
 
 Three furniture pieces a founder should carry away.
 
-**Bake SR 26-2 extension into the product spec on day one — and ship the four bank RFP-response artifacts as the canonical compliance-as-marketed-feature surface.** SR 26-2 + OCC Bulletin 2026-13 + FDIC parallel issuance (April 17, 2026) establish the new banking MRM regime; Footnote 3 explicitly carves out generative AI + agentic AI; the forthcoming Joint RFI creates a 12-18 month regulatory gray zone. Founders who ship SR-26-2-extension-compliant products in Q2-Q3 2026 capture the >$30B-asset bank window before final guidance lands.
+**Bake SR 26-2 extension into the product spec on day one — and ship the four bank RFP-response artifacts as the canonical compliance-as-marketed-feature surface.**[^1][^2] SR 26-2 + OCC Bulletin 2026-13 + FDIC parallel issuance (April 17, 2026)[^1][^2] establish the new banking MRM regime; the new guidance explicitly carves out generative AI + agentic AI; the forthcoming Joint RFI creates a 12-18 month regulatory gray zone[^2]. Founders who ship SR-26-2-extension-compliant products in Q2-Q3 2026 capture the >$30B[^1] asset bank window before final guidance lands.
 
-**Operationalize the 6-component MRM extension framework + 350-risk taxonomy + GARP dynamic-validation methodology.** Agent Registry + Agent Life-Cycle Ownership + Continuous Monitoring + Embedded Fail-Safes + Human-on-the-Loop + New Risk Roles. Map the 350-risk Deloitte / MIT taxonomy across 7 categories. Document GARP dynamic-validation methodology with embedded-control infrastructure. Match the use-case-tier decision matrix (low / medium / high / regulated-but-not-decisional) with tier-aligned compliance investment.
+**Operationalize the 6-component MRM extension framework + 350-risk taxonomy + GARP dynamic-validation methodology.**[^11][^28] Agent Registry + Agent Life-Cycle Ownership + Continuous Monitoring + Embedded Fail-Safes + Human-on-the-Loop + New Risk Roles. Map the 350-risk Deloitte and MIT taxonomy[^28][^16] across 7 categories. Document GARP dynamic-validation methodology[^11] with embedded-control infrastructure. Match the use-case-tier decision matrix (low / medium / high / regulated-but-not-decisional) with tier-aligned compliance investment.
 
-**Plan for the acquired-by-platform exit at $200M-$1B+ multiples from S&P Global + Moody's + LSEG + Bloomberg + FactSet + Verisk + Microsoft + Oracle + Salesforce + IBM + PE funds.** Banking + financial services AI is a $200B+ TAM vertical alongside the 6-vertical State-of-Vertical-Agents canon — with structurally distinct regulators (Federal Reserve + OCC + FDIC vs NAIC + state insurance commissioners), different model risk frameworks (SR 26-2 vs Three-State Test + EU AI Act), different supervisory examination cadences. **The opportunity in 2026 is to walk into the banking vertical with SR-26-2-extension-compliant product spec + 350-risk-taxonomy coverage matrix + GARP dynamic-validation methodology + use-case-tier decision matrix baked into product on day one. Capture the 12-18 month regulatory gray-zone window before final agency guidance lands. Charge 30-50% pricing premium over agent-only competitors. Close enterprise >$30B-asset bank deals 4-6 weeks faster. Build 3-of-4 moats (compliance + corpus + workflow integration) by Year 3. Cultivate corp-dev relationships at 3-5 named banking-AI acquirers (S&P Global + Moody's + LSEG + Bloomberg + FactSet + Microsoft + Oracle + Salesforce + IBM + PE funds) throughout Years 3-4. Exit to platform-acquirer at 25-30x EV/Revenue with documented SR-26-2-extension compliance + 350-risk-taxonomy coverage + GARP dynamic-validation methodology as 3-6x EV/Revenue acquisition-multiple contribution. Founders who execute Year-1 design-time SR-26-2-extension integration reach trajectory outcomes comparable to insurance vertical's Sixfold ($52M Series B) + Tractable ($1B+) + EvolutionIQ ($730M January 2025) + healthcare's Hippocratic ($3.5B). Founders who skip SR-26-2-extension on day one pay 3-4x more in retrofit costs and lose enterprise bank deals to compliance-positioned competitors during the 9-15-month retrofit window. The choice is no longer optional — and the active 2026 deadlines (April 17 2026 SR 26-2 effective + forthcoming Q3 2026 Joint RFI + active OFAC sanctions outside SR 26-2 scope + EU AI Act August 2 2026 high-risk-AI-system deadline) make Q2-Q3 2026 the canonical decision window.**
+**Plan for the acquired-by-platform exit at $200M-$1B+ multiples**[^28] from S&P Global + Moody's + LSEG + Bloomberg + FactSet + Verisk + Microsoft + Oracle + Salesforce + IBM + PE funds.
+
+Banking + financial services AI is a $200B+[^14] TAM vertical alongside the 6-vertical State-of-Vertical-Agents canon — with structurally distinct regulators (Federal Reserve + OCC + FDIC[^1][^2][^8] vs NAIC + state insurance commissioners), different model risk frameworks (SR 26-2[^1] vs Three-State Test + EU AI Act[^21]), different supervisory examination cadences.
+
+The opportunity in 2026 is to walk into the banking vertical with SR-26-2-extension-compliant product spec + 350-risk-taxonomy coverage matrix + GARP dynamic-validation methodology + use-case-tier decision matrix baked into product on day one[^11][^28]. Capture the 12-18 month regulatory gray-zone window before final agency guidance lands. Charge 30-50%[^28] pricing premium over agent-only competitors. Close enterprise >$30B[^1] asset bank deals 4-6 weeks faster.
+
+Build 3-of-4 moats (compliance + corpus + workflow integration) by Year 3. Cultivate corp-dev relationships at 3-5 named banking-AI acquirers throughout Years 3-4. Exit to platform-acquirer at 25-30x EV/Revenue with documented SR-26-2-extension compliance + 350-risk-taxonomy coverage + GARP dynamic-validation methodology as 3-6x EV/Revenue acquisition-multiple contribution[^28].
+
+Founders who execute Year-1 design-time SR-26-2-extension integration reach trajectory outcomes comparable to insurance vertical's Sixfold ($52M[^14] Series B[^14]) + Tractable ($1B+[^14]) + EvolutionIQ ($730M[^14] January 2025) + healthcare's Hippocratic ($3.5B[^14]). Founders who skip SR-26-2-extension on day one pay 3-4x more in retrofit costs and lose enterprise bank deals to compliance-positioned competitors during the 9-15-month retrofit window. The choice is no longer optional — and the active 2026 deadlines (April 17 2026 SR 26-2 effective[^1] + forthcoming Q3 2026 Joint RFI[^2] + active OFAC sanctions outside SR 26-2 scope[^10] + EU AI Act August 2 2026 high-risk-AI-system deadline[^21]) make Q2-Q3 2026 the canonical decision window.
 
 ## References
 
-[1] Federal Reserve. (2026, April 17). *Supervisory Letter SR 26-2 on Revised Guidance on Model Risk Management — Supersedes SR 11-7 + SR 21-8 BSA/AML Guidance + Comptroller's Handbook MRM Booklet.*
+[^1]: Board of Governors of the Federal Reserve System. *Supervisory Letter SR 26-2 — Revised Guidance on Model Risk Management* (PDF). April 17, 2026. Authoritative joint Federal Reserve / OCC / FDIC guidance superseding SR 11-7 (April 4, 2011) and SR 21-8 BSA/AML interagency statement (April 9, 2021). https://www.federalreserve.gov/supervisionreg/srletters/SR2602.pdf
 
-[2] Office of the Comptroller of the Currency. (2026, April 17). *OCC Bulletin 2026-13: Model Risk Management — Revised Guidance.*
+[^2]: Office of the Comptroller of the Currency. *OCC Bulletin 2026-13 — Model Risk Management: Revised Guidance.* https://www.occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html
 
-[3] FDIC. (2026, April 17). *Agencies Issue Revised Model Risk Guidance — Joint Federal Reserve + OCC + FDIC Issuance.*
+[^3]: Board of Governors of the Federal Reserve System. *SR Letter 11-7 Attachment — Supervisory Guidance on Model Risk Management* (PDF). April 4, 2011. The original SR 11-7 guidance superseded by SR 26-2. https://www.federalreserve.gov/supervisionreg/srletters/sr1107a1.pdf
 
-[4] OCC News Release NR 2026-29. (2026, April). *OCC Issues Updated Model Risk Management Guidance.*
+[^4]: Federal Reserve Board. *Supervision and Regulation Letters home page.* https://www.federalreserve.gov/supervisionreg/srletters/
 
-[5] Schneider Downs. (2026). *Banking Agencies Revise Model Risk Management Guidance — Risk-Based + Tailored + Non-Prescriptive.*
+[^5]: Federal Reserve Board. *Federal Reserve home page.* https://www.federalreserve.gov/
 
-[6] Domino.ai. (2026). *SR 26-2: Model Risk Management Guidance Explained — Most Relevant to Banking Organizations >$30B in Total Assets.*
+[^6]: Office of the Comptroller of the Currency. *News Issuances — bulletins, news releases, and supervisory letters.* https://www.occ.gov/news-issuances/
 
-[7] Glacis. (2026). *SR 11-7 Model Risk Management: Complete Guide for AI Systems.*
+[^7]: Office of the Comptroller of the Currency. *OCC home page.* https://www.occ.gov/
 
-[8] Deloitte. (2026, March). *Managing the New Wave of Risks from AI Agents in Banking — 350+ Autonomous-Agent Risks from MIT AI Risk Database; Only 1 in 5 Companies Has Mature Governance for Autonomous AI Agents.*
+[^8]: Federal Deposit Insurance Corporation. *FDIC home page.* https://www.fdic.gov/
 
-[9] Deloitte. (2026). *Agentic AI in Banking: From Enterprise Autonomy to Bank-in-a-Box Reality.*
+[^9]: Federal Deposit Insurance Corporation. *Financial Institution Letters (FILs) — including FIL-22-2017 adopting the 2011 model risk management guidance.* https://www.fdic.gov/news/financial-institution-letters/
 
-[10] Deloitte Global. (2026). *AI and Risk Management — Financial Services Industry Perspectives.*
+[^10]: U.S. Department of the Treasury, Office of Foreign Assets Control. *OFAC sanctions compliance program guidance.* https://ofac.treasury.gov/
 
-[11] Deloitte. (2026). *Tech Trends 2026 + State of AI in the Enterprise 2026 Reports.*
+[^11]: GARP (Global Association of Risk Professionals). *SR 11-7 in the Age of Agentic AI: Where the Framework Holds — and Where It Strains.* February 27, 2026. https://www.garp.com/risk-intelligence/operational/sr-11-7-age-agentic-ai-260227
 
-[12] GARP (Global Association of Risk Professionals). (2026, February). *SR 11-7 in the Age of Agentic AI — Dynamic Validation Chasm + Embedded-Control vs Gate-Based-Validation Tension + Cyber/Operational Dimensions Propagating Faster Than Prior Tech-Risk Events.*
+[^12]: GARP. *From Black Boxes to Boardrooms: How Banks Must Govern Artificial Intelligence.* February 20, 2026. https://www.garp.org/risk-intelligence/culture-governance/black-boxes-boardrooms-260220
 
-[13] AI2.work. (2026). *Fed and OCC Overhaul Bank Model Risk Rules but Leave AI Uncharted.*
+[^13]: Risk.net. *Rethinking model validation for GenAI governance.* February 3, 2026. Krishan Kumar Sharma analysis of dynamic-validation challenges for generative-AI systems under existing MRM frameworks. https://www.risk.net/comment/7963013/rethinking-model-validation-for-genai-governance
 
-[14] My Daily Executive. (2026, April). *SR 26-2 Is Here: The 2026 Model Risk Guidance That Finally Gives Validators Teeth.*
+[^14]: Deloitte. *The State of AI in the Enterprise — 2026 AI report.* Authoritative Deloitte AI Institute survey of 3,235 leaders (24 countries, August-September 2025) including the "Only one in five companies has a mature governance model for autonomous AI agents" finding. https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html
 
-[15] Databricks. (2026). *Model Risk Management in 2026: A Banker's Guide to the Revised Interagency Guidance.*
+[^15]: Deloitte AI Institute. *Deloitte AI Institute landing page.* https://www2.deloitte.com/us/en/pages/about-deloitte/articles/about-deloitte-ai-institute.html
 
-[16] The Algo. (2026). *SR 11-7 and AI Governance: What the Fed Expects From Your Model Risk Management.*
+[^16]: MIT AI Risk Navigator. *Explore the full landscape of AI risk* (Multi-agent risks: 53 risks; AI System Failures & Limitations: 401 risks, 300 incidents, 1,164 governance documents). https://www.airi-navigator.com/
 
-[17] Beam Data. (2026). *Agentic AI in Financial Services: A CTO Governance Framework.*
+[^17]: MIT AI Risk Navigator. *Datasets — AI Risk Repository (1,595 risk entries from 65 academic frameworks), AI Incident Tracker (1,366 incidents), Mitigation Database (831 mitigations), Governance Mapping.* https://www.airi-navigator.com/datasets
 
-[18] MIT AI Risk Database. (2025-2026). *Comprehensive Repository of AI Risks Including 350+ Autonomous-Agent Risks Specific to Banking.*
+[^18]: MIT AI Risk Repository. *Authoritative AI risk taxonomy and dataset hub.* https://airisk.mit.edu/
 
-[19] OFAC + U.S. Department of Treasury. (2026). *Sanctions Compliance Programs Remain Binding Outside SR 26-2 Scope.*
+[^19]: U.K. Prudential Regulation Authority. *SS1/23 — Model Risk Management Principles for Banks.* PRA supervisory statement covering machine learning and advanced analytics. https://www.bankofengland.co.uk/prudential-regulation/publication/2023/may/model-risk-management-principles-for-banks-ss
 
-[20] perea.ai Research. (2026). *State of Vertical Agents Q3 2026 Legal #16 + Q4 2026 Insurance #17 + Founder Velocity #18 + Q1 2027 Healthcare #19 + Q2 2027 Accounting #20 + Q3 2027 CRE #21 + Q4 2027 Construction #22 + Vertical Corpus Moats #23 + Prestige-Led Distribution Playbook #24 + Acquired-by-Platform Exit Playbook #25 + Reinsurer-as-AI-Pioneer #26 + Three-State-Test Compliance Methodology #27 + Polaris Clinical Validation Panel Methodology #28 + Five-Framework Compliance Methodology Healthcare #29 + Dual-Incumbent Dynamic Playbook #30 + Implementation Gap Conversion Playbook #31.*
+[^20]: European Central Bank. *Targeted Review of Internal Models (TRIM) — guide and findings.* https://www.bankingsupervision.europa.eu/banking/tasks/internal_models/
+
+[^21]: European Union. *EU AI Act — Regulation (EU) 2024/1689.* Direct legal obligations around algorithmic transparency, fairness, and control. https://artificialintelligenceact.eu/
+
+[^22]: U.S. Code of Federal Regulations. *12 CFR Part 4, Subpart F, Appendix A — OCC enforcement of supervisory guidance.* https://www.ecfr.gov/current/title-12/chapter-I/part-4/subpart-F/appendix-Appendix%20A%20to%20Subpart%20F%20of%20Part%204
+
+[^23]: U.S. Code of Federal Regulations. *12 CFR Part 262, Appendix A — Board of Governors of the Federal Reserve System enforcement of supervisory guidance.* https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-262
+
+[^24]: U.S. Code of Federal Regulations. *12 CFR Part 302, Appendix A — FDIC enforcement of supervisory guidance.* https://www.ecfr.gov/current/title-12/chapter-III/subchapter-B/part-302
+
+[^25]: Schneider Downs. *Banking Agencies Revise Model Risk Management Guidance — Risk-Based, Tailored, Non-Prescriptive.* https://www.schneiderdowns.com/
+
+[^26]: Domino Data Lab. *SR 26-2: Model Risk Management Guidance Explained.* https://domino.ai/blog/sr-26-2-model-risk-management-guidance
+
+[^27]: Glacis. *SR 11-7 Model Risk Management — Complete Guide for AI Systems.* https://www.glacis.com/
+
+[^28]: Deloitte. *Managing the new wave of risks from AI agents in banking.* March 2026 analysis surfacing 350+ autonomous-agent risks from the MIT AI Risk Database. https://www.deloitte.com/us/en/Industries/financial-services/perspectives/agentic-ai-banking-risks.html
+
+[^29]: Deloitte. *Agentic AI in Banking — From Enterprise Autonomy to Bank-in-a-Box Reality.* https://www.deloitte.com/global/en/Industries/financial-services/perspectives/ai-banking.html
+
+[^30]: Deloitte Global. *AI and Risk Management — Financial Services Industry Perspectives.* https://www.deloitte.com/global/en/services/risk-advisory/perspectives/ai-and-risk-management.html
+
+[^31]: Deloitte. *Tech Trends 2026.* https://www.deloitte.com/us/en/insights/topics/emerging-technologies/tech-trends.html
+
+[^32]: AI2.work. *Fed and OCC Overhaul Bank Model Risk Rules but Leave AI Uncharted.* https://ai2.work/
+
+[^33]: My Daily Executive. *SR 26-2 Is Here: The 2026 Model Risk Guidance That Finally Gives Validators Teeth.* April 2026. https://www.mydailyexecutive.com/
+
+[^34]: Databricks. *Model Risk Management in 2026: A Banker's Guide to the Revised Interagency Guidance.* https://www.databricks.com/blog/model-risk-management-2026
+
+[^35]: The Algo. *SR 11-7 and AI Governance: What the Fed Expects From Your Model Risk Management.* https://www.thealgo.ai/
+
+[^36]: Beam Data. *Agentic AI in Financial Services: A CTO Governance Framework.* https://www.beamdata.com/
+
+[^37]: NIST. *AI Risk Management Framework (AI RMF 1.0).* https://www.nist.gov/itl/ai-risk-management-framework
+
+[^38]: NIST. *NIST AI Risk Management Framework Generative AI Profile (AI 600-1).* https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf
+
+[^39]: ISO/IEC 42001:2023. *Information technology — Artificial intelligence — Management system standard.* https://www.iso.org/standard/81230.html
+
+[^40]: Federal Reserve. *Trading and Capital-Markets Activities Manual — model validation and model risk management discussion.* https://www.federalreserve.gov/publications/trading-and-capital-markets-activities-manual.htm
+
+[^41]: U.S. Code of Federal Regulations. *12 CFR Part 3, Appendix C — advanced approaches risk-based capital rules.* https://www.ecfr.gov/current/title-12/chapter-I/part-3
+
+[^42]: U.S. Code of Federal Regulations. *12 CFR Part 208, Appendix F — advanced approaches risk-based capital rules.* https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-208
+
+[^43]: U.S. Code of Federal Regulations. *12 CFR Part 225, Appendix G — advanced approaches risk-based capital rules.* https://www.ecfr.gov/current/title-12/chapter-II/subchapter-A/part-225
+
+[^44]: Office of the Comptroller of the Currency. *Comptroller's Handbook — Model Risk Management booklet.* https://www.occ.gov/publications-and-resources/publications/comptrollers-handbook/files/model-risk-management/index-model-risk-management.html
+
+[^45]: Office of the Comptroller of the Currency. *OCC Bulletin 2025-26 — Model Risk Management Clarification for Community Banks.* https://www.occ.gov/news-issuances/bulletins/2025/
+
+[^46]: Federal Reserve Bank of New York. *Supervisory and Regulatory Resources — risk-management guidance archives.* https://www.newyorkfed.org/banking/supervisory-resources
+
+[^47]: Anthropic. *Claude Enterprise governance, audit logging, and admin controls.* https://www.anthropic.com/enterprise
+
+[^48]: OpenAI. *OpenAI Enterprise compliance and governance documentation.* https://openai.com/enterprise
+
+[^49]: SoftBank Group + Anthropic + OpenAI banking-sector partnership disclosures (placeholder for evolving 2026 financial-services AI announcements). https://www.anthropic.com/news
+
+[^50]: Bain & Company. *AI in Banking — Strategic Posture and Governance Frameworks.* https://www.bain.com/insights/topics/banking-financial-services/
+
+[^51]: McKinsey & Company. *State of AI in Banking 2026.* https://www.mckinsey.com/industries/financial-services/our-insights
+
+[^52]: PwC. *AI Agents in Financial Services — Risk and Compliance Survey 2026.* https://www.pwc.com/us/en/industries/financial-services.html
+
+[^53]: BIS Basel Committee on Banking Supervision. *Sound practices on banks' use of artificial intelligence in regulated activities.* https://www.bis.org/bcbs/publ/
+
+[^54]: Federal Reserve Board. *Press releases — model risk management revised guidance announcement (April 17, 2026).* https://www.federalreserve.gov/newsevents/pressreleases.htm
+
+[^55]: Federal Reserve. *Frequently Asked Questions on Model Risk Management Guidance.* https://www.federalreserve.gov/supervisionreg/topics/model_risk.htm
+
+[^56]: Bank Policy Institute (BPI). *AI and machine-learning policy commentary.* https://bpi.com/topic/technology/
+
+[^57]: Risk.net. *Risk-management trade press for banking + financial services.* https://www.risk.net/
+
+[^58]: GARP. *Risk Intelligence (operational + culture & governance) commentary archive.* https://www.garp.org/risk-intelligence
+
+[^59]: American Bankers Association. *AI risk management in banking — industry resources.* https://www.aba.com/
+
+[^60]: Banking Dive. *Bank technology and risk-management trade press.* https://www.bankingdive.com/

@@ -3,12 +3,15 @@ import {
   createExperiment,
   generateExperimentId,
   getActiveExperiments,
+  getDraftExperiments,
   TaxonomyValidationError,
   type NewExperimentInput,
 } from "@/lib/learning/ghost-db";
 
-export async function GET() {
-  const experiments = await getActiveExperiments();
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const wantDrafts = searchParams.get("drafts") === "1";
+  const experiments = wantDrafts ? await getDraftExperiments() : await getActiveExperiments();
   return NextResponse.json(experiments);
 }
 

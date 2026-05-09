@@ -58,26 +58,77 @@ function verdictLabel(verdict: string | null, outcome: string, shippedAt: Date |
   return "in progress";
 }
 
+interface CloseWizardState {
+  open: boolean;
+  verdict: "win" | "kill";
+}
+
+const IMPLICATIONS = ["PERSEVERE", "PIVOT", "KILL", "DOUBLE-DOWN"] as const;
+const CONFIDENCES = ["HIGH", "MEDIUM", "LOW"] as const;
+const GENERALIZES = ["THIS-ONLY", "SEGMENT", "MARKET", "UNIVERSAL"] as const;
+const PIVOT_TYPES = [
+  "Customer-Segment", "Customer-Need", "Channel", "Pricing", "Value-Prop",
+  "Zoom-In", "Zoom-Out", "Tech", "Platform", "Business-Model",
+] as const;
+
 function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => void }) {
   const [isPending, startTransition] = useTransition();
-  const [showWin, setShowWin] = useState(false);
-  const [showKill, setShowKill] = useState(false);
+  const [wizard, setWizard] = useState<CloseWizardState>({ open: false, verdict: "win" });
+  const [implication, setImplication] = useState<typeof IMPLICATIONS[number]>("PERSEVERE");
+  const [confidence, setConfidence] = useState<typeof CONFIDENCES[number] | "">("");
+  const [generalizes, setGeneralizes] = useState<typeof GENERALIZES[number] | "">("");
+  const [pivotType, setPivotType] = useState<typeof PIVOT_TYPES[number] | "">("");
   const [learning, setLearning] = useState("");
+  const [closeError, setCloseError] = useState("");
 
   const isActive = exp.outcome === "in_progress";
 
-  async function patch(action: string, learning?: string) {
-    await fetch(`/api/experiments/${exp.id}`, {
+  async function patch(action: string, body: Record<string, unknown> = {}): Promise<Response> {
+    const res = await fetch(`/api/experiments/${exp.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, learning }),
+      body: JSON.stringify({ action, ...body }),
     });
     onAction();
+    return res;
   }
 
-  function handle(action: string, learning?: string) {
-    startTransition(() => { patch(action, learning); });
+  function openWizard(verdict: "win" | "kill") {
+    setWizard({ open: true, verdict });
+    setImplication(verdict === "win" ? "PERSEVERE" : "KILL");
+    setConfidence("");
+    setGeneralizes("");
+    setPivotType("");
+    setLearning("");
+    setCloseError("");
   }
+
+  const closeReady =
+    learning.trim() && confidence && generalizes &&
+    (implication !== "PIVOT" || pivotType);
+
+  function submitClose() {
+    if (!closeReady) return;
+    startTransition(async () => {
+      const res = await patch("close", {
+        verdict: wizard.verdict,
+        implication,
+        learning: learning.trim(),
+        confidence,
+        generalizes_to: generalizes,
+        pivot_type: implication === "PIVOT" ? pivotType : undefined,
+      });
+      if (res.ok) {
+        setWizard({ open: false, verdict: "win" });
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setCloseError(err.error ?? "Close failed");
+      }
+    });
+  }
+
+  function handleShip() { startTransition(async () => { await patch("ship"); }); }
+  function handleMore() { startTransition(async () => { await patch("more"); }); }
 
   return (
     <div className={`rounded-xl border p-4 space-y-2 ${isPending ? "opacity-60" : ""} ${!isActive ? "border-gray-100 bg-gray-50" : "border-gray-200"}`}>
@@ -125,61 +176,141 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
         </span>
       </div>
 
-      {isActive && (
+      {isActive && !wizard.open && (
         <div className="flex flex-wrap gap-2 pt-1">
           {!exp.shipped_at && (
             <button
-              onClick={() => handle("ship")}
+              onClick={handleShip}
               className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-50"
             >
               Mark Shipped
             </button>
           )}
           <button
-            onClick={() => { setShowWin(true); setShowKill(false); }}
+            onClick={() => openWizard("win")}
             className="text-xs px-2 py-1 rounded border border-green-200 text-green-700 hover:bg-green-50"
           >
             WIN
           </button>
           <button
-            onClick={() => { setShowKill(true); setShowWin(false); }}
+            onClick={() => openWizard("kill")}
             className="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50"
           >
             KILL
           </button>
           <button
-            onClick={() => handle("more")}
+            onClick={handleMore}
             className="text-xs px-2 py-1 rounded border border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+            title="Logs a 'still observing' signal but keeps the experiment active"
           >
             Need More Data
           </button>
         </div>
       )}
 
-      {(showWin || showKill) && (
-        <div className="pt-1 space-y-2">
-          <textarea
-            value={learning}
-            onChange={(e) => setLearning(e.target.value)}
-            placeholder="What did you learn? (required)"
-            rows={2}
-            className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-gray-300"
-          />
-          <div className="flex gap-2">
-            <button
-              disabled={!learning.trim()}
-              onClick={() => { handle(showWin ? "win" : "kill", learning); setShowWin(false); setShowKill(false); }}
-              className="text-xs px-3 py-1 rounded bg-gray-900 text-white disabled:opacity-40"
-            >
-              Confirm {showWin ? "WIN" : "KILL"}
-            </button>
-            <button
-              onClick={() => { setShowWin(false); setShowKill(false); setLearning(""); }}
-              className="text-xs px-3 py-1 rounded border border-gray-200 text-gray-500"
-            >
-              Cancel
-            </button>
+      {wizard.open && (
+        <div className="pt-2 space-y-3 rounded-lg border border-gray-300 bg-white p-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">
+              Close as <span className={wizard.verdict === "win" ? "text-green-700" : "text-red-600"}>{wizard.verdict.toUpperCase()}</span> · Axis 7 structured close
+            </p>
+            <button onClick={() => setWizard({ open: false, verdict: "win" })} className="text-gray-400 text-xs hover:text-gray-700">✕</button>
           </div>
+
+          <div>
+            <label className="text-[10px] text-gray-500 uppercase tracking-wide">We learned that …</label>
+            <textarea
+              value={learning}
+              onChange={(e) => setLearning(e.target.value)}
+              placeholder="One sentence summarizing what reality showed."
+              rows={2}
+              className="w-full text-xs border border-gray-200 rounded px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-gray-300"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wide">Implication</label>
+              <select
+                value={implication}
+                onChange={(e) => setImplication(e.target.value as typeof IMPLICATIONS[number])}
+                className="w-full text-xs border border-gray-200 rounded px-2 py-1"
+              >
+                {IMPLICATIONS.map((i) => <option key={i} value={i}>{i}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wide">Confidence</label>
+              <select
+                value={confidence}
+                onChange={(e) => setConfidence(e.target.value as typeof CONFIDENCES[number])}
+                className="w-full text-xs border border-gray-200 rounded px-2 py-1"
+              >
+                <option value="">— select —</option>
+                {CONFIDENCES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-gray-500 uppercase tracking-wide">Generalizes to</label>
+              <select
+                value={generalizes}
+                onChange={(e) => setGeneralizes(e.target.value as typeof GENERALIZES[number])}
+                className="w-full text-xs border border-gray-200 rounded px-2 py-1"
+              >
+                <option value="">— select —</option>
+                {GENERALIZES.map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            {implication === "PIVOT" && (
+              <div>
+                <label className="text-[10px] text-gray-500 uppercase tracking-wide">Pivot type</label>
+                <select
+                  value={pivotType}
+                  onChange={(e) => setPivotType(e.target.value as typeof PIVOT_TYPES[number])}
+                  className="w-full text-xs border border-gray-200 rounded px-2 py-1"
+                >
+                  <option value="">— select —</option>
+                  {PIVOT_TYPES.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+            )}
+          </div>
+
+          {closeError && <p className="text-xs text-red-500">{closeError}</p>}
+
+          <div className="flex items-center justify-between pt-1">
+            <p className="text-[10px] text-gray-400">
+              {implication === "KILL"
+                ? "No next-bet draft (KILL = exploration closed)."
+                : "AI will draft a next-bet experiment when you confirm."}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setWizard({ open: false, verdict: "win" })}
+                className="text-xs px-3 py-1 rounded border border-gray-200 text-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!closeReady || isPending}
+                onClick={submitClose}
+                className="text-xs px-3 py-1 rounded bg-gray-900 text-white disabled:opacity-40"
+              >
+                {isPending ? "Closing…" : `Confirm ${wizard.verdict.toUpperCase()}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Surface the structured close fields on already-closed experiments */}
+      {!isActive && (exp.implication || exp.confidence) && (
+        <div className="pt-1 flex flex-wrap gap-1.5 text-[10px]">
+          {exp.implication && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{exp.implication}</span>}
+          {exp.confidence && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">conf: {exp.confidence}</span>}
+          {exp.generalizes_to && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">scope: {exp.generalizes_to}</span>}
+          {exp.pivot_type && <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">pivot: {exp.pivot_type}</span>}
+          {exp.next_bet_id && <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">→ next: <code className="font-mono">{exp.next_bet_id}</code></span>}
         </div>
       )}
     </div>
@@ -210,6 +341,7 @@ function formatRate(r: number | null): string {
 export function ExperimentsClient({
   initialActive,
   initialClosed,
+  initialDrafts,
   learnings,
   velocityToday,
   velocityWeek,
@@ -218,6 +350,7 @@ export function ExperimentsClient({
 }: {
   initialActive: Experiment[];
   initialClosed: Experiment[];
+  initialDrafts: Experiment[];
   learnings: RecentLearning[];
   velocityToday: number;
   velocityWeek: number;
@@ -225,6 +358,7 @@ export function ExperimentsClient({
   validationRate: number | null;
 }) {
   const [active, setActive] = useState(initialActive);
+  const [drafts, setDrafts] = useState(initialDrafts);
   const [isStarting, startTransition] = useTransition();
   const [startupFilter, setStartupFilter] = useState<string | null>(null);
   const [report, setReport] = useState<ScrumReport | null>(null);
@@ -241,6 +375,7 @@ export function ExperimentsClient({
   // Ops log: L0 entries, hidden by default
   const opsActive    = active.filter((e) => byProject(e) && e.loop_class === "L0");
   const filteredClosed = initialClosed.filter(byProject);
+  const filteredDrafts = drafts.filter(byProject);
 
   // Validated Learning Taxonomy form state
   const [loopClass, setLoopClass] = useState<"L0" | "L1" | "L2">("L1");
@@ -328,11 +463,30 @@ export function ExperimentsClient({
   }
 
   async function refreshActive() {
-    const res = await fetch("/api/experiments");
-    if (res.ok) {
-      const data = await res.json();
-      setActive(data);
-    }
+    const [actRes, draftRes] = await Promise.all([
+      fetch("/api/experiments"),
+      fetch("/api/experiments?drafts=1"),
+    ]);
+    if (actRes.ok) setActive(await actRes.json());
+    if (draftRes.ok) setDrafts(await draftRes.json());
+  }
+
+  async function promoteDraft(id: string) {
+    const res = await fetch(`/api/experiments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "promote" }),
+    });
+    if (res.ok) await refreshActive();
+  }
+
+  async function discardDraft(id: string) {
+    const res = await fetch(`/api/experiments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "delete" }),
+    });
+    if (res.ok) await refreshActive();
   }
 
   return (
@@ -630,6 +784,57 @@ export function ExperimentsClient({
               {s}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Drafts — auto-spawned next bets pending review */}
+      {filteredDrafts.length > 0 && (
+        <div>
+          <h2 className="text-lg font-medium text-emerald-700 mb-2">
+            Pending next-bets ({filteredDrafts.length})
+          </h2>
+          <p className="text-xs text-gray-500 mb-3">
+            AI-drafted hypotheses spawned from closed experiments. Review and promote to start running, or discard.
+          </p>
+          <div className="space-y-3">
+            {filteredDrafts.map((d) => (
+              <div key={d.id} className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{d.hypothesis}</p>
+                    <p className="text-xs text-gray-500 mt-1 flex flex-wrap items-center gap-x-1.5">
+                      <code className="font-mono text-gray-400">{d.id}</code>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-700">DRAFT</span>
+                      {d.parent_experiment_id && <span>↑ from <code className="font-mono">{d.parent_experiment_id}</code></span>}
+                      {d.risk_dimension && <span>· {d.risk_dimension}</span>}
+                      {d.aarrr_stage && <span>· {d.aarrr_stage}</span>}
+                      {d.evidence_method && <span>· {d.evidence_method}</span>}
+                    </p>
+                    {d.threshold && (
+                      <p className="text-[11px] text-gray-500 mt-1">
+                        <span className="font-medium">Win:</span> {d.metric} ≥ {d.threshold} within {d.timeframe}
+                        {d.kill_threshold && <span className="text-red-500"> · Kill if &lt; {d.kill_threshold}</span>}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => promoteDraft(d.id)}
+                    className="text-xs px-3 py-1 rounded bg-emerald-700 text-white hover:bg-emerald-800"
+                  >
+                    Promote to Active
+                  </button>
+                  <button
+                    onClick={() => discardDraft(d.id)}
+                    className="text-xs px-3 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50"
+                  >
+                    Discard
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

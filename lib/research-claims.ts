@@ -3545,6 +3545,37 @@ const HEALTH_HIPAA_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)cdph\.ca\.gov(\/|$)/i,
   /(^|\.)www\.cdph\.ca\.gov(\/|$)/i,
   /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+  // Peer-reviewed healthcare publishers + canonical academic press
+  /(^|\.)nature\.com(\/|$)/i,
+  /(^|\.)www\.nature\.com(\/|$)/i,
+  /(^|\.)npg\.nature\.com(\/|$)/i,
+  // Major academic medical centers (first-party institutional press)
+  /(^|\.)mountsinai\.org(\/|$)/i,
+  /(^|\.)www\.mountsinai\.org(\/|$)/i,
+  // Healthcare AI vendor first-party documentation (Polaris validation methodology, etc.)
+  /(^|\.)hippocraticai\.com(\/|$)/i,
+  /(^|\.)www\.hippocraticai\.com(\/|$)/i,
+  // US Senate offices + Senate committee primary documents
+  /(^|\.)cantwell\.senate\.gov(\/|$)/i,
+  /(^|\.)finance\.senate\.gov(\/|$)/i,
+  /(^|\.)www\.senate\.gov(\/|$)/i,
+  /(^|\.)senate\.gov(\/|$)/i,
+  // CMS + adjacent federal health agencies
+  /(^|\.)cms\.gov(\/|$)/i,
+  /(^|\.)www\.cms\.gov(\/|$)/i,
+  /(^|\.)oig\.hhs\.gov(\/|$)/i,
+  /(^|\.)aspe\.hhs\.gov(\/|$)/i,
+  // Cloud + foundation-model providers' compliance/HIPAA documentation surfaces
+  /(^|\.)aws\.amazon\.com(\/|$)/i,
+  /(^|\.)docs\.aws\.amazon\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  /(^|\.)docs\.microsoft\.com(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)www\.microsoft\.com(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  // 988 Suicide and Crisis Lifeline + adjacent crisis-services authoritative
+  /(^|\.)988lifeline\.org(\/|$)/i,
+  /(^|\.)www\.988lifeline\.org(\/|$)/i,
 ];
 
 const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
@@ -3587,6 +3618,393 @@ const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)nirmitee\.io(\/|$)/i,
   /(^|\.)netguardia\.com(\/|$)/i,
   /(^|\.)www\.netguardia\.com(\/|$)/i,
+  // Healthcare law trade press + legal-analysis surfaces (Lokken / nH Predict coverage)
+  /(^|\.)americanhealthlaw\.org(\/|$)/i,
+  /(^|\.)www\.americanhealthlaw\.org(\/|$)/i,
+  /(^|\.)ediscoveryllc\.com(\/|$)/i,
+  /(^|\.)www\.ediscoveryllc\.com(\/|$)/i,
+  /(^|\.)news\.ambest\.com(\/|$)/i,
+  /(^|\.)ambest\.com(\/|$)/i,
+  /(^|\.)pharmaciststeve\.com(\/|$)/i,
+  /(^|\.)www\.pharmaciststeve\.com(\/|$)/i,
+  // Hospital association + state-hospital surfaces (WSHA WISeR coverage)
+  /(^|\.)wsha\.org(\/|$)/i,
+  /(^|\.)www\.wsha\.org(\/|$)/i,
+  // Regional newspaper coverage of federal health-AI delays (Spokesman-Review)
+  /(^|\.)spokesman\.com(\/|$)/i,
+  /(^|\.)www\.spokesman\.com(\/|$)/i,
+  // Academic medical center digest / commentary on healthcare-AI papers (UNMC)
+  /(^|\.)unmc\.edu(\/|$)/i,
+  /(^|\.)www\.unmc\.edu(\/|$)/i,
+  // Press distribution + research news (Newswise; mostly academic press releases)
+  /(^|\.)newswise\.com(\/|$)/i,
+  /(^|\.)www\.newswise\.com(\/|$)/i,
+];
+
+const AGENT_INFERENCE_PRIMARY_PATTERNS: RegExp[] = [
+  // Foundation-model providers' first-party docs/pricing surfaces
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)www\.openai\.com(\/|$)/i,
+  /(^|\.)platform\.openai\.com(\/|$)/i,
+  /(^|\.)docs\.openai\.com(\/|$)/i,
+  /(^|\.)ai\.google\.dev(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  /(^|\.)deepmind\.google(\/|$)/i,
+  /(^|\.)api-docs\.deepseek\.com(\/|$)/i,
+  /(^|\.)huggingface\.co(\/|$)/i,
+  /(^|\.)together\.ai(\/|$)/i,
+  /(^|\.)www\.together\.ai(\/|$)/i,
+  /(^|\.)mistral\.ai(\/|$)/i,
+  /(^|\.)cohere\.com(\/|$)/i,
+  // GPU + accelerator vendors
+  /(^|\.)nvidia\.com(\/|$)/i,
+  /(^|\.)www\.nvidia\.com(\/|$)/i,
+  /(^|\.)developer\.nvidia\.com(\/|$)/i,
+  /(^|\.)build\.nvidia\.com(\/|$)/i,
+  /(^|\.)docs\.nvidia\.com(\/|$)/i,
+  /(^|\.)blogs\.nvidia\.com(\/|$)/i,
+  /(^|\.)amd\.com(\/|$)/i,
+  /(^|\.)www\.amd\.com(\/|$)/i,
+  /(^|\.)cerebras\.net(\/|$)/i,
+  /(^|\.)www\.cerebras\.net(\/|$)/i,
+  /(^|\.)groq\.com(\/|$)/i,
+  // Inference engines / open-source projects' canonical docs + repos
+  /(^|\.)docs\.vllm\.ai(\/|$)/i,
+  /(^|\.)blog\.vllm\.ai(\/|$)/i,
+  /(^|\.)docs\.lmcache\.ai(\/|$)/i,
+  /(^|\.)lmcache\.ai(\/|$)/i,
+  /(^|\.)llm-d\.ai(\/|$)/i,
+  /(^|\.)developers\.redhat\.com(\/|$)/i,
+  /(^|\.)redhat\.com(\/|$)/i,
+  /(^|\.)www\.redhat\.com(\/|$)/i,
+  /(^|\.)github\.com\/red-hat-data-services\//i,
+  /(^|\.)github\.com\/sgl-project\//i,
+  /(^|\.)github\.com\/ai-dynamo\//i,
+  /(^|\.)github\.com\/NVIDIA\//i,
+  /(^|\.)github\.com\/deepseek-ai\//i,
+  // VC research firms publishing canonical 2024-2026 inference cost analyses
+  /(^|\.)a16z\.com(\/|$)/i,
+  /(^|\.)www\.a16z\.com(\/|$)/i,
+];
+
+const AGENT_INFERENCE_SECONDARY_PATTERNS: RegExp[] = [
+  // Pricing aggregators + comparison trackers
+  /(^|\.)devtk\.ai(\/|$)/i,
+  /(^|\.)aicomp\.prygn\.com(\/|$)/i,
+  /(^|\.)aicostcheck\.com(\/|$)/i,
+  /(^|\.)aicostindex\.com(\/|$)/i,
+  /(^|\.)tokenpricing\.com(\/|$)/i,
+  // Tech trade press covering AI infrastructure / inference economics
+  /(^|\.)thestack\.technology(\/|$)/i,
+  /(^|\.)www\.thestack\.technology(\/|$)/i,
+  /(^|\.)theverge\.com(\/|$)/i,
+  /(^|\.)www\.theverge\.com(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)venturebeat\.com(\/|$)/i,
+  /(^|\.)www\.venturebeat\.com(\/|$)/i,
+  /(^|\.)theinformation\.com(\/|$)/i,
+  /(^|\.)www\.theinformation\.com(\/|$)/i,
+  /(^|\.)spheronnetwork\.com(\/|$)/i,
+  /(^|\.)spheron\.network(\/|$)/i,
+  /(^|\.)techplained\.com(\/|$)/i,
+  /(^|\.)www\.techplained\.com(\/|$)/i,
+  // AI infrastructure product / inference observability surfaces
+  /(^|\.)langfuse\.com(\/|$)/i,
+  /(^|\.)www\.langfuse\.com(\/|$)/i,
+  /(^|\.)helicone\.ai(\/|$)/i,
+  /(^|\.)www\.helicone\.ai(\/|$)/i,
+  /(^|\.)portkey\.ai(\/|$)/i,
+  /(^|\.)www\.portkey\.ai(\/|$)/i,
+  /(^|\.)phoenix\.arize\.com(\/|$)/i,
+  /(^|\.)arize\.com(\/|$)/i,
+  /(^|\.)langsmith\.com(\/|$)/i,
+  /(^|\.)braintrust\.dev(\/|$)/i,
+  // Cloudflare AI Gateway docs
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)cloudflare\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  // IDC research firm + adjacent analyst
+  /(^|\.)idc\.com(\/|$)/i,
+  /(^|\.)www\.idc\.com(\/|$)/i,
+  /(^|\.)my\.idc\.com(\/|$)/i,
+  /(^|\.)info\.idc\.com(\/|$)/i,
+  // AI media + LinkedIn distribution surfaces for VC research summaries
+  /(^|\.)linkedin\.com(\/|$)/i,
+  /(^|\.)www\.linkedin\.com(\/|$)/i,
+];
+
+const BANKING_MRM_PRIMARY_PATTERNS: RegExp[] = [
+  // US federal banking regulators
+  /(^|\.)federalreserve\.gov(\/|$)/i,
+  /(^|\.)www\.federalreserve\.gov(\/|$)/i,
+  /(^|\.)occ\.gov(\/|$)/i,
+  /(^|\.)www\.occ\.gov(\/|$)/i,
+  /(^|\.)fdic\.gov(\/|$)/i,
+  /(^|\.)www\.fdic\.gov(\/|$)/i,
+  /(^|\.)newyorkfed\.org(\/|$)/i,
+  /(^|\.)www\.newyorkfed\.org(\/|$)/i,
+  /(^|\.)treasury\.gov(\/|$)/i,
+  /(^|\.)www\.treasury\.gov(\/|$)/i,
+  /(^|\.)ofac\.treasury\.gov(\/|$)/i,
+  // International bank regulators
+  /(^|\.)bankofengland\.co\.uk(\/|$)/i,
+  /(^|\.)www\.bankofengland\.co\.uk(\/|$)/i,
+  /(^|\.)bankingsupervision\.europa\.eu(\/|$)/i,
+  /(^|\.)bis\.org(\/|$)/i,
+  /(^|\.)www\.bis\.org(\/|$)/i,
+  // EU AI Act + standards
+  /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)nist\.gov(\/|$)/i,
+  /(^|\.)www\.nist\.gov(\/|$)/i,
+  /(^|\.)nvlpubs\.nist\.gov(\/|$)/i,
+  // MIT AI Risk research
+  /(^|\.)airisk\.mit\.edu(\/|$)/i,
+  /(^|\.)airi-navigator\.com(\/|$)/i,
+  /(^|\.)www\.airi-navigator\.com(\/|$)/i,
+];
+
+const BANKING_MRM_SECONDARY_PATTERNS: RegExp[] = [
+  // Risk-management trade press
+  /(^|\.)garp\.org(\/|$)/i,
+  /(^|\.)www\.garp\.org(\/|$)/i,
+  /(^|\.)garp\.com(\/|$)/i,
+  /(^|\.)www\.garp\.com(\/|$)/i,
+  /(^|\.)risk\.net(\/|$)/i,
+  /(^|\.)www\.risk\.net(\/|$)/i,
+  // Banking trade press
+  /(^|\.)bankingdive\.com(\/|$)/i,
+  /(^|\.)www\.bankingdive\.com(\/|$)/i,
+  /(^|\.)bpi\.com(\/|$)/i,
+  /(^|\.)www\.bpi\.com(\/|$)/i,
+  /(^|\.)aba\.com(\/|$)/i,
+  /(^|\.)www\.aba\.com(\/|$)/i,
+  // MRM consultancies
+  /(^|\.)schneiderdowns\.com(\/|$)/i,
+  /(^|\.)www\.schneiderdowns\.com(\/|$)/i,
+  /(^|\.)domino\.ai(\/|$)/i,
+  /(^|\.)www\.domino\.ai(\/|$)/i,
+  /(^|\.)glacis\.com(\/|$)/i,
+  /(^|\.)www\.glacis\.com(\/|$)/i,
+  /(^|\.)databricks\.com(\/|$)/i,
+  /(^|\.)www\.databricks\.com(\/|$)/i,
+  /(^|\.)thealgo\.ai(\/|$)/i,
+  /(^|\.)www\.thealgo\.ai(\/|$)/i,
+  /(^|\.)beamdata\.com(\/|$)/i,
+  /(^|\.)www\.beamdata\.com(\/|$)/i,
+  /(^|\.)mydailyexecutive\.com(\/|$)/i,
+  /(^|\.)www\.mydailyexecutive\.com(\/|$)/i,
+  /(^|\.)ai2\.work(\/|$)/i,
+];
+
+const RPA_AI_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
+  // Enterprise RPA + agentic-AI platform vendors (first-party newsroom + product docs)
+  /(^|\.)uipath\.com(\/|$)/i,
+  /(^|\.)www\.uipath\.com(\/|$)/i,
+  /(^|\.)ir\.uipath\.com(\/|$)/i,
+  /(^|\.)blueprism\.com(\/|$)/i,
+  /(^|\.)www\.blueprism\.com(\/|$)/i,
+  /(^|\.)automationanywhere\.com(\/|$)/i,
+  /(^|\.)www\.automationanywhere\.com(\/|$)/i,
+  /(^|\.)salesforce\.com(\/|$)/i,
+  /(^|\.)www\.salesforce\.com(\/|$)/i,
+  /(^|\.)servicenow\.com(\/|$)/i,
+  /(^|\.)www\.servicenow\.com(\/|$)/i,
+  /(^|\.)workday\.com(\/|$)/i,
+  /(^|\.)www\.workday\.com(\/|$)/i,
+  /(^|\.)investor\.workday\.com(\/|$)/i,
+  /(^|\.)sap\.com(\/|$)/i,
+  /(^|\.)www\.sap\.com(\/|$)/i,
+  /(^|\.)celonis\.com(\/|$)/i,
+  /(^|\.)www\.celonis\.com(\/|$)/i,
+  /(^|\.)nexusgpt\.io(\/|$)/i,
+  // Y Combinator + accelerator first-party launch posts
+  /(^|\.)ycombinator\.com(\/|$)/i,
+  /(^|\.)www\.ycombinator\.com(\/|$)/i,
+  // BusinessWire authoritative corporate press release distribution
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)www\.businesswire\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)www\.prnewswire\.com(\/|$)/i,
+  // Standards bodies + regulatory frameworks
+  /(^|\.)iso\.org(\/|$)/i,
+  /(^|\.)www\.iso\.org(\/|$)/i,
+  /(^|\.)fedramp\.gov(\/|$)/i,
+  /(^|\.)www\.fedramp\.gov(\/|$)/i,
+  /(^|\.)aiuc\.ai(\/|$)/i,
+  /(^|\.)www\.aiuc\.ai(\/|$)/i,
+  // Gartner + Forrester + IDC research firms
+  /(^|\.)gartner\.com(\/|$)/i,
+  /(^|\.)www\.gartner\.com(\/|$)/i,
+  /(^|\.)forrester\.com(\/|$)/i,
+  /(^|\.)www\.forrester\.com(\/|$)/i,
+  // Big-4 consultancies
+  /(^|\.)bain\.com(\/|$)/i,
+  /(^|\.)www\.bain\.com(\/|$)/i,
+  /(^|\.)deloitte\.com(\/|$)/i,
+  /(^|\.)www\.deloitte\.com(\/|$)/i,
+  /(^|\.)www2\.deloitte\.com(\/|$)/i,
+  /(^|\.)pwc\.com(\/|$)/i,
+  /(^|\.)www\.pwc\.com(\/|$)/i,
+  /(^|\.)mckinsey\.com(\/|$)/i,
+  /(^|\.)www\.mckinsey\.com(\/|$)/i,
+  /(^|\.)kpmg\.com(\/|$)/i,
+  /(^|\.)www\.kpmg\.com(\/|$)/i,
+  /(^|\.)ey\.com(\/|$)/i,
+  /(^|\.)www\.ey\.com(\/|$)/i,
+  // Independent research firms publishing enterprise AI ROI benchmarks
+  /(^|\.)nucleusresearch\.com(\/|$)/i,
+  /(^|\.)www\.nucleusresearch\.com(\/|$)/i,
+  /(^|\.)phenom\.com(\/|$)/i,
+  /(^|\.)www\.phenom\.com(\/|$)/i,
+];
+
+const RPA_AI_PLATFORM_SECONDARY_PATTERNS: RegExp[] = [
+  // Startup funding press
+  /(^|\.)finsmes\.com(\/|$)/i,
+  /(^|\.)www\.finsmes\.com(\/|$)/i,
+  /(^|\.)eu-startups\.com(\/|$)/i,
+  /(^|\.)www\.eu-startups\.com(\/|$)/i,
+  // Enterprise software analyst aggregators + review platforms
+  /(^|\.)peerspot\.com(\/|$)/i,
+  /(^|\.)www\.peerspot\.com(\/|$)/i,
+  /(^|\.)g2\.com(\/|$)/i,
+  /(^|\.)www\.g2\.com(\/|$)/i,
+  /(^|\.)trustradius\.com(\/|$)/i,
+  /(^|\.)www\.trustradius\.com(\/|$)/i,
+  // AI / agentic platform analysis blogs
+  /(^|\.)planetarylabour\.com(\/|$)/i,
+  /(^|\.)www\.planetarylabour\.com(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)www\.agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)agentcorps\.co(\/|$)/i,
+  /(^|\.)www\.agentcorps\.co(\/|$)/i,
+  /(^|\.)beri\.net(\/|$)/i,
+  /(^|\.)www\.beri\.net(\/|$)/i,
+  /(^|\.)kognitos\.com(\/|$)/i,
+  /(^|\.)www\.kognitos\.com(\/|$)/i,
+  /(^|\.)mobiosolutions\.com(\/|$)/i,
+  /(^|\.)www\.mobiosolutions\.com(\/|$)/i,
+  /(^|\.)ekfrazo\.com(\/|$)/i,
+  /(^|\.)www\.ekfrazo\.com(\/|$)/i,
+  /(^|\.)fifthrow\.ai(\/|$)/i,
+  /(^|\.)www\.fifthrow\.ai(\/|$)/i,
+  /(^|\.)petronellatech\.com(\/|$)/i,
+  /(^|\.)www\.petronellatech\.com(\/|$)/i,
+  /(^|\.)lastingdynamics\.com(\/|$)/i,
+  /(^|\.)www\.lastingdynamics\.com(\/|$)/i,
+  /(^|\.)ampcome\.com(\/|$)/i,
+  /(^|\.)www\.ampcome\.com(\/|$)/i,
+  /(^|\.)neontri\.com(\/|$)/i,
+  /(^|\.)www\.neontri\.com(\/|$)/i,
+  // TIME magazine + adjacent media for product/awards coverage
+  /(^|\.)time\.com(\/|$)/i,
+  /(^|\.)www\.time\.com(\/|$)/i,
+  // Reworked + AI Business industry trade press
+  /(^|\.)reworked\.co(\/|$)/i,
+  /(^|\.)www\.reworked\.co(\/|$)/i,
+  /(^|\.)aibusiness\.com(\/|$)/i,
+  /(^|\.)www\.aibusiness\.com(\/|$)/i,
+];
+
+const PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS: RegExp[] = [
+  // AI-discovery platform companies (first-party corporate announcements)
+  /(^|\.)insilico\.com(\/|$)/i,
+  /(^|\.)www\.insilico\.com(\/|$)/i,
+  /(^|\.)generatebiomedicines\.com(\/|$)/i,
+  /(^|\.)www\.generatebiomedicines\.com(\/|$)/i,
+  /(^|\.)isomorphiclabs\.com(\/|$)/i,
+  /(^|\.)www\.isomorphiclabs\.com(\/|$)/i,
+  /(^|\.)insitro\.com(\/|$)/i,
+  /(^|\.)www\.insitro\.com(\/|$)/i,
+  /(^|\.)recursionpharma\.com(\/|$)/i,
+  /(^|\.)www\.recursionpharma\.com(\/|$)/i,
+  /(^|\.)investors\.exscientia\.ai(\/|$)/i,
+  /(^|\.)exscientia\.ai(\/|$)/i,
+  // First-party corporate press kits (Google Cloud Storage, etc.)
+  /(^|\.)storage\.googleapis\.com\/isomorphiclabs/i,
+  // EU regulatory + pharma authority surfaces
+  /(^|\.)health\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)ec\.europa\.eu(\/|$)/i,
+  // Big Pharma corporate press surfaces
+  /(^|\.)news\.lilly\.com(\/|$)/i,
+  /(^|\.)novartis\.com(\/|$)/i,
+  /(^|\.)www\.novartis\.com(\/|$)/i,
+  /(^|\.)bms\.com(\/|$)/i,
+  /(^|\.)www\.bms\.com(\/|$)/i,
+  /(^|\.)news\.bms\.com(\/|$)/i,
+  /(^|\.)roche\.com(\/|$)/i,
+  /(^|\.)www\.roche\.com(\/|$)/i,
+  /(^|\.)astrazeneca\.com(\/|$)/i,
+  /(^|\.)www\.astrazeneca\.com(\/|$)/i,
+];
+
+const PHARMA_DRUG_DISCOVERY_SECONDARY_PATTERNS: RegExp[] = [
+  // Biotech / pharma trade press
+  /(^|\.)biospace\.com(\/|$)/i,
+  /(^|\.)www\.biospace\.com(\/|$)/i,
+  /(^|\.)fiercebiotech\.com(\/|$)/i,
+  /(^|\.)www\.fiercebiotech\.com(\/|$)/i,
+  /(^|\.)biopharmadive\.com(\/|$)/i,
+  /(^|\.)www\.biopharmadive\.com(\/|$)/i,
+  /(^|\.)pharmaphorum\.com(\/|$)/i,
+  /(^|\.)www\.pharmaphorum\.com(\/|$)/i,
+  /(^|\.)pharmaceutical-technology\.com(\/|$)/i,
+  /(^|\.)www\.pharmaceutical-technology\.com(\/|$)/i,
+  /(^|\.)endpoints\.news(\/|$)/i,
+  /(^|\.)www\.endpoints\.news(\/|$)/i,
+  /(^|\.)biopharmatrend\.com(\/|$)/i,
+  /(^|\.)www\.biopharmatrend\.com(\/|$)/i,
+  /(^|\.)biopharmaapac\.com(\/|$)/i,
+  /(^|\.)allsci\.com(\/|$)/i,
+  /(^|\.)medpath\.com(\/|$)/i,
+  /(^|\.)trial\.medpath\.com(\/|$)/i,
+  /(^|\.)medcentral\.com(\/|$)/i,
+  /(^|\.)www\.medcentral\.com(\/|$)/i,
+  /(^|\.)alsnewstoday\.com(\/|$)/i,
+  /(^|\.)geneonline\.com(\/|$)/i,
+  /(^|\.)www\.geneonline\.com(\/|$)/i,
+  /(^|\.)pulmonaryfibrosis\.org(\/|$)/i,
+  /(^|\.)www\.pulmonaryfibrosis\.org(\/|$)/i,
+  /(^|\.)eurekalert\.org(\/|$)/i,
+  /(^|\.)www\.eurekalert\.org(\/|$)/i,
+  // European pharma trade press + EU regulators commentary
+  /(^|\.)europeanpharmaceuticalreview\.com(\/|$)/i,
+  /(^|\.)www\.europeanpharmaceuticalreview\.com(\/|$)/i,
+  /(^|\.)pharmasource\.global(\/|$)/i,
+  /(^|\.)thepharmaletter\.com(\/|$)/i,
+  /(^|\.)www\.thepharmaletter\.com(\/|$)/i,
+  // Big-Law pharma analysis
+  /(^|\.)orrick\.com(\/|$)/i,
+  /(^|\.)www\.orrick\.com(\/|$)/i,
+  /(^|\.)troutman\.com(\/|$)/i,
+  /(^|\.)www\.troutman\.com(\/|$)/i,
+  /(^|\.)jonesday90\.pilot\.onenorth\.com(\/|$)/i,
+  /(^|\.)jonesday\.com(\/|$)/i,
+  /(^|\.)www\.jonesday\.com(\/|$)/i,
+  // Big-4 / consulting pharma analysis
+  /(^|\.)pwc\.be(\/|$)/i,
+  /(^|\.)www\.pwc\.be(\/|$)/i,
+  /(^|\.)pwc\.com(\/|$)/i,
+  /(^|\.)www\.pwc\.com(\/|$)/i,
+  // GMP / regulatory affairs trade press
+  /(^|\.)gmp-compliance\.org(\/|$)/i,
+  /(^|\.)www\.gmp-compliance\.org(\/|$)/i,
+  /(^|\.)gmp-publishing\.com(\/|$)/i,
+  /(^|\.)www\.gmp-publishing\.com(\/|$)/i,
+  /(^|\.)gxpvigilance\.com\.au(\/|$)/i,
+  /(^|\.)regask\.com(\/|$)/i,
+  /(^|\.)www\.regask\.com(\/|$)/i,
+  /(^|\.)regulatoryrapporteur\.org(\/|$)/i,
+  /(^|\.)www\.regulatoryrapporteur\.org(\/|$)/i,
+  // Market research firms (analyst reports)
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)www\.grandviewresearch\.com(\/|$)/i,
+  /(^|\.)precedenceresearch\.com(\/|$)/i,
+  /(^|\.)www\.precedenceresearch\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+  /(^|\.)www\.globenewswire\.com(\/|$)/i,
+  /(^|\.)giiresearch\.com(\/|$)/i,
+  /(^|\.)www\.giiresearch\.com(\/|$)/i,
 ];
 
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
@@ -4847,6 +5265,30 @@ export function classifyTier(
   }
   for (const re of HEALTH_HIPAA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:health-hipaa-secondary" };
+  }
+  for (const re of PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:pharma-drug-discovery-primary" };
+  }
+  for (const re of PHARMA_DRUG_DISCOVERY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:pharma-drug-discovery-secondary" };
+  }
+  for (const re of AGENT_INFERENCE_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:agent-inference-primary" };
+  }
+  for (const re of AGENT_INFERENCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-inference-secondary" };
+  }
+  for (const re of RPA_AI_PLATFORM_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:rpa-ai-platform-primary" };
+  }
+  for (const re of RPA_AI_PLATFORM_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:rpa-ai-platform-secondary" };
+  }
+  for (const re of BANKING_MRM_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:banking-mrm-primary" };
+  }
+  for (const re of BANKING_MRM_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:banking-mrm-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
