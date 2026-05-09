@@ -3545,6 +3545,37 @@ const HEALTH_HIPAA_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)cdph\.ca\.gov(\/|$)/i,
   /(^|\.)www\.cdph\.ca\.gov(\/|$)/i,
   /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+  // Peer-reviewed healthcare publishers + canonical academic press
+  /(^|\.)nature\.com(\/|$)/i,
+  /(^|\.)www\.nature\.com(\/|$)/i,
+  /(^|\.)npg\.nature\.com(\/|$)/i,
+  // Major academic medical centers (first-party institutional press)
+  /(^|\.)mountsinai\.org(\/|$)/i,
+  /(^|\.)www\.mountsinai\.org(\/|$)/i,
+  // Healthcare AI vendor first-party documentation (Polaris validation methodology, etc.)
+  /(^|\.)hippocraticai\.com(\/|$)/i,
+  /(^|\.)www\.hippocraticai\.com(\/|$)/i,
+  // US Senate offices + Senate committee primary documents
+  /(^|\.)cantwell\.senate\.gov(\/|$)/i,
+  /(^|\.)finance\.senate\.gov(\/|$)/i,
+  /(^|\.)www\.senate\.gov(\/|$)/i,
+  /(^|\.)senate\.gov(\/|$)/i,
+  // CMS + adjacent federal health agencies
+  /(^|\.)cms\.gov(\/|$)/i,
+  /(^|\.)www\.cms\.gov(\/|$)/i,
+  /(^|\.)oig\.hhs\.gov(\/|$)/i,
+  /(^|\.)aspe\.hhs\.gov(\/|$)/i,
+  // Cloud + foundation-model providers' compliance/HIPAA documentation surfaces
+  /(^|\.)aws\.amazon\.com(\/|$)/i,
+  /(^|\.)docs\.aws\.amazon\.com(\/|$)/i,
+  /(^|\.)learn\.microsoft\.com(\/|$)/i,
+  /(^|\.)docs\.microsoft\.com(\/|$)/i,
+  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)www\.microsoft\.com(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  // 988 Suicide and Crisis Lifeline + adjacent crisis-services authoritative
+  /(^|\.)988lifeline\.org(\/|$)/i,
+  /(^|\.)www\.988lifeline\.org(\/|$)/i,
 ];
 
 const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
@@ -3587,6 +3618,27 @@ const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)nirmitee\.io(\/|$)/i,
   /(^|\.)netguardia\.com(\/|$)/i,
   /(^|\.)www\.netguardia\.com(\/|$)/i,
+  // Healthcare law trade press + legal-analysis surfaces (Lokken / nH Predict coverage)
+  /(^|\.)americanhealthlaw\.org(\/|$)/i,
+  /(^|\.)www\.americanhealthlaw\.org(\/|$)/i,
+  /(^|\.)ediscoveryllc\.com(\/|$)/i,
+  /(^|\.)www\.ediscoveryllc\.com(\/|$)/i,
+  /(^|\.)news\.ambest\.com(\/|$)/i,
+  /(^|\.)ambest\.com(\/|$)/i,
+  /(^|\.)pharmaciststeve\.com(\/|$)/i,
+  /(^|\.)www\.pharmaciststeve\.com(\/|$)/i,
+  // Hospital association + state-hospital surfaces (WSHA WISeR coverage)
+  /(^|\.)wsha\.org(\/|$)/i,
+  /(^|\.)www\.wsha\.org(\/|$)/i,
+  // Regional newspaper coverage of federal health-AI delays (Spokesman-Review)
+  /(^|\.)spokesman\.com(\/|$)/i,
+  /(^|\.)www\.spokesman\.com(\/|$)/i,
+  // Academic medical center digest / commentary on healthcare-AI papers (UNMC)
+  /(^|\.)unmc\.edu(\/|$)/i,
+  /(^|\.)www\.unmc\.edu(\/|$)/i,
+  // Press distribution + research news (Newswise; mostly academic press releases)
+  /(^|\.)newswise\.com(\/|$)/i,
+  /(^|\.)www\.newswise\.com(\/|$)/i,
 ];
 
 const PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS: RegExp[] = [
