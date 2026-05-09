@@ -3226,6 +3226,62 @@ const AGENT_WALLET_PRIMARY_PATTERNS: RegExp[] = [
 // architecture, named-author analyst publications, security research firms
 // (NCC Group, Sygnia, Verichains, DARKNAVY, WalletWitness), and agentic-AI
 // security analyst research (Forrester AEGIS, Gartner via re-publishers).
+// Policy Decision Record / EU AI Act / AI governance — primary regulators, standards, canonical specs
+const PDR_AI_GOVERNANCE_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)agdr\.dev(\/|$)/i,
+  /(^|\.)www\.agdr\.dev(\/|$)/i,
+  /(^|\.)garanteprivacy\.it(\/|$)/i,
+  /(^|\.)www\.garanteprivacy\.it(\/|$)/i,
+  /(^|\.)aiact-info\.eu(\/|$)/i,
+  /(^|\.)www\.aiact-info\.eu(\/|$)/i,
+  /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)cloudsecurityalliance\.org(\/|$)/i,
+  /(^|\.)labs\.cloudsecurityalliance\.org(\/|$)/i,
+  /(^|\.)atlas\.mitre\.org(\/|$)/i,
+  /(^|\.)cnil\.fr(\/|$)/i,
+  /(^|\.)www\.cnil\.fr(\/|$)/i,
+  /(^|\.)leg\.colorado\.gov(\/|$)/i,
+];
+
+// Policy Decision Record / EU AI Act / AI governance — secondary analyst, industry, trade press
+const PDR_AI_GOVERNANCE_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)forrester\.com(\/|$)/i,
+  /(^|\.)www\.forrester\.com(\/|$)/i,
+  /(^|\.)techrepublic\.com(\/|$)/i,
+  /(^|\.)www\.techrepublic\.com(\/|$)/i,
+  /(^|\.)bloomberglaw\.com(\/|$)/i,
+  /(^|\.)news\.bloomberglaw\.com(\/|$)/i,
+  /(^|\.)securitytoday\.de(\/|$)/i,
+  /(^|\.)www\.securitytoday\.de(\/|$)/i,
+  /(^|\.)fintech\.global(\/|$)/i,
+  /(^|\.)asdlabs\.io(\/|$)/i,
+  /(^|\.)www\.asdlabs\.io(\/|$)/i,
+  /(^|\.)deepidv\.com(\/|$)/i,
+  /(^|\.)www\.deepidv\.com(\/|$)/i,
+  /(^|\.)veritaschain\.org(\/|$)/i,
+  /(^|\.)infosecurity-magazine\.com(\/|$)/i,
+  /(^|\.)www\.infosecurity-magazine\.com(\/|$)/i,
+  /(^|\.)zylos\.ai(\/|$)/i,
+  /(^|\.)metricstream\.com(\/|$)/i,
+  /(^|\.)www\.metricstream\.com(\/|$)/i,
+  /(^|\.)knowlee\.ai(\/|$)/i,
+  /(^|\.)www\.knowlee\.ai(\/|$)/i,
+  /(^|\.)notraced\.com(\/|$)/i,
+  /(^|\.)co-aims\.com(\/|$)/i,
+  /(^|\.)pertamapartners\.com(\/|$)/i,
+  /(^|\.)www\.pertamapartners\.com(\/|$)/i,
+  /(^|\.)isaca\.org(\/|$)/i,
+  /(^|\.)www\.isaca\.org(\/|$)/i,
+  /(^|\.)lexology\.com(\/|$)/i,
+  /(^|\.)www\.lexology\.com(\/|$)/i,
+  /(^|\.)certifieddata\.io(\/|$)/i,
+  /(^|\.)www\.certifieddata\.io(\/|$)/i,
+  /(^|\.)letsaskclaire\.com(\/|$)/i,
+  /(^|\.)www\.letsaskclaire\.com(\/|$)/i,
+  /(^|\.)argmin\.net(\/|$)/i,
+  /(^|\.)criminalnotebook\.ca(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4445,6 +4501,12 @@ export function classifyTier(
   }
   for (const re of AGENT_WALLET_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-wallet-secondary" };
+  }
+  for (const re of PDR_AI_GOVERNANCE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:pdr-ai-governance-primary" };
+  }
+  for (const re of PDR_AI_GOVERNANCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:pdr-ai-governance-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
