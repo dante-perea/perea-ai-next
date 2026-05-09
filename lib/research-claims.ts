@@ -3763,6 +3763,50 @@ const BANKING_MRM_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.airi-navigator\.com(\/|$)/i,
 ];
 
+const CROSS_VERTICAL_IMPLEMENTATION_PRIMARY_PATTERNS: RegExp[] = [
+  // MIT NANDA + research-institution primaries
+  /(^|\.)nanda\.mit\.edu(\/|$)/i,
+  /(^|\.)mlq\.ai(\/|$)/i,
+  /(^|\.)www\.mlq\.ai(\/|$)/i,
+  /(^|\.)digitaleconomy\.stanford\.edu(\/|$)/i,
+  /(^|\.)hai\.stanford\.edu(\/|$)/i,
+  // S&P + corporate analyst primaries
+  /(^|\.)spglobal\.com(\/|$)/i,
+  /(^|\.)www\.spglobal\.com(\/|$)/i,
+  // CRE primary (JLL corporate research arm)
+  /(^|\.)jll\.com(\/|$)/i,
+  /(^|\.)www\.jll\.com(\/|$)/i,
+  // Vanderbilt medical-center primary
+  /(^|\.)vumc\.org(\/|$)/i,
+  /(^|\.)www\.vumc\.org(\/|$)/i,
+  /(^|\.)news\.vumc\.org(\/|$)/i,
+  // Vertical-AI vendor first-party (primary product/corporate pages)
+  /(^|\.)tractable\.ai(\/|$)/i,
+  /(^|\.)www\.tractable\.ai(\/|$)/i,
+  /(^|\.)sixfold\.ai(\/|$)/i,
+  /(^|\.)www\.sixfold\.ai(\/|$)/i,
+  /(^|\.)evolutioniq\.com(\/|$)/i,
+  /(^|\.)www\.evolutioniq\.com(\/|$)/i,
+  /(^|\.)blackline\.com(\/|$)/i,
+  /(^|\.)www\.blackline\.com(\/|$)/i,
+  /(^|\.)floqast\.com(\/|$)/i,
+  /(^|\.)www\.floqast\.com(\/|$)/i,
+  /(^|\.)vic\.ai(\/|$)/i,
+  /(^|\.)www\.vic\.ai(\/|$)/i,
+  /(^|\.)karbonhq\.com(\/|$)/i,
+  /(^|\.)www\.karbonhq\.com(\/|$)/i,
+  /(^|\.)acculynx\.com(\/|$)/i,
+  /(^|\.)www\.acculynx\.com(\/|$)/i,
+];
+
+const CROSS_VERTICAL_IMPLEMENTATION_SECONDARY_PATTERNS: RegExp[] = [
+  // Established industry-research mirrors + analyst sites
+  /(^|\.)ictworks\.org(\/|$)/i,
+  /(^|\.)www\.ictworks\.org(\/|$)/i,
+  /(^|\.)allwork\.space(\/|$)/i,
+  /(^|\.)www\.allwork\.space(\/|$)/i,
+];
+
 const BANKING_MRM_SECONDARY_PATTERNS: RegExp[] = [
   // Risk-management trade press
   /(^|\.)garp\.org(\/|$)/i,
@@ -5290,6 +5334,12 @@ export function classifyTier(
   }
   for (const re of BANKING_MRM_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:banking-mrm-secondary" };
+  }
+  for (const re of CROSS_VERTICAL_IMPLEMENTATION_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:cross-vertical-implementation-primary" };
+  }
+  for (const re of CROSS_VERTICAL_IMPLEMENTATION_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:cross-vertical-implementation-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
