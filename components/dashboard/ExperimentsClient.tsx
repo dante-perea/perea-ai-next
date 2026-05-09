@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { Experiment, Signal } from "@/lib/learning/ghost-db";
+import type { Experiment, Signal, SynthesisRecommendation } from "@/lib/learning/ghost-db";
 
 
 // Validated Learning Taxonomy options
@@ -102,6 +102,24 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
     setPivotType("");
     setLearning("");
     setCloseError("");
+  }
+
+  // Apply AI synthesis to pre-fill the close wizard. Maps the recommendation's
+  // implication onto the win/kill verdict so the user can review + confirm with
+  // one click instead of filling 5 fields by hand.
+  function applySynthesis(rec: SynthesisRecommendation) {
+    const verdict: "win" | "kill" = rec.implication === "KILL" || rec.implication === "PIVOT" ? "kill" : "win";
+    setWizard({ open: true, verdict });
+    setImplication(rec.implication);
+    setLearning(rec.learning);
+    setConfidence(rec.confidence);
+    setGeneralizes(rec.generalizes_to as typeof GENERALIZES[number]);
+    setPivotType((rec.pivot_type ?? "") as typeof PIVOT_TYPES[number] | "");
+    setCloseError("");
+  }
+
+  function waitLonger(days: number) {
+    startTransition(async () => { await patch("snooze", { revisit_days: days }); });
   }
 
   const closeReady =
@@ -209,6 +227,54 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
           {verdictLabel(exp.verdict, exp.outcome, exp.shipped_at)}
         </span>
       </div>
+
+      {/* AI synthesis banner — shown when the snooze window has expired and Grok
+          has read the accumulated notes. Pre-fills the close wizard on Apply. */}
+      {isActive && !wizard.open && exp.synthesis_text && exp.synthesis_recommendation && (
+        <div className="rounded-lg border border-purple-200 bg-purple-50/60 p-3 space-y-2">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="text-[10px] uppercase tracking-wide text-purple-700 font-semibold">
+              🤖 Re-decide recommendation
+              {exp.synthesis_generated_at && (
+                <span className="ml-2 font-normal text-purple-500/80 text-[10px]">
+                  · {new Date(exp.synthesis_generated_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </span>
+              )}
+            </p>
+            <p className="text-[10px] text-purple-700">
+              <span className="font-semibold">{exp.synthesis_recommendation.implication}</span>
+              {exp.synthesis_recommendation.pivot_type && <span> ({exp.synthesis_recommendation.pivot_type})</span>}
+              <span className="text-purple-500/80"> · {exp.synthesis_recommendation.confidence} confidence</span>
+            </p>
+          </div>
+          <p className="text-xs text-gray-700 italic">{exp.synthesis_text}</p>
+          <p className="text-[11px] text-gray-600">
+            <span className="font-medium text-gray-700">Suggested learning:</span> &ldquo;{exp.synthesis_recommendation.learning}&rdquo;
+          </p>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              onClick={() => applySynthesis(exp.synthesis_recommendation!)}
+              className="text-xs px-3 py-1 rounded bg-purple-700 text-white hover:bg-purple-800"
+            >
+              Apply &amp; review
+            </button>
+            <button
+              onClick={() => waitLonger(2)}
+              className="text-xs px-2 py-1 rounded border border-purple-200 text-purple-700 hover:bg-purple-100"
+              title="Re-snooze for another 2 days; clears this synthesis so a fresh one is generated next time"
+            >
+              Wait longer (+2d)
+            </button>
+            <button
+              onClick={openMoreInput}
+              className="text-xs px-2 py-1 rounded border border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+              title="Log a fresh observation; re-snoozes and clears the recommendation"
+            >
+              Add note
+            </button>
+          </div>
+        </div>
+      )}
 
       {isActive && !wizard.open && (
         <div className="flex flex-wrap gap-2 pt-1">
@@ -523,13 +589,24 @@ export function ExperimentsClient({
   const filteredAll = all.filter(byProject);
 
   // Ranked active list — due experiments first, then stalest, signal count tiebreak.
-  const ranked = useMemo(() =>
-    filteredActive
+  // Snoozed experiments are FULLY HIDDEN until their window expires (then they
+  // resurface as 🔔 Re-decide, jumping to the top of the queue).
+  const ranked = useMemo(() => {
+    const nowMs = Date.now();
+    return filteredActive
       .filter((e) => e.outcome === "in_progress")
+      .filter((e) => {
+        // Prefer the DB column when set; fall back to deriving from the signal trail
+        // for any rows that predate the snoozed_until column.
+        if (e.snoozed_until) return new Date(e.snoozed_until).getTime() < nowMs;
+        const sigs = signalsMap[e.id] ?? [];
+        const derivedDue = getReviewDueAt(sigs);
+        return !derivedDue || derivedDue.getTime() < nowMs;
+      })
       .map((e) => {
         const sigs = signalsMap[e.id] ?? [];
-        const due = getReviewDueAt(sigs);
-        const isDue = due != null && due.getTime() < Date.now();
+        const due = e.snoozed_until ? new Date(e.snoozed_until) : getReviewDueAt(sigs);
+        const isDue = due != null && due.getTime() < nowMs;
         return { exp: e, ageDays: daysSince(e.started_at), sigCount: sigs.length, due, isDue };
       })
       .sort((a, b) => {
@@ -537,8 +614,13 @@ export function ExperimentsClient({
         if (a.isDue && b.isDue && a.due && b.due) return a.due.getTime() - b.due.getTime();
         if (Math.abs(b.ageDays - a.ageDays) > 0.5) return b.ageDays - a.ageDays;
         return b.sigCount - a.sigCount;
-      })
-  , [filteredActive, signalsMap]);
+      });
+  }, [filteredActive, signalsMap]);
+
+  // Snoozed experiments — surfaced as a separate count, not visible in Decide Now/Up Next.
+  const snoozedCount = filteredActive
+    .filter((e) => e.outcome === "in_progress" && e.snoozed_until && new Date(e.snoozed_until).getTime() >= Date.now())
+    .length;
 
   const now = ranked[0];
   const upNext = ranked.slice(1, 7);
@@ -961,7 +1043,13 @@ export function ExperimentsClient({
               </section>
             ) : (
               <section className="rounded-xl border border-dashed border-gray-300 p-6 text-center">
-                <p className="text-sm text-gray-500">No active experiments. Hit <span className="font-medium text-gray-900">+ Start new experiment</span> to begin.</p>
+                {snoozedCount > 0 ? (
+                  <p className="text-sm text-gray-500">
+                    All {snoozedCount} active experiment{snoozedCount === 1 ? "" : "s"} are waiting for signal. They&apos;ll surface here as <span className="text-amber-700 font-medium">🔔 Re-decide</span> once their snooze window expires.
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500">No active experiments. Hit <span className="font-medium text-gray-900">+ Start new experiment</span> to begin.</p>
+                )}
               </section>
             )}
 
@@ -985,6 +1073,12 @@ export function ExperimentsClient({
                   ))}
                 </div>
               </section>
+            )}
+
+            {snoozedCount > 0 && (
+              <p className="text-[11px] text-gray-400 italic px-1">
+                💤 {snoozedCount} experiment{snoozedCount === 1 ? "" : "s"} snoozed — hidden until their re-decide window opens
+              </p>
             )}
 
             <section className="border-t border-gray-200 pt-4 grid grid-cols-4 gap-2 text-xs">

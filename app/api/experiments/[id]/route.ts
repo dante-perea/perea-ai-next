@@ -9,6 +9,7 @@ import {
   promoteDraft,
   deleteExperiment,
   updateExperimentTags,
+  snoozeExperiment,
   ghostDb,
   type Experiment,
   type Implication,
@@ -54,6 +55,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     experiment_type?: string;
     feature_tag?: string;
     signal_content?: string;
+    revisit_days?: number;
   };
   try {
     body = await req.json();
@@ -118,16 +120,29 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ closed, draft_id: null });
   }
 
-  // Need More Data: log a signal, do NOT close (per Q2=A)
+  // Need More Data: log a signal AND snooze for revisit_days (default 2).
+  // Snooze hides the experiment from the Decide Now ranking until reality
+  // has had time to speak; the cron will then synthesize the notes for re-decide.
   if (action === "more") {
     const content = body.signal_content?.trim() || "Need more data — still observing.";
+    const days = body.revisit_days && body.revisit_days > 0 ? body.revisit_days : 2;
+    const tagged = `[need-more-data] ${content}${content.includes("[revisit-in:") ? "" : ` [revisit-in:${days}d]`}`;
     try {
-      await insertSignal(id, "observation", `[need-more-data] ${content}`);
+      await insertSignal(id, "observation", tagged);
+      await snoozeExperiment(id, days);
       const exp = await getById(id);
       return NextResponse.json({ ok: true, experiment: exp });
     } catch (err) {
       return NextResponse.json({ error: String(err) }, { status: 500 });
     }
+  }
+
+  // Re-snooze without adding a new note (used by "Wait longer" button on the synthesis banner).
+  if (action === "snooze") {
+    const days = body.revisit_days && body.revisit_days > 0 ? body.revisit_days : 2;
+    const exp = await snoozeExperiment(id, days);
+    if (!exp) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(exp);
   }
 
   // Promote a draft → active experiment

@@ -12,6 +12,14 @@ export type PivotType =
   | "Customer-Segment" | "Customer-Need" | "Channel" | "Pricing" | "Value-Prop"
   | "Zoom-In" | "Zoom-Out" | "Tech" | "Platform" | "Business-Model";
 
+export interface SynthesisRecommendation {
+  implication: Implication;
+  learning: string;
+  confidence: Confidence;
+  generalizes_to: GeneralizesTo;
+  pivot_type?: PivotType;
+}
+
 export interface Experiment {
   id: string;
   hypothesis: string;
@@ -47,6 +55,11 @@ export interface Experiment {
   is_implied: boolean;
   is_draft: boolean;
   implication: Implication | null;
+  // Snooze + AI synthesis (added 2026-05-09)
+  snoozed_until: Date | null;
+  synthesis_text: string | null;
+  synthesis_recommendation: SynthesisRecommendation | null;
+  synthesis_generated_at: Date | null;
 }
 
 export interface NewExperimentInput {
@@ -205,11 +218,11 @@ export async function getSignalsForExperiment(experiment_id: string): Promise<Si
   const db = ghostDb();
   try {
     return await db<Signal[]>`
-      SELECT id, experiment_id, source, content, created_at,
+      SELECT id, experiment_id, source, content, received_at AS created_at,
              signal_type, evidence_weight, polarity
       FROM signals
       WHERE experiment_id = ${experiment_id}
-      ORDER BY created_at DESC
+      ORDER BY received_at DESC
     `;
   } finally {
     await db.end();
@@ -220,11 +233,11 @@ export async function getSignalsByExperimentMap(): Promise<Record<string, Signal
   const db = ghostDb();
   try {
     const rows = await db<Signal[]>`
-      SELECT id, experiment_id, source, content, created_at,
+      SELECT id, experiment_id, source, content, received_at AS created_at,
              signal_type, evidence_weight, polarity
       FROM signals
       WHERE experiment_id IS NOT NULL
-      ORDER BY created_at DESC
+      ORDER BY received_at DESC
     `;
     const map: Record<string, Signal[]> = {};
     for (const r of rows) {
@@ -232,6 +245,62 @@ export async function getSignalsByExperimentMap(): Promise<Record<string, Signal
       (map[r.experiment_id] ||= []).push(r);
     }
     return map;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function snoozeExperiment(id: string, days: number): Promise<Experiment | null> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments
+      SET snoozed_until = NOW() + (${days} || ' days')::interval,
+          synthesis_text = NULL,
+          synthesis_recommendation = NULL,
+          synthesis_generated_at = NULL
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function setSynthesis(
+  id: string,
+  text: string,
+  recommendation: SynthesisRecommendation
+): Promise<void> {
+  const db = ghostDb();
+  try {
+    await db`
+      UPDATE experiments
+      SET synthesis_text = ${text},
+          synthesis_recommendation = ${JSON.stringify(recommendation)}::jsonb,
+          synthesis_generated_at = NOW()
+      WHERE id = ${id}
+    `;
+  } finally {
+    await db.end();
+  }
+}
+
+// Experiments that have passed their snooze window AND don't yet have synthesis.
+// Used by the resurface cron to know which ones need fresh AI synthesis.
+export async function getDueWithoutSynthesis(): Promise<Experiment[]> {
+  const db = ghostDb();
+  try {
+    return await db<Experiment[]>`
+      SELECT * FROM experiments
+      WHERE outcome = 'in_progress'
+        AND is_draft = false
+        AND snoozed_until IS NOT NULL
+        AND snoozed_until < NOW()
+        AND (synthesis_generated_at IS NULL OR synthesis_generated_at < snoozed_until)
+      ORDER BY snoozed_until ASC
+    `;
   } finally {
     await db.end();
   }
