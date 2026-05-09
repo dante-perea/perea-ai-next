@@ -190,7 +190,6 @@ Article 27(3) is the operational obligation that catches deployers most often. I
 ## Related Research
 
 - [Right to Be Forgotten in Agent Memory: GDPR + CCPA Architectures for 2026](https://www.perea.ai/research/gdpr-ccpa-agent-memory-compliance) — companion regulatory paper covering deletion rights and DPIA-adjacent vector-store architecture.
-- [AI Bill of Materials and Agent Supply-Chain Compliance](https://www.perea.ai/research/ai-bom-agent-supply-chain) — Article 11 + Annex IV technical-documentation duties that paired with Article 27 form the high-risk deployer compliance package.
 - [MCP OAuth 2.1 and the Enterprise SSO Reality Check](https://www.perea.ai/research/mcp-oauth-2-1-enterprise-sso) — adjacent enterprise procurement compliance work where authentication and authorisation interlock with the human-oversight requirements of Article 27(1)(e).
 
 ## References
