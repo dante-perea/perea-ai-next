@@ -3418,6 +3418,37 @@ const AAIF_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)deepwiki\.com(\/|$)/i,
 ];
 
+// CoSAI (Coalition for Secure AI / OASIS Open Project) + Microsoft open-source +
+// MITRE ecosystem subdomains used in MAESTRO threat-modeling paper canon.
+const MAESTRO_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)coalitionforsecureai\.org(\/|$)/i,
+  /(^|\.)www\.coalitionforsecureai\.org(\/|$)/i,
+  /(^|\.)opensource\.microsoft\.com(\/|$)/i,
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /(^|\.)oasis-open\.org(\/|$)/i,
+  /(^|\.)www\.oasis-open\.org(\/|$)/i,
+  /(^|\.)atlas\.mitre\.org(\/|$)/i,
+  /(^|\.)oasis-open-projects\.org(\/|$)/i,
+];
+
+const MAESTRO_SECONDARY_PATTERNS: RegExp[] = [
+  // Trade press analysis used for MAESTRO/agentic-governance papers
+  /(^|\.)csoonline\.com(\/|$)/i,
+  /(^|\.)www\.csoonline\.com(\/|$)/i,
+  /(^|\.)startupdefense\.io(\/|$)/i,
+  /(^|\.)www\.startupdefense\.io(\/|$)/i,
+  /(^|\.)aiexpert\.network(\/|$)/i,
+  /(^|\.)stack-ai\.com(\/|$)/i,
+  /(^|\.)www\.stack-ai\.com(\/|$)/i,
+  /(^|\.)aptible\.com(\/|$)/i,
+  /(^|\.)www\.aptible\.com(\/|$)/i,
+  /(^|\.)emergentmind\.com(\/|$)/i,
+  /(^|\.)www\.emergentmind\.com(\/|$)/i,
+  /(^|\.)sechub\.in(\/|$)/i,
+  /(^|\.)securityfeed\.link(\/|$)/i,
+  /(^|\.)az365\.ai(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4658,6 +4689,12 @@ export function classifyTier(
   }
   for (const re of AAIF_PRIMARY_PATTERNS) {
     if (re.test(domain)) return { tier: "primary", reason: "domain:aaif-primary" };
+  }
+  for (const re of MAESTRO_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:maestro-primary" };
+  }
+  for (const re of MAESTRO_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:maestro-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
