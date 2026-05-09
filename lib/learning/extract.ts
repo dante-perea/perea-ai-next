@@ -84,6 +84,7 @@ export interface ProposedExperiment {
 export interface ProposedExperimentV2 {
   loop_class: "L0" | "L1" | "L2";
   hypothesis: string;
+  is_implied: boolean; // true if the hypothesis was inferred by LLM, not stated in session
   // For L1/L2 only:
   risk_dimension?: "VAL" | "USA" | "FEA" | "VIA";
   hypothesis_class?: "VAL-H" | "GRO-H";
@@ -102,54 +103,62 @@ export interface ProposedExperimentV2 {
 
 const TAXONOMY_PROMPT = `You are extracting structured experiments from a startup founder's working session.
 
-The Validated Learning Taxonomy classifies every entry as one of three loop classes:
+EVERY session represents a bet about how to make the startup better. Even pure
+engineering work ("I implemented X") implies a hypothesis: that shipping X will
+change some user behavior. Your job is to surface that implied hypothesis in
+falsifiable form, even when the founder didn't state it explicitly.
 
-L0 — OPERATIONAL FIX: bug fix, infrastructure repair, refactor, deps upgrade, ops task. NOT a hypothesis test. The session describes "I fixed X," "I deployed Y," "I debugged Z." No user behavior tested. Most engineering work is L0.
+CLASSIFICATION:
+- L0 — Only used for genuinely empty sessions, broken transcripts, or content with no user-facing change at all.
+- L1 — Discovery experiment. Tests a belief about user behavior, market, willingness to pay, growth, or business model. Use this for the vast majority of sessions, including engineering work.
+- L2 — Optimization A/B test on an existing live flow.
 
-L1 — DISCOVERY EXPERIMENT: tests a belief about user behavior, market demand, willingness to pay, growth mechanics, or business model. The session shows the founder testing a HYPOTHESIS against REALITY (users, market, payments).
+is_implied (boolean):
+- false → the founder explicitly stated the hypothesis (e.g., "I'm testing whether…", "let's see if users…")
+- true  → you derived the hypothesis from the implementation (engineering session, no explicit hypothesis stated). This is the COMMON case. Be transparent — mark as implied.
 
-L2 — OPTIMIZATION A/B: tests an incremental change on a live product flow with statistical comparison.
+For L1/L2 you MUST fill every slot, even when implied. Make the inference precise:
+- segment: who specifically is impacted by this change (a real user type, e.g., "early-stage AI founders in unifounder ICP", not "users")
+- behavior: the specific user behavior the change is expected to produce
+- metric: the specific metric capturing that behavior
+- threshold: a numeric threshold the metric must hit (your best inference of what would make this change "successful")
+- timeframe: time window (≤ 7 days)
+- kill_threshold: numeric threshold below which to kill
 
-For L1 and L2, the hypothesis MUST follow the falsifiable structure with all six slots filled:
-- segment: specific user segment (not "users" or "everyone")
-- behavior: specific user behavior expected
-- metric: specific metric capturing the behavior
-- threshold: numeric threshold the metric must hit
-- timeframe: time window for the test (must be ≤ 7 days)
-- kill_threshold: numeric threshold below which the experiment is killed
+Plus:
+- risk_dimension: VAL (Value — will customers buy/use it), USA (Usability — can users figure it out), FEA (Feasibility — can we build/ship it), VIA (Viability — does it work for the business)
+- hypothesis_class (L1 only): VAL-H (does product deliver value to user) or GRO-H (how do users discover/adopt it)
+- aarrr_stage: ACQ | ACT | RET | REF | REV
+- evidence_method: INT | OBS | FAK | CON | WOZ | AB | PAY
 
-Also classify L1/L2 by:
-- risk_dimension: VAL (Value — will customers buy/use it), USA (Usability — can users figure it out), FEA (Feasibility — can we build it), VIA (Viability — does it work for the business)
-- hypothesis_class (L1 only): VAL-H (Value hypothesis — does product deliver value to user), GRO-H (Growth hypothesis — how do users discover and adopt)
-- aarrr_stage: ACQ, ACT, RET, REF, REV
-- evidence_method: INT (interview), OBS (observation/replay), FAK (fake door / smoke test landing page), CON (concierge MVP), WOZ (Wizard of Oz), AB (A/B test), PAY (payment / pre-order)
+CRITICAL:
+- Default to L1 with is_implied=true for engineering sessions. Generate the hypothesis from the implementation — what user behavior does this code change predict?
+- DO NOT make up a fake user segment. Use the founder's known ICP context if obvious from filenames/projects (unifounder, perea-ai, 999x, ralph, aria, etc.). Otherwise use a precise segment description like "founders using ralph TUI", "users of the Aria companion", "viewers of perea.ai/research".
+- Make thresholds concrete numbers. If you have to guess, guess plausibly (e.g., "≥ 30%", "≥ 5 users", "first-post within 24h").
+- Output exactly ONE entry per session — one row per session for idempotency.
+- L0 ONLY for empty/broken/junk sessions, NEVER for engineering work.
 
-CRITICAL RULES:
-- DEFAULT TO L0. The vast majority of working sessions are operational. If you cannot extract a clear segment + measurable behavior + numeric threshold + kill criterion from the session, it is L0.
-- DO NOT invent slots. If the session does not contain a real user segment, do not make one up. Classify as L0.
-- Each session may produce 0 or 1 experiment row. If the session is purely L0 work, return one L0 entry summarizing what was fixed.
-- Output exactly ONE entry per session. The whole point is to have one row per session for idempotency.
-
-Return ONLY valid JSON matching this schema:
+Return ONLY valid JSON:
 
 {
   "loop_class": "L0" | "L1" | "L2",
-  "hypothesis": "for L1/L2: 'We believe that [change] for [segment] will result in [behavior]'. For L0: brief description of what was done in the session.",
+  "is_implied": true | false,
+  "hypothesis": "We believe that [behavior] for [segment] measured by [metric] hitting [threshold] within [timeframe]. Kill if below [kill_threshold].",
 
-  "risk_dimension": "VAL|USA|FEA|VIA or null for L0",
-  "hypothesis_class": "VAL-H|GRO-H or null (L1 only, null for L2/L0)",
-  "aarrr_stage": "ACQ|ACT|RET|REF|REV or null for L0",
-  "evidence_method": "INT|OBS|FAK|CON|WOZ|AB|PAY or null for L0",
+  "risk_dimension": "VAL|USA|FEA|VIA",
+  "hypothesis_class": "VAL-H|GRO-H or null for L2",
+  "aarrr_stage": "ACQ|ACT|RET|REF|REV",
+  "evidence_method": "INT|OBS|FAK|CON|WOZ|AB|PAY",
 
-  "segment": "for L1/L2: specific user segment. null for L0.",
-  "behavior": "for L1/L2: specific user behavior expected. null for L0.",
-  "metric": "for L1/L2: specific measurable metric. null for L0.",
-  "threshold": "for L1/L2: numeric success threshold. null for L0.",
-  "timeframe": "for L1/L2: time window (e.g. '48 hours', '7 days'). null for L0.",
-  "kill_threshold": "for L1/L2: numeric threshold below which to kill. null for L0.",
+  "segment": "specific user segment",
+  "behavior": "specific user behavior expected",
+  "metric": "specific measurable metric",
+  "threshold": "numeric success threshold",
+  "timeframe": "time window",
+  "kill_threshold": "numeric kill threshold",
 
-  "outcome": "validated|refuted|inconclusive if the session shows the result. null if test is not yet concluded.",
-  "learning": "if outcome is set: one sentence summarizing what reality showed. null otherwise."
+  "outcome": "validated|refuted|inconclusive if the session shows the result, else null",
+  "learning": "one sentence on what reality showed (only if outcome is set)"
 }`;
 
 export async function extractFromSingleSession(
@@ -183,6 +192,7 @@ export async function extractFromSingleSession(
     }
     return {
       loop_class: parsed.loop_class,
+      is_implied: Boolean(parsed.is_implied),
       hypothesis: parsed.hypothesis.trim(),
       risk_dimension: parsed.risk_dimension ?? undefined,
       hypothesis_class: parsed.hypothesis_class ?? undefined,

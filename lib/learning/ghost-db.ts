@@ -39,6 +39,7 @@ export interface Experiment {
   pivot_type: string | null;
   next_bet_id: string | null;
   extractor_version: number;
+  is_implied: boolean;
 }
 
 export interface NewExperimentInput {
@@ -58,6 +59,7 @@ export interface NewExperimentInput {
   threshold?: string;
   timeframe?: string;
   kill_threshold?: string;
+  is_implied?: boolean;
 }
 
 export interface VelocityStats {
@@ -99,7 +101,7 @@ export async function createExperiment(input: NewExperimentInput): Promise<Exper
         id, hypothesis, project_tag, session_id, loop_class,
         risk_dimension, hypothesis_class, aarrr_stage, evidence_method,
         segment, behavior, metric, threshold, timeframe, kill_threshold,
-        extractor_version
+        extractor_version, is_implied
       )
       VALUES (
         ${input.id}, ${input.hypothesis}, ${input.project_tag ?? null},
@@ -108,7 +110,7 @@ export async function createExperiment(input: NewExperimentInput): Promise<Exper
         ${input.aarrr_stage ?? null}, ${input.evidence_method ?? null},
         ${input.segment ?? null}, ${input.behavior ?? null}, ${input.metric ?? null},
         ${input.threshold ?? null}, ${input.timeframe ?? null}, ${input.kill_threshold ?? null},
-        2
+        2, ${input.is_implied ?? false}
       )
       RETURNING *
     `;
@@ -126,6 +128,19 @@ export async function sessionAlreadyProcessed(session_id: string, version = 2): 
       WHERE session_id = ${session_id} AND extractor_version >= ${version}
     `;
     return Number(rows[0]?.n ?? 0) > 0;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function getProcessedSessionIds(version = 2): Promise<Set<string>> {
+  const db = ghostDb();
+  try {
+    const rows = await db<{ session_id: string }[]>`
+      SELECT DISTINCT session_id FROM experiments
+      WHERE session_id IS NOT NULL AND extractor_version >= ${version}
+    `;
+    return new Set(rows.map((r) => r.session_id));
   } finally {
     await db.end();
   }

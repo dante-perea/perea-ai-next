@@ -97,6 +97,9 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
                 : "bg-gray-100 text-gray-500"
               }`}>{exp.loop_class}</span>
             )}
+            {exp.is_implied && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700" title="Hypothesis was inferred from the implementation, not explicitly stated by the founder">IMPLIED</span>
+            )}
             {exp.risk_dimension && <span>· {exp.risk_dimension}</span>}
             {exp.hypothesis_class && <span>· {exp.hypothesis_class}</span>}
             {exp.aarrr_stage && exp.aarrr_stage !== "none" && exp.aarrr_stage !== "NON" && <span>· {exp.aarrr_stage}</span>}
