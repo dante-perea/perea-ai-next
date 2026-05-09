@@ -190,6 +190,53 @@ export async function closeExperiment(
   }
 }
 
+export interface Signal {
+  id: number;
+  experiment_id: string | null;
+  source: string;
+  content: string;
+  created_at: Date;
+  signal_type: string | null;
+  evidence_weight: string | null;
+  polarity: string | null;
+}
+
+export async function getSignalsForExperiment(experiment_id: string): Promise<Signal[]> {
+  const db = ghostDb();
+  try {
+    return await db<Signal[]>`
+      SELECT id, experiment_id, source, content, created_at,
+             signal_type, evidence_weight, polarity
+      FROM signals
+      WHERE experiment_id = ${experiment_id}
+      ORDER BY created_at DESC
+    `;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function getSignalsByExperimentMap(): Promise<Record<string, Signal[]>> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Signal[]>`
+      SELECT id, experiment_id, source, content, created_at,
+             signal_type, evidence_weight, polarity
+      FROM signals
+      WHERE experiment_id IS NOT NULL
+      ORDER BY created_at DESC
+    `;
+    const map: Record<string, Signal[]> = {};
+    for (const r of rows) {
+      if (!r.experiment_id) continue;
+      (map[r.experiment_id] ||= []).push(r);
+    }
+    return map;
+  } finally {
+    await db.end();
+  }
+}
+
 export async function insertSignal(
   experiment_id: string,
   source: string,

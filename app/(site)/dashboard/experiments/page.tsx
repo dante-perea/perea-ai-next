@@ -1,13 +1,14 @@
-import { getActiveExperiments, getClosedExperiments, getDraftExperiments, getVelocityStats, getRecentLearnings } from "@/lib/learning/ghost-db";
+import { getActiveExperiments, getClosedExperiments, getDraftExperiments, getSignalsByExperimentMap, getVelocityStats, getRecentLearnings } from "@/lib/learning/ghost-db";
 import { ExperimentsClient } from "@/components/dashboard/ExperimentsClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExperimentsPage() {
-  const [active, closed, drafts, stats, learnings] = await Promise.all([
+  const [active, closed, drafts, signalsMap, stats, learnings] = await Promise.all([
     getActiveExperiments().catch(() => []),
     getClosedExperiments(50).catch(() => []),
     getDraftExperiments().catch(() => []),
+    getSignalsByExperimentMap().catch(() => ({})),
     getVelocityStats().catch(() => ({ velocity_today: 0, velocity_week: 0, avg_cycle_hours: null, validation_rate: null })),
     getRecentLearnings(7).catch(() => []),
   ]);
@@ -23,6 +24,7 @@ export default async function ExperimentsPage() {
         initialActive={active}
         initialClosed={closed}
         initialDrafts={drafts}
+        signalsMap={signalsMap}
         learnings={learnings.map((dl) => ({
           date: String(dl.date),
           territory: dl.territory ?? null,

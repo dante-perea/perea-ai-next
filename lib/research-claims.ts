@@ -4916,6 +4916,7 @@ export interface ClaimSpan {
   forwardDated: boolean;
   hasInlineCitation: boolean;
   citationIds: number[];
+  offset: number;
 }
 
 export function extractDomain(url: string): string | null {
@@ -5469,6 +5470,7 @@ export function extractClaims(body: string, refsSectionStart: number): ClaimSpan
         forwardDated,
         hasInlineCitation,
         citationIds,
+        offset: idx,
       });
     }
   }
@@ -5662,52 +5664,107 @@ function hedgedProseShare(claims: ClaimSpan[]): number {
  * Returns up to 3 offender excerpts. Scans only the body (anything before the
  * References section); footnote-definition lines are skipped.
  */
-export function detectSaltShaker(body: string, refsSectionStart: number): string[] {
-  const lines = body.split("\n");
-  const limit =
-    refsSectionStart >= 0 ? Math.min(refsSectionStart, lines.length) : lines.length;
-  const offenders: string[] = [];
+/**
+ * Layer 2c — salt-shaker citation detector.
+ *
+ * Fires only when a paragraph (or single bullet item) is decorating numeric
+ * claims with refs that aren't actually doing the citation work:
+ *   1. The unit contains ≥1 detected claim (pure-narrative units are exempt
+ *      because their refs presumably back qualitative prose, not stats).
+ *   2. The unit has ≥5 distinct ref markers.
+ *   3. Fewer than ⌈refs/2⌉ of those refs sit within ±80 chars of any claim.
+ *
+ * Bullet items count as their own units so a 4-bullet list with 6 refs each
+ * isn't penalized while a single 26-ref bullet dump is.
+ */
+export function detectSaltShaker(
+  body: string,
+  refsSectionStart: number,
+  claims: ClaimSpan[],
+): string[] {
+  const allLines = body.split("\n");
+  const preRefs =
+    refsSectionStart >= 0 ? allLines.slice(0, refsSectionStart).join("\n") : body;
+  const bodyOnly = stripQuotableFindingsSection(preRefs);
+  const lines = bodyOnly.split("\n");
 
+  const lineOffsets: number[] = [];
+  let cursor = 0;
+  for (const ln of lines) {
+    lineOffsets.push(cursor);
+    cursor += ln.length + 1;
+  }
+
+  const isBoundary = (s: string) =>
+    s.trim() === "" || s.startsWith("#") || /^\[\^\d+\]:/.test(s);
+  const isBullet = (s: string) =>
+    /^\s*[-*+]\s/.test(s) || /^\s*\d+\.\s/.test(s);
+
+  const offenders: string[] = [];
   let i = 0;
-  let inQuotable = false;
-  while (i < limit) {
+  while (i < lines.length) {
     const line = lines[i];
-    // Track Quotable Findings exemption only at H2 boundaries (don't reset on H3).
-    const h2Match = /^##\s+(.*)$/.exec(line);
-    if (h2Match && !line.startsWith("###")) {
-      inQuotable = /^Quotable( Findings)?\b/i.test(h2Match[1].trim());
-    }
-    if (line.trim() === "" || line.startsWith("#") || /^\[\^\d+\]:/.test(line)) {
+    if (isBoundary(line)) {
       i++;
       continue;
     }
-    if (inQuotable) {
-      i++;
-      continue;
-    }
-    let j = i;
-    const buf: string[] = [];
-    while (j < limit) {
+
+    const unitStart = lineOffsets[i];
+    let unitText = line;
+    let unitEnd = unitStart + line.length;
+    let j = i + 1;
+    while (j < lines.length) {
       const lj = lines[j];
-      if (lj.trim() === "") break;
-      if (lj.startsWith("#")) break;
-      if (/^\[\^\d+\]:/.test(lj)) break;
-      buf.push(lj);
+      if (isBoundary(lj) || isBullet(lj)) break;
+      unitText += " " + lj;
+      unitEnd = lineOffsets[j] + lj.length;
       j++;
     }
-    const paragraph = buf.join(" ");
-    const ids = new Set<number>();
-    const re = /\[\^(\d+)\]/g;
+
+    const refRe = /\[\^(\d+)\]/g;
+    refRe.lastIndex = unitStart;
+    const refPositions: { id: number; pos: number }[] = [];
     let m: RegExpExecArray | null;
-    while ((m = re.exec(paragraph)) !== null) {
-      ids.add(parseInt(m[1], 10));
+    while ((m = refRe.exec(bodyOnly)) !== null) {
+      if (m.index >= unitEnd) break;
+      refPositions.push({ id: parseInt(m[1], 10), pos: m.index });
     }
-    if (ids.size >= 10) {
-      const excerpt = paragraph.length > 180 ? paragraph.slice(0, 180) + "…" : paragraph;
-      offenders.push(`${ids.size} refs: ${excerpt}`);
+    const distinctIds = new Set(refPositions.map((r) => r.id));
+    if (distinctIds.size < 5) {
+      i = j;
+      continue;
+    }
+
+    const claimsInUnit = claims.filter(
+      (c) => c.offset >= unitStart && c.offset < unitEnd,
+    );
+    if (claimsInUnit.length === 0) {
+      i = j;
+      continue;
+    }
+
+    const claimWindows = claimsInUnit.map((c) => ({
+      lo: c.offset - 80,
+      hi: c.offset + c.matchedText.length + 80,
+    }));
+    const attachedIds = new Set<number>();
+    for (const r of refPositions) {
+      if (claimWindows.some((w) => r.pos >= w.lo && r.pos <= w.hi)) {
+        attachedIds.add(r.id);
+      }
+    }
+
+    const required = Math.ceil(distinctIds.size / 2);
+    if (attachedIds.size < required) {
+      const excerpt =
+        unitText.length > 180 ? unitText.slice(0, 180) + "…" : unitText;
+      offenders.push(
+        `${distinctIds.size} refs, ${attachedIds.size}/${distinctIds.size} attached to claims: ${excerpt}`,
+      );
       if (offenders.length >= 3) break;
     }
-    i = j + 1;
+
+    i = j;
   }
   return offenders;
 }
@@ -5848,10 +5905,10 @@ export function runVerifyGate(
   // Layer 2c — salt-shaker citation cluster (only when caller passes body text).
   if (typeof body === "string") {
     const sectionStart = typeof refsSectionStart === "number" ? refsSectionStart : -1;
-    const offenders = detectSaltShaker(body, sectionStart);
+    const offenders = detectSaltShaker(body, sectionStart, claims);
     if (offenders.length > 0) {
       failures.push(
-        `Layer 2c: salt-shaker citation cluster (≥10 distinct refs in one paragraph): ${offenders.slice(0, 3).join(" | ")}`,
+        `Layer 2c: salt-shaker citation cluster (≥5 refs in one paragraph/bullet, <half attached to claims): ${offenders.slice(0, 3).join(" | ")}`,
       );
     }
   }

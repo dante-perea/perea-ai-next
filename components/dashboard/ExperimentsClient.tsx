@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import type { Experiment } from "@/lib/learning/ghost-db";
+import { useState, useTransition, useCallback } from "react";
+import type { Experiment, Signal } from "@/lib/learning/ghost-db";
 
 
 // Validated Learning Taxonomy options
@@ -71,7 +71,7 @@ const PIVOT_TYPES = [
   "Zoom-In", "Zoom-Out", "Tech", "Platform", "Business-Model",
 ] as const;
 
-function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => void }) {
+function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Experiment; initialSignals?: Signal[]; onAction: () => void }) {
   const [isPending, startTransition] = useTransition();
   const [wizard, setWizard] = useState<CloseWizardState>({ open: false, verdict: "win" });
   const [implication, setImplication] = useState<typeof IMPLICATIONS[number]>("PERSEVERE");
@@ -128,7 +128,40 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
   }
 
   function handleShip() { startTransition(async () => { await patch("ship"); }); }
-  function handleMore() { startTransition(async () => { await patch("more"); }); }
+
+  // Need More Data — inline note prompt + visible signal trail
+  const [showMoreInput, setShowMoreInput] = useState(false);
+  const [moreContent, setMoreContent] = useState("");
+  const [revisitDays, setRevisitDays] = useState("");
+  const [signals, setSignals] = useState<Signal[]>(initialSignals);
+
+  const loadSignals = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/experiments/${exp.id}/signals`);
+      if (res.ok) setSignals(await res.json());
+    } catch { /* ignore */ }
+  }, [exp.id]);
+
+  function openMoreInput() {
+    setShowMoreInput(true);
+    setMoreContent("");
+    setRevisitDays("");
+  }
+
+  async function submitMore() {
+    if (!moreContent.trim()) return;
+    const days = revisitDays ? Number(revisitDays) : null;
+    const revisitTag = days && Number.isFinite(days) && days > 0
+      ? ` [revisit-in:${days}d]`
+      : "";
+    startTransition(async () => {
+      await patch("more", { signal_content: `${moreContent.trim()}${revisitTag}` });
+      setShowMoreInput(false);
+      setMoreContent("");
+      setRevisitDays("");
+      await loadSignals();
+    });
+  }
 
   return (
     <div className={`rounded-xl border p-4 space-y-2 ${isPending ? "opacity-60" : ""} ${!isActive ? "border-gray-100 bg-gray-50" : "border-gray-200"}`}>
@@ -199,12 +232,76 @@ function ExperimentCard({ exp, onAction }: { exp: Experiment; onAction: () => vo
             KILL
           </button>
           <button
-            onClick={handleMore}
+            onClick={openMoreInput}
             className="text-xs px-2 py-1 rounded border border-yellow-200 text-yellow-700 hover:bg-yellow-50"
-            title="Logs a 'still observing' signal but keeps the experiment active"
+            title="Log what signal you're waiting for — keeps the experiment active"
           >
             Need More Data
           </button>
+        </div>
+      )}
+
+      {showMoreInput && (
+        <div className="pt-2 space-y-2 rounded-lg border border-yellow-200 bg-yellow-50/40 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-yellow-800">
+            What signal are you waiting for?
+          </p>
+          <textarea
+            value={moreContent}
+            onChange={(e) => setMoreContent(e.target.value)}
+            placeholder="e.g., need more replies on the Telegram CTA tweet, only 3 visits so far"
+            rows={2}
+            className="w-full text-xs border border-yellow-200 rounded px-2 py-1.5 resize-none bg-white focus:outline-none focus:ring-1 focus:ring-yellow-300"
+            autoFocus
+          />
+          <div className="flex items-center gap-2">
+            <label className="text-[10px] text-gray-500 uppercase tracking-wide">Revisit in</label>
+            <input
+              type="number"
+              min={1}
+              value={revisitDays}
+              onChange={(e) => setRevisitDays(e.target.value)}
+              placeholder="N"
+              className="w-16 text-xs border border-gray-200 rounded px-2 py-1 bg-white"
+            />
+            <span className="text-[10px] text-gray-500">days (optional)</span>
+            <div className="ml-auto flex gap-2">
+              <button
+                onClick={() => { setShowMoreInput(false); setMoreContent(""); setRevisitDays(""); }}
+                className="text-xs px-3 py-1 rounded border border-gray-200 text-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!moreContent.trim() || isPending}
+                onClick={submitMore}
+                className="text-xs px-3 py-1 rounded bg-yellow-700 text-white disabled:opacity-40"
+              >
+                {isPending ? "Logging…" : "Log signal"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Signal trail — surfaces every observation logged for this experiment */}
+      {isActive && signals.length > 0 && (
+        <div className="pt-2 space-y-1.5">
+          <p className="text-[10px] uppercase tracking-wide text-gray-400">Signal trail · {signals.length}</p>
+          <div className="space-y-1">
+            {signals.slice(0, 8).map((s) => (
+              <div key={s.id} className="flex items-start gap-2 text-[11px] text-gray-600 border-l-2 border-gray-200 pl-2">
+                <span className="text-gray-400 shrink-0 font-mono">
+                  {new Date(s.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </span>
+                <span className="text-gray-400 uppercase text-[9px] shrink-0">{s.source}</span>
+                <span className="flex-1">{s.content}</span>
+              </div>
+            ))}
+            {signals.length > 8 && (
+              <p className="text-[10px] text-gray-400 italic pl-3">+ {signals.length - 8} older signals</p>
+            )}
+          </div>
         </div>
       )}
 
@@ -342,6 +439,7 @@ export function ExperimentsClient({
   initialActive,
   initialClosed,
   initialDrafts,
+  signalsMap,
   learnings,
   velocityToday,
   velocityWeek,
@@ -351,6 +449,7 @@ export function ExperimentsClient({
   initialActive: Experiment[];
   initialClosed: Experiment[];
   initialDrafts: Experiment[];
+  signalsMap: Record<string, Signal[]>;
   learnings: RecentLearning[];
   velocityToday: number;
   velocityWeek: number;
@@ -848,7 +947,7 @@ export function ExperimentsClient({
         ) : (
           <div className="space-y-3">
             {filteredActive.map((exp) => (
-              <ExperimentCard key={exp.id} exp={exp} onAction={refreshActive} />
+              <ExperimentCard key={exp.id} exp={exp} initialSignals={signalsMap[exp.id]} onAction={refreshActive} />
             ))}
           </div>
         )}

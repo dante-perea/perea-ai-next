@@ -158,42 +158,122 @@ This paper closes the A-tier vertical-flavored sequence (A-25 corpus moat → A-
 
 ## References
 
-[1] MIT NANDA Initiative. (2026). *MIT NANDA AI Pilot Studies — ~95% of Generative AI Pilot Programs Not Delivering Measurable P&L Impact.*
+[^1]: MIT NANDA Initiative + MLQ.ai. *The GenAI Divide — State of AI in Business 2025* (PDF report). Authoritative source for the 95% generative AI pilot failure rate, the $30-40 billion enterprise GenAI investment figure, the 5%-of-pilots-reaching-production statistic, the ~83% generic-LLM-chatbot pilot-to-implementation rate, and the 90-day-mid-market vs 9-month-enterprise pilot-to-implementation timelines. https://mlq.ai/media/quarterly_decks/v0.1_State_of_AI_in_Business_2025_Report.pdf
 
-[2] Digital Applied. (2026, March). *AI Agent Scaling Gap March 2026: Pilot to Production — 78% Enterprises Have AI Agent Pilots, Under 15% Reach Production.*
+[^2]: ICTworks. *AI Business 2025 — The State of AI in Business* (mirror PDF of MIT NANDA + MLQ.ai report). https://www.ictworks.org/wp-content/uploads/2025/09/AI_Business_2025.pdf
 
-[3] SOLIX. (2026). *The Bill Comes Due: Why "AI Pilot Purgatory" Is About to Define the 2026 Boardroom.*
+[^3]: Estrada, S. *MIT report: 95% of generative AI pilots at companies are failing.* Fortune, August 18, 2025. https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/
 
-[4] KPMG. (2026). *Why Enterprise AI Stalls After Pilot Success — CIO Guide.*
+[^4]: MIT Sloan Management Review. *Generative AI Reports + Implementation Gap Research.* https://sloanreview.mit.edu/
 
-[5] zbrain.ai. (2026). *Enterprise AI Pilot-to-Production Gap: Root Causes and How to Address Them — 5 Gaps Account for 89% of Scaling Failures.*
+[^5]: NANDA (Networked Autonomy and Decentralized AI Initiative at MIT). *NANDA project overview.* https://nanda.mit.edu/
 
-[6] WRITER. (2026). *Enterprise AI Adoption in 2026: Why 79% Face Challenges Despite High Investment — 54% C-Suite Admit AI Tearing Companies Apart + 29% Employees Sabotaging AI Strategy + 73% CEO Stress.*
+[^6]: JLL. *Real estate's AI reality check: 90% of companies piloting, only 5% achieved all AI goals.* Press release for JLL's 2025 Global Real Estate Technology Survey of 1,500+ senior CRE investor and occupier decision-makers across 16 markets. October 28, 2025. https://www.jll.com/en-in/newsroom/real-estates-ai-reality-check-companies-piloting-only-achieved-all-ai-goals
 
-[7] JLL. (2025). *Real Estate's AI Reality Check: 88% of Investors/Owners/Landlords Piloting + 92% of Occupiers Piloting + Only 5% Achieving All Goals + 47% Achieving 2-3 Goals + 56 AI Use Cases Across CRE Value Chain + 87% Reporting Tech Budget Increases.*
+[^7]: JLL. *AI for business growth — Are real estate investors ready to gain a competitive edge?* https://www.jll.com/en-de/insights/ai-for-business-growth-are-real-estate-investors-ready-to-gain-the-competitive-edge
 
-[8] JLL. (2025). *Reality Check: The True Pace and Payoffs of AI Adoption in Corporate Real Estate — Global Real Estate Technology Survey of 1,500+ Senior Decision-Makers Across 16 Markets.*
+[^8]: JLL. *Reality check: The true pace and payoffs of AI adoption in corporate real estate — Global Real Estate Technology Survey 2025.* https://www.jll.com/en-us/insights/global-real-estate-technology-survey
 
-[9] Allwork.space. (2025, November). *JLL: 92% of Real Estate Firms Adopt AI, But Only 5% Deliver Results.*
+[^9]: Microsoft. *A year of DAX Copilot: Healthcare innovation that refocuses on the clinician-patient connection.* The Official Microsoft Blog, September 26, 2024. https://blogs.microsoft.com/blog/2024/09/26/a-year-of-dax-copilot-healthcare-innovation-that-refocuses-on-the-clinician-patient-connection
 
-[10] Autodesk Digital Builder. (2026). *2026 AI Construction Trends — 72% of Construction Organizations Using AI + Only 32% of Construction Leaders Met or Are Close to Meeting AI Goals.*
+[^10]: Vanderbilt University Medical Center. *Clinicians, patients cheer DAX, the AI 'ear' in Vanderbilt Health exam rooms.* Vanderbilt Health News, August 25, 2025. https://news.vumc.org/2025/08/25/clinicians-patients-cheer-the-ai-ear-in-vanderbilt-health-exam-rooms
 
-[11] Quickbase. (2026). *2026 Construction Outlook: Navigate Labor Shortages and AI.*
+[^11]: Becker's Hospital Review. *400+ healthcare organizations adopt Microsoft's DAX Copilot.* https://www.beckershospitalreview.com/innovation/400-healthcare-organizations-adopt-microsofts-dax-copilot
 
-[12] Stanford Digital Economy Lab. (2026, March). *The Enterprise AI Playbook — Lessons from 51 Successful Deployments.*
+[^12]: Microsoft. *Microsoft Cloud for Healthcare — DAX Copilot product page.* https://www.microsoft.com/en-us/industry/health/dax-copilot
 
-[13] S&P Global Market Intelligence + McKinsey. (2026). *31% of Enterprises Have At Least One AI Agent in Production — Banking + Insurance Leading at 47% + Healthcare + Government Trailing at 18%.*
+[^13]: Hippocratic AI. *Polaris and Polaris 3.0 — Real World Evaluation of Large Language Models in Healthcare (RWE-LLM).* https://hippocraticai.com/real-world-evaluation-llm/
 
-[14] McKinsey Research. (2026). *Workflow Redesign Has the Single Biggest Effect on Enterprise Profit Impact from AI; 80% Success Rate with Formal AI Strategy vs 37% Without.*
+[^14]: Hippocratic AI. *Polaris 3.0 — A 4.2 Trillion Parameter Suite of 22 LLMs.* https://hippocraticai.com/polaris-3/
 
-[15] BCG + Forrester 2026 Surveys. (2026). *Median Time-to-Value on Agent Deployments 5.1 Months + SDR Agents 3.4 Months + Finance/Ops Agents 8.9 Months.*
+[^15]: Tractable. *PZU is first Polish insurer to enable its customers to use AI to assess car damage and settle claims in minutes.* https://tractable.ai/en/resources/pzu-is-first-polish-insurer-to-enable-its-customers-to-use-ai-to-assess-car-damage-and-settle-claims-in-minutes
 
-[16] StackAI. (2026). *Enterprise AI Adoption 2026: Trends, Benchmarks, and Best Practices for Scalable Success — 56% Enterprises Name Dedicated AI Agent Owner / Agentic Ops Lead in 2026 (Up from 11% in 2024).*
+[^16]: Tractable. *Tractable AI — Computer vision for accident and disaster recovery.* https://tractable.ai/
 
-[17] Joget. (2026). *AI Agent Adoption in 2026: What the Analysts' Data Shows — 88% of Agent Pilots Fail to Graduate to Production + Top Blockers: Evaluation Gaps 64% + Governance Friction 57% + Model Reliability 51%.*
+[^17]: CallSphere. *Tractable AI Auto Insurance 2026: Claims Image Agents at Scale.* April 12, 2026. Industry analysis covering Tractable's 100+ carrier deployments, $180K → $340K average enterprise contract size, 11-week → 4-week time-to-first-production-conversation, and 70%+ tier-1 resolution and deflection rates. https://callsphere.ai/blog/td30-vrt-tractable-ai-auto-insurance-2026
 
-[18] Larridin. (2026). *AI Adoption: The Complete Enterprise Guide 2026.*
+[^18]: BlackLine. *AI-powered close management and accounting automation platform.* https://www.blackline.com/
 
-[19] perea.ai Research. (2026). *State of Vertical Agents Q3 2026 Legal #16 + Q4 2026 Insurance #17 + Founder Velocity Field Studies #18 + Q1 2027 Healthcare #19 + Q2 2027 Accounting #20 + Q3 2027 CRE #21 + Q4 2027 Construction #22 — 6-Vertical Canon Closure.*
+[^19]: FloQast. *Close management software for accounting teams.* https://www.floqast.com/
 
-[20] perea.ai Research. (2026). *Vertical Corpus Moats #23 + Prestige-Led Distribution Playbook #24 + Acquired-by-Platform Exit Playbook #25 + Reinsurer-as-AI-Pioneer #26 + Three-State-Test Compliance Methodology #27 + Polaris Clinical Validation Panel Methodology #28 + Five-Framework Compliance Methodology Healthcare #29 + Dual-Incumbent Dynamic Playbook #30 — 8 Cross-Vertical Operator Playbooks Forming Complete Vertical-AI Founder Operating Manual.*
+[^20]: MultiEntityAccounting. *BlackLine vs FloQast (2026): Which Is the Better Close Platform?* March 24, 2026. Industry analysis covering up-to-95% AI-auto-match (BlackLine) vs up-to-85% GL-linked auto-match (FloQast); 3-6 months vs 2-8 weeks implementation timelines; ~$2,500/mo vs ~$1,500/mo starting prices. https://multientityaccounting.com/blackline-vs-floqast/
+
+[^21]: RoboCFO. *AI and the Month-End Close for CFOs.* March 17, 2026. Glenn Hopper analysis citing Gartner's 8-business-day median month-end close, 60-70% reconciliation automation, BlackLine's ~50% reconciliation-time reduction with AI, and 30-40% audit-prep-time reduction. https://robocfo.ai/blog/ai-and-the-month-end-close
+
+[^22]: Stanford Digital Economy Lab. *The Enterprise AI Playbook — Lessons from 51 Successful Deployments.* March 2026. https://digitaleconomy.stanford.edu/
+
+[^23]: Stanford HAI (Human-Centered AI Institute). *AI Index Report 2026.* https://hai.stanford.edu/ai-index/
+
+[^24]: McKinsey & Company. *The State of AI 2026 — Workflow Redesign and Enterprise Profit Impact.* https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai
+
+[^25]: McKinsey & Company. *Generative AI in Enterprise — Implementation Best Practices.* https://www.mckinsey.com/
+
+[^26]: S&P Global Market Intelligence. *Enterprise AI Adoption 2026 — 31% of Enterprises Have at Least One AI Agent in Production.* https://www.spglobal.com/marketintelligence/en/
+
+[^27]: KPMG. *Why Enterprise AI Stalls After Pilot Success — CIO Guide.* https://kpmg.com/
+
+[^28]: Boston Consulting Group. *AI at Scale — Time-to-Value Benchmarks 2026.* https://www.bcg.com/capabilities/artificial-intelligence
+
+[^29]: Forrester. *The State of Enterprise AI Agents 2026 — Median 5.1-Month Time-to-Value.* https://www.forrester.com/
+
+[^30]: Gartner. *AI Adoption and Implementation Gap Research 2026.* https://www.gartner.com/en/research/methodologies/magic-quadrants-research
+
+[^31]: zbrain.ai. *Enterprise AI Pilot-to-Production Gap: Root Causes and How to Address Them.* https://zbrain.ai/
+
+[^32]: WRITER. *Enterprise AI Adoption in 2026 — Why 79% Face Challenges Despite High Investment.* https://writer.com/
+
+[^33]: SOLIX Technologies. *The Bill Comes Due: Why "AI Pilot Purgatory" Is About to Define the 2026 Boardroom.* https://www.solix.com/
+
+[^34]: Digital Applied. *AI Agent Scaling Gap March 2026: Pilot to Production.* https://digitalapplied.com/
+
+[^35]: Autodesk. *Digital Builder Blog — 2026 AI Construction Trends.* https://construction.autodesk.com/
+
+[^36]: Quickbase. *2026 Construction Outlook: Navigate Labor Shortages and AI.* https://www.quickbase.com/
+
+[^37]: Allwork.space. *JLL: 92% of Real Estate Firms Adopt AI, But Only 5% Deliver Results.* November 2025. https://allwork.space/
+
+[^38]: StackAI. *Enterprise AI Adoption 2026 — Trends, Benchmarks, and Best Practices.* https://www.stack-ai.com/
+
+[^39]: Joget. *AI Agent Adoption in 2026: What the Analysts' Data Shows.* https://www.joget.com/
+
+[^40]: Larridin. *AI Adoption: The Complete Enterprise Guide 2026.* https://larridin.com/
+
+[^41]: HBR (Harvard Business Review). *Bridging the AI Implementation Gap.* https://hbr.org/
+
+[^42]: Bain & Company. *Enterprise AI — Strategic Implementation Guide 2026.* https://www.bain.com/
+
+[^43]: Deloitte. *State of Generative AI in the Enterprise 2026 Report.* https://www2.deloitte.com/us/en/pages/consulting/articles/state-of-generative-ai-in-enterprise.html
+
+[^44]: PwC. *AI Implementation Survey 2026 — Pilot to Production Conversion.* https://www.pwc.com/
+
+[^45]: Andreessen Horowitz. *Enterprise AI Implementation Pattern Analysis.* https://a16z.com/
+
+[^46]: IDC. *FutureScape Worldwide Agentic Artificial Intelligence 2026 Predictions.* https://my.idc.com/getdoc.jsp?containerId=US53860925
+
+[^47]: AccuLynx. *Construction roofing operations AI tooling.* https://www.acculynx.com/
+
+[^48]: Sixfold. *Insurance underwriting AI platform.* https://www.sixfold.ai/
+
+[^49]: EvolutionIQ (CCC Intelligent Solutions). *AI for disability and injury claims.* https://evolutioniq.com/
+
+[^50]: Procore Technologies. *Procore Construction Management Platform — AI deployment context.* https://www.procore.com/
+
+[^51]: Trullion. *AI accounting and audit automation platform.* https://trullion.com/
+
+[^52]: Vic.ai. *AI accounts payable + invoice automation.* https://vic.ai/
+
+[^53]: Karbon. *Practice management software for accounting firms.* https://karbonhq.com/
+
+[^54]: VentureBeat. *Enterprise AI implementation gap analysis 2025-2026.* https://venturebeat.com/
+
+[^55]: TechCrunch. *Enterprise AI deployment patterns 2025-2026.* https://techcrunch.com/
+
+[^56]: Salesforce. *Salesforce Agentforce — pricing and customer base evolution 2025-2026.* https://www.salesforce.com/agentforce/
+
+[^57]: ServiceNow. *AI Agent Studio + Now Assist + AI Agent Orchestrator.* https://www.servicenow.com/products/ai-agents.html
+
+[^58]: Workday. *Workday Sana + Agent System of Record.* https://investor.workday.com/news-and-events/press-releases/news-details/2026/Introducing-Sana-from-Workday-Superintelligence-for-Work-That-Finds-Answers-Takes-Action-and-Automates-Workflows/
+
+[^59]: UiPath. *Agentic Automation Platform + Maestro orchestration.* https://www.uipath.com/
+
+[^60]: Microsoft. *Copilot Studio agent flows + workflow integration.* https://learn.microsoft.com/en-us/power-platform/release-plan/2026wave1/microsoft-copilot-studio/invoke-agents-as-workflow-steps-agent-node
