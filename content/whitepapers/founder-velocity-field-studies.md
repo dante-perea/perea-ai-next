@@ -229,23 +229,19 @@ Three furniture pieces a founder should carry away.
 
 ## References
 
-[1] perea.ai Research. (2026). *State of Vertical Agents Q3 2026: Legal.* https://www.perea.ai/research/state-of-vertical-agents-q3-2026-legal.
+[1] perea.ai Research. (2026). *The Pinnacle Gecko Protocol.* https://www.perea.ai/research/pinnacle-gecko-protocol.
 
-[2] perea.ai Research. (2026). *State of Vertical Agents Q4 2026: Insurance Claims.* https://www.perea.ai/research/state-of-vertical-agents-q4-2026-insurance.
+[2] perea.ai Research. (2026). *Small Language Model Procurement.* https://www.perea.ai/research/small-language-model-procurement.
 
-[3] perea.ai Research. (2026). *The Pinnacle Gecko Protocol.* https://www.perea.ai/research/pinnacle-gecko-protocol.
+[3] perea.ai Research. (2026). *Multi-Judge Calibration Playbook.* https://www.perea.ai/research/multi-judge-calibration-playbook.
 
-[4] perea.ai Research. (2026). *Small Language Model Procurement.* https://www.perea.ai/research/small-language-model-procurement.
+[4] Bessemer Venture Partners. (2026). *Building Vertical AI: An Early-Stage Playbook for Founders.*
 
-[5] perea.ai Research. (2026). *Multi-Judge Calibration Playbook.* https://www.perea.ai/research/multi-judge-calibration-playbook.
+[5] Bessemer Venture Partners. (2026). *The AI Pricing and Monetization Playbook.*
 
-[6] Bessemer Venture Partners. (2026). *Building Vertical AI: An Early-Stage Playbook for Founders.*
+[6] Contrary Research. (2026). *Deep Dive: The Vertical AI Playbook.*
 
-[7] Bessemer Venture Partners. (2026). *The AI Pricing and Monetization Playbook.*
-
-[8] Contrary Research. (2026). *Deep Dive: The Vertical AI Playbook.*
-
-[9] Greylock. (2026). *Vertical AI: The $300B Opportunity.*
+[7] Greylock. (2026). *Vertical AI: The $300B Opportunity.*
 
 [10] Crunchbase. (2026, May). *Spellbook — Scott Stevenson Co-Founder Profile.*
 
