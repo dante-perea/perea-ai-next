@@ -10,6 +10,8 @@ import {
   deleteExperiment,
   updateExperimentTags,
   snoozeExperiment,
+  demoteExperimentToL0,
+  promoteL0ToL1,
   ghostDb,
   type Experiment,
   type Implication,
@@ -142,6 +144,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const days = body.revisit_days && body.revisit_days > 0 ? body.revisit_days : 2;
     const exp = await snoozeExperiment(id, days);
     if (!exp) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(exp);
+  }
+
+  // Reclassify as L0: when an L1/L2 turned out not to be a real falsifiable
+  // hypothesis (force-generated extractor false-positive). Reversible via
+  // action=promote_l1; field data is preserved so promote restores cleanly.
+  if (action === "demote") {
+    const exp = await demoteExperimentToL0(id);
+    if (!exp) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(exp);
+  }
+
+  // Reverse of demote — flips L0 back to L1. Original L1/L2 fields were
+  // preserved on demotion so they re-render automatically.
+  if (action === "promote_l1") {
+    const exp = await promoteL0ToL1(id);
+    if (!exp) return NextResponse.json({ error: "Not found or not an L0" }, { status: 404 });
     return NextResponse.json(exp);
   }
 

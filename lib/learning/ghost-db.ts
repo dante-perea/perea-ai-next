@@ -287,6 +287,49 @@ export async function setSynthesis(
   }
 }
 
+// Reclassify an L1/L2 experiment as L0 ("ops fix"). Used when the
+// force-generated hypothesis turned out not to be a real falsifiable
+// user-behavior test. Preserves all field data — just flips loop_class
+// — so the action is reversible via promoteToL1. Snooze + synthesis
+// state get cleared since they're meaningless on an L0.
+export async function demoteExperimentToL0(id: string): Promise<Experiment | null> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments
+      SET loop_class = 'L0',
+          snoozed_until = NULL,
+          synthesis_text = NULL,
+          synthesis_recommendation = NULL,
+          synthesis_generated_at = NULL
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
+// Reverse of demoteExperimentToL0 — flips loop_class back to L1. The
+// original L1/L2 fields were preserved on demotion so they re-appear
+// automatically. Defaults to L1 (the more common case); if the original
+// was L2 the founder can manually edit.
+export async function promoteL0ToL1(id: string): Promise<Experiment | null> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments
+      SET loop_class = 'L1'
+      WHERE id = ${id} AND loop_class = 'L0'
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
 // Experiments that have passed their snooze window AND don't yet have synthesis.
 // Used by the resurface cron to know which ones need fresh AI synthesis.
 export async function getDueWithoutSynthesis(): Promise<Experiment[]> {

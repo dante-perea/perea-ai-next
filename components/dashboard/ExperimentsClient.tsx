@@ -122,6 +122,15 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
     startTransition(async () => { await patch("snooze", { revisit_days: days }); });
   }
 
+  function reclassifyAsL0() {
+    if (!confirm(
+      `Reclassify "${exp.id}" as L0 (ops fix)?\n\n` +
+      `Use this when the hypothesis isn't really a falsifiable user-behavior test (e.g. the extractor force-generated it from a code-refactor session).\n\n` +
+      `The L1 fields will be preserved silently — you can promote back later from the Operations log.`
+    )) return;
+    startTransition(async () => { await patch("demote"); });
+  }
+
   const closeReady =
     learning.trim() && confidence && generalizes &&
     (implication !== "PIVOT" || pivotType);
@@ -200,13 +209,16 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
                 : "bg-gray-100 text-gray-500"
               }`}>{exp.loop_class}</span>
             )}
-            {exp.is_implied && (
+            {exp.is_implied && exp.loop_class !== "L0" && (
               <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700" title="Hypothesis was inferred from the implementation, not explicitly stated by the founder">IMPLIED</span>
             )}
-            {exp.risk_dimension && <span>· {exp.risk_dimension}</span>}
-            {exp.hypothesis_class && <span>· {exp.hypothesis_class}</span>}
-            {exp.aarrr_stage && exp.aarrr_stage !== "none" && exp.aarrr_stage !== "NON" && <span>· {exp.aarrr_stage}</span>}
-            {exp.evidence_method && <span>· {exp.evidence_method}</span>}
+            {/* L1/L2-specific taxonomy tags — hidden on L0s (including demoted ones) so the
+                Ops log doesn't show stale validated-learning chrome on a record that no longer
+                lives in that corpus. The data is still in the row, just not surfaced. */}
+            {exp.loop_class !== "L0" && exp.risk_dimension && <span>· {exp.risk_dimension}</span>}
+            {exp.loop_class !== "L0" && exp.hypothesis_class && <span>· {exp.hypothesis_class}</span>}
+            {exp.loop_class !== "L0" && exp.aarrr_stage && exp.aarrr_stage !== "none" && exp.aarrr_stage !== "NON" && <span>· {exp.aarrr_stage}</span>}
+            {exp.loop_class !== "L0" && exp.evidence_method && <span>· {exp.evidence_method}</span>}
             {exp.project_tag && <span>· {exp.project_tag}</span>}
             <span>· {new Date(exp.started_at).toLocaleDateString()}</span>
           </p>
@@ -305,6 +317,15 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
           >
             Need More Data
           </button>
+          {exp.loop_class && exp.loop_class !== "L0" && (
+            <button
+              onClick={reclassifyAsL0}
+              className="text-xs px-2 py-1 rounded border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 ml-auto"
+              title="Reclassify as L0 (ops fix) — use when this isn't really a falsifiable user-behavior hypothesis"
+            >
+              ⤓ Reclassify as L0
+            </button>
+          )}
         </div>
       )}
 
@@ -787,6 +808,15 @@ export function ExperimentsClient({
     if (res.ok) await refreshActive();
   }
 
+  async function promoteL0(id: string) {
+    const res = await fetch(`/api/experiments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "promote_l1" }),
+    });
+    if (res.ok) await refreshActive();
+  }
+
   // Close modal on Escape
   useEffect(() => {
     if (!selected) return;
@@ -1209,6 +1239,19 @@ export function ExperimentsClient({
                       <code className="font-mono text-gray-400">{exp.id}</code>
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-200 text-gray-500">L0</span>
                       {exp.project_tag && <span>· {exp.project_tag}</span>}
+                      {/* Promote-back button — only meaningful for L0s that were demoted from L1
+                          (i.e. they still have the L1 fields populated underneath). For genuine
+                          L0s these fields are null, so we hide the button to avoid suggesting
+                          promotion would do anything useful. */}
+                      {(exp.segment || exp.behavior || exp.metric) && (
+                        <button
+                          onClick={() => promoteL0(exp.id)}
+                          className="ml-auto text-[10px] px-2 py-0.5 rounded border border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                          title="Restore as L1 — original taxonomy fields are still in the row"
+                        >
+                          ↥ Promote to L1
+                        </button>
+                      )}
                     </div>
                     <p className="mt-1 truncate">{exp.hypothesis}</p>
                   </div>
