@@ -6,6 +6,11 @@ export type HypothesisClass = "VAL-H" | "GRO-H";
 export type AarrrStage = "ACQ" | "ACT" | "RET" | "REF" | "REV";
 export type EvidenceMethod = "INT" | "OBS" | "FAK" | "CON" | "WOZ" | "AB" | "PAY";
 export type Confidence = "HIGH" | "MEDIUM" | "LOW";
+export type Implication = "PERSEVERE" | "PIVOT" | "KILL" | "DOUBLE-DOWN";
+export type GeneralizesTo = "THIS-ONLY" | "SEGMENT" | "MARKET" | "UNIVERSAL";
+export type PivotType =
+  | "Customer-Segment" | "Customer-Need" | "Channel" | "Pricing" | "Value-Prop"
+  | "Zoom-In" | "Zoom-Out" | "Tech" | "Platform" | "Business-Model";
 
 export interface Experiment {
   id: string;
@@ -40,6 +45,8 @@ export interface Experiment {
   next_bet_id: string | null;
   extractor_version: number;
   is_implied: boolean;
+  is_draft: boolean;
+  implication: Implication | null;
 }
 
 export interface NewExperimentInput {
@@ -223,9 +230,109 @@ export async function getActiveExperiments(): Promise<Experiment[]> {
   try {
     return await db<Experiment[]>`
       SELECT * FROM experiments
-      WHERE outcome = 'in_progress'
+      WHERE outcome = 'in_progress' AND is_draft = false
       ORDER BY started_at DESC
     `;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function getDraftExperiments(): Promise<Experiment[]> {
+  const db = ghostDb();
+  try {
+    return await db<Experiment[]>`
+      SELECT * FROM experiments
+      WHERE is_draft = true
+      ORDER BY started_at DESC
+    `;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function promoteDraft(id: string): Promise<Experiment | null> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments
+      SET is_draft = false, started_at = NOW()
+      WHERE id = ${id} AND is_draft = true
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
+export interface StructuredCloseInput {
+  id: string;
+  verdict: "win" | "kill";
+  implication: Implication;
+  learning: string;          // one-sentence "we learned …"
+  confidence: Confidence;
+  generalizes_to: GeneralizesTo;
+  pivot_type?: PivotType;    // required when implication = PIVOT
+  next_bet_id?: string;      // set after the draft is created
+}
+
+export async function closeWithStructure(input: StructuredCloseInput): Promise<Experiment | null> {
+  const outcome = input.verdict === "win" ? "validated" : "refuted";
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      UPDATE experiments SET
+        verdict        = ${input.verdict},
+        outcome        = ${outcome},
+        implication    = ${input.implication},
+        learning       = ${input.learning},
+        confidence     = ${input.confidence},
+        generalizes_to = ${input.generalizes_to},
+        pivot_type     = ${input.pivot_type ?? null},
+        next_bet_id    = ${input.next_bet_id ?? null},
+        shipped_at     = COALESCE(shipped_at, NOW())
+      WHERE id = ${input.id}
+      RETURNING *
+    `;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function setNextBetId(id: string, next_bet_id: string): Promise<void> {
+  const db = ghostDb();
+  try {
+    await db`UPDATE experiments SET next_bet_id = ${next_bet_id} WHERE id = ${id}`;
+  } finally {
+    await db.end();
+  }
+}
+
+export async function createDraftExperiment(input: NewExperimentInput & { parent_experiment_id?: string }): Promise<Experiment> {
+  validateExperimentInput(input);
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`
+      INSERT INTO experiments (
+        id, hypothesis, project_tag, session_id, loop_class,
+        risk_dimension, hypothesis_class, aarrr_stage, evidence_method,
+        segment, behavior, metric, threshold, timeframe, kill_threshold,
+        extractor_version, is_implied, is_draft, parent_experiment_id
+      )
+      VALUES (
+        ${input.id}, ${input.hypothesis}, ${input.project_tag ?? null},
+        ${input.session_id ?? null}, ${input.loop_class},
+        ${input.risk_dimension ?? null}, ${input.hypothesis_class ?? null},
+        ${input.aarrr_stage ?? null}, ${input.evidence_method ?? null},
+        ${input.segment ?? null}, ${input.behavior ?? null}, ${input.metric ?? null},
+        ${input.threshold ?? null}, ${input.timeframe ?? null}, ${input.kill_threshold ?? null},
+        2, true, true, ${input.parent_experiment_id ?? null}
+      )
+      RETURNING *
+    `;
+    return rows[0];
   } finally {
     await db.end();
   }

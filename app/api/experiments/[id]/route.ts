@@ -1,16 +1,67 @@
 import { NextResponse } from "next/server";
-import { markShipped, closeWithVerdict, deleteExperiment, updateExperimentTags } from "@/lib/learning/ghost-db";
+import {
+  markShipped,
+  closeWithStructure,
+  setNextBetId,
+  createDraftExperiment,
+  generateExperimentId,
+  insertSignal,
+  promoteDraft,
+  deleteExperiment,
+  updateExperimentTags,
+  ghostDb,
+  type Experiment,
+  type Implication,
+  type Confidence,
+  type GeneralizesTo,
+  type PivotType,
+} from "@/lib/learning/ghost-db";
+import { generateNextBetDraft } from "@/lib/learning/next-bet";
+
+interface CloseBody {
+  action: "close";
+  verdict: "win" | "kill";
+  implication: Implication;
+  learning: string;
+  confidence: Confidence;
+  generalizes_to: GeneralizesTo;
+  pivot_type?: PivotType;
+  generate_next_bet?: boolean; // default true unless implication = KILL
+}
+
+async function getById(id: string): Promise<Experiment | null> {
+  const db = ghostDb();
+  try {
+    const rows = await db<Experiment[]>`SELECT * FROM experiments WHERE id = ${id} LIMIT 1`;
+    return rows[0] ?? null;
+  } finally {
+    await db.end();
+  }
+}
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  let body: { action?: string; learning?: string; project_tag?: string; experiment_type?: string; feature_tag?: string };
+  let body: {
+    action?: string;
+    verdict?: "win" | "kill";
+    implication?: Implication;
+    learning?: string;
+    confidence?: Confidence;
+    generalizes_to?: GeneralizesTo;
+    pivot_type?: PivotType;
+    generate_next_bet?: boolean;
+    project_tag?: string;
+    experiment_type?: string;
+    feature_tag?: string;
+    signal_content?: string;
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { action, learning } = body;
+  const { action } = body;
 
   if (action === "ship") {
     const exp = await markShipped(id);
@@ -18,18 +69,71 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json(exp);
   }
 
-  if (action === "win" || action === "kill") {
-    if (!learning?.trim()) {
-      return NextResponse.json({ error: "learning is required for win/kill" }, { status: 400 });
+  // Structured close (Axis 7) — replaces the old free-text win/kill action
+  if (action === "close") {
+    if (!body.verdict)         return NextResponse.json({ error: "verdict is required" }, { status: 400 });
+    if (!body.implication)     return NextResponse.json({ error: "implication is required" }, { status: 400 });
+    if (!body.learning?.trim()) return NextResponse.json({ error: "learning is required" }, { status: 400 });
+    if (!body.confidence)      return NextResponse.json({ error: "confidence is required" }, { status: 400 });
+    if (!body.generalizes_to)  return NextResponse.json({ error: "generalizes_to is required" }, { status: 400 });
+    if (body.implication === "PIVOT" && !body.pivot_type) {
+      return NextResponse.json({ error: "pivot_type is required when implication is PIVOT" }, { status: 400 });
     }
-    const exp = await closeWithVerdict(id, action, learning.trim());
-    if (!exp) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(exp);
+
+    const closed = await closeWithStructure({
+      id,
+      verdict: body.verdict,
+      implication: body.implication,
+      learning: body.learning.trim(),
+      confidence: body.confidence,
+      generalizes_to: body.generalizes_to,
+      pivot_type: body.pivot_type,
+    });
+    if (!closed) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // Auto-spawn next-bet draft when implication != KILL (per Q3=B)
+    const wantDraft = (body.generate_next_bet ?? true) && body.implication !== "KILL";
+    if (wantDraft) {
+      try {
+        const seed = await generateNextBetDraft({
+          closed,
+          implication: body.implication,
+          learning: body.learning.trim(),
+          pivot_type: body.pivot_type,
+        });
+        if (seed) {
+          const draftId = generateExperimentId();
+          await createDraftExperiment({
+            id: draftId,
+            ...seed,
+            parent_experiment_id: closed.id,
+          });
+          await setNextBetId(closed.id, draftId);
+          return NextResponse.json({ closed, draft_id: draftId });
+        }
+      } catch (err) {
+        console.warn("[experiments/close] draft generation failed:", err);
+      }
+    }
+    return NextResponse.json({ closed, draft_id: null });
   }
 
+  // Need More Data: log a signal, do NOT close (per Q2=A)
   if (action === "more") {
-    const exp = await closeWithVerdict(id, "need_more_data", "");
-    if (!exp) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const content = body.signal_content?.trim() || "Need more data — still observing.";
+    try {
+      await insertSignal(id, "observation", `[need-more-data] ${content}`);
+      const exp = await getById(id);
+      return NextResponse.json({ ok: true, experiment: exp });
+    } catch (err) {
+      return NextResponse.json({ error: String(err) }, { status: 500 });
+    }
+  }
+
+  // Promote a draft → active experiment
+  if (action === "promote") {
+    const exp = await promoteDraft(id);
+    if (!exp) return NextResponse.json({ error: "Draft not found" }, { status: 404 });
     return NextResponse.json(exp);
   }
 
@@ -42,6 +146,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { project_tag, experiment_type, feature_tag } = body;
     await updateExperimentTags(id, { project_tag, experiment_type, feature_tag });
     return NextResponse.json({ retagged: true });
+  }
+
+  // Legacy actions retained for backward compat with old clients
+  if (action === "win" || action === "kill") {
+    return NextResponse.json({
+      error: "Legacy free-text close is no longer supported. Use action='close' with the structured Axis 7 fields (verdict, implication, learning, confidence, generalizes_to, pivot_type).",
+    }, { status: 400 });
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 });
