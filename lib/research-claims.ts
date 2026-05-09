@@ -3324,6 +3324,65 @@ const PDR_AI_GOVERNANCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)criminalnotebook\.ca(\/|$)/i,
 ];
 
+const OBSERVABILITY_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)opentelemetry\.io(\/|$)/i,
+  /(^|\.)docs\.datadoghq\.com(\/|$)/i,
+  /(^|\.)investors\.datadoghq\.com(\/|$)/i,
+  /(^|\.)datadoghq\.com(\/|$)/i,
+  /(^|\.)www\.datadoghq\.com(\/|$)/i,
+  /(^|\.)docs\.arize\.com(\/|$)/i,
+  /(^|\.)arize\.com(\/|$)/i,
+  /(^|\.)phoenix\.arize\.com(\/|$)/i,
+  /(^|\.)langfuse\.com(\/|$)/i,
+  /(^|\.)docs\.langfuse\.com(\/|$)/i,
+  /(^|\.)helicone\.ai(\/|$)/i,
+  /(^|\.)docs\.helicone\.ai(\/|$)/i,
+  /(^|\.)smith\.langchain\.com(\/|$)/i,
+  /(^|\.)honeycomb\.io(\/|$)/i,
+  /(^|\.)docs\.honeycomb\.io(\/|$)/i,
+  /(^|\.)newrelic\.com(\/|$)/i,
+  /(^|\.)docs\.newrelic\.com(\/|$)/i,
+  /(^|\.)braintrust\.dev(\/|$)/i,
+  /(^|\.)docs\.konghq\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  /(^|\.)cloudflare\.com(\/|$)/i,
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)servicenow\.com(\/|$)/i,
+  /(^|\.)www\.servicenow\.com(\/|$)/i,
+  /(^|\.)community\.servicenow\.com(\/|$)/i,
+  /(^|\.)salesforce\.com(\/|$)/i,
+  /(^|\.)www\.salesforce\.com(\/|$)/i,
+  /(^|\.)developer\.salesforce\.com(\/|$)/i,
+  /(^|\.)a2a-protocol\.org(\/|$)/i,
+];
+
+const OBSERVABILITY_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)blog\.appxlab\.io(\/|$)/i,
+  /(^|\.)appxlab\.io(\/|$)/i,
+  /(^|\.)agentsindex\.ai(\/|$)/i,
+  /(^|\.)awesomeagents\.ai(\/|$)/i,
+  /(^|\.)digitalapplied\.com(\/|$)/i,
+  /(^|\.)www\.digitalapplied\.com(\/|$)/i,
+  /(^|\.)open-techstack\.com(\/|$)/i,
+  /(^|\.)timesofsalesforce\.com(\/|$)/i,
+  /(^|\.)www\.timesofsalesforce\.com(\/|$)/i,
+  /(^|\.)cxfoundation\.com(\/|$)/i,
+  /(^|\.)uctoday\.com(\/|$)/i,
+  /(^|\.)www\.uctoday\.com(\/|$)/i,
+  /(^|\.)ienable\.ai(\/|$)/i,
+  /(^|\.)businesswire\.com(\/|$)/i,
+  /(^|\.)www\.businesswire\.com(\/|$)/i,
+  /(^|\.)prnewswire\.com(\/|$)/i,
+  /(^|\.)www\.prnewswire\.com(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)www\.techcrunch\.com(\/|$)/i,
+  /(^|\.)siliconangle\.com(\/|$)/i,
+  /(^|\.)theinformation\.com(\/|$)/i,
+  /(^|\.)protocol\.com(\/|$)/i,
+  /(^|\.)portkey\.ai(\/|$)/i,
+  /(^|\.)konghq\.com(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4555,6 +4614,12 @@ export function classifyTier(
   }
   for (const re of AGENTIC_COMMERCE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:agentic-commerce-secondary" };
+  }
+  for (const re of OBSERVABILITY_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:observability-primary" };
+  }
+  for (const re of OBSERVABILITY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:observability-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
