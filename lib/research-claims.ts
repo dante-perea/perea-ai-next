@@ -5668,14 +5668,20 @@ function hedgedProseShare(claims: ClaimSpan[]): number {
  * Layer 2c — salt-shaker citation detector.
  *
  * Fires only when a paragraph (or single bullet item) is decorating numeric
- * claims with refs that aren't actually doing the citation work:
+ * claims with a pile of refs that aren't actually doing the citation work:
  *   1. The unit contains ≥1 detected claim (pure-narrative units are exempt
  *      because their refs presumably back qualitative prose, not stats).
- *   2. The unit has ≥5 distinct ref markers.
- *   3. Fewer than ⌈refs/2⌉ of those refs sit within ±80 chars of any claim.
+ *   2. The unit has ≥10 distinct ref markers (the absolute-density floor; a
+ *      legit bibliographic paragraph might have 5–9 refs and that's fine).
+ *   3. Fewer than 30% of those refs sit within ±80 chars of any claim — i.e.,
+ *      most of the refs are decorative rather than claim-attached.
  *
  * Bullet items count as their own units so a 4-bullet list with 6 refs each
- * isn't penalized while a single 26-ref bullet dump is.
+ * isn't penalized while a single 26-ref bullet dump is. The conservative
+ * thresholds (≥10 + <30%) exist because CLAIM_PATTERNS only matches dollar
+ * amounts, percents, Series A–G, and a fixed noun-count vocabulary; until
+ * that detector grows, we can't be aggressive about "unattached" without
+ * false-positiving on legal/qualitative citation work.
  */
 export function detectSaltShaker(
   body: string,
@@ -5730,7 +5736,7 @@ export function detectSaltShaker(
       refPositions.push({ id: parseInt(m[1], 10), pos: m.index });
     }
     const distinctIds = new Set(refPositions.map((r) => r.id));
-    if (distinctIds.size < 5) {
+    if (distinctIds.size < 10) {
       i = j;
       continue;
     }
@@ -5754,8 +5760,7 @@ export function detectSaltShaker(
       }
     }
 
-    const required = Math.ceil(distinctIds.size / 2);
-    if (attachedIds.size < required) {
+    if (attachedIds.size < distinctIds.size * 0.3) {
       const excerpt =
         unitText.length > 180 ? unitText.slice(0, 180) + "…" : unitText;
       offenders.push(
@@ -5908,7 +5913,7 @@ export function runVerifyGate(
     const offenders = detectSaltShaker(body, sectionStart, claims);
     if (offenders.length > 0) {
       failures.push(
-        `Layer 2c: salt-shaker citation cluster (≥5 refs in one paragraph/bullet, <half attached to claims): ${offenders.slice(0, 3).join(" | ")}`,
+        `Layer 2c: salt-shaker citation cluster (≥10 refs in one paragraph/bullet, <30% attached to claims): ${offenders.slice(0, 3).join(" | ")}`,
       );
     }
   }
