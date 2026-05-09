@@ -3381,6 +3381,41 @@ const OBSERVABILITY_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)protocol\.com(\/|$)/i,
   /(^|\.)portkey\.ai(\/|$)/i,
   /(^|\.)konghq\.com(\/|$)/i,
+  /(^|\.)therift\.ai(\/|$)/i,
+  /(^|\.)meta-intelligence\.tech(\/|$)/i,
+  /(^|\.)theaiinnovator\.com(\/|$)/i,
+  /(^|\.)hivetrail\.com(\/|$)/i,
+  /(^|\.)agentmarketcap\.ai(\/|$)/i,
+  /(^|\.)stellagent\.ai(\/|$)/i,
+  /(^|\.)aicerts\.ai(\/|$)/i,
+  /(^|\.)chatforest\.com(\/|$)/i,
+  /(^|\.)itbrief\.co\.nz(\/|$)/i,
+  /(^|\.)allaboutai\.com(\/|$)/i,
+  /(^|\.)telecomtv\.com(\/|$)/i,
+  /(^|\.)aipatternbook\.com(\/|$)/i,
+];
+
+const AAIF_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)aaif\.io(\/|$)/i,
+  /(^|\.)linuxfoundation\.org(\/|$)/i,
+  /(^|\.)docs\.linuxfoundation\.org(\/|$)/i,
+  /(^|\.)events\.linuxfoundation\.org(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)www\.anthropic\.com(\/|$)/i,
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)www\.openai\.com(\/|$)/i,
+  /(^|\.)block\.xyz(\/|$)/i,
+  /(^|\.)factory\.ai(\/|$)/i,
+  /(^|\.)www\.factory\.ai(\/|$)/i,
+  /(^|\.)agents\.md(\/|$)/i,
+  /(^|\.)agent\.md(\/|$)/i,
+  /(^|\.)go\.aws(\/|$)/i,
+  /(^|\.)modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)blog\.modelcontextprotocol\.io(\/|$)/i,
+  /(^|\.)a2a-protocol\.org(\/|$)/i,
+  /(^|\.)opensource\.googleblog\.com(\/|$)/i,
+  /(^|\.)developers\.googleblog\.com(\/|$)/i,
+  /(^|\.)deepwiki\.com(\/|$)/i,
 ];
 
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
@@ -4620,6 +4655,9 @@ export function classifyTier(
   }
   for (const re of OBSERVABILITY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:observability-secondary" };
+  }
+  for (const re of AAIF_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:aaif-primary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
