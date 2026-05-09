@@ -1,9 +1,9 @@
 {
-  "answer_first": 0.75,
+  "answer_first": 0.667,
   "schema_density": 5,
   "quotable_presence": 0,
-  "stats_density": 52.5,
+  "stats_density": 82.5,
   "entity_surface": 82,
-  "freshness_days": 2,
-  "word_count": 10908
+  "freshness_days": 3,
+  "word_count": 10914
 }

@@ -2410,6 +2410,8 @@ const AGENT_INBOX_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)callsphere\.ai(\/|$)/i,
   /(^|\.)sdd\.sh(\/|$)/i,
   /(^|\.)akshayghalme\.com(\/|$)/i,
+  /(^|\.)zenml\.io(\/|$)/i,
+  /(^|\.)www\.zenml\.io(\/|$)/i,
   /(^|\.)morphllm\.com(\/|$)/i,
   /(^|\.)iamraghuveer\.com(\/|$)/i,
   /(^|\.)adwaitx\.com(\/|$)/i,
