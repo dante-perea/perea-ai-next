@@ -3641,6 +3641,98 @@ const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.newswise\.com(\/|$)/i,
 ];
 
+const AGENT_INFERENCE_PRIMARY_PATTERNS: RegExp[] = [
+  // Foundation-model providers' first-party docs/pricing surfaces
+  /(^|\.)openai\.com(\/|$)/i,
+  /(^|\.)www\.openai\.com(\/|$)/i,
+  /(^|\.)platform\.openai\.com(\/|$)/i,
+  /(^|\.)docs\.openai\.com(\/|$)/i,
+  /(^|\.)ai\.google\.dev(\/|$)/i,
+  /(^|\.)cloud\.google\.com(\/|$)/i,
+  /(^|\.)deepmind\.google(\/|$)/i,
+  /(^|\.)api-docs\.deepseek\.com(\/|$)/i,
+  /(^|\.)huggingface\.co(\/|$)/i,
+  /(^|\.)together\.ai(\/|$)/i,
+  /(^|\.)www\.together\.ai(\/|$)/i,
+  /(^|\.)mistral\.ai(\/|$)/i,
+  /(^|\.)cohere\.com(\/|$)/i,
+  // GPU + accelerator vendors
+  /(^|\.)nvidia\.com(\/|$)/i,
+  /(^|\.)www\.nvidia\.com(\/|$)/i,
+  /(^|\.)developer\.nvidia\.com(\/|$)/i,
+  /(^|\.)build\.nvidia\.com(\/|$)/i,
+  /(^|\.)docs\.nvidia\.com(\/|$)/i,
+  /(^|\.)blogs\.nvidia\.com(\/|$)/i,
+  /(^|\.)amd\.com(\/|$)/i,
+  /(^|\.)www\.amd\.com(\/|$)/i,
+  /(^|\.)cerebras\.net(\/|$)/i,
+  /(^|\.)www\.cerebras\.net(\/|$)/i,
+  /(^|\.)groq\.com(\/|$)/i,
+  // Inference engines / open-source projects' canonical docs + repos
+  /(^|\.)docs\.vllm\.ai(\/|$)/i,
+  /(^|\.)blog\.vllm\.ai(\/|$)/i,
+  /(^|\.)docs\.lmcache\.ai(\/|$)/i,
+  /(^|\.)lmcache\.ai(\/|$)/i,
+  /(^|\.)llm-d\.ai(\/|$)/i,
+  /(^|\.)developers\.redhat\.com(\/|$)/i,
+  /(^|\.)redhat\.com(\/|$)/i,
+  /(^|\.)www\.redhat\.com(\/|$)/i,
+  /(^|\.)github\.com\/red-hat-data-services\//i,
+  /(^|\.)github\.com\/sgl-project\//i,
+  /(^|\.)github\.com\/ai-dynamo\//i,
+  /(^|\.)github\.com\/NVIDIA\//i,
+  /(^|\.)github\.com\/deepseek-ai\//i,
+  // VC research firms publishing canonical 2024-2026 inference cost analyses
+  /(^|\.)a16z\.com(\/|$)/i,
+  /(^|\.)www\.a16z\.com(\/|$)/i,
+];
+
+const AGENT_INFERENCE_SECONDARY_PATTERNS: RegExp[] = [
+  // Pricing aggregators + comparison trackers
+  /(^|\.)devtk\.ai(\/|$)/i,
+  /(^|\.)aicomp\.prygn\.com(\/|$)/i,
+  /(^|\.)aicostcheck\.com(\/|$)/i,
+  /(^|\.)aicostindex\.com(\/|$)/i,
+  /(^|\.)tokenpricing\.com(\/|$)/i,
+  // Tech trade press covering AI infrastructure / inference economics
+  /(^|\.)thestack\.technology(\/|$)/i,
+  /(^|\.)www\.thestack\.technology(\/|$)/i,
+  /(^|\.)theverge\.com(\/|$)/i,
+  /(^|\.)www\.theverge\.com(\/|$)/i,
+  /(^|\.)techcrunch\.com(\/|$)/i,
+  /(^|\.)venturebeat\.com(\/|$)/i,
+  /(^|\.)www\.venturebeat\.com(\/|$)/i,
+  /(^|\.)theinformation\.com(\/|$)/i,
+  /(^|\.)www\.theinformation\.com(\/|$)/i,
+  /(^|\.)spheronnetwork\.com(\/|$)/i,
+  /(^|\.)spheron\.network(\/|$)/i,
+  /(^|\.)techplained\.com(\/|$)/i,
+  /(^|\.)www\.techplained\.com(\/|$)/i,
+  // AI infrastructure product / inference observability surfaces
+  /(^|\.)langfuse\.com(\/|$)/i,
+  /(^|\.)www\.langfuse\.com(\/|$)/i,
+  /(^|\.)helicone\.ai(\/|$)/i,
+  /(^|\.)www\.helicone\.ai(\/|$)/i,
+  /(^|\.)portkey\.ai(\/|$)/i,
+  /(^|\.)www\.portkey\.ai(\/|$)/i,
+  /(^|\.)phoenix\.arize\.com(\/|$)/i,
+  /(^|\.)arize\.com(\/|$)/i,
+  /(^|\.)langsmith\.com(\/|$)/i,
+  /(^|\.)braintrust\.dev(\/|$)/i,
+  // Cloudflare AI Gateway docs
+  /(^|\.)developers\.cloudflare\.com(\/|$)/i,
+  /(^|\.)cloudflare\.com(\/|$)/i,
+  /(^|\.)blog\.cloudflare\.com(\/|$)/i,
+  // IDC research firm + adjacent analyst
+  /(^|\.)idc\.com(\/|$)/i,
+  /(^|\.)www\.idc\.com(\/|$)/i,
+  /(^|\.)my\.idc\.com(\/|$)/i,
+  /(^|\.)info\.idc\.com(\/|$)/i,
+  // AI media + LinkedIn distribution surfaces for VC research summaries
+  /(^|\.)linkedin\.com(\/|$)/i,
+  /(^|\.)www\.linkedin\.com(\/|$)/i,
+];
+
 const PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS: RegExp[] = [
   // AI-discovery platform companies (first-party corporate announcements)
   /(^|\.)insilico\.com(\/|$)/i,
@@ -5006,6 +5098,12 @@ export function classifyTier(
   }
   for (const re of PHARMA_DRUG_DISCOVERY_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:pharma-drug-discovery-secondary" };
+  }
+  for (const re of AGENT_INFERENCE_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:agent-inference-primary" };
+  }
+  for (const re of AGENT_INFERENCE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-inference-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
