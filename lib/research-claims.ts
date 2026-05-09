@@ -3522,6 +3522,73 @@ const INCIDENT_RESPONSE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)bitcoinethereumnews\.com(\/|$)/i,
 ];
 
+const HEALTH_HIPAA_PRIMARY_PATTERNS: RegExp[] = [
+  // Vendor canonical product/policy docs (BAAs, data-retention, enterprise terms)
+  /(^|\.)help\.openai\.com(\/|$)/i,
+  /(^|\.)privacy\.anthropic\.com(\/|$)/i,
+  /(^|\.)support\.claude\.com(\/|$)/i,
+  /(^|\.)platform\.claude\.com(\/|$)/i,
+  /(^|\.)anthropic\.com(\/|$)/i,
+  /(^|\.)www\.anthropic\.com(\/|$)/i,
+  /(^|\.)news\.nuance\.com(\/|$)/i,
+  // Standards bodies + certification bodies
+  /(^|\.)hitrustalliance\.net(\/|$)/i,
+  /(^|\.)bsigroup\.com(\/|$)/i,
+  /(^|\.)www\.bsigroup\.com(\/|$)/i,
+  /(^|\.)aicpa-cima\.com(\/|$)/i,
+  /(^|\.)www\.aicpa-cima\.com(\/|$)/i,
+  /(^|\.)future\.aicpa\.org(\/|$)/i,
+  // US federal government health-IT + AI
+  /(^|\.)healthit\.gov(\/|$)/i,
+  /(^|\.)www\.healthit\.gov(\/|$)/i,
+  // California government (state health AI)
+  /(^|\.)cdph\.ca\.gov(\/|$)/i,
+  /(^|\.)www\.cdph\.ca\.gov(\/|$)/i,
+  /(^|\.)leginfo\.legislature\.ca\.gov(\/|$)/i,
+];
+
+const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
+  // Healthcare compliance/legal trade press + Big-Law analysis
+  /(^|\.)hipaajournal\.com(\/|$)/i,
+  /(^|\.)www\.hipaajournal\.com(\/|$)/i,
+  /(^|\.)natlawreview\.com(\/|$)/i,
+  /(^|\.)www\.natlawreview\.com(\/|$)/i,
+  /(^|\.)jdsupra\.com(\/|$)/i,
+  /(^|\.)www\.jdsupra\.com(\/|$)/i,
+  /(^|\.)morganlewis\.com(\/|$)/i,
+  /(^|\.)www\.morganlewis\.com(\/|$)/i,
+  /(^|\.)mcdermottlaw\.com(\/|$)/i,
+  /(^|\.)www\.mcdermottlaw\.com(\/|$)/i,
+  /(^|\.)crowell\.com(\/|$)/i,
+  /(^|\.)www\.crowell\.com(\/|$)/i,
+  /(^|\.)conventuslaw\.com(\/|$)/i,
+  /(^|\.)beckershospitalreview\.com(\/|$)/i,
+  /(^|\.)www\.beckershospitalreview\.com(\/|$)/i,
+  // HIPAA / SOC 2 / ISO 42001 vertical compliance trade press
+  /(^|\.)accountablehq\.com(\/|$)/i,
+  /(^|\.)www\.accountablehq\.com(\/|$)/i,
+  /(^|\.)censinet\.com(\/|$)/i,
+  /(^|\.)www\.censinet\.com(\/|$)/i,
+  /(^|\.)aihealthcarecompliance\.com(\/|$)/i,
+  /(^|\.)hicomply\.com(\/|$)/i,
+  /(^|\.)www\.hicomply\.com(\/|$)/i,
+  /(^|\.)regulome\.io(\/|$)/i,
+  /(^|\.)compelframework\.org(\/|$)/i,
+  /(^|\.)www\.compelframework\.org(\/|$)/i,
+  // Healthcare AI vendor / consulting analysis
+  /(^|\.)agentmodeai\.com(\/|$)/i,
+  /(^|\.)reg-intel\.com(\/|$)/i,
+  /(^|\.)thecybersignal\.com(\/|$)/i,
+  /(^|\.)www\.thecybersignal\.com(\/|$)/i,
+  /(^|\.)forasoft\.com(\/|$)/i,
+  /(^|\.)www\.forasoft\.com(\/|$)/i,
+  /(^|\.)mosaiclifetech\.com(\/|$)/i,
+  /(^|\.)www\.mosaiclifetech\.com(\/|$)/i,
+  /(^|\.)nirmitee\.io(\/|$)/i,
+  /(^|\.)netguardia\.com(\/|$)/i,
+  /(^|\.)www\.netguardia\.com(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4774,6 +4841,12 @@ export function classifyTier(
   }
   for (const re of INCIDENT_RESPONSE_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:incident-response-secondary" };
+  }
+  for (const re of HEALTH_HIPAA_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:health-hipaa-primary" };
+  }
+  for (const re of HEALTH_HIPAA_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:health-hipaa-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
