@@ -154,18 +154,12 @@ This paper does not cover: PPE-Preference and PPE-Correctness in detail (related
 [^18]: ScalerLab/JudgeBench GitHub. https://github.com/ScalerLab/JudgeBench
 [^19]: ContextualAI LMUnit collection. https://huggingface.co/collections/ContextualAI/lmunit
 [^20]: SkyworkAI/Skywork-Reward-V2 GitHub. https://github.com/SkyworkAI/Skywork-Reward-V2
-[^21]: RewardBench v1 arXiv abstract page. https://arxiv.org/abs/2403.13787
-[^22]: RewardBench v1 HTML version. https://arxiv.org/html/2403.13787v1
-[^23]: JudgeBench arXiv full PDF. https://arxiv.org/pdf/2410.12784
 [^24]: JudgeBench README on GitHub. https://github.com/ScalerLab/JudgeBench/blob/main/README.md
 [^25]: RewardBench 2 ADS bibliographic record. https://ui.adsabs.harvard.edu/abs/2025arXiv250601937M/abstract
 [^26]: JudgeBench ADS bibliographic record. https://ui.adsabs.harvard.edu/abs/2024arXiv241012784T/abstract
-[^27]: IF-RewardBench arXiv abstract page. https://arxiv.org/abs/2603.04738
-[^28]: IF-RewardBench arXiv v1 listing. https://arxiv.org/abs/2603.04738v1
 [^29]: IF-RewardBench ADS record. https://ui.adsabs.harvard.edu/abs/arXiv:2603.04738
 [^30]: IF-RewardBench Hugging Face papers page. https://huggingface.co/papers/2603.04738
 [^31]: thu-coai/IF-RewardBench GitHub. https://github.com/thu-coai/IF-RewardBench
-[^32]: ContextualAI/LMUnit arXiv. https://arxiv.org/abs/2412.13091
 [^33]: ContextualAI/LMUnit GitHub. https://github.com/ContextualAI/LMUnit
 [^34]: Databricks Mosaic PGRM model card. https://huggingface.co/Databricks-Mosaic-Research/PGRM
 [^35]: RewardBench dataset on Hugging Face. https://huggingface.co/datasets/allenai/reward-bench
@@ -173,19 +167,8 @@ This paper does not cover: PPE-Preference and PPE-Correctness in detail (related
 [^37]: Skywork-Reward-V2 Hugging Face collection. https://huggingface.co/collections/Skywork/Skywork-Reward-V2
 [^38]: JudgeBench dataset on Hugging Face. https://huggingface.co/datasets/ScalerLab/JudgeBench
 [^39]: JudgeBench leaderboard space. https://huggingface.co/spaces/ScalerLab/JudgeBench
-[^40]: Lambert et al., Anthropic Helpful preference dataset. https://arxiv.org/abs/2204.05862
 [^41]: Stanford SHP preference dataset (Ethayarajh et al., 2022). https://huggingface.co/datasets/stanfordnlp/SHP
-[^42]: OpenAI Learning to Summarize (Stiennon et al., 2020). https://arxiv.org/abs/2009.01325
 [^43]: PRM-800k math process reward dataset (Lightman et al., 2023). https://github.com/openai/prm800k
-[^44]: HumanEvalPack (Muennighoff et al., 2023). https://arxiv.org/abs/2308.07124
-[^45]: LiveBench (White et al., 2024). https://arxiv.org/abs/2406.19314
-[^46]: LiveCodeBench (Jain et al., 2024). https://arxiv.org/abs/2403.07974
-[^47]: LLMBar adversarial preference benchmark. https://arxiv.org/abs/2310.07641
-[^48]: InfoBench instruction-following benchmark. https://arxiv.org/abs/2401.03601
-[^49]: IFBench follow-up benchmark. https://arxiv.org/abs/2402.13703
-[^50]: PPE Preference and Correctness benchmarks. https://arxiv.org/abs/2410.05192
-[^51]: RM-Bench reward-model benchmark. https://arxiv.org/abs/2410.16184
-[^52]: RMB reward-model benchmark. https://arxiv.org/abs/2410.09893
 [^53]: Anthropic, Natural emergent misalignment from reward hacking. https://www.anthropic.com/research/reward-hacking-misalignment
 [^54]: emergentmind.com JudgeBench summary. https://www.emergentmind.com/papers/2410.12784
 [^55]: deeplearn.org JudgeBench paper detail. https://deeplearn.org/arxiv/537508/judgebench:-a-benchmark-for-evaluating-llm-based-judges

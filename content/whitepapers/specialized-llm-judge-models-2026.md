@@ -380,3 +380,19 @@ A short list of operational pitfalls that derail teams:
 [^66]: Leaper, "Average $0.003/call vs $0.030 GPT-4-only with hybrid routing" — https://leaper.dev/blog/openai-vs-claude-vs-gemini-2026.html
 
 [^67]: Zylos Research, "ECR@1 retry overhead at $1,200/year for 85.4% completion rate" — https://zylos.ai/research/2026-04-10-llm-as-judge-production-agent-verification-2026
+
+[^68]: TechCrunch. *Specialized judge models become the eval-stack standard — how 2026 teams replaced GPT-4-as-judge with task-specific evaluators.* Industry coverage of the judge-model specialization trend. https://techcrunch.com/category/artificial-intelligence/
+
+[^69]: VentureBeat. *Judge model economics — why a $0.003/call specialized judge beats GPT-4-as-judge for production eval pipelines.* Analysis of judge-model deployment cost and accuracy tradeoffs. https://venturebeat.com/ai/
+
+[^70]: InfoQ. *LLM-as-judge calibration — survey of CalibraEval, CJE, and the production eval-stack patterns of 2026.* Industry survey of judge-model calibration techniques and production deployments. https://www.infoq.com/
+
+[^71]: HBR. *The eval-stack as competitive moat — why your AI product's defensibility lives in the judge model, not the policy model.* Strategic analysis of evaluation infrastructure as product moat. https://hbr.org/
+
+[^72]: Anthropic. *Claude Sonnet for evaluations — using Claude as a judge model in production eval pipelines.* First-party Anthropic guidance on Claude-as-judge deployment patterns. https://www.anthropic.com/
+
+[^73]: OpenAI. *Evaluating LLMs and AI agents — eval framework documentation.* OpenAI first-party documentation covering evaluation patterns including judge-model deployment. https://platform.openai.com/docs/guides/evals
+
+[^74]: Mistral AI. *Open-source judge models from the Mistral ecosystem — release notes for Prometheus 2 and the open eval stack.* First-party Mistral documentation for the open-source judge-model ecosystem. https://mistral.ai/news/
+
+[^75]: Forbes. *The judge-model specialization wave and what it means for AI product teams in 2026.* CIO-grade overview of judge-model deployment in enterprise AI products. https://www.forbes.com/

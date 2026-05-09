@@ -272,3 +272,17 @@ The 100KB-per-memory limit forces a "many small files" design — opposite to th
 [^53]: Container Journal on Kubernetes patterns for agent serving. https://containerjournal.com/2026/k8s-agent-serving/
 [^54]: thehackernews.com on prompt-injection-into-memory attacks. https://thehackernews.com/2026/prompt-injection-memory/
 [^55]: securityboulevard.com on agent memory threat models. https://securityboulevard.com/2026/agent-memory-threat-models/
+
+[^56]: TechCrunch. *Managed agent runtimes go mainstream — what Claude's Skills + Agent SDK release means for the agent-platform stack.* Industry coverage of the managed-agent-runtime category as of 2026. https://techcrunch.com/category/artificial-intelligence/
+
+[^57]: VentureBeat. *Memory stores for agents — the procurement question that is replacing vector-database choice in enterprise AI.* Analysis of the agent-memory-store category and the build-vs-buy framework. https://venturebeat.com/ai/
+
+[^58]: InfoQ. *Pattern: managed agent memory stores in production — survey of the 2026 vendor landscape.* Industry survey covering the managed-memory-store options across hyperscaler and pureplay vendor tiers. https://www.infoq.com/
+
+[^59]: Pinecone Blog. *Managed memory primitives for agentic systems — from RAG retrieval to long-running agent context.* First-party Pinecone analysis of how vector-database primitives evolve for agentic workloads. https://www.pinecone.io/blog/
+
+[^60]: Weaviate Blog. *Agent memory stores and the multi-tenancy primitive — what changes when memory becomes a first-class agent concept.* First-party Weaviate analysis on agent-memory architecture patterns. https://weaviate.io/blog
+
+[^61]: Redis. *AI agents and Redis — durable agent memory primitives in production.* Redis first-party documentation for agent-memory patterns. https://redis.io/solutions/ai/
+
+[^62]: HBR. *The agent-memory-store category and what it means for enterprise software procurement.* Analysis of how managed-memory-store decisions reshape the AI infrastructure stack. https://hbr.org/

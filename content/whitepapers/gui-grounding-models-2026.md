@@ -171,26 +171,7 @@ This paper does not cover: the planner-side architecture of computer-use agents 
 [^23]: ScreenSpot-Pro benchmark and leaderboard. https://gui-agent.github.io/grounding-leaderboard/
 [^24]: OSWorld-G project page. https://osworld-grounding.github.io
 [^25]: UI-Venus-1.5 README on GitHub. https://github.com/inclusionAI/UI-Venus/blob/UI-Venus-1.5/README.md
-[^26]: UI-Venus 1.0 arXiv abstract. https://arxiv.org/abs/2508.10833
-[^27]: UI-Venus 1.5 arXiv full PDF. https://arxiv.org/pdf/2602.09082
-[^28]: UI-Venus 1.5 v2 arXiv listing. https://arxiv.org/pdf/2602.09082v2
-[^29]: Aria-UI v2 arXiv listing. http://arxiv.org/abs/2412.16256v2
 [^30]: Aria-UI on ADS Harvard. https://ui.adsabs.harvard.edu/abs/arXiv:2412.16256
-[^31]: MEGA-GUI arXiv full PDF. https://arxiv.org/pdf/2511.13087
-[^32]: GUI-Drag arXiv. https://arxiv.org/abs/2601.06031
-[^33]: OSWorld-G arXiv full PDF. https://arxiv.org/pdf/2505.13227
-[^34]: OSWorld-G HTML version. https://arxiv.org/html/2505.13227v3
-[^35]: ScreenSpot-Pro arXiv full PDF. https://arxiv.org/pdf/2504.07981
-[^36]: UGround arXiv full PDF. https://arxiv.org/pdf/2410.05243
-[^37]: OS-Atlas arXiv 2410.23218. https://arxiv.org/abs/2410.23218
-[^38]: Qwen2.5-VL Technical Report (Bai et al., 2025). https://arxiv.org/abs/2502.13923
-[^39]: ShowUI: One Vision-Language-Action Model for GUI Visual Agent. https://arxiv.org/abs/2411.17465
-[^40]: Aguvis: Unified Pure Vision Agents for Autonomous GUI Interaction. https://arxiv.org/abs/2412.04454
-[^41]: AndroidWorld benchmark (Rawles et al., 2025). https://arxiv.org/abs/2405.14573
-[^42]: WebVoyager benchmark (He et al., 2024). https://arxiv.org/abs/2401.13919
-[^43]: OSWorld benchmark (Xie et al., ICLR 2025). https://arxiv.org/abs/2404.07972
-[^44]: GTA1 paper. https://arxiv.org/abs/2507.05716
-[^45]: UI-TARS technical report (ByteDance, closed-source numbers cited from public reporting). https://arxiv.org/abs/2501.12326
 [^46]: AlphaXiv archive of UI-Venus-1.5. https://www.alphaxiv.org/abs/2602.09082
 [^47]: Synced AI, UI-Venus-1.5 release coverage. https://syncedreview.com/2026/02/ui-venus-1-5-sota
 [^48]: MarkTechPost, MEGA-GUI multi-stage grounding analysis. https://www.marktechpost.com/2026/01/mega-gui-multi-stage
