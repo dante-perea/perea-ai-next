@@ -43,6 +43,7 @@ interface SectionHandlers {
   onSelect: (e: Experiment) => void;
   onShip: (id: string) => void;
   onPromote: (id: string) => void;
+  onRefresh: () => void;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -52,7 +53,7 @@ interface SectionHandlers {
 
 function DecideNowSection({
   active, drafts, signalsMap, velocityToday, velocityWeek, avgCycleHours, validationRate,
-  onSelect, onShip, onPromote, compact = false,
+  onSelect, onPromote, onRefresh, compact = false,
 }: Props & SectionHandlers & { compact?: boolean }) {
   const live = active.filter((e) => e.loop_class !== "L0");
   const ranked = useMemo(() => live
@@ -91,35 +92,21 @@ function DecideNowSection({
       )}
 
       {now && (
-        <section className={`rounded-2xl border-2 border-gray-900 bg-white shadow-lg space-y-5 ${compact ? "p-5" : "p-8"}`}>
-          <div className="flex items-baseline justify-between">
+        <section className="space-y-2">
+          <div className="flex items-baseline justify-between px-1">
             <p className="text-xs uppercase tracking-widest font-semibold text-gray-900">Decide now</p>
             <p className="text-xs text-gray-500">running {fmtDays(now.ageDays)} · {now.sigCount} signal{now.sigCount === 1 ? "" : "s"}</p>
           </div>
-          <p className={`leading-snug text-gray-900 ${compact ? "text-base" : "text-lg"}`}>{now.exp.hypothesis}</p>
-
-          <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100 text-sm">
-            <div>
-              <p className="text-[10px] uppercase tracking-wide text-gray-400">Win when</p>
-              <p className="text-gray-700">{now.exp.metric ?? "—"} ≥ {now.exp.threshold ?? "—"}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wide text-gray-400">Within</p>
-              <p className="text-gray-700">{now.exp.timeframe ?? "—"}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wide text-gray-400">Kill if</p>
-              <p className="text-red-600">&lt; {now.exp.kill_threshold ?? "—"}</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
-            <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">WIN</button>
-            <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700">KILL</button>
-            <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600">Need data</button>
-            {!now.exp.shipped_at && (
-              <button onClick={() => onShip(now.exp.id)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50">Ship it</button>
-            )}
+          {/* ExperimentCard provides the inline action surface:
+              WIN/KILL → expand 6-field structured close wizard inline (no modal).
+              Need More Data → expand inline note prompt (no modal).
+              Mark Shipped → fires PATCH directly. Signal trail visible below. */}
+          <div className="rounded-2xl border-2 border-gray-900 bg-white shadow-lg p-2">
+            <ExperimentCard
+              exp={now.exp}
+              initialSignals={signalsMap[now.exp.id] ?? []}
+              onAction={onRefresh}
+            />
           </div>
         </section>
       )}
@@ -459,7 +446,7 @@ export function ExperimentsProto(props: Props) {
     refresh();
   }
 
-  const sectionProps = { ...props, onSelect: setSelected, onShip: handleShip, onPromote: handlePromote };
+  const sectionProps = { ...props, onSelect: setSelected, onShip: handleShip, onPromote: handlePromote, onRefresh: refresh };
 
   return (
     <>
