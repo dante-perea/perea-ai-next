@@ -489,27 +489,66 @@ function buildServer(auth: { kind: "user"; ctx: ViewerContext } | { kind: "admin
 
   server.tool(
     "start_experiment",
-    "Log a new hypothesis to the innovation loop tracker. Call this at the start of a work session when you have a clear hypothesis to test. Returns the experiment ID to use in subsequent calls.",
+    `Log an entry to the experiment tracker. The tracker enforces the Validated Learning Taxonomy:
+- L0 = operational fix / bug fix / refactor (NOT a hypothesis test). Only 'description' is required.
+- L1 = discovery experiment (tests a belief about user behavior, market, demand). Requires the full 6-slot falsifiable hypothesis.
+- L2 = optimization A/B test on live product. Same 6-slot statement, hypothesis_class is optional.
+
+For L1/L2, the hypothesis must be a specific change tested against a specific user segment, producing a specific behavior, measurable by a specific metric reaching a specific threshold within a specific timeframe, with a kill criterion. If you cannot fill all six slots, route as L0 instead.`,
     {
-      hypothesis:  z.string().describe("The hypothesis being tested. Format: 'Testing X because Y, expecting Z'"),
-      project_tag: z.string().optional().describe("Project context, e.g. 'perea-ai', 'unifounder', '999x', 'tierra-flint'"),
-      session_id:  z.string().optional().describe("Claude Code session ID (CLAUDE_SESSION_ID) to link this experiment to the current session for accurate learning extraction"),
+      loop_class:       z.enum(["L0", "L1", "L2"]).describe("L0 = ops fix (no learning); L1 = discovery test; L2 = optimization A/B"),
+      hypothesis:       z.string().describe("For L1/L2: 'We believe that [change] for [segment] will result in [behavior]'. For L0: brief description of what was fixed."),
+      project_tag:      z.string().optional().describe("Project context, e.g. 'perea-ai', 'unifounder', '999x'"),
+      session_id:       z.string().optional().describe("CLAUDE_SESSION_ID linking this entry to the current Claude Code session"),
+      // Required for L1/L2:
+      risk_dimension:   z.enum(["VAL", "USA", "FEA", "VIA"]).optional().describe("Cagan's Four Risks: Value/Usability/Feasibility/Viability"),
+      hypothesis_class: z.enum(["VAL-H", "GRO-H"]).optional().describe("L1 only: Value hypothesis (does product deliver value?) or Growth hypothesis (how do users discover?)"),
+      aarrr_stage:      z.enum(["ACQ", "ACT", "RET", "REF", "REV"]).optional().describe("McClure's funnel stage"),
+      evidence_method:  z.enum(["INT", "OBS", "FAK", "CON", "WOZ", "AB", "PAY"]).optional().describe("Interview/Observation/FakeDoor/Concierge/WizardOfOz/A-B/Payment"),
+      segment:          z.string().optional().describe("Specific user segment being tested (not 'everyone')"),
+      behavior:         z.string().optional().describe("Specific user behavior expected"),
+      metric:           z.string().optional().describe("Specific metric that captures the behavior"),
+      threshold:        z.string().optional().describe("Numeric threshold the metric must hit"),
+      timeframe:        z.string().optional().describe("Time window for the test (≤ 7 days)"),
+      kill_threshold:   z.string().optional().describe("Numeric threshold below which the experiment is killed"),
     },
-    async ({ hypothesis, project_tag, session_id }) => {
+    async (args) => {
       try {
         const id = generateExperimentId();
-        const exp = await createExperiment(id, hypothesis, project_tag, session_id);
+        const exp = await createExperiment({
+          id,
+          hypothesis: args.hypothesis,
+          loop_class: args.loop_class,
+          project_tag: args.project_tag,
+          session_id: args.session_id,
+          risk_dimension: args.risk_dimension,
+          hypothesis_class: args.hypothesis_class,
+          aarrr_stage: args.aarrr_stage,
+          evidence_method: args.evidence_method,
+          segment: args.segment,
+          behavior: args.behavior,
+          metric: args.metric,
+          threshold: args.threshold,
+          timeframe: args.timeframe,
+          kill_threshold: args.kill_threshold,
+        });
         return {
           content: [{ type: "text" as const, text: JSON.stringify({
             id: exp.id,
+            loop_class: exp.loop_class,
             hypothesis: exp.hypothesis,
             project_tag: exp.project_tag,
             started_at: exp.started_at,
-            message: `Experiment started. Use id '${exp.id}' to ship, log signals, or close the loop.`,
+            message: exp.loop_class === "L0"
+              ? `Logged as L0 (ops fix, not a hypothesis test). id=${exp.id}`
+              : `Experiment started. Use id '${exp.id}' to ship, log signals, or close the loop.`,
           }) }],
         };
       } catch (err) {
-        return { content: [{ type: "text" as const, text: JSON.stringify({ error: String(err) }) }], isError: true };
+        return { content: [{ type: "text" as const, text: JSON.stringify({
+          error: err instanceof Error ? err.message : String(err),
+          hint: "If you cannot provide segment/metric/threshold/timeframe/kill_threshold, route as loop_class='L0' instead — that means it's an ops fix, not a hypothesis test.",
+        }) }], isError: true };
       }
     }
   );

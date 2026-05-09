@@ -123,25 +123,22 @@ async function main() {
 
     await writeSignalsFromLearnings(allValidated, allRefuted, allInconclusive);
 
-    const VALID_TYPES = new Set(["product","pricing","messaging","distribution","business_model","gtm","other"]);
-    const VALID_AARRR = new Set(["acquisition","activation","retention","referral","revenue","none"]);
-
+    // DEPRECATED: this script predates the Validated Learning Taxonomy (extractor v2).
+    // New backfill is scripts/backfill-experiments-v2.ts. Entries here are written as L0
+    // so they don't pollute the L1/L2 learning corpus.
     let created = 0;
     for (const pe of allProposed) {
       if (!pe.hypothesis?.trim() || !pe.learning?.trim()) continue;
       try {
         const id = generateExperimentId();
-        await createExperiment(id, pe.hypothesis.trim(), undefined, undefined, {
-          experiment_type: VALID_TYPES.has(pe.experiment_type) ? pe.experiment_type : "other",
-          aarrr_stage: VALID_AARRR.has(pe.aarrr_stage) ? pe.aarrr_stage : "none",
-        });
+        await createExperiment({ id, hypothesis: pe.hypothesis.trim(), loop_class: "L0" });
         const outcome = ["validated", "refuted", "inconclusive"].includes(pe.outcome)
           ? pe.outcome as "validated" | "refuted" | "inconclusive"
           : "inconclusive";
         await closeExperiment(id, outcome, pe.learning.trim());
         created++;
       } catch (err) {
-        console.warn(`  skipped experiment (${pe.experiment_type}): ${err instanceof Error ? err.message : err}`);
+        console.warn(`  skipped experiment: ${err instanceof Error ? err.message : err}`);
       }
     }
 

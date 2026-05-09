@@ -1,5 +1,12 @@
 import postgres from "postgres";
 
+export type LoopClass = "L0" | "L1" | "L2";
+export type RiskDimension = "VAL" | "USA" | "FEA" | "VIA";
+export type HypothesisClass = "VAL-H" | "GRO-H";
+export type AarrrStage = "ACQ" | "ACT" | "RET" | "REF" | "REV";
+export type EvidenceMethod = "INT" | "OBS" | "FAK" | "CON" | "WOZ" | "AB" | "PAY";
+export type Confidence = "HIGH" | "MEDIUM" | "LOW";
+
 export interface Experiment {
   id: string;
   hypothesis: string;
@@ -16,6 +23,41 @@ export interface Experiment {
   parent_experiment_id: string | null;
   verdict: string | null;
   feature_tag: string | null;
+  // Validated Learning Taxonomy (extractor v2)
+  loop_class: LoopClass | null;
+  risk_dimension: RiskDimension | null;
+  hypothesis_class: HypothesisClass | null;
+  evidence_method: EvidenceMethod | null;
+  segment: string | null;
+  behavior: string | null;
+  metric: string | null;
+  threshold: string | null;
+  timeframe: string | null;
+  kill_threshold: string | null;
+  confidence: Confidence | null;
+  generalizes_to: string | null;
+  pivot_type: string | null;
+  next_bet_id: string | null;
+  extractor_version: number;
+}
+
+export interface NewExperimentInput {
+  id: string;
+  hypothesis: string;
+  loop_class: LoopClass;
+  session_id?: string | null;
+  project_tag?: string | null;
+  // Required when loop_class is L1 or L2
+  risk_dimension?: RiskDimension;
+  hypothesis_class?: HypothesisClass;
+  aarrr_stage?: AarrrStage;
+  evidence_method?: EvidenceMethod;
+  segment?: string;
+  behavior?: string;
+  metric?: string;
+  threshold?: string;
+  timeframe?: string;
+  kill_threshold?: string;
 }
 
 export interface VelocityStats {
@@ -31,33 +73,59 @@ export function ghostDb() {
   return postgres(url, { ssl: "require", max: 3 });
 }
 
-export async function createExperiment(
-  id: string,
-  hypothesis: string,
-  project_tag?: string,
-  session_id?: string,
-  opts?: {
-    success_criteria?: string;
-    experiment_type?: string;
-    aarrr_stage?: string;
-    parent_experiment_id?: string;
+export class TaxonomyValidationError extends Error {}
+
+export function validateExperimentInput(input: NewExperimentInput): void {
+  if (!input.loop_class) throw new TaxonomyValidationError("loop_class is required");
+  if (input.loop_class === "L0") return;
+  const required: (keyof NewExperimentInput)[] = [
+    "risk_dimension", "aarrr_stage", "evidence_method",
+    "segment", "behavior", "metric", "threshold", "timeframe", "kill_threshold",
+  ];
+  if (input.loop_class === "L1") required.push("hypothesis_class");
+  for (const k of required) {
+    if (!input[k] || String(input[k]).trim() === "") {
+      throw new TaxonomyValidationError(`${k} is required for ${input.loop_class}`);
+    }
   }
-): Promise<Experiment> {
+}
+
+export async function createExperiment(input: NewExperimentInput): Promise<Experiment> {
+  validateExperimentInput(input);
   const db = ghostDb();
   try {
     const rows = await db<Experiment[]>`
       INSERT INTO experiments (
-        id, hypothesis, project_tag, session_id,
-        success_criteria, experiment_type, aarrr_stage, parent_experiment_id
+        id, hypothesis, project_tag, session_id, loop_class,
+        risk_dimension, hypothesis_class, aarrr_stage, evidence_method,
+        segment, behavior, metric, threshold, timeframe, kill_threshold,
+        extractor_version
       )
       VALUES (
-        ${id}, ${hypothesis}, ${project_tag ?? null}, ${session_id ?? null},
-        ${opts?.success_criteria ?? null}, ${opts?.experiment_type ?? null},
-        ${opts?.aarrr_stage ?? null}, ${opts?.parent_experiment_id ?? null}
+        ${input.id}, ${input.hypothesis}, ${input.project_tag ?? null},
+        ${input.session_id ?? null}, ${input.loop_class},
+        ${input.risk_dimension ?? null}, ${input.hypothesis_class ?? null},
+        ${input.aarrr_stage ?? null}, ${input.evidence_method ?? null},
+        ${input.segment ?? null}, ${input.behavior ?? null}, ${input.metric ?? null},
+        ${input.threshold ?? null}, ${input.timeframe ?? null}, ${input.kill_threshold ?? null},
+        2
       )
       RETURNING *
     `;
     return rows[0];
+  } finally {
+    await db.end();
+  }
+}
+
+export async function sessionAlreadyProcessed(session_id: string, version = 2): Promise<boolean> {
+  const db = ghostDb();
+  try {
+    const rows = await db<{ n: string }[]>`
+      SELECT COUNT(*) AS n FROM experiments
+      WHERE session_id = ${session_id} AND extractor_version >= ${version}
+    `;
+    return Number(rows[0]?.n ?? 0) > 0;
   } finally {
     await db.end();
   }

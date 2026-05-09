@@ -80,6 +80,128 @@ export interface ProposedExperiment {
   aarrr_stage: string;
 }
 
+// Validated Learning Taxonomy (extractor v2)
+export interface ProposedExperimentV2 {
+  loop_class: "L0" | "L1" | "L2";
+  hypothesis: string;
+  // For L1/L2 only:
+  risk_dimension?: "VAL" | "USA" | "FEA" | "VIA";
+  hypothesis_class?: "VAL-H" | "GRO-H";
+  aarrr_stage?: "ACQ" | "ACT" | "RET" | "REF" | "REV";
+  evidence_method?: "INT" | "OBS" | "FAK" | "CON" | "WOZ" | "AB" | "PAY";
+  segment?: string;
+  behavior?: string;
+  metric?: string;
+  threshold?: string;
+  timeframe?: string;
+  kill_threshold?: string;
+  // Outcome (if extractable from session content):
+  outcome?: "validated" | "refuted" | "inconclusive";
+  learning?: string;
+}
+
+const TAXONOMY_PROMPT = `You are extracting structured experiments from a startup founder's working session.
+
+The Validated Learning Taxonomy classifies every entry as one of three loop classes:
+
+L0 — OPERATIONAL FIX: bug fix, infrastructure repair, refactor, deps upgrade, ops task. NOT a hypothesis test. The session describes "I fixed X," "I deployed Y," "I debugged Z." No user behavior tested. Most engineering work is L0.
+
+L1 — DISCOVERY EXPERIMENT: tests a belief about user behavior, market demand, willingness to pay, growth mechanics, or business model. The session shows the founder testing a HYPOTHESIS against REALITY (users, market, payments).
+
+L2 — OPTIMIZATION A/B: tests an incremental change on a live product flow with statistical comparison.
+
+For L1 and L2, the hypothesis MUST follow the falsifiable structure with all six slots filled:
+- segment: specific user segment (not "users" or "everyone")
+- behavior: specific user behavior expected
+- metric: specific metric capturing the behavior
+- threshold: numeric threshold the metric must hit
+- timeframe: time window for the test (must be ≤ 7 days)
+- kill_threshold: numeric threshold below which the experiment is killed
+
+Also classify L1/L2 by:
+- risk_dimension: VAL (Value — will customers buy/use it), USA (Usability — can users figure it out), FEA (Feasibility — can we build it), VIA (Viability — does it work for the business)
+- hypothesis_class (L1 only): VAL-H (Value hypothesis — does product deliver value to user), GRO-H (Growth hypothesis — how do users discover and adopt)
+- aarrr_stage: ACQ, ACT, RET, REF, REV
+- evidence_method: INT (interview), OBS (observation/replay), FAK (fake door / smoke test landing page), CON (concierge MVP), WOZ (Wizard of Oz), AB (A/B test), PAY (payment / pre-order)
+
+CRITICAL RULES:
+- DEFAULT TO L0. The vast majority of working sessions are operational. If you cannot extract a clear segment + measurable behavior + numeric threshold + kill criterion from the session, it is L0.
+- DO NOT invent slots. If the session does not contain a real user segment, do not make one up. Classify as L0.
+- Each session may produce 0 or 1 experiment row. If the session is purely L0 work, return one L0 entry summarizing what was fixed.
+- Output exactly ONE entry per session. The whole point is to have one row per session for idempotency.
+
+Return ONLY valid JSON matching this schema:
+
+{
+  "loop_class": "L0" | "L1" | "L2",
+  "hypothesis": "for L1/L2: 'We believe that [change] for [segment] will result in [behavior]'. For L0: brief description of what was done in the session.",
+
+  "risk_dimension": "VAL|USA|FEA|VIA or null for L0",
+  "hypothesis_class": "VAL-H|GRO-H or null (L1 only, null for L2/L0)",
+  "aarrr_stage": "ACQ|ACT|RET|REF|REV or null for L0",
+  "evidence_method": "INT|OBS|FAK|CON|WOZ|AB|PAY or null for L0",
+
+  "segment": "for L1/L2: specific user segment. null for L0.",
+  "behavior": "for L1/L2: specific user behavior expected. null for L0.",
+  "metric": "for L1/L2: specific measurable metric. null for L0.",
+  "threshold": "for L1/L2: numeric success threshold. null for L0.",
+  "timeframe": "for L1/L2: time window (e.g. '48 hours', '7 days'). null for L0.",
+  "kill_threshold": "for L1/L2: numeric threshold below which to kill. null for L0.",
+
+  "outcome": "validated|refuted|inconclusive if the session shows the result. null if test is not yet concluded.",
+  "learning": "if outcome is set: one sentence summarizing what reality showed. null otherwise."
+}`;
+
+export async function extractFromSingleSession(
+  sessionContent: string
+): Promise<ProposedExperimentV2 | null> {
+  if (sessionContent.length < 200) return null;
+
+  const prompt = `${TAXONOMY_PROMPT}\n\nSESSION CONTENT:\n${sessionContent.slice(0, 12000)}`;
+
+  let text: string;
+  try {
+    const result = await generateText({
+      model: gateway("xai/grok-4.3"),
+      messages: [{ role: "user", content: prompt }],
+      maxOutputTokens: 800,
+    });
+    text = result.text;
+  } catch (err) {
+    console.warn("[extract.v2] AI gateway error:", err);
+    return null;
+  }
+
+  const cleaned = text.replace(/```json\n?|\n?```/g, "").trim();
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (!parsed.loop_class || !["L0", "L1", "L2"].includes(parsed.loop_class)) {
+      return null;
+    }
+    if (!parsed.hypothesis || typeof parsed.hypothesis !== "string") {
+      return null;
+    }
+    return {
+      loop_class: parsed.loop_class,
+      hypothesis: parsed.hypothesis.trim(),
+      risk_dimension: parsed.risk_dimension ?? undefined,
+      hypothesis_class: parsed.hypothesis_class ?? undefined,
+      aarrr_stage: parsed.aarrr_stage ?? undefined,
+      evidence_method: parsed.evidence_method ?? undefined,
+      segment: parsed.segment ?? undefined,
+      behavior: parsed.behavior ?? undefined,
+      metric: parsed.metric ?? undefined,
+      threshold: parsed.threshold ?? undefined,
+      timeframe: parsed.timeframe ?? undefined,
+      kill_threshold: parsed.kill_threshold ?? undefined,
+      outcome: parsed.outcome ?? undefined,
+      learning: parsed.learning ?? undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function extractAndSynthesize(
   sessions: { id: string; content: string }[],
   experiments: Experiment[]

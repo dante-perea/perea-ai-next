@@ -1,5 +1,3 @@
-import { generateText } from "ai";
-import { gateway } from "@/lib/ai";
 import { NextResponse } from "next/server";
 import {
   insertSignal,
@@ -37,32 +35,8 @@ function parseCommand(text: string): { cmd: string; args: string[] } | null {
   return { cmd: parts[0].toLowerCase().replace(/@\S+$/, ""), args: parts.slice(1) };
 }
 
-async function classifyHypothesis(hypothesis: string): Promise<{
-  experiment_type: string;
-  aarrr_stage: string;
-}> {
-  try {
-    const { text } = await generateText({
-      model: gateway("openai/gpt-5.4-2026-03-05"),
-      messages: [
-        {
-          role: "user",
-          content: `Classify this startup hypothesis into experiment_type and aarrr_stage.
-experiment_type: product | pricing | messaging | distribution | business_model | gtm | other
-aarrr_stage: acquisition | activation | retention | referral | revenue | none
-
-Hypothesis: "${hypothesis}"
-
-Return only valid JSON: { "experiment_type": "...", "aarrr_stage": "..." }`,
-        },
-      ],
-      maxOutputTokens: 64,
-    });
-    return JSON.parse(text);
-  } catch {
-    return { experiment_type: "other", aarrr_stage: "none" };
-  }
-}
+// Telegram quick-capture creates L0 entries (no falsifiability gate).
+// Promote to L1/L2 from the dashboard once you have segment/metric/threshold.
 
 export async function POST(req: Request) {
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
@@ -125,17 +99,11 @@ export async function POST(req: Request) {
     }
     const hypothesis = parsed.args.join(" ");
     try {
-      const [id, classification] = await Promise.all([
-        Promise.resolve(generateExperimentId()),
-        classifyHypothesis(hypothesis),
-      ]);
-      await createExperiment(id, hypothesis, undefined, undefined, {
-        experiment_type: classification.experiment_type,
-        aarrr_stage: classification.aarrr_stage,
-      });
+      const id = generateExperimentId();
+      await createExperiment({ id, hypothesis, loop_class: "L0" });
       await sendTelegram(
         chatId,
-        `✓ Experiment started\n<code>${id}</code>\n<i>${classification.experiment_type} · ${classification.aarrr_stage}</i>\n\nWhat does winning look like?\n/criteria ${id} <your success criteria>`
+        `✓ Logged as L0 (quick capture)\n<code>${id}</code>\n\nPromote to L1/L2 in the dashboard with segment + metric + threshold + kill criteria to make it falsifiable.`
       );
     } catch (err) {
       await sendTelegram(chatId, `⚠️ Failed: ${err instanceof Error ? err.message : String(err)}`);

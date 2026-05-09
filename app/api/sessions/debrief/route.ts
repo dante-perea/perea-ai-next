@@ -95,9 +95,11 @@ ${snippet}`;
 
   const id = generateExperimentId();
   try {
-    await createExperiment(id, parsed.hypothesis, undefined, session_id, {
-      experiment_type: parsed.experiment_type,
-      aarrr_stage: parsed.aarrr_stage,
+    await createExperiment({
+      id,
+      hypothesis: parsed.hypothesis,
+      session_id,
+      loop_class: "L0", // session debrief auto-extracts; promote in dashboard if it tests a real belief
     });
   } catch (err) {
     console.error("[debrief] createExperiment failed:", err);
