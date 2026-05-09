@@ -71,7 +71,7 @@ const PIVOT_TYPES = [
   "Zoom-In", "Zoom-Out", "Tech", "Platform", "Business-Model",
 ] as const;
 
-function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Experiment; initialSignals?: Signal[]; onAction: () => void }) {
+export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Experiment; initialSignals?: Signal[]; onAction: () => void }) {
   const [isPending, startTransition] = useTransition();
   const [wizard, setWizard] = useState<CloseWizardState>({ open: false, verdict: "win" });
   const [implication, setImplication] = useState<typeof IMPLICATIONS[number]>("PERSEVERE");

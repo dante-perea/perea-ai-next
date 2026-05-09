@@ -8,9 +8,10 @@
 
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Experiment, Signal } from "@/lib/learning/ghost-db";
+import { ExperimentCard } from "./ExperimentsClient";
 
 interface Props {
   variant: "A" | "B" | "C";
@@ -43,8 +44,8 @@ function fmtDays(n: number): string {
 // next-action button. No section toggles. No tabs. One stream of decisions.
 // ────────────────────────────────────────────────────────────────────────────
 
-function VariantA(props: Props) {
-  const { active, drafts, signalsMap, velocityToday, velocityWeek, avgCycleHours, validationRate } = props;
+function VariantA(props: Props & { onSelect: (e: Experiment) => void; onShip: (id: string) => void; onPromote: (id: string) => void }) {
+  const { active, drafts, signalsMap, velocityToday, velocityWeek, avgCycleHours, validationRate, onSelect, onShip, onPromote } = props;
 
   const live = active.filter((e) => e.loop_class !== "L0");
   const enriched = live.map((e) => {
@@ -60,12 +61,12 @@ function VariantA(props: Props) {
   const fresh   = enriched.filter((x) => x.ageDays < 3).sort((a, b) => b.ageDays - a.ageDays);
   const silent  = enriched.filter((x) => x.sigCount === 0 && x.ageDays > 2).slice(0, 8);
 
-  function nextAction(x: typeof enriched[0]): { label: string; tone: "red" | "amber" | "blue" | "gray" } {
-    if (x.ageDays > 7) return { label: "Decide — overdue (>7d, kill or close)", tone: "red" };
-    if (!x.exp.shipped_at && x.ageDays > 2) return { label: "Ship it (still not in front of users)", tone: "amber" };
-    if (x.sigCount === 0 && x.ageDays > 2) return { label: "Log signal (silent, no observations)", tone: "amber" };
-    if (x.ageDays > 3) return { label: "Log Need More Data or close", tone: "blue" };
-    return { label: "Running — observe", tone: "gray" };
+  function nextAction(x: typeof enriched[0]): { label: string; tone: "red" | "amber" | "blue" | "gray"; kind: "decide" | "ship" | "signal" | "observe" } {
+    if (x.ageDays > 7) return { label: "Decide — overdue", tone: "red", kind: "decide" };
+    if (!x.exp.shipped_at && x.ageDays > 2) return { label: "Ship it", tone: "amber", kind: "ship" };
+    if (x.sigCount === 0 && x.ageDays > 2) return { label: "Log signal", tone: "amber", kind: "signal" };
+    if (x.ageDays > 3) return { label: "Decide / log signal", tone: "blue", kind: "decide" };
+    return { label: "Observe", tone: "gray", kind: "observe" };
   }
 
   return (
@@ -85,11 +86,16 @@ function VariantA(props: Props) {
         </header>
 
         {drafts.length > 0 && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-emerald-900">{drafts.length} pending next-bet{drafts.length > 1 ? "s" : ""} need a decision</p>
-              <a href="/dashboard/experiments" className="text-xs text-emerald-700 underline">Review</a>
-            </div>
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 space-y-2">
+            <p className="text-sm font-semibold text-emerald-900">{drafts.length} pending next-bet{drafts.length > 1 ? "s" : ""} need a decision</p>
+            {drafts.slice(0, 3).map((d) => (
+              <div key={d.id} className="flex items-center gap-2 text-xs">
+                <code className="font-mono text-[10px] text-emerald-700 shrink-0 w-20 truncate">{d.id}</code>
+                <p className="flex-1 truncate text-gray-800">{d.hypothesis}</p>
+                <button onClick={() => onPromote(d.id)} className="px-2 py-0.5 rounded bg-emerald-700 text-white shrink-0">Promote</button>
+                <button onClick={() => onSelect(d)} className="px-2 py-0.5 rounded border border-emerald-300 text-emerald-700 shrink-0">Edit</button>
+              </div>
+            ))}
           </div>
         )}
 
@@ -100,6 +106,8 @@ function VariantA(props: Props) {
           subtitle="Started >7 days ago, no verdict. Per Pinnacle Gecko: 48h decision rule. Kill or close."
           items={overdue.slice(0, 10)}
           nextAction={nextAction}
+          onSelect={onSelect}
+          onShip={onShip}
         />
         <UrgencyBand
           tone="amber"
@@ -108,6 +116,8 @@ function VariantA(props: Props) {
           subtitle="3–7 days running. Push toward a verdict before they overdue."
           items={aging.slice(0, 8)}
           nextAction={nextAction}
+          onSelect={onSelect}
+          onShip={onShip}
         />
         <UrgencyBand
           tone="green"
@@ -116,6 +126,8 @@ function VariantA(props: Props) {
           subtitle="Started in the last 72 hours. Observe; signal speaks soon."
           items={fresh.slice(0, 5)}
           nextAction={nextAction}
+          onSelect={onSelect}
+          onShip={onShip}
         />
 
         {silent.length > 0 && (
@@ -124,7 +136,11 @@ function VariantA(props: Props) {
             <p className="text-xs text-gray-500">No observations logged. Either the test is mis-designed (no measurable signal possible), or you forgot. Decide.</p>
             <ul className="space-y-1 mt-2">
               {silent.map((x) => (
-                <li key={x.exp.id} className="flex items-center justify-between text-xs">
+                <li
+                  key={x.exp.id}
+                  onClick={() => onSelect(x.exp)}
+                  className="flex items-center justify-between text-xs cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-1 rounded"
+                >
                   <span className="truncate flex-1 text-gray-700">{x.exp.hypothesis.slice(0, 90)}…</span>
                   <span className="text-gray-400 ml-3 shrink-0 font-mono">{fmtDays(x.ageDays)} old</span>
                 </li>
@@ -139,13 +155,15 @@ function VariantA(props: Props) {
 
 interface BandItem { exp: Experiment; ageDays: number; lastSignalDays: number; shippedDays: number | null; sigCount: number; }
 
-function UrgencyBand({ tone, icon, title, subtitle, items, nextAction }: {
+function UrgencyBand({ tone, icon, title, subtitle, items, nextAction, onSelect, onShip }: {
   tone: "red" | "amber" | "green";
   icon: string;
   title: string;
   subtitle: string;
   items: BandItem[];
-  nextAction: (x: BandItem) => { label: string; tone: "red" | "amber" | "blue" | "gray" };
+  nextAction: (x: BandItem) => { label: string; tone: "red" | "amber" | "blue" | "gray"; kind: "decide" | "ship" | "signal" | "observe" };
+  onSelect: (e: Experiment) => void;
+  onShip: (id: string) => void;
 }) {
   const bg = tone === "red" ? "bg-red-50 border-red-200" : tone === "amber" ? "bg-amber-50 border-amber-200" : "bg-emerald-50 border-emerald-200";
   return (
@@ -161,8 +179,17 @@ function UrgencyBand({ tone, icon, title, subtitle, items, nextAction }: {
         <div className="space-y-1.5">
           {items.map((x) => {
             const action = nextAction(x);
+            function handleAction(e: React.MouseEvent) {
+              e.stopPropagation();
+              if (action.kind === "ship") onShip(x.exp.id);
+              else onSelect(x.exp); // decide / signal / observe → open modal with full action panel
+            }
             return (
-              <div key={x.exp.id} className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 border border-white">
+              <div
+                key={x.exp.id}
+                onClick={() => onSelect(x.exp)}
+                className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 border border-white cursor-pointer hover:border-gray-300"
+              >
                 <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{x.exp.id}</code>
                 <p className="flex-1 truncate text-xs text-gray-800">{x.exp.hypothesis}</p>
                 <div className="flex items-center gap-2 shrink-0 text-[10px] text-gray-500">
@@ -171,7 +198,7 @@ function UrgencyBand({ tone, icon, title, subtitle, items, nextAction }: {
                   {x.exp.evidence_method && <span className={x.exp.evidence_method === "PAY" ? "text-emerald-700 font-bold" : ""}>{x.exp.evidence_method}</span>}
                 </div>
                 <span className="text-[10px] font-mono text-gray-400 shrink-0 w-12 text-right">{fmtDays(x.ageDays)}</span>
-                <button className={`text-[10px] px-2.5 py-1 rounded font-medium shrink-0 ${
+                <button onClick={handleAction} className={`text-[10px] px-2.5 py-1 rounded font-medium shrink-0 ${
                   action.tone === "red"   ? "bg-red-600 text-white hover:bg-red-700"
                   : action.tone === "amber" ? "bg-amber-500 text-white hover:bg-amber-600"
                   : action.tone === "blue"  ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -201,8 +228,9 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
 // Distribution charts. Diagnostic, not action-oriented. Use for weekly review.
 // ────────────────────────────────────────────────────────────────────────────
 
-function VariantB(props: Props) {
-  const { all, signalsMap } = props;
+function VariantB(props: Props & { onSelect: (e: Experiment) => void }) {
+  const { all, signalsMap, onSelect } = props;
+  const [filter, setFilter] = useState<{ kind: "all" | "evidence" | "aarrr" | "risk"; value: string } | null>(null);
 
   const audit = useMemo(() => {
     const live = all.filter((e) => e.loop_class === "L1" || e.loop_class === "L2");
@@ -330,13 +358,54 @@ function VariantB(props: Props) {
           </section>
         )}
 
-        {/* Distribution charts */}
+        {/* Distribution charts (click a row → filter the drill-down list below) */}
         <section className="grid grid-cols-2 gap-6">
-          <DistributionChart title="Risk dimension" subtitle="Cagan's Four Big Risks" dist={audit.riskDist} colorMap={{ VAL: "emerald", USA: "blue", FEA: "purple", VIA: "amber" }} />
-          <DistributionChart title="AARRR funnel coverage" subtitle="McClure pirate metrics" dist={audit.aarrrDist} colorMap={{ ACQ: "blue", ACT: "emerald", RET: "amber", REF: "purple", REV: "rose" }} />
-          <DistributionChart title="Evidence method" subtitle="Strength: PAY > AB > WOZ > CON > FAK > OBS > INT" dist={audit.evidenceDist} colorMap={{ PAY: "emerald", AB: "blue", WOZ: "blue", CON: "amber", FAK: "amber", OBS: "gray", INT: "gray" }} />
+          <DistributionChart title="Risk dimension" subtitle="Cagan's Four Big Risks · click to filter below" dist={audit.riskDist} colorMap={{ VAL: "emerald", USA: "blue", FEA: "purple", VIA: "amber" }} onClick={(v) => setFilter({ kind: "risk", value: v })} />
+          <DistributionChart title="AARRR funnel coverage" subtitle="McClure pirate metrics · click to filter" dist={audit.aarrrDist} colorMap={{ ACQ: "blue", ACT: "emerald", RET: "amber", REF: "purple", REV: "rose" }} onClick={(v) => setFilter({ kind: "aarrr", value: v })} />
+          <DistributionChart title="Evidence method" subtitle="Strength: PAY > AB > WOZ > CON > FAK > OBS > INT · click to filter" dist={audit.evidenceDist} colorMap={{ PAY: "emerald", AB: "blue", WOZ: "blue", CON: "amber", FAK: "amber", OBS: "gray", INT: "gray" }} onClick={(v) => setFilter({ kind: "evidence", value: v })} />
           <DistributionChart title="Loop class" subtitle="L1/L2 = falsifiable; L0 = ops" dist={audit.loopDist} colorMap={{ L1: "emerald", L2: "blue", L0: "gray" }} />
         </section>
+
+        {/* Drill-down list — appears when a chart segment is clicked */}
+        {filter && (
+          <section className="rounded-xl border border-gray-200 p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-700">
+                {filter.kind} = {filter.value}
+                {" · "}
+                {all.filter((e) => {
+                  if (filter.kind === "risk") return e.risk_dimension === filter.value;
+                  if (filter.kind === "aarrr") return e.aarrr_stage === filter.value;
+                  if (filter.kind === "evidence") return e.evidence_method === filter.value;
+                  return true;
+                }).length} experiments
+              </h3>
+              <button onClick={() => setFilter(null)} className="text-xs text-gray-400">clear filter ✕</button>
+            </div>
+            <div className="space-y-1 max-h-80 overflow-y-auto">
+              {all
+                .filter((e) => {
+                  if (e.loop_class === "L0") return false;
+                  if (filter.kind === "risk") return e.risk_dimension === filter.value;
+                  if (filter.kind === "aarrr") return e.aarrr_stage === filter.value;
+                  if (filter.kind === "evidence") return e.evidence_method === filter.value;
+                  return true;
+                })
+                .slice(0, 30)
+                .map((e) => (
+                  <div
+                    key={e.id}
+                    onClick={() => onSelect(e)}
+                    className="flex items-center gap-3 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer text-xs"
+                  >
+                    <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{e.id}</code>
+                    <p className="flex-1 truncate text-gray-800">{e.hypothesis}</p>
+                    <span className="text-gray-400 shrink-0">{e.outcome}</span>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -353,10 +422,11 @@ function BigStat({ label, value, highlight }: { label: string; value: string; hi
   );
 }
 
-function DistributionChart({ title, subtitle, dist, colorMap }: {
+function DistributionChart({ title, subtitle, dist, colorMap, onClick }: {
   title: string; subtitle: string;
   dist: Record<string, number>;
   colorMap: Record<string, string>;
+  onClick?: (key: string) => void;
 }) {
   const entries = Object.entries(dist).sort((a, b) => b[1] - a[1]);
   const max = Math.max(1, ...entries.map(([, n]) => n));
@@ -369,7 +439,11 @@ function DistributionChart({ title, subtitle, dist, colorMap }: {
           const pct = (n / max) * 100;
           const color = colorMap[k] ?? "gray";
           return (
-            <div key={k} className="flex items-center gap-2 text-xs">
+            <div
+              key={k}
+              onClick={onClick ? () => onClick(k) : undefined}
+              className={`flex items-center gap-2 text-xs ${onClick ? "cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-0.5 rounded" : ""}`}
+            >
               <span className="w-12 font-mono text-gray-700">{k}</span>
               <div className="flex-1 h-4 bg-gray-100 rounded overflow-hidden">
                 <div className={`h-full bg-${color}-400`} style={{ width: `${pct}%` }} />
@@ -396,8 +470,9 @@ function countBy<T>(arr: T[], key: (x: T) => string): Record<string, number> {
 // bold lines between nodes. Reveals "what compounds" vs "where you're stuck".
 // ────────────────────────────────────────────────────────────────────────────
 
-function VariantC(props: Props) {
-  const { all } = props;
+function VariantC(props: Props & { onSelect: (e: Experiment) => void }) {
+  const { all, onSelect } = props;
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   const byProject = useMemo(() => {
     const live = all.filter((e) => e.loop_class === "L1" || e.loop_class === "L2");
@@ -457,10 +532,10 @@ function VariantC(props: Props) {
         {/* Compounding chains — the most valuable view */}
         {chains.length > 0 ? (
           <section className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5">
-            <h2 className="text-sm font-semibold text-emerald-900 mb-3">Compounding chains — hypotheses that produced follow-up bets</h2>
+            <h2 className="text-sm font-semibold text-emerald-900 mb-3">Compounding chains — click any node to act on it</h2>
             <div className="space-y-3">
               {chains.slice(0, 8).map((ids, idx) => (
-                <ChainView key={idx} ids={ids} all={all} />
+                <ChainView key={idx} ids={ids} all={all} onSelect={onSelect} />
               ))}
             </div>
           </section>
@@ -473,19 +548,47 @@ function VariantC(props: Props) {
 
         {/* Project clusters — orphans + their AARRR coverage */}
         <section className="space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Project clusters</h2>
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Project clusters · click to drill into experiments</h2>
           <div className="grid grid-cols-2 gap-4">
             {byProject.map(([project, exps]) => (
-              <ProjectCluster key={project} project={project} experiments={exps} />
+              <ProjectCluster
+                key={project}
+                project={project}
+                experiments={exps}
+                onClick={() => setSelectedProject(project === selectedProject ? null : project)}
+                selected={project === selectedProject}
+              />
             ))}
           </div>
         </section>
+
+        {selectedProject && (
+          <section className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-700">{selectedProject} · click an experiment to act on it</h3>
+              <button onClick={() => setSelectedProject(null)} className="text-xs text-gray-400">close</button>
+            </div>
+            <div className="space-y-1 max-h-96 overflow-y-auto">
+              {(byProject.find(([p]) => p === selectedProject)?.[1] ?? []).slice(0, 50).map((e) => (
+                <div
+                  key={e.id}
+                  onClick={() => onSelect(e)}
+                  className="flex items-center gap-3 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer text-xs"
+                >
+                  <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{e.id}</code>
+                  <p className="flex-1 truncate text-gray-800">{e.hypothesis}</p>
+                  <span className="text-gray-400 shrink-0">{e.outcome}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
 }
 
-function ChainView({ ids, all }: { ids: string[]; all: Experiment[] }) {
+function ChainView({ ids, all, onSelect }: { ids: string[]; all: Experiment[]; onSelect: (e: Experiment) => void }) {
   const byId = new Map(all.map((e) => [e.id, e]));
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -498,8 +601,11 @@ function ChainView({ ids, all }: { ids: string[]; all: Experiment[] }) {
           : e.outcome === "inconclusive" ? "border-amber-300 bg-amber-50"
           :                                "border-blue-200 bg-blue-50";
         return (
-          <>
-            <div key={id} className={`shrink-0 rounded-lg border-2 ${tone} p-2 min-w-[200px] max-w-[260px]`}>
+          <div key={id} className="flex items-center gap-2 shrink-0">
+            <div
+              onClick={() => onSelect(e)}
+              className={`shrink-0 rounded-lg border-2 ${tone} p-2 min-w-[200px] max-w-[260px] cursor-pointer hover:shadow-md`}
+            >
               <code className="text-[10px] font-mono text-gray-500">{e.id}</code>
               <p className="text-[11px] text-gray-800 mt-1 line-clamp-3">{e.hypothesis.slice(0, 140)}…</p>
               <div className="flex gap-1 mt-1.5 text-[9px]">
@@ -508,15 +614,15 @@ function ChainView({ ids, all }: { ids: string[]; all: Experiment[] }) {
                 {e.pivot_type && <span className="px-1 py-0.5 rounded bg-purple-100 text-purple-800">pivot: {e.pivot_type}</span>}
               </div>
             </div>
-            {i < ids.length - 1 && <span key={`a-${i}`} className="text-2xl text-gray-400 shrink-0">→</span>}
-          </>
+            {i < ids.length - 1 && <span className="text-2xl text-gray-400 shrink-0">→</span>}
+          </div>
         );
       })}
     </div>
   );
 }
 
-function ProjectCluster({ project, experiments }: { project: string; experiments: Experiment[] }) {
+function ProjectCluster({ project, experiments, onClick, selected }: { project: string; experiments: Experiment[]; onClick: () => void; selected: boolean }) {
   const aarrrByStage: Record<string, number> = {};
   const validated = experiments.filter((e) => e.outcome === "validated").length;
   const refuted = experiments.filter((e) => e.outcome === "refuted").length;
@@ -527,7 +633,10 @@ function ProjectCluster({ project, experiments }: { project: string; experiments
   }
   const stages = ["ACQ", "ACT", "RET", "REF", "REV"];
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+    <div
+      onClick={onClick}
+      className={`rounded-xl border bg-white p-4 space-y-3 cursor-pointer transition-shadow hover:shadow-md ${selected ? "border-emerald-500 ring-2 ring-emerald-200" : "border-gray-200"}`}
+    >
       <div className="flex items-baseline justify-between">
         <h3 className="text-sm font-semibold text-gray-900 truncate">{project}</h3>
         <span className="text-xs text-gray-500 shrink-0 ml-2">{experiments.length}</span>
@@ -612,11 +721,66 @@ function PrototypeSwitcher({ variant }: { variant: string }) {
 // ────────────────────────────────────────────────────────────────────────────
 
 export function ExperimentsProto(props: Props) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<Experiment | null>(null);
+
+  const refresh = () => router.refresh();
+
+  async function handleShip(id: string) {
+    await fetch(`/api/experiments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "ship" }),
+    });
+    refresh();
+  }
+
+  async function handlePromote(id: string) {
+    await fetch(`/api/experiments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "promote" }),
+    });
+    refresh();
+  }
+
+  // When user takes an action inside the modal, close it and re-fetch the page data
+  function onModalAction() {
+    refresh();
+    // Don't auto-close — wizard flows like WIN/KILL involve sub-steps; user closes manually
+  }
+
   return (
     <>
-      {props.variant === "A" && <VariantA {...props} />}
-      {props.variant === "B" && <VariantB {...props} />}
-      {props.variant === "C" && <VariantC {...props} />}
+      {props.variant === "A" && <VariantA {...props} onSelect={setSelected} onShip={handleShip} onPromote={handlePromote} />}
+      {props.variant === "B" && <VariantB {...props} onSelect={setSelected} />}
+      {props.variant === "C" && <VariantC {...props} onSelect={setSelected} />}
+
+      {selected && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 flex items-start justify-center p-6 overflow-y-auto"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-5 mt-12"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs uppercase tracking-wide text-gray-500">Experiment actions · click outside to close</p>
+              <button
+                onClick={() => setSelected(null)}
+                className="text-gray-400 hover:text-gray-700 text-lg leading-none"
+              >✕</button>
+            </div>
+            <ExperimentCard
+              exp={selected}
+              initialSignals={props.signalsMap[selected.id] ?? []}
+              onAction={onModalAction}
+            />
+          </div>
+        </div>
+      )}
+
       <PrototypeSwitcher variant={props.variant} />
     </>
   );
