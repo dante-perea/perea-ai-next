@@ -3733,6 +3733,69 @@ const AGENT_INFERENCE_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.linkedin\.com(\/|$)/i,
 ];
 
+const BANKING_MRM_PRIMARY_PATTERNS: RegExp[] = [
+  // US federal banking regulators
+  /(^|\.)federalreserve\.gov(\/|$)/i,
+  /(^|\.)www\.federalreserve\.gov(\/|$)/i,
+  /(^|\.)occ\.gov(\/|$)/i,
+  /(^|\.)www\.occ\.gov(\/|$)/i,
+  /(^|\.)fdic\.gov(\/|$)/i,
+  /(^|\.)www\.fdic\.gov(\/|$)/i,
+  /(^|\.)newyorkfed\.org(\/|$)/i,
+  /(^|\.)www\.newyorkfed\.org(\/|$)/i,
+  /(^|\.)treasury\.gov(\/|$)/i,
+  /(^|\.)www\.treasury\.gov(\/|$)/i,
+  /(^|\.)ofac\.treasury\.gov(\/|$)/i,
+  // International bank regulators
+  /(^|\.)bankofengland\.co\.uk(\/|$)/i,
+  /(^|\.)www\.bankofengland\.co\.uk(\/|$)/i,
+  /(^|\.)bankingsupervision\.europa\.eu(\/|$)/i,
+  /(^|\.)bis\.org(\/|$)/i,
+  /(^|\.)www\.bis\.org(\/|$)/i,
+  // EU AI Act + standards
+  /(^|\.)artificialintelligenceact\.eu(\/|$)/i,
+  /(^|\.)nist\.gov(\/|$)/i,
+  /(^|\.)www\.nist\.gov(\/|$)/i,
+  /(^|\.)nvlpubs\.nist\.gov(\/|$)/i,
+  // MIT AI Risk research
+  /(^|\.)airisk\.mit\.edu(\/|$)/i,
+  /(^|\.)airi-navigator\.com(\/|$)/i,
+  /(^|\.)www\.airi-navigator\.com(\/|$)/i,
+];
+
+const BANKING_MRM_SECONDARY_PATTERNS: RegExp[] = [
+  // Risk-management trade press
+  /(^|\.)garp\.org(\/|$)/i,
+  /(^|\.)www\.garp\.org(\/|$)/i,
+  /(^|\.)garp\.com(\/|$)/i,
+  /(^|\.)www\.garp\.com(\/|$)/i,
+  /(^|\.)risk\.net(\/|$)/i,
+  /(^|\.)www\.risk\.net(\/|$)/i,
+  // Banking trade press
+  /(^|\.)bankingdive\.com(\/|$)/i,
+  /(^|\.)www\.bankingdive\.com(\/|$)/i,
+  /(^|\.)bpi\.com(\/|$)/i,
+  /(^|\.)www\.bpi\.com(\/|$)/i,
+  /(^|\.)aba\.com(\/|$)/i,
+  /(^|\.)www\.aba\.com(\/|$)/i,
+  // MRM consultancies
+  /(^|\.)schneiderdowns\.com(\/|$)/i,
+  /(^|\.)www\.schneiderdowns\.com(\/|$)/i,
+  /(^|\.)domino\.ai(\/|$)/i,
+  /(^|\.)www\.domino\.ai(\/|$)/i,
+  /(^|\.)glacis\.com(\/|$)/i,
+  /(^|\.)www\.glacis\.com(\/|$)/i,
+  /(^|\.)databricks\.com(\/|$)/i,
+  /(^|\.)www\.databricks\.com(\/|$)/i,
+  /(^|\.)thealgo\.ai(\/|$)/i,
+  /(^|\.)www\.thealgo\.ai(\/|$)/i,
+  /(^|\.)beamdata\.com(\/|$)/i,
+  /(^|\.)www\.beamdata\.com(\/|$)/i,
+  /(^|\.)mydailyexecutive\.com(\/|$)/i,
+  /(^|\.)www\.mydailyexecutive\.com(\/|$)/i,
+  /(^|\.)ai2\.work(\/|$)/i,
+];
+
 const RPA_AI_PLATFORM_PRIMARY_PATTERNS: RegExp[] = [
   // Enterprise RPA + agentic-AI platform vendors (first-party newsroom + product docs)
   /(^|\.)uipath\.com(\/|$)/i,
@@ -5220,6 +5283,12 @@ export function classifyTier(
   }
   for (const re of RPA_AI_PLATFORM_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:rpa-ai-platform-secondary" };
+  }
+  for (const re of BANKING_MRM_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:banking-mrm-primary" };
+  }
+  for (const re of BANKING_MRM_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:banking-mrm-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
