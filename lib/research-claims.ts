@@ -97,7 +97,8 @@ const PRIMARY_PATTERNS: RegExp[] = [
   // Microsoft Edge spec editor's personal blog (Patrick Brosset)
   /(^|\.)patrickbrosset\.com(\/|$)/i,
   /(^|\.)blogs\.microsoft\.com(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
+  /(^|\.)news\.microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   // Salesforce / HubSpot / Microsoft Dynamics ecosystem corporate publishers
   /(^|\.)salesforce\.com(\/|$)/i,
   /(^|\.)investor\.salesforce\.com(\/|$)/i,
@@ -950,7 +951,7 @@ const BOOTCAMP_CREDENTIALING_PRIMARY_PATTERNS: RegExp[] = [
   // Khan Academy / Microsoft / OpenAI corporate
   /(^|\.)khanacademy\.org(\/|$)/i,
   /(^|\.)blog\.khanacademy\.org(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   /(^|\.)aka\.ms(\/|$)/i,
   /(^|\.)openai\.com(\/|$)/i,
   // Pearson / Credly / Accredible / Sertifier corporate
@@ -1778,7 +1779,7 @@ const A2A_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)linuxfoundation\.org(\/|$)/i,
   /(^|\.)lfaidata\.foundation(\/|$)/i,
   /(^|\.)salesforce\.com(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   /(^|\.)news\.microsoft\.com(\/|$)/i,
   /(^|\.)sap\.com(\/|$)/i,
   /(^|\.)news\.sap\.com(\/|$)/i,
@@ -1970,8 +1971,6 @@ const HYPERSCALER_RUNTIME_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)aws\.amazon\.com(\/|$)/i,
   /(^|\.)docs\.aws\.amazon\.com(\/|$)/i,
   /(^|\.)azure\.microsoft\.com(\/|$)/i,
-  /(^|\.)devblogs\.microsoft\.com(\/|$)/i,
-  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
   /(^|\.)learn\.microsoft\.com(\/|$)/i,
   /(^|\.)cloud\.google\.com(\/|$)/i,
   /(^|\.)docs\.cloud\.google\.com(\/|$)/i,
@@ -2057,9 +2056,7 @@ const BROWSER_AGENT_PERCEPTION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)cloudflare\.com(\/|$)/i,
   /(^|\.)blog\.cloudflare\.com(\/|$)/i,
   /(^|\.)developers\.cloudflare\.com(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
-  /(^|\.)devblogs\.microsoft\.com(\/|$)/i,
-  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   /(^|\.)docs\.microsoft\.com(\/|$)/i,
   /(^|\.)learn\.microsoft\.com(\/|$)/i,
   /(^|\.)vibebrowser\.app(\/|$)/i,
@@ -2450,7 +2447,7 @@ const FIELD_DOCUMENTATION_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)nablamed\.com(\/|$)/i,
   /(^|\.)deepscribe\.ai(\/|$)/i,
   /(^|\.)ambience\.health(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   /(^|\.)learn\.microsoft\.com(\/|$)/i,
   /(^|\.)epic\.com(\/|$)/i,
   // Trade-niche FSM and field-doc vendors from this paper's research
@@ -2996,7 +2993,7 @@ const CAPABILITY_AGENT_SECURITY_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)sigops\.org(\/|$)/i,
   /(^|\.)usenix\.org(\/|$)/i,
   /(^|\.)modelcontextprotocol\.info(\/|$)/i,
-  /(^|\.)microsoft\.com(\/|$)/i,
+  /^(www\.)?microsoft\.com(\/|$)/i,
   /(^|\.)developer\.microsoft\.com(\/|$)/i,
   // AI-security analyst + practitioner blogs
   /(^|\.)replyant\.com(\/|$)/i,
@@ -3835,6 +3832,12 @@ const SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)zdnet\.com(\/|$)/i,
   /(^|\.)computerworld\.com(\/|$)/i,
   /(^|\.)infoworld\.com(\/|$)/i,
+  /(^|\.)devblogs\.microsoft\.com(\/|$)/i,
+  /(^|\.)techcommunity\.microsoft\.com(\/|$)/i,
+  /(^|\.)machinebrief\.com(\/|$)/i,
+  /(^|\.)aaif\.io(\/|$)/i,
+  /(^|\.)newclawtimes\.com(\/|$)/i,
+  /(^|\.)cybertechnologyinsights\.com(\/|$)/i,
   // CB-Insights / VC analyst publications
   /(^|\.)notablecap\.com(\/|$)/i,
   /(^|\.)cognitionhub\.com(\/|$)/i,
