@@ -703,8 +703,7 @@ function PrototypeSwitcher({ variant }: { variant: string }) {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  if (process.env.NODE_ENV === "production") return null;
-
+  // Switcher visible in prod too — this dashboard is owner-only, no leak risk.
   return (
     <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full bg-gray-900 px-5 py-2.5 text-white shadow-2xl">
       <button onClick={() => go(prev)} className="text-lg leading-none text-gray-400 hover:text-white">←</button>
