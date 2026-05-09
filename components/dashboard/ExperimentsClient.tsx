@@ -372,11 +372,32 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
         </div>
       )}
 
-      {wizard.open && (
+      {wizard.open && (() => {
+        // The wizard heading + button label follow the IMPLICATION, not just
+        // the win/kill verdict. PIVOT is technically a "kill" verdict (the
+        // original hypothesis was refuted) but reads as "Close & pivot" so
+        // the user isn't confused into thinking they're killing the line.
+        const headingTone =
+          implication === "KILL" ? "text-red-600"
+          : implication === "PIVOT" ? "text-purple-700"
+          : implication === "DOUBLE-DOWN" ? "text-emerald-700"
+          : "text-green-700";
+        const headingLabel =
+          implication === "KILL" ? "KILL"
+          : implication === "PIVOT" ? "PIVOT"
+          : implication === "DOUBLE-DOWN" ? "DOUBLE-DOWN"
+          : "WIN";
+        const headingPrefix = implication === "PIVOT" ? "Close & pivot —" : "Close as";
+        const confirmLabel =
+          implication === "KILL" ? "Confirm KILL"
+          : implication === "PIVOT" ? "Confirm pivot"
+          : implication === "DOUBLE-DOWN" ? "Confirm DOUBLE-DOWN"
+          : "Confirm WIN";
+        return (
         <div className="pt-2 space-y-3 rounded-lg border border-gray-300 bg-white p-3">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">
-              Close as <span className={wizard.verdict === "win" ? "text-green-700" : "text-red-600"}>{wizard.verdict.toUpperCase()}</span> · Axis 7 structured close
+              {headingPrefix} <span className={headingTone}>{headingLabel}</span> · Axis 7 structured close
             </p>
             <button onClick={() => setWizard({ open: false, verdict: "win" })} className="text-gray-400 text-xs hover:text-gray-700">✕</button>
           </div>
@@ -460,12 +481,13 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
                 onClick={submitClose}
                 className="text-xs px-3 py-1 rounded bg-gray-900 text-white disabled:opacity-40"
               >
-                {isPending ? "Closing…" : `Confirm ${wizard.verdict.toUpperCase()}`}
+                {isPending ? "Closing…" : confirmLabel}
               </button>
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* Surface the structured close fields on already-closed experiments */}
       {!isActive && (exp.implication || exp.confidence) && (

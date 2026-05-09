@@ -7,7 +7,22 @@
 
 import { generateText } from "ai";
 import { gateway } from "../ai";
-import type { Experiment, Signal, SynthesisRecommendation } from "./ghost-db";
+import type {
+  Experiment, Signal, SynthesisRecommendation,
+  Implication, Confidence, GeneralizesTo, PivotType,
+} from "./ghost-db";
+
+const IMPLICATIONS: readonly Implication[] = ["PERSEVERE", "PIVOT", "KILL", "DOUBLE-DOWN"];
+const CONFIDENCES: readonly Confidence[] = ["HIGH", "MEDIUM", "LOW"];
+const GENERALIZES: readonly GeneralizesTo[] = ["THIS-ONLY", "SEGMENT", "MARKET", "UNIVERSAL"];
+const PIVOT_TYPES: readonly PivotType[] = [
+  "Customer-Segment", "Customer-Need", "Channel", "Pricing", "Value-Prop",
+  "Zoom-In", "Zoom-Out", "Tech", "Platform", "Business-Model",
+];
+
+function inEnum<T extends string>(allowed: readonly T[], value: unknown): T | null {
+  return typeof value === "string" && (allowed as readonly string[]).includes(value) ? (value as T) : null;
+}
 
 const PROMPT = `You are a startup founder's research partner. An experiment they ran 48+ hours ago has been waiting for a decision. They logged observation notes during that time. Your job: read the notes and recommend a decision.
 
@@ -98,26 +113,34 @@ export async function synthesizeExperiment(
   }
 
   const cleaned = text.replace(/```json\n?|\n?```/g, "").trim();
-  try {
-    const parsed = JSON.parse(cleaned);
-    if (typeof parsed.summary !== "string" || !parsed.recommendation) return null;
-    const rec = parsed.recommendation;
-    if (!rec.implication || !rec.learning || !rec.confidence || !rec.generalizes_to) return null;
-    if (rec.implication === "PIVOT" && !rec.pivot_type) {
-      // Fall back to a sensible default rather than discarding the whole synthesis
-      rec.pivot_type = "Customer-Need";
-    }
-    return {
-      summary: parsed.summary.trim(),
-      recommendation: {
-        implication: rec.implication,
-        learning: rec.learning.trim(),
-        confidence: rec.confidence,
-        generalizes_to: rec.generalizes_to,
-        pivot_type: rec.implication === "PIVOT" ? rec.pivot_type : undefined,
-      },
-    };
-  } catch {
+  let parsed: unknown;
+  try { parsed = JSON.parse(cleaned); } catch { return null; }
+  if (!parsed || typeof parsed !== "object") return null;
+
+  const root = parsed as Record<string, unknown>;
+  const summary = typeof root.summary === "string" ? root.summary.trim() : null;
+  const rec = root.recommendation as Record<string, unknown> | undefined;
+  if (!summary || !rec || typeof rec !== "object") return null;
+
+  // Strict enum validation — Grok occasionally hallucinates synonyms (e.g.
+  // "VALIDATE" for "PERSEVERE") which would silently break the wizard
+  // pre-fill. Reject the synthesis rather than store invalid values.
+  const implication = inEnum(IMPLICATIONS, rec.implication);
+  const confidence = inEnum(CONFIDENCES, rec.confidence);
+  const generalizes_to = inEnum(GENERALIZES, rec.generalizes_to);
+  const learning = typeof rec.learning === "string" ? rec.learning.trim() : "";
+  if (!implication || !confidence || !generalizes_to || !learning) {
+    console.warn("[synthesize] rejected — invalid enum or missing learning:", { rec });
     return null;
   }
+
+  let pivot_type: PivotType | undefined;
+  if (implication === "PIVOT") {
+    pivot_type = inEnum(PIVOT_TYPES, rec.pivot_type) ?? "Customer-Need";
+  }
+
+  return {
+    summary,
+    recommendation: { implication, learning, confidence, generalizes_to, pivot_type },
+  };
 }

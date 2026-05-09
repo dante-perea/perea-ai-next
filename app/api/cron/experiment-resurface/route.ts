@@ -25,6 +25,15 @@ const DAY = 24 * 60 * 60 * 1000;
 const DEFAULT_REVISIT_DAYS = 2;
 const DASHBOARD_URL = "https://www.perea.ai/dashboard/experiments";
 
+// Cap synthesis per tick so 10+ simultaneously-due experiments can't
+// blow Vercel's 300s function ceiling (each Grok call runs ~5–10s).
+// Remaining experiments get picked up on the next hourly tick.
+const MAX_SYNTHESIS_PER_TICK = 5;
+
+// Telegram message hard limit. We slice the per-experiment digest list
+// to stay safely under this, and append a "+N more" footer if needed.
+const TELEGRAM_MAX_CHARS = 4000;
+
 async function sendTelegram(text: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -94,21 +103,35 @@ function formatExperiment(d: DueExperiment): string {
 }
 
 function buildMessage(due: DueExperiment[]): string {
-  const lines: string[] = [];
+  const header: string[] = [];
   const synthesized = due.filter((d) => d.synthesis).length;
   const noun = due.length === 1 ? "experiment is" : "experiments are";
-  lines.push(`🔔 <b>${due.length} ${noun} past their re-decide window</b>`);
-  if (synthesized > 0) {
-    lines.push(`<i>${synthesized} synthesized — recommendations ready</i>`);
+  header.push(`🔔 <b>${due.length} ${noun} past their re-decide window</b>`);
+  if (synthesized > 0) header.push(`<i>${synthesized} synthesized — recommendations ready</i>`);
+  header.push("");
+
+  const footer = `<a href="${DASHBOARD_URL}">Open dashboard</a>`;
+  // Reserve room for the footer + "+N more" line so we never overshoot.
+  const reserve = footer.length + 60;
+  let budget = TELEGRAM_MAX_CHARS - header.join("\n").length - reserve;
+
+  const body: string[] = [];
+  let included = 0;
+  for (const d of due) {
+    const block = formatExperiment(d) + "\n\n";
+    if (block.length > budget) break;
+    body.push(block);
+    budget -= block.length;
+    included += 1;
   }
-  lines.push("");
-  for (const d of due.slice(0, 6)) {
-    lines.push(formatExperiment(d));
-    lines.push("");
-  }
-  if (due.length > 6) lines.push(`<i>+ ${due.length - 6} more</i>`);
-  lines.push(`<a href="${DASHBOARD_URL}">Open dashboard</a>`);
-  return lines.join("\n");
+
+  const remaining = due.length - included;
+  return [
+    ...header,
+    ...body,
+    ...(remaining > 0 ? [`<i>+ ${remaining} more (digest truncated)</i>`] : []),
+    footer,
+  ].join("\n");
 }
 
 async function markNudged(due: DueExperiment[]): Promise<void> {
@@ -141,10 +164,13 @@ export async function GET(req: Request) {
     ]);
 
     // Synthesize one at a time to keep cost predictable and respect rate limits.
+    // Cap at MAX_SYNTHESIS_PER_TICK to stay under the 300s function timeout.
     const synthesizedRows: DueExperiment[] = [];
     const now = Date.now();
-    for (const exp of needsSynth) {
-      if (exp.loop_class === "L0") continue;
+    const eligible = needsSynth.filter((e) => e.loop_class !== "L0");
+    const synthesisBudget = eligible.slice(0, MAX_SYNTHESIS_PER_TICK);
+    const synthesisDeferred = Math.max(0, eligible.length - synthesisBudget.length);
+    for (const exp of synthesisBudget) {
       const dueAt = exp.snoozed_until ? new Date(exp.snoozed_until) : new Date();
       const synthesis = await runSynthesisFor(exp);
       synthesizedRows.push({
@@ -204,6 +230,7 @@ export async function GET(req: Request) {
       ok: true,
       due: due.length,
       synthesized: synthesizedRows.length,
+      synthesis_deferred: synthesisDeferred,
       nudged: due.length,
       ids: due.map((d) => d.exp.id),
     });
