@@ -1,10 +1,10 @@
-// PROTOTYPE — Experiments dashboard redesign
-// Three radically different UI variants on the same data:
-//   A — Velocity Cockpit — "What needs my attention today?" (triage / urgency)
-//   B — Health Audit     — "What's broken about my discipline?" (diagnostics)
-//   C — Learning Map     — "What's the shape of my learning?" (corpus visualization)
-// Switchable via ?variant=A|B|C with a floating bottom bar (←/→ keys cycle).
-// Throwaway — once a winner is picked, fold it into ExperimentsClient and delete the rest.
+// PROTOTYPE — Experiments dashboard redesign · ROUND 2
+// Three new mental models replacing the rejected round-1 variants.
+// All three lean toward DECISION RHYTHM, not data presentation.
+//   A — Daily Standup     · "What ONE thing am I deciding right now?" (one decision at a time, max focus)
+//   B — Swipe Stack       · "Burn through the corpus, decide each one." (Tinder-style sequential)
+//   C — Lab Journal       · "What did reality say each day?" (temporal narrative, like a research notebook)
+// Switchable via ?variant=A|B|C. Floating bottom switcher. Click any experiment → modal with full action panel.
 
 "use client";
 
@@ -37,633 +37,372 @@ function fmtDays(n: number): string {
   if (n < 7) return `${Math.round(n)}d`;
   return `${Math.round(n / 7)}w`;
 }
+function fmtDate(d: Date | string): string {
+  return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" });
+}
 
 // ────────────────────────────────────────────────────────────────────────────
-// Variant A — Velocity Cockpit
-// Mental model: triage inbox. Sorted by urgency. Each experiment has ONE
-// next-action button. No section toggles. No tabs. One stream of decisions.
+// Variant A — Daily Standup
+// One large "decide right now" card up top. Below it: a tiny breadcrumb of
+// "next up" experiments. Below that: drafts pending promotion. Right rail:
+// today's metrics. The page screams: "make ONE decision, then come back."
 // ────────────────────────────────────────────────────────────────────────────
 
 function VariantA(props: Props & { onSelect: (e: Experiment) => void; onShip: (id: string) => void; onPromote: (id: string) => void }) {
   const { active, drafts, signalsMap, velocityToday, velocityWeek, avgCycleHours, validationRate, onSelect, onShip, onPromote } = props;
 
+  // The "now" experiment: oldest active L1/L2, prefer ones with signals (so user has context to decide)
   const live = active.filter((e) => e.loop_class !== "L0");
-  const enriched = live.map((e) => {
-    const sigs = signalsMap[e.id] ?? [];
-    const lastSignalDays = sigs.length > 0 ? daysSince(sigs[0].created_at) : Infinity;
-    const ageDays = daysSince(e.started_at);
-    const shippedDays = e.shipped_at ? daysSince(e.shipped_at) : null;
-    return { exp: e, ageDays, lastSignalDays, shippedDays, sigCount: sigs.length };
-  });
-
-  const overdue = enriched.filter((x) => x.ageDays > 7).sort((a, b) => b.ageDays - a.ageDays);
-  const aging   = enriched.filter((x) => x.ageDays >= 3 && x.ageDays <= 7).sort((a, b) => b.ageDays - a.ageDays);
-  const fresh   = enriched.filter((x) => x.ageDays < 3).sort((a, b) => b.ageDays - a.ageDays);
-  const silent  = enriched.filter((x) => x.sigCount === 0 && x.ageDays > 2).slice(0, 8);
-
-  function nextAction(x: typeof enriched[0]): { label: string; tone: "red" | "amber" | "blue" | "gray"; kind: "decide" | "ship" | "signal" | "observe" } {
-    if (x.ageDays > 7) return { label: "Decide — overdue", tone: "red", kind: "decide" };
-    if (!x.exp.shipped_at && x.ageDays > 2) return { label: "Ship it", tone: "amber", kind: "ship" };
-    if (x.sigCount === 0 && x.ageDays > 2) return { label: "Log signal", tone: "amber", kind: "signal" };
-    if (x.ageDays > 3) return { label: "Decide / log signal", tone: "blue", kind: "decide" };
-    return { label: "Observe", tone: "gray", kind: "observe" };
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        <header className="flex items-baseline justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Velocity Cockpit</h1>
-            <p className="text-sm text-gray-500">Sorted by what needs your attention today</p>
-          </div>
-          <div className="flex gap-3 text-xs">
-            <Stat label="started today" value={String(velocityToday)} />
-            <Stat label="started 7d" value={String(velocityWeek)} />
-            <Stat label="avg cycle" value={avgCycleHours != null ? `${avgCycleHours}h` : "—"} highlight={avgCycleHours != null && avgCycleHours > 48 ? "red" : "gray"} />
-            <Stat label="validation rate" value={validationRate != null ? `${(validationRate * 100).toFixed(0)}%` : "—"} />
-          </div>
-        </header>
-
-        {drafts.length > 0 && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 space-y-2">
-            <p className="text-sm font-semibold text-emerald-900">{drafts.length} pending next-bet{drafts.length > 1 ? "s" : ""} need a decision</p>
-            {drafts.slice(0, 3).map((d) => (
-              <div key={d.id} className="flex items-center gap-2 text-xs">
-                <code className="font-mono text-[10px] text-emerald-700 shrink-0 w-20 truncate">{d.id}</code>
-                <p className="flex-1 truncate text-gray-800">{d.hypothesis}</p>
-                <button onClick={() => onPromote(d.id)} className="px-2 py-0.5 rounded bg-emerald-700 text-white shrink-0">Promote</button>
-                <button onClick={() => onSelect(d)} className="px-2 py-0.5 rounded border border-emerald-300 text-emerald-700 shrink-0">Edit</button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <UrgencyBand
-          tone="red"
-          icon="🔴"
-          title={`Decisions overdue · ${overdue.length}`}
-          subtitle="Started >7 days ago, no verdict. Per Pinnacle Gecko: 48h decision rule. Kill or close."
-          items={overdue.slice(0, 10)}
-          nextAction={nextAction}
-          onSelect={onSelect}
-          onShip={onShip}
-        />
-        <UrgencyBand
-          tone="amber"
-          icon="🟡"
-          title={`Aging · ${aging.length}`}
-          subtitle="3–7 days running. Push toward a verdict before they overdue."
-          items={aging.slice(0, 8)}
-          nextAction={nextAction}
-          onSelect={onSelect}
-          onShip={onShip}
-        />
-        <UrgencyBand
-          tone="green"
-          icon="🟢"
-          title={`Fresh · ${fresh.length}`}
-          subtitle="Started in the last 72 hours. Observe; signal speaks soon."
-          items={fresh.slice(0, 5)}
-          nextAction={nextAction}
-          onSelect={onSelect}
-          onShip={onShip}
-        />
-
-        {silent.length > 0 && (
-          <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">⚠ Silent · zero signals after 48h ({silent.length})</p>
-            <p className="text-xs text-gray-500">No observations logged. Either the test is mis-designed (no measurable signal possible), or you forgot. Decide.</p>
-            <ul className="space-y-1 mt-2">
-              {silent.map((x) => (
-                <li
-                  key={x.exp.id}
-                  onClick={() => onSelect(x.exp)}
-                  className="flex items-center justify-between text-xs cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-1 rounded"
-                >
-                  <span className="truncate flex-1 text-gray-700">{x.exp.hypothesis.slice(0, 90)}…</span>
-                  <span className="text-gray-400 ml-3 shrink-0 font-mono">{fmtDays(x.ageDays)} old</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-interface BandItem { exp: Experiment; ageDays: number; lastSignalDays: number; shippedDays: number | null; sigCount: number; }
-
-function UrgencyBand({ tone, icon, title, subtitle, items, nextAction, onSelect, onShip }: {
-  tone: "red" | "amber" | "green";
-  icon: string;
-  title: string;
-  subtitle: string;
-  items: BandItem[];
-  nextAction: (x: BandItem) => { label: string; tone: "red" | "amber" | "blue" | "gray"; kind: "decide" | "ship" | "signal" | "observe" };
-  onSelect: (e: Experiment) => void;
-  onShip: (id: string) => void;
-}) {
-  const bg = tone === "red" ? "bg-red-50 border-red-200" : tone === "amber" ? "bg-amber-50 border-amber-200" : "bg-emerald-50 border-emerald-200";
-  return (
-    <section className={`rounded-xl border ${bg} p-4`}>
-      <div className="flex items-baseline gap-2 mb-3">
-        <span>{icon}</span>
-        <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
-        <p className="text-xs text-gray-500">{subtitle}</p>
-      </div>
-      {items.length === 0 ? (
-        <p className="text-xs text-gray-400 italic">Nothing here.</p>
-      ) : (
-        <div className="space-y-1.5">
-          {items.map((x) => {
-            const action = nextAction(x);
-            function handleAction(e: React.MouseEvent) {
-              e.stopPropagation();
-              if (action.kind === "ship") onShip(x.exp.id);
-              else onSelect(x.exp); // decide / signal / observe → open modal with full action panel
-            }
-            return (
-              <div
-                key={x.exp.id}
-                onClick={() => onSelect(x.exp)}
-                className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 border border-white cursor-pointer hover:border-gray-300"
-              >
-                <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{x.exp.id}</code>
-                <p className="flex-1 truncate text-xs text-gray-800">{x.exp.hypothesis}</p>
-                <div className="flex items-center gap-2 shrink-0 text-[10px] text-gray-500">
-                  {x.exp.risk_dimension && <span>{x.exp.risk_dimension}</span>}
-                  {x.exp.aarrr_stage && <span>{x.exp.aarrr_stage}</span>}
-                  {x.exp.evidence_method && <span className={x.exp.evidence_method === "PAY" ? "text-emerald-700 font-bold" : ""}>{x.exp.evidence_method}</span>}
-                </div>
-                <span className="text-[10px] font-mono text-gray-400 shrink-0 w-12 text-right">{fmtDays(x.ageDays)}</span>
-                <button onClick={handleAction} className={`text-[10px] px-2.5 py-1 rounded font-medium shrink-0 ${
-                  action.tone === "red"   ? "bg-red-600 text-white hover:bg-red-700"
-                  : action.tone === "amber" ? "bg-amber-500 text-white hover:bg-amber-600"
-                  : action.tone === "blue"  ? "bg-blue-600 text-white hover:bg-blue-700"
-                                            : "bg-gray-100 text-gray-500"
-                }`}>{action.label}</button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function Stat({ label, value, highlight }: { label: string; value: string; highlight?: "red" | "gray" }) {
-  return (
-    <div className="text-right">
-      <div className={`font-mono text-base ${highlight === "red" ? "text-red-600" : "text-gray-900"}`}>{value}</div>
-      <div className="text-[10px] text-gray-500 uppercase tracking-wide">{label}</div>
-    </div>
-  );
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Variant B — Health Audit
-// Mental model: system status page. Big health score. Anti-pattern alerts.
-// Distribution charts. Diagnostic, not action-oriented. Use for weekly review.
-// ────────────────────────────────────────────────────────────────────────────
-
-function VariantB(props: Props & { onSelect: (e: Experiment) => void }) {
-  const { all, signalsMap, onSelect } = props;
-  const [filter, setFilter] = useState<{ kind: "all" | "evidence" | "aarrr" | "risk"; value: string } | null>(null);
-
-  const audit = useMemo(() => {
-    const live = all.filter((e) => e.loop_class === "L1" || e.loop_class === "L2");
-    const closed = live.filter((e) => e.outcome !== "in_progress");
-    const total = live.length;
-
-    // Risk dimension distribution
-    const riskDist = countBy(live, (e) => e.risk_dimension ?? "—");
-    // AARRR distribution
-    const aarrrDist = countBy(live, (e) => e.aarrr_stage ?? "—");
-    // Evidence method distribution
-    const evidenceDist = countBy(live, (e) => e.evidence_method ?? "—");
-    // Loop class distribution
-    const loopDist = countBy(all, (e) => e.loop_class ?? "—");
-
-    // Anti-pattern checks
-    const payCount = (evidenceDist["PAY"] ?? 0);
-    const payPct = total > 0 ? (payCount / total) * 100 : 0;
-    const retCount = (aarrrDist["RET"] ?? 0);
-    const retPct = total > 0 ? (retCount / total) * 100 : 0;
-    const refCount = (aarrrDist["REF"] ?? 0);
-    const revCount = (aarrrDist["REV"] ?? 0);
-
-    const cycleDays = closed.map((e) =>
-      e.shipped_at ? (new Date(e.shipped_at).getTime() - new Date(e.started_at).getTime()) / DAY : null
-    ).filter((d): d is number => d != null);
-    const avgCycleDays = cycleDays.length > 0 ? cycleDays.reduce((a, b) => a + b, 0) / cycleDays.length : null;
-
-    // Signal-quality check: how many signals are tagged with polarity?
-    const allSignals = Object.values(signalsMap).flat();
-    const polarityTagged = allSignals.filter((s) => s.polarity).length;
-    const polarityPct = allSignals.length > 0 ? (polarityTagged / allSignals.length) * 100 : 0;
-
-    const validated = closed.filter((e) => e.outcome === "validated").length;
-    const validationRate = closed.length > 0 ? validated / closed.length : null;
-
-    const alerts: { tone: "red" | "orange" | "yellow"; title: string; detail: string; pinnacleRule: string }[] = [];
-    if (payPct < 5 && total > 50) {
-      alerts.push({
-        tone: "red", title: "Free-first violation",
-        detail: `Only ${payCount} of ${total} experiments use PAY (${payPct.toFixed(1)}%) as evidence method.`,
-        pinnacleRule: "Marc Lou: 'Sell first. If you can't get one person to commit money in 24h, the problem isn't real.'",
+  const ranked = useMemo(() => {
+    return live
+      .map((e) => ({
+        exp: e,
+        ageDays: daysSince(e.started_at),
+        sigCount: (signalsMap[e.id] ?? []).length,
+        lastSignalDays: (signalsMap[e.id] ?? [])[0]?.created_at ? daysSince(signalsMap[e.id][0].created_at) : Infinity,
+      }))
+      .sort((a, b) => {
+        // Primary: ageDays desc (stalest first)
+        // Secondary: sigCount desc (more signal = easier decision)
+        if (Math.abs(b.ageDays - a.ageDays) > 0.5) return b.ageDays - a.ageDays;
+        return b.sigCount - a.sigCount;
       });
-    }
-    if (retPct < 3 && total > 50) {
-      alerts.push({
-        tone: "orange", title: "Funnel hole — retention",
-        detail: `Only ${retCount} retention experiments out of ${total} (${retPct.toFixed(1)}%).`,
-        pinnacleRule: "AARRR: you're acquiring/activating but not testing whether anyone stays.",
-      });
-    }
-    if (refCount + revCount < 10 && total > 100) {
-      alerts.push({
-        tone: "orange", title: "No referral or revenue tests",
-        detail: `${refCount} REF + ${revCount} REV across ${total} experiments.`,
-        pinnacleRule: "Sequoia 'terrifying questions': do users refer? does it monetize?",
-      });
-    }
-    if (avgCycleDays != null && avgCycleDays > 7) {
-      alerts.push({
-        tone: "yellow", title: "Cycle bloat",
-        detail: `Average cycle ${avgCycleDays.toFixed(1)} days. Target <2 days per the protocol.`,
-        pinnacleRule: "Sam Altman: 'Iteration cycle every 4 hours, not 4 weeks.'",
-      });
-    }
-    if (allSignals.length > 20 && polarityPct < 20) {
-      alerts.push({
-        tone: "orange", title: "Confirmation bias risk",
-        detail: `${polarityTagged} of ${allSignals.length} signals tagged with polarity (${polarityPct.toFixed(0)}%).`,
-        pinnacleRule: "Without disconfirming signals tagged, the corpus drifts toward what you wanted to hear.",
-      });
-    }
+  }, [live, signalsMap]);
 
-    // Health score: subtract from 100 based on alerts
-    const score = Math.max(0, 100 - alerts.reduce((s, a) => s + (a.tone === "red" ? 25 : a.tone === "orange" ? 15 : 8), 0));
-
-    return { riskDist, aarrrDist, evidenceDist, loopDist, alerts, score, total, validationRate };
-  }, [all, signalsMap]);
-
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
-        <header>
-          <h1 className="text-2xl font-semibold text-gray-900">Corpus Health Audit</h1>
-          <p className="text-sm text-gray-500">Diagnostic view. Built for weekly review, not daily ops.</p>
-        </header>
-
-        {/* Health Score */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-1 rounded-2xl border border-gray-200 p-6 flex flex-col items-center justify-center">
-            <div className={`font-mono text-6xl font-bold ${audit.score < 40 ? "text-red-600" : audit.score < 70 ? "text-amber-600" : "text-emerald-600"}`}>
-              {audit.score}
-            </div>
-            <div className="text-xs uppercase tracking-wider text-gray-500 mt-2">Health score</div>
-            <div className="text-[10px] text-gray-400 mt-1">100 − Σ(anti-pattern penalties)</div>
-          </div>
-          <div className="col-span-2 grid grid-cols-2 gap-3">
-            <BigStat label="L1/L2 corpus" value={String(audit.total)} />
-            <BigStat label="Validation rate" value={audit.validationRate != null ? `${(audit.validationRate * 100).toFixed(0)}%` : "—"} />
-            <BigStat label="PAY evidence %" value={audit.total > 0 ? `${(((audit.evidenceDist["PAY"] ?? 0) / audit.total) * 100).toFixed(1)}%` : "—"} highlight={(((audit.evidenceDist["PAY"] ?? 0) / audit.total) * 100) < 5 ? "red" : "gray"} />
-            <BigStat label="RET coverage %" value={audit.total > 0 ? `${(((audit.aarrrDist["RET"] ?? 0) / audit.total) * 100).toFixed(1)}%` : "—"} highlight={(((audit.aarrrDist["RET"] ?? 0) / audit.total) * 100) < 3 ? "orange" : "gray"} />
-          </div>
-        </div>
-
-        {/* Anti-pattern alerts */}
-        {audit.alerts.length > 0 && (
-          <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Anti-pattern alerts</h2>
-            {audit.alerts.map((a, i) => (
-              <div key={i} className={`rounded-lg border p-4 ${
-                a.tone === "red"    ? "border-red-300 bg-red-50"
-                : a.tone === "orange" ? "border-orange-300 bg-orange-50"
-                                      : "border-yellow-300 bg-yellow-50"
-              }`}>
-                <div className="flex items-baseline justify-between">
-                  <h3 className={`text-sm font-semibold ${
-                    a.tone === "red" ? "text-red-800" : a.tone === "orange" ? "text-orange-800" : "text-yellow-800"
-                  }`}>{a.title}</h3>
-                  <span className="text-[10px] uppercase tracking-wide text-gray-500">{a.tone}</span>
-                </div>
-                <p className="text-sm text-gray-800 mt-1">{a.detail}</p>
-                <p className="text-xs text-gray-500 mt-2 italic">{a.pinnacleRule}</p>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {/* Distribution charts (click a row → filter the drill-down list below) */}
-        <section className="grid grid-cols-2 gap-6">
-          <DistributionChart title="Risk dimension" subtitle="Cagan's Four Big Risks · click to filter below" dist={audit.riskDist} colorMap={{ VAL: "emerald", USA: "blue", FEA: "purple", VIA: "amber" }} onClick={(v) => setFilter({ kind: "risk", value: v })} />
-          <DistributionChart title="AARRR funnel coverage" subtitle="McClure pirate metrics · click to filter" dist={audit.aarrrDist} colorMap={{ ACQ: "blue", ACT: "emerald", RET: "amber", REF: "purple", REV: "rose" }} onClick={(v) => setFilter({ kind: "aarrr", value: v })} />
-          <DistributionChart title="Evidence method" subtitle="Strength: PAY > AB > WOZ > CON > FAK > OBS > INT · click to filter" dist={audit.evidenceDist} colorMap={{ PAY: "emerald", AB: "blue", WOZ: "blue", CON: "amber", FAK: "amber", OBS: "gray", INT: "gray" }} onClick={(v) => setFilter({ kind: "evidence", value: v })} />
-          <DistributionChart title="Loop class" subtitle="L1/L2 = falsifiable; L0 = ops" dist={audit.loopDist} colorMap={{ L1: "emerald", L2: "blue", L0: "gray" }} />
-        </section>
-
-        {/* Drill-down list — appears when a chart segment is clicked */}
-        {filter && (
-          <section className="rounded-xl border border-gray-200 p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-700">
-                {filter.kind} = {filter.value}
-                {" · "}
-                {all.filter((e) => {
-                  if (filter.kind === "risk") return e.risk_dimension === filter.value;
-                  if (filter.kind === "aarrr") return e.aarrr_stage === filter.value;
-                  if (filter.kind === "evidence") return e.evidence_method === filter.value;
-                  return true;
-                }).length} experiments
-              </h3>
-              <button onClick={() => setFilter(null)} className="text-xs text-gray-400">clear filter ✕</button>
-            </div>
-            <div className="space-y-1 max-h-80 overflow-y-auto">
-              {all
-                .filter((e) => {
-                  if (e.loop_class === "L0") return false;
-                  if (filter.kind === "risk") return e.risk_dimension === filter.value;
-                  if (filter.kind === "aarrr") return e.aarrr_stage === filter.value;
-                  if (filter.kind === "evidence") return e.evidence_method === filter.value;
-                  return true;
-                })
-                .slice(0, 30)
-                .map((e) => (
-                  <div
-                    key={e.id}
-                    onClick={() => onSelect(e)}
-                    className="flex items-center gap-3 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer text-xs"
-                  >
-                    <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{e.id}</code>
-                    <p className="flex-1 truncate text-gray-800">{e.hypothesis}</p>
-                    <span className="text-gray-400 shrink-0">{e.outcome}</span>
-                  </div>
-                ))}
-            </div>
-          </section>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function BigStat({ label, value, highlight }: { label: string; value: string; highlight?: "red" | "orange" | "gray" }) {
-  return (
-    <div className="rounded-xl border border-gray-200 p-4">
-      <div className={`font-mono text-2xl ${
-        highlight === "red" ? "text-red-600" : highlight === "orange" ? "text-orange-600" : "text-gray-900"
-      }`}>{value}</div>
-      <div className="text-[10px] uppercase tracking-wide text-gray-500 mt-1">{label}</div>
-    </div>
-  );
-}
-
-function DistributionChart({ title, subtitle, dist, colorMap, onClick }: {
-  title: string; subtitle: string;
-  dist: Record<string, number>;
-  colorMap: Record<string, string>;
-  onClick?: (key: string) => void;
-}) {
-  const entries = Object.entries(dist).sort((a, b) => b[1] - a[1]);
-  const max = Math.max(1, ...entries.map(([, n]) => n));
-  return (
-    <div className="rounded-xl border border-gray-200 p-4">
-      <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">{title}</h3>
-      <p className="text-[10px] text-gray-500 mb-3">{subtitle}</p>
-      <div className="space-y-1.5">
-        {entries.map(([k, n]) => {
-          const pct = (n / max) * 100;
-          const color = colorMap[k] ?? "gray";
-          return (
-            <div
-              key={k}
-              onClick={onClick ? () => onClick(k) : undefined}
-              className={`flex items-center gap-2 text-xs ${onClick ? "cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-0.5 rounded" : ""}`}
-            >
-              <span className="w-12 font-mono text-gray-700">{k}</span>
-              <div className="flex-1 h-4 bg-gray-100 rounded overflow-hidden">
-                <div className={`h-full bg-${color}-400`} style={{ width: `${pct}%` }} />
-              </div>
-              <span className="w-10 text-right font-mono text-gray-500">{n}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function countBy<T>(arr: T[], key: (x: T) => string): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const x of arr) out[key(x)] = (out[key(x)] ?? 0) + 1;
-  return out;
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Variant C — Learning Map
-// Mental model: a metro map of your hypotheses. Cluster by project. Within
-// each cluster, color by AARRR, size by confidence. next_bet_id chains as
-// bold lines between nodes. Reveals "what compounds" vs "where you're stuck".
-// ────────────────────────────────────────────────────────────────────────────
-
-function VariantC(props: Props & { onSelect: (e: Experiment) => void }) {
-  const { all, onSelect } = props;
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-
-  const byProject = useMemo(() => {
-    const live = all.filter((e) => e.loop_class === "L1" || e.loop_class === "L2");
-    const groups: Record<string, Experiment[]> = {};
-    for (const e of live) {
-      const p = e.project_tag ?? "(untagged)";
-      (groups[p] ||= []).push(e);
-    }
-    return Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
-  }, [all]);
-
-  const chains = useMemo(() => {
-    const nextById = new Map<string, string>();
-    const parentsById = new Map<string, string>();
-    for (const e of all) {
-      if (e.next_bet_id) nextById.set(e.id, e.next_bet_id);
-      if (e.parent_experiment_id) parentsById.set(e.id, e.parent_experiment_id);
-    }
-    // Find chain starts (no parent) and walk forward
-    const chains: string[][] = [];
-    const visited = new Set<string>();
-    for (const e of all) {
-      if (e.parent_experiment_id) continue; // not a head
-      if (visited.has(e.id)) continue;
-      const chain = [e.id];
-      visited.add(e.id);
-      let cur = e.id;
-      while (nextById.has(cur)) {
-        const next = nextById.get(cur)!;
-        if (visited.has(next)) break;
-        chain.push(next);
-        visited.add(next);
-        cur = next;
-      }
-      if (chain.length > 1) chains.push(chain);
-    }
-    return chains.sort((a, b) => b.length - a.length);
-  }, [all]);
-
-  const orphanCount = byProject.reduce((s, [, exps]) => s + exps.length, 0) - chains.flat().length;
+  const now = ranked[0];
+  const upNext = ranked.slice(1, 7);
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
-        <header className="flex items-baseline justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Learning Map</h1>
-            <p className="text-sm text-gray-500">Cluster by project · color by AARRR stage · chains show what compounds</p>
-          </div>
-          <div className="flex gap-4 text-xs text-gray-600">
-            <span><strong className="text-gray-900">{byProject.length}</strong> projects</span>
-            <span><strong className="text-gray-900">{chains.length}</strong> chains</span>
-            <span><strong className="text-gray-900">{orphanCount}</strong> orphans</span>
-          </div>
+      <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
+        <header>
+          <p className="text-xs uppercase tracking-widest text-gray-400">Daily Standup · {fmtDate(new Date())}</p>
+          <h1 className="text-3xl font-semibold text-gray-900 mt-1">One decision at a time.</h1>
+          <p className="text-sm text-gray-500 mt-2 max-w-xl">
+            Pick this experiment up, decide, and come back. Don&apos;t scroll the list. Don&apos;t open three tabs.
+            The Pinnacle Gecko Protocol&apos;s 48-hour rule: <em>twice as many decisions at half the precision is better than half as many at full</em>.
+          </p>
         </header>
 
-        {/* Compounding chains — the most valuable view */}
-        {chains.length > 0 ? (
-          <section className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5">
-            <h2 className="text-sm font-semibold text-emerald-900 mb-3">Compounding chains — click any node to act on it</h2>
-            <div className="space-y-3">
-              {chains.slice(0, 8).map((ids, idx) => (
-                <ChainView key={idx} ids={ids} all={all} onSelect={onSelect} />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <section className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center">
-            <p className="text-sm font-medium text-gray-700">No chains yet</p>
-            <p className="text-xs text-gray-500 mt-1">Chains form when you close an experiment via the Axis 7 wizard with implication PERSEVERE / PIVOT / DOUBLE-DOWN. The auto-spawned next-bet draft becomes the chain's next link.</p>
-          </section>
-        )}
-
-        {/* Project clusters — orphans + their AARRR coverage */}
-        <section className="space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Project clusters · click to drill into experiments</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {byProject.map(([project, exps]) => (
-              <ProjectCluster
-                key={project}
-                project={project}
-                experiments={exps}
-                onClick={() => setSelectedProject(project === selectedProject ? null : project)}
-                selected={project === selectedProject}
-              />
-            ))}
-          </div>
-        </section>
-
-        {selectedProject && (
-          <section className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-700">{selectedProject} · click an experiment to act on it</h3>
-              <button onClick={() => setSelectedProject(null)} className="text-xs text-gray-400">close</button>
-            </div>
-            <div className="space-y-1 max-h-96 overflow-y-auto">
-              {(byProject.find(([p]) => p === selectedProject)?.[1] ?? []).slice(0, 50).map((e) => (
-                <div
-                  key={e.id}
-                  onClick={() => onSelect(e)}
-                  className="flex items-center gap-3 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer text-xs"
-                >
-                  <code className="font-mono text-[10px] text-gray-400 shrink-0 w-20 truncate">{e.id}</code>
-                  <p className="flex-1 truncate text-gray-800">{e.hypothesis}</p>
-                  <span className="text-gray-400 shrink-0">{e.outcome}</span>
+        {drafts.length > 0 && (
+          <section className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-xs font-semibold text-emerald-900 uppercase tracking-wide mb-2">First — {drafts.length} pending next-bet{drafts.length > 1 ? "s" : ""}</p>
+            <p className="text-xs text-emerald-700 mb-3">Drafts auto-spawned from your last closes. Promote or discard before adding new bets.</p>
+            <div className="space-y-2">
+              {drafts.slice(0, 3).map((d) => (
+                <div key={d.id} className="flex items-start gap-2 bg-white rounded-lg p-3">
+                  <p className="flex-1 text-sm text-gray-800">{d.hypothesis}</p>
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => onPromote(d.id)} className="text-xs px-3 py-1 rounded bg-emerald-700 text-white">Promote</button>
+                    <button onClick={() => onSelect(d)} className="text-xs px-3 py-1 rounded border border-gray-200 text-gray-600">Edit</button>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
         )}
-      </div>
-    </div>
-  );
-}
 
-function ChainView({ ids, all, onSelect }: { ids: string[]; all: Experiment[]; onSelect: (e: Experiment) => void }) {
-  const byId = new Map(all.map((e) => [e.id, e]));
-  return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2">
-      {ids.map((id, i) => {
-        const e = byId.get(id);
-        if (!e) return null;
-        const tone =
-          e.outcome === "validated" ? "border-emerald-400 bg-emerald-100"
-          : e.outcome === "refuted"  ? "border-red-300 bg-red-50"
-          : e.outcome === "inconclusive" ? "border-amber-300 bg-amber-50"
-          :                                "border-blue-200 bg-blue-50";
-        return (
-          <div key={id} className="flex items-center gap-2 shrink-0">
-            <div
-              onClick={() => onSelect(e)}
-              className={`shrink-0 rounded-lg border-2 ${tone} p-2 min-w-[200px] max-w-[260px] cursor-pointer hover:shadow-md`}
-            >
-              <code className="text-[10px] font-mono text-gray-500">{e.id}</code>
-              <p className="text-[11px] text-gray-800 mt-1 line-clamp-3">{e.hypothesis.slice(0, 140)}…</p>
-              <div className="flex gap-1 mt-1.5 text-[9px]">
-                {e.implication && <span className="px-1 py-0.5 rounded bg-white text-gray-700 border border-gray-200">{e.implication}</span>}
-                {e.confidence && <span className="px-1 py-0.5 rounded bg-white text-gray-600 border border-gray-200">conf: {e.confidence}</span>}
-                {e.pivot_type && <span className="px-1 py-0.5 rounded bg-purple-100 text-purple-800">pivot: {e.pivot_type}</span>}
+        {now && (
+          <section className="rounded-2xl border-2 border-gray-900 bg-white p-8 space-y-5 shadow-lg">
+            <div className="flex items-baseline justify-between">
+              <p className="text-xs uppercase tracking-widest font-semibold text-gray-900">Decide now</p>
+              <p className="text-xs text-gray-500">running for {fmtDays(now.ageDays)} · {now.sigCount} signal{now.sigCount === 1 ? "" : "s"}</p>
+            </div>
+            <p className="text-lg leading-snug text-gray-900">{now.exp.hypothesis}</p>
+
+            <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100 text-sm">
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-gray-400">Win when</p>
+                <p className="text-gray-700">{now.exp.metric ?? "—"} ≥ {now.exp.threshold ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-gray-400">Within</p>
+                <p className="text-gray-700">{now.exp.timeframe ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wide text-gray-400">Kill if</p>
+                <p className="text-red-600">&lt; {now.exp.kill_threshold ?? "—"}</p>
               </div>
             </div>
-            {i < ids.length - 1 && <span className="text-2xl text-gray-400 shrink-0">→</span>}
-          </div>
-        );
-      })}
+
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+              <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">WIN</button>
+              <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700">KILL</button>
+              <button onClick={() => onSelect(now.exp)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600">Need data</button>
+              {!now.exp.shipped_at && (
+                <button onClick={() => onShip(now.exp.id)} className="flex-1 text-sm font-medium px-4 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50">Ship it</button>
+              )}
+            </div>
+          </section>
+        )}
+
+        {upNext.length > 0 && (
+          <section>
+            <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Up next · {upNext.length} after this one</p>
+            <div className="space-y-1">
+              {upNext.map((x, i) => (
+                <button
+                  key={x.exp.id}
+                  onClick={() => onSelect(x.exp)}
+                  className="w-full flex items-center gap-3 text-left text-xs p-2 rounded hover:bg-white border border-transparent hover:border-gray-200"
+                >
+                  <span className="font-mono text-gray-400 shrink-0 w-4 text-right">{i + 2}</span>
+                  <span className="flex-1 truncate text-gray-700">{x.exp.hypothesis}</span>
+                  <span className="text-gray-400 shrink-0 font-mono">{fmtDays(x.ageDays)}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="border-t border-gray-200 pt-6 grid grid-cols-4 gap-2 text-xs">
+          <div><div className="text-gray-400 uppercase tracking-wide text-[10px]">Today</div><div className="text-lg font-semibold text-gray-900">{velocityToday} started</div></div>
+          <div><div className="text-gray-400 uppercase tracking-wide text-[10px]">7d velocity</div><div className="text-lg font-semibold text-gray-900">{velocityWeek}</div></div>
+          <div><div className="text-gray-400 uppercase tracking-wide text-[10px]">Avg cycle</div><div className={`text-lg font-semibold ${avgCycleHours != null && avgCycleHours > 48 ? "text-red-600" : "text-gray-900"}`}>{avgCycleHours != null ? `${avgCycleHours}h` : "—"}</div></div>
+          <div><div className="text-gray-400 uppercase tracking-wide text-[10px]">Validation rate</div><div className="text-lg font-semibold text-gray-900">{validationRate != null ? `${(validationRate * 100).toFixed(0)}%` : "—"}</div></div>
+        </section>
+      </div>
     </div>
   );
 }
 
-function ProjectCluster({ project, experiments, onClick, selected }: { project: string; experiments: Experiment[]; onClick: () => void; selected: boolean }) {
-  const aarrrByStage: Record<string, number> = {};
-  const validated = experiments.filter((e) => e.outcome === "validated").length;
-  const refuted = experiments.filter((e) => e.outcome === "refuted").length;
-  const inProgress = experiments.filter((e) => e.outcome === "in_progress").length;
-  for (const e of experiments) {
-    const k = e.aarrr_stage ?? "—";
-    aarrrByStage[k] = (aarrrByStage[k] ?? 0) + 1;
+// ────────────────────────────────────────────────────────────────────────────
+// Variant B — Swipe Stack
+// Tinder-style. One full-screen experiment at a time. Big action buttons.
+// Keyboard: ←=KILL, →=WIN, ↑=Need More, ↓=Skip. Progress bar at top.
+// Goal: drive 30 closes in 30 minutes. Maximum signal-to-noise per minute.
+// ────────────────────────────────────────────────────────────────────────────
+
+function VariantB(props: Props & { onSelect: (e: Experiment) => void; onShip: (id: string) => void }) {
+  const { active, signalsMap, onSelect } = props;
+  const live = useMemo(() => active.filter((e) => e.loop_class !== "L0").sort((a, b) => new Date(a.started_at).getTime() - new Date(b.started_at).getTime()), [active]);
+  const [idx, setIdx] = useState(0);
+  const exp = live[idx];
+
+  function next() { setIdx((i) => Math.min(i + 1, live.length - 1)); }
+  function prev() { setIdx((i) => Math.max(0, i - 1)); }
+  function openWith() { if (exp) onSelect(exp); }
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "ArrowDown" || e.key === " ") { e.preventDefault(); next(); }
+      if (e.key === "ArrowUp") { e.preventDefault(); prev(); }
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") return; // reserved for variant switcher
+      if (e.key === "Enter") openWith();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
+  const sigs = exp ? (signalsMap[exp.id] ?? []) : [];
+
+  if (!exp) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <p className="text-lg">No active experiments.</p>
+      </div>
+    );
   }
-  const stages = ["ACQ", "ACT", "RET", "REF", "REV"];
+
+  const ageDays = daysSince(exp.started_at);
+
   return (
-    <div
-      onClick={onClick}
-      className={`rounded-xl border bg-white p-4 space-y-3 cursor-pointer transition-shadow hover:shadow-md ${selected ? "border-emerald-500 ring-2 ring-emerald-200" : "border-gray-200"}`}
-    >
-      <div className="flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold text-gray-900 truncate">{project}</h3>
-        <span className="text-xs text-gray-500 shrink-0 ml-2">{experiments.length}</span>
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      {/* Progress */}
+      <div className="px-8 pt-8 pb-4">
+        <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
+          <span>Reviewing {idx + 1} of {live.length}</span>
+          <div className="flex items-center gap-2">
+            <button onClick={prev} disabled={idx === 0} className="px-2 py-1 rounded border border-gray-700 disabled:opacity-30">↑ prev</button>
+            <button onClick={next} disabled={idx === live.length - 1} className="px-2 py-1 rounded border border-gray-700 disabled:opacity-30">↓ skip</button>
+          </div>
+        </div>
+        <div className="h-1 bg-gray-800 rounded overflow-hidden">
+          <div className="h-full bg-emerald-400 transition-all" style={{ width: `${((idx + 1) / live.length) * 100}%` }} />
+        </div>
       </div>
-      <div className="flex items-end gap-1 h-12">
-        {stages.map((s) => {
-          const n = aarrrByStage[s] ?? 0;
-          const pct = experiments.length > 0 ? (n / experiments.length) * 100 : 0;
-          const hue = s === "ACQ" ? "blue" : s === "ACT" ? "emerald" : s === "RET" ? "amber" : s === "REF" ? "purple" : "rose";
-          return (
-            <div key={s} className="flex-1 flex flex-col items-center gap-1">
-              <div className={`w-full bg-${hue}-200 rounded-t`} style={{ height: `${Math.max(pct, n > 0 ? 8 : 0)}%` }} title={`${s}: ${n}`} />
-              <span className="text-[9px] text-gray-500 font-mono">{s}</span>
-              <span className="text-[10px] text-gray-700 font-semibold">{n}</span>
+
+      {/* Card */}
+      <div className="flex-1 flex items-center justify-center px-8 pb-8">
+        <div className="w-full max-w-2xl bg-gray-800 rounded-3xl p-10 space-y-6 shadow-2xl">
+          <div className="flex items-baseline gap-3 text-xs">
+            <code className="font-mono text-gray-500">{exp.id}</code>
+            <span className="text-gray-500">running {fmtDays(ageDays)}</span>
+            {exp.risk_dimension && <span className="px-2 py-0.5 rounded bg-gray-700 text-gray-200">{exp.risk_dimension}</span>}
+            {exp.aarrr_stage && <span className="px-2 py-0.5 rounded bg-gray-700 text-gray-200">{exp.aarrr_stage}</span>}
+            {exp.evidence_method && <span className={`px-2 py-0.5 rounded ${exp.evidence_method === "PAY" ? "bg-emerald-500/30 text-emerald-200" : "bg-gray-700 text-gray-200"}`}>{exp.evidence_method}</span>}
+            {exp.is_implied && <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200">IMPLIED</span>}
+          </div>
+
+          <p className="text-2xl leading-snug text-white">{exp.hypothesis}</p>
+
+          {(exp.metric || exp.threshold) && (
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-700 text-sm">
+              <div><p className="text-[10px] uppercase tracking-wide text-gray-500">Win when</p><p className="text-emerald-300">{exp.metric ?? "—"} ≥ {exp.threshold ?? "—"}</p></div>
+              <div><p className="text-[10px] uppercase tracking-wide text-gray-500">Within</p><p className="text-gray-200">{exp.timeframe ?? "—"}</p></div>
+              <div><p className="text-[10px] uppercase tracking-wide text-gray-500">Kill if</p><p className="text-red-300">&lt; {exp.kill_threshold ?? "—"}</p></div>
             </div>
-          );
-        })}
+          )}
+
+          {sigs.length > 0 && (
+            <div className="rounded-lg bg-gray-900/50 p-3 space-y-1 max-h-40 overflow-y-auto">
+              <p className="text-[10px] uppercase tracking-wide text-gray-500">Signal trail · {sigs.length}</p>
+              {sigs.slice(0, 5).map((s) => (
+                <div key={s.id} className="flex items-start gap-2 text-xs text-gray-300">
+                  <span className="text-gray-500 shrink-0 font-mono">{new Date(s.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                  <span className="flex-1">{s.content}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <button onClick={openWith} className="px-6 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-lg font-semibold">KILL</button>
+            <button onClick={openWith} className="px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-semibold">WIN</button>
+            <button onClick={openWith} className="px-6 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white text-base font-medium">Need More Data</button>
+            <button onClick={next} className="px-6 py-4 rounded-2xl border-2 border-gray-700 hover:bg-gray-700 text-gray-300 text-base font-medium">Skip ↓</button>
+          </div>
+
+          <p className="text-[10px] text-gray-500 text-center">↑ prev · ↓ skip · Enter = open action panel</p>
+        </div>
       </div>
-      <div className="flex items-center gap-3 text-[11px]">
-        <span className="text-emerald-700">✓ {validated}</span>
-        <span className="text-red-600">✗ {refuted}</span>
-        <span className="text-blue-600">↻ {inProgress}</span>
-        {experiments.length > 0 && (
-          <span className="ml-auto text-gray-500">
-            validation rate {validated + refuted > 0 ? `${Math.round((validated / (validated + refuted)) * 100)}%` : "—"}
-          </span>
-        )}
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Variant C — Lab Journal
+// Reverse-chronological notebook. Each day = one entry. Shows what was
+// started, what was closed, what was signaled. Click a day to expand.
+// Treats experiments as a research log, not a backlog.
+// ────────────────────────────────────────────────────────────────────────────
+
+function VariantC(props: Props & { onSelect: (e: Experiment) => void }) {
+  const { all, signalsMap, onSelect } = props;
+  const [openDay, setOpenDay] = useState<string | null>(null);
+
+  // Group experiments + signals by date (using started_at, shipped_at as close date)
+  const byDay = useMemo(() => {
+    type DayActivity = {
+      started: Experiment[];
+      closed: Experiment[];
+      signaled: { exp: Experiment; signal: Signal }[];
+    };
+    const map: Record<string, DayActivity> = {};
+    function key(d: Date | string): string {
+      return new Date(d).toISOString().slice(0, 10);
+    }
+    function bucket(k: string): DayActivity {
+      return (map[k] ||= { started: [], closed: [], signaled: [] });
+    }
+    for (const e of all) {
+      bucket(key(e.started_at)).started.push(e);
+      if (e.shipped_at && e.outcome !== "in_progress") {
+        bucket(key(e.shipped_at)).closed.push(e);
+      }
+    }
+    for (const [expId, sigs] of Object.entries(signalsMap)) {
+      const exp = all.find((e) => e.id === expId);
+      if (!exp) continue;
+      for (const s of sigs) bucket(key(s.created_at)).signaled.push({ exp, signal: s });
+    }
+    return Object.entries(map).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [all, signalsMap]);
+
+  return (
+    <div className="min-h-screen bg-amber-50/30">
+      <div className="max-w-4xl mx-auto px-8 py-10">
+        <header className="mb-8 pb-4 border-b-2 border-gray-900">
+          <p className="text-xs uppercase tracking-widest text-gray-500">Lab Journal</p>
+          <h1 className="text-4xl font-serif text-gray-900 mt-1">Field notes from running experiments</h1>
+          <p className="text-sm text-gray-600 mt-2 italic">Each day is one entry. What was started. What reality said. What you decided.</p>
+        </header>
+
+        <div className="relative">
+          {/* Vertical timeline line */}
+          <div className="absolute left-[12px] top-2 bottom-2 w-0.5 bg-gray-300" />
+
+          <div className="space-y-6">
+            {byDay.map(([day, activity]) => {
+              const isOpen = day === openDay;
+              const total = activity.started.length + activity.closed.length + activity.signaled.length;
+              return (
+                <article key={day} className="relative pl-10">
+                  <div className="absolute left-[6px] top-2 w-4 h-4 rounded-full bg-gray-900 border-4 border-amber-50" />
+
+                  <button
+                    onClick={() => setOpenDay(isOpen ? null : day)}
+                    className="text-left w-full"
+                  >
+                    <h2 className="text-lg font-serif text-gray-900">
+                      {new Date(day).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {activity.started.length > 0 && <span>{activity.started.length} started · </span>}
+                      {activity.closed.length > 0 && <span className="text-emerald-700">{activity.closed.length} closed · </span>}
+                      {activity.signaled.length > 0 && <span className="text-blue-700">{activity.signaled.length} signal{activity.signaled.length === 1 ? "" : "s"} logged</span>}
+                      {total === 0 && <span className="italic">no activity</span>}
+                    </p>
+                  </button>
+
+                  {isOpen && (
+                    <div className="mt-4 space-y-4 text-sm font-serif">
+                      {activity.closed.length > 0 && (
+                        <div>
+                          <p className="text-[11px] uppercase tracking-wide text-emerald-700 font-sans font-semibold mb-1">Closed</p>
+                          <ul className="space-y-1">
+                            {activity.closed.map((e) => (
+                              <li key={e.id} onClick={() => onSelect(e)} className="cursor-pointer hover:bg-amber-100/60 -mx-2 px-2 py-1 rounded">
+                                <span className={e.outcome === "validated" ? "text-emerald-700" : "text-red-600"}>
+                                  {e.outcome === "validated" ? "✓ Validated" : e.outcome === "refuted" ? "✗ Refuted" : "? Inconclusive"}
+                                </span>{" "}
+                                — <span className="text-gray-800">{e.hypothesis.slice(0, 200)}</span>
+                                {e.learning && <p className="text-xs text-gray-600 italic mt-0.5">&ldquo;{e.learning}&rdquo;</p>}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {activity.started.length > 0 && (
+                        <div>
+                          <p className="text-[11px] uppercase tracking-wide text-gray-700 font-sans font-semibold mb-1">Started</p>
+                          <ul className="space-y-1">
+                            {activity.started.slice(0, 8).map((e) => (
+                              <li key={e.id} onClick={() => onSelect(e)} className="cursor-pointer hover:bg-amber-100/60 -mx-2 px-2 py-1 rounded text-gray-700">
+                                {e.hypothesis.slice(0, 200)}
+                              </li>
+                            ))}
+                            {activity.started.length > 8 && (
+                              <li className="text-xs text-gray-500 italic pl-2">+ {activity.started.length - 8} more</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+
+                      {activity.signaled.length > 0 && (
+                        <div>
+                          <p className="text-[11px] uppercase tracking-wide text-blue-700 font-sans font-semibold mb-1">Signals logged</p>
+                          <ul className="space-y-1.5">
+                            {activity.signaled.slice(0, 10).map(({ exp, signal }) => (
+                              <li key={signal.id} onClick={() => onSelect(exp)} className="cursor-pointer hover:bg-amber-100/60 -mx-2 px-2 py-1 rounded">
+                                <span className="text-blue-700 text-xs font-sans uppercase tracking-wide">{signal.source}</span>{" "}
+                                — <span className="text-gray-700">{signal.content}</span>
+                                <p className="text-[11px] text-gray-500 mt-0.5">on: {exp.hypothesis.slice(0, 120)}</p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -675,9 +414,9 @@ function ProjectCluster({ project, experiments, onClick, selected }: { project: 
 
 const VARIANTS = ["A", "B", "C"] as const;
 const LABELS: Record<string, string> = {
-  A: "A — Velocity Cockpit",
-  B: "B — Health Audit",
-  C: "C — Learning Map",
+  A: "A — Daily Standup",
+  B: "B — Swipe Stack",
+  C: "C — Lab Journal",
 };
 
 function PrototypeSwitcher({ variant }: { variant: string }) {
@@ -703,7 +442,6 @@ function PrototypeSwitcher({ variant }: { variant: string }) {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  // Switcher visible in prod too — this dashboard is owner-only, no leak risk.
   return (
     <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full bg-gray-900 px-5 py-2.5 text-white shadow-2xl">
       <button onClick={() => go(prev)} className="text-lg leading-none text-gray-400 hover:text-white">←</button>
@@ -743,21 +481,15 @@ export function ExperimentsProto(props: Props) {
     refresh();
   }
 
-  // When user takes an action inside the modal, close it and re-fetch the page data
-  function onModalAction() {
-    refresh();
-    // Don't auto-close — wizard flows like WIN/KILL involve sub-steps; user closes manually
-  }
-
   return (
     <>
       {props.variant === "A" && <VariantA {...props} onSelect={setSelected} onShip={handleShip} onPromote={handlePromote} />}
-      {props.variant === "B" && <VariantB {...props} onSelect={setSelected} />}
+      {props.variant === "B" && <VariantB {...props} onSelect={setSelected} onShip={handleShip} />}
       {props.variant === "C" && <VariantC {...props} onSelect={setSelected} />}
 
       {selected && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 flex items-start justify-center p-6 overflow-y-auto"
+          className="fixed inset-0 z-40 bg-black/50 flex items-start justify-center p-6 overflow-y-auto"
           onClick={() => setSelected(null)}
         >
           <div
@@ -774,7 +506,7 @@ export function ExperimentsProto(props: Props) {
             <ExperimentCard
               exp={selected}
               initialSignals={props.signalsMap[selected.id] ?? []}
-              onAction={onModalAction}
+              onAction={refresh}
             />
           </div>
         </div>
