@@ -8,8 +8,8 @@
 
 import { config as loadEnv } from "dotenv";
 import path from "node:path";
-loadEnv({ path: path.resolve(process.cwd(), ".env.local"), quiet: true });
-loadEnv({ quiet: true }); // also pull from .env if present
+loadEnv({ path: path.resolve(process.cwd(), ".env.local") });
+loadEnv(); // also pull from .env if present
 import { neon } from "@neondatabase/serverless";
 import { get } from "@vercel/blob";
 import {
