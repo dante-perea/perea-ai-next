@@ -230,12 +230,17 @@ export function ExperimentsClient({
   const [report, setReport] = useState<ScrumReport | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [isGenerating, startReportTransition] = useTransition();
+  const [showOps, setShowOps] = useState(false);
 
   const allExperiments = [...active, ...initialClosed];
   const startups = Array.from(new Set(allExperiments.map((e) => e.project_tag).filter(Boolean))) as string[];
 
-  const filteredActive = startupFilter ? active.filter((e) => e.project_tag === startupFilter) : active;
-  const filteredClosed = startupFilter ? initialClosed.filter((e) => e.project_tag === startupFilter) : initialClosed;
+  const byProject = (e: Experiment) => !startupFilter || e.project_tag === startupFilter;
+  // Main learning corpus: L1/L2 only (the falsifiable hypothesis tests)
+  const filteredActive = active.filter((e) => byProject(e) && e.loop_class !== "L0");
+  // Ops log: L0 entries, hidden by default
+  const opsActive    = active.filter((e) => byProject(e) && e.loop_class === "L0");
+  const filteredClosed = initialClosed.filter(byProject);
 
   // Validated Learning Taxonomy form state
   const [loopClass, setLoopClass] = useState<"L0" | "L1" | "L2">("L1");
@@ -643,6 +648,33 @@ export function ExperimentsClient({
           </div>
         )}
       </div>
+
+      {/* Operations log (L0) — hidden by default */}
+      {opsActive.length > 0 && (
+        <div>
+          <button
+            onClick={() => setShowOps(!showOps)}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
+          >
+            <span className={`transition-transform inline-block ${showOps ? "rotate-90" : ""}`}>›</span>
+            Operations log ({opsActive.length} L0 sessions — engineering work without explicit hypothesis)
+          </button>
+          {showOps && (
+            <div className="space-y-2 mt-3">
+              {opsActive.map((exp) => (
+                <div key={exp.id} className="rounded-lg border border-gray-100 bg-gray-50 p-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <code className="font-mono text-gray-400">{exp.id}</code>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-200 text-gray-500">L0</span>
+                    {exp.project_tag && <span>· {exp.project_tag}</span>}
+                  </div>
+                  <p className="mt-1 truncate">{exp.hypothesis}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Historical experiments */}
       {filteredClosed.length > 0 && (
