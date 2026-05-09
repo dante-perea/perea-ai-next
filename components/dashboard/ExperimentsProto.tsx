@@ -28,6 +28,7 @@ interface Props {
 }
 
 const DAY = 24 * 60 * 60 * 1000;
+const DEFAULT_REVISIT_DAYS = 2; // 48h per Pinnacle Gecko decision rule
 function daysSince(d: Date | string | null): number {
   if (!d) return Infinity;
   return (Date.now() - new Date(d).getTime()) / DAY;
@@ -37,6 +38,33 @@ function fmtDays(n: number): string {
   if (n < 1) return `${Math.round(n * 24)}h`;
   if (n < 7) return `${Math.round(n)}d`;
   return `${Math.round(n / 7)}w`;
+}
+
+// Derive when a "need-more-data" hold expires.
+// Reads the most recent [need-more-data] signal and the [revisit-in:Nd] tag
+// the user (optionally) provided. Defaults to 48h.
+function getReviewDueAt(signals: Signal[]): Date | null {
+  const nmd = signals.filter((s) => s.content.startsWith("[need-more-data]"));
+  if (nmd.length === 0) return null;
+  const latest = nmd[0]; // signals are sorted by created_at DESC
+  const match = latest.content.match(/\[revisit-in:(\d+)d\]/);
+  const days = match ? parseInt(match[1], 10) : DEFAULT_REVISIT_DAYS;
+  return new Date(new Date(latest.created_at).getTime() + days * DAY);
+}
+function isReviewDue(signals: Signal[]): boolean {
+  const due = getReviewDueAt(signals);
+  return due != null && due.getTime() < Date.now();
+}
+function fmtDueDelta(due: Date): string {
+  const ms = Date.now() - due.getTime();
+  if (ms < 0) {
+    const hoursUntil = Math.round(-ms / 3.6e6);
+    if (hoursUntil < 24) return `due in ${hoursUntil}h`;
+    return `due in ${Math.round(hoursUntil / 24)}d`;
+  }
+  const hoursAgo = Math.round(ms / 3.6e6);
+  if (hoursAgo < 24) return `due ${hoursAgo}h ago`;
+  return `due ${Math.round(hoursAgo / 24)}d ago`;
 }
 
 interface SectionHandlers {
@@ -57,20 +85,38 @@ function DecideNowSection({
 }: Props & SectionHandlers & { compact?: boolean }) {
   const live = active.filter((e) => e.loop_class !== "L0");
   const ranked = useMemo(() => live
-    .map((e) => ({
-      exp: e,
-      ageDays: daysSince(e.started_at),
-      sigCount: (signalsMap[e.id] ?? []).length,
-    }))
+    .map((e) => {
+      const sigs = signalsMap[e.id] ?? [];
+      const due = getReviewDueAt(sigs);
+      const isDue = due != null && due.getTime() < Date.now();
+      return { exp: e, ageDays: daysSince(e.started_at), sigCount: sigs.length, due, isDue };
+    })
     .sort((a, b) => {
+      // Due experiments jump to the top.
+      if (a.isDue !== b.isDue) return a.isDue ? -1 : 1;
+      // Within the due group: oldest due first.
+      if (a.isDue && b.isDue && a.due && b.due) return a.due.getTime() - b.due.getTime();
+      // Within the not-due group: stalest first, more signals as tiebreak.
       if (Math.abs(b.ageDays - a.ageDays) > 0.5) return b.ageDays - a.ageDays;
       return b.sigCount - a.sigCount;
     }), [live, signalsMap]);
   const now = ranked[0];
   const upNext = ranked.slice(1, compact ? 4 : 7);
+  const dueCount = ranked.filter((x) => x.isDue).length;
 
   return (
     <div className="space-y-6">
+      {dueCount > 0 && (
+        <section className="rounded-xl border-2 border-amber-300 bg-amber-50 px-4 py-3">
+          <p className="text-sm font-semibold text-amber-900">
+            🔔 {dueCount} experiment{dueCount === 1 ? "" : "s"} past their re-decide window
+          </p>
+          <p className="text-xs text-amber-700 mt-0.5">
+            You logged Need More Data on these. {DEFAULT_REVISIT_DAYS * 24}h is up. Revisit and decide — or log a new note if reality still hasn&apos;t spoken.
+          </p>
+        </section>
+      )}
+
       {drafts.length > 0 && (
         <section className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-4">
           <p className="text-xs font-semibold text-emerald-900 uppercase tracking-wide mb-2">
@@ -94,8 +140,13 @@ function DecideNowSection({
       {now && (
         <section className="space-y-2">
           <div className="flex items-baseline justify-between px-1">
-            <p className="text-xs uppercase tracking-widest font-semibold text-gray-900">Decide now</p>
-            <p className="text-xs text-gray-500">running {fmtDays(now.ageDays)} · {now.sigCount} signal{now.sigCount === 1 ? "" : "s"}</p>
+            <p className={`text-xs uppercase tracking-widest font-semibold ${now.isDue ? "text-amber-700" : "text-gray-900"}`}>
+              {now.isDue ? "🔔 Re-decide" : "Decide now"}
+            </p>
+            <p className="text-xs text-gray-500">
+              running {fmtDays(now.ageDays)} · {now.sigCount} signal{now.sigCount === 1 ? "" : "s"}
+              {now.due && <span className={now.isDue ? "text-amber-700 ml-2 font-medium" : "ml-2"}>· {fmtDueDelta(now.due)}</span>}
+            </p>
           </div>
           {/* ExperimentCard provides the inline action surface:
               WIN/KILL → expand 6-field structured close wizard inline (no modal).
@@ -119,11 +170,14 @@ function DecideNowSection({
               <button
                 key={x.exp.id}
                 onClick={() => onSelect(x.exp)}
-                className="w-full flex items-center gap-3 text-left text-xs p-2 rounded hover:bg-white border border-transparent hover:border-gray-200"
+                className={`w-full flex items-center gap-3 text-left text-xs p-2 rounded border ${x.isDue ? "border-amber-200 bg-amber-50/40 hover:bg-amber-50" : "border-transparent hover:bg-white hover:border-gray-200"}`}
               >
                 <span className="font-mono text-gray-400 shrink-0 w-4 text-right">{i + 2}</span>
+                {x.isDue && <span className="shrink-0 text-amber-700">🔔</span>}
                 <span className="flex-1 truncate text-gray-700">{x.exp.hypothesis}</span>
-                <span className="text-gray-400 shrink-0 font-mono">{fmtDays(x.ageDays)}</span>
+                <span className={`shrink-0 font-mono text-[10px] ${x.isDue ? "text-amber-700" : "text-gray-400"}`}>
+                  {x.due ? fmtDueDelta(x.due) : fmtDays(x.ageDays)}
+                </span>
               </button>
             ))}
           </div>
