@@ -25,6 +25,7 @@
     "marked-footnote": "^1.4.0",
     "next": "15.3.8",
     "postgres": "^3.4.9",
+    "posthog-js": "^1.372.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "retell-client-js-sdk": "^2.0.5",

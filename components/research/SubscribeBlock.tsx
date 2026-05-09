@@ -1,26 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import styles from "./research.module.css";
 
-export function SubscribeBlock() {
+interface Props {
+  slug: string;
+  title: string;
+}
+
+export function SubscribeBlock({ slug, title }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
+  const posthog = usePostHog();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
+    posthog?.capture("research_subscribe_attempt", { slug, title, email });
     try {
-      // Posts to a future endpoint; degrade gracefully if not yet wired
       const res = await fetch("/api/research/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      setStatus(res.ok ? "ok" : "error");
-      if (res.ok) setEmail("");
+      if (res.ok) {
+        setStatus("ok");
+        setEmail("");
+        posthog?.capture("research_subscribe_success", { slug, title });
+      } else {
+        setStatus("error");
+        posthog?.capture("research_subscribe_error", { slug, title, status: res.status });
+      }
     } catch {
       setStatus("error");
+      posthog?.capture("research_subscribe_error", { slug, title, status: "network_error" });
     }
   }
 

@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import styles from "./research.module.css";
 import type { ResearchTocItem } from "@/lib/research";
 
 interface Props {
   items: ResearchTocItem[];
+  slug: string;
+  title: string;
 }
 
-export function StickyTOC({ items }: Props) {
+export function StickyTOC({ items, slug, title }: Props) {
   const [activeId, setActiveId] = useState<string>("");
+  const posthog = usePostHog();
 
   useEffect(() => {
     const headings = items
@@ -27,7 +31,6 @@ export function StickyTOC({ items }: Props) {
           setActiveId(visible[0]);
           return;
         }
-        // Find the last heading we scrolled past
         const top = window.scrollY;
         let current = "";
         for (const h of headings) {
@@ -42,7 +45,6 @@ export function StickyTOC({ items }: Props) {
     return () => observer.disconnect();
   }, [items]);
 
-  // Group L3s under their parent L2
   const grouped: { item: ResearchTocItem; children: ResearchTocItem[] }[] = [];
   items.forEach((it) => {
     if (it.level <= 2) {
@@ -51,6 +53,10 @@ export function StickyTOC({ items }: Props) {
       grouped[grouped.length - 1].children.push(it);
     }
   });
+
+  const trackTocClick = (sectionId: string, sectionTitle: string) => {
+    posthog?.capture("research_toc_click", { slug, title, section_id: sectionId, section_title: sectionTitle });
+  };
 
   return (
     <aside className={styles.tocAside}>
@@ -70,7 +76,7 @@ export function StickyTOC({ items }: Props) {
                 .filter(Boolean)
                 .join(" ")}
             >
-              <a href={`#${item.id}`}>{item.text}</a>
+              <a href={`#${item.id}`} onClick={() => trackTocClick(item.id, item.text)}>{item.text}</a>
               {children.map((child) => (
                 <ul
                   key={child.id}
@@ -79,7 +85,7 @@ export function StickyTOC({ items }: Props) {
                   }`}
                 >
                   <li>
-                    <a href={`#${child.id}`}>{child.text}</a>
+                    <a href={`#${child.id}`} onClick={() => trackTocClick(child.id, child.text)}>{child.text}</a>
                   </li>
                 </ul>
               ))}

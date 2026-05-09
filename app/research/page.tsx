@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listResearch } from "@/lib/research";
+import { ResearchCardLink } from "@/components/research/ResearchCardLink";
 import styles from "@/components/research/research.module.css";
 
 export const metadata: Metadata = {
@@ -70,29 +71,16 @@ export default function ResearchIndexPage() {
       ) : (
         <section className={styles.indexList}>
           {papers.map(({ slug, frontmatter }) => (
-            <Link
+            <ResearchCardLink
               key={slug}
-              href={`/research/${slug}`}
-              className={styles.indexCard}
-            >
-              <div className={styles.indexCardDate}>
-                {formatDate(frontmatter.date)}
-              </div>
-              <div className={styles.indexCardBody}>
-                <h2 className={styles.indexCardTitle}>{frontmatter.title}</h2>
-                {frontmatter.subtitle && (
-                  <p className={styles.indexCardSubtitle}>{frontmatter.subtitle}</p>
-                )}
-                <div className={styles.indexCardMeta}>
-                  {frontmatter.length && <span>{frontmatter.length}</span>}
-                  {frontmatter.status && <span>· {frontmatter.status}</span>}
-                  {frontmatter.version && <span>· {frontmatter.version}</span>}
-                </div>
-              </div>
-              <div className={styles.indexCardArrow} aria-hidden>
-                →
-              </div>
-            </Link>
+              slug={slug}
+              title={frontmatter.title}
+              date={formatDate(frontmatter.date)}
+              subtitle={frontmatter.subtitle}
+              length={frontmatter.length}
+              status={frontmatter.status}
+              version={frontmatter.version}
+            />
           ))}
         </section>
       )}

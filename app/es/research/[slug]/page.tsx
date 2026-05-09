@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { getResearch, listTranslatedResearchSlugs } from "@/lib/research";
 import { ReadingProgress } from "@/components/research/ReadingProgress";
 import { StickyTOC } from "@/components/research/StickyTOC";
 import { ShareRow } from "@/components/research/ShareRow";
 import { SubscribeBlock } from "@/components/research/SubscribeBlock";
 import { LangToggle } from "@/components/research/LangToggle";
+import { ArticleAnalytics } from "@/components/research/ArticleAnalytics";
+import { ArticleBody } from "@/components/research/ArticleBody";
+import { captureServerEvent, detectAICrawler } from "@/lib/posthog-server";
 import styles from "@/components/research/research.module.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
@@ -90,6 +94,18 @@ export default async function ResearchArticleEsPage(
   const enUrl = `${SITE_URL}/research/${slug}`;
   const dateStr = formatDate(frontmatter.date);
 
+  const headersList = await headers();
+  const ua = headersList.get("user-agent") || "";
+  const crawler = detectAICrawler(ua);
+  if (crawler) {
+    captureServerEvent(`bot:${crawler}`, "research_crawler_fetch", {
+      slug,
+      title: frontmatter.title,
+      crawler,
+      locale: "es",
+    });
+  }
+
   const jsonLdGraph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -135,6 +151,7 @@ export default async function ResearchArticleEsPage(
   return (
     <div className={styles.shell}>
       <ReadingProgress />
+      <ArticleAnalytics slug={slug} title={frontmatter.title} />
 
       <header className={styles.hero}>
         <div className={styles.heroBrand}>
@@ -198,15 +215,12 @@ export default async function ResearchArticleEsPage(
       </header>
 
       <main className={styles.layout}>
-        <StickyTOC items={toc} />
+        <StickyTOC items={toc} slug={slug} title={frontmatter.title} />
         <div>
-          <article
-            className={styles.article}
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          <ArticleBody html={html} slug={slug} title={frontmatter.title} />
           <footer className={styles.afterArticle}>
-            <ShareRow url={url} title={frontmatter.title} />
-            <SubscribeBlock />
+            <ShareRow url={url} title={frontmatter.title} slug={slug} />
+            <SubscribeBlock slug={slug} title={frontmatter.title} />
           </footer>
         </div>
       </main>

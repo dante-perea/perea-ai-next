@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { captureServerEvent } from "@/lib/posthog-server";
 import { get, put } from "@vercel/blob";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { z } from "zod";
@@ -659,9 +660,27 @@ For L1/L2, the hypothesis must be a specific change tested against a specific us
   return server;
 }
 
+async function trackMcpCall(reqClone: Request, auth: Exclude<AuthResult, { kind: "error" }>): Promise<void> {
+  try {
+    const body = await reqClone.json();
+    if (body?.method === "tools/call") {
+      const toolName = body.params?.name ?? "unknown";
+      const distinctId = auth.kind === "user" ? auth.ctx.userId : "mcp-admin";
+      captureServerEvent(distinctId, "mcp_tool_call", {
+        tool_name: toolName,
+        auth_kind: auth.kind,
+      });
+    }
+  } catch {
+    // non-JSON or listing request — not a tool call
+  }
+}
+
 async function handle(request: Request): Promise<Response> {
   const authResult = await resolveAuth(request);
   if (authResult.kind === "error") return authResult.response;
+
+  const reqClone = request.clone();
 
   const server = buildServer(authResult);
   const transport = new WebStandardStreamableHTTPServerTransport({
@@ -671,6 +690,9 @@ async function handle(request: Request): Promise<Response> {
   await server.connect(transport);
   const response = await transport.handleRequest(request);
   await server.close();
+
+  void trackMcpCall(reqClone, authResult);
+
   return response;
 }
 

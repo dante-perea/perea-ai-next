@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { abCookieName, assignVariant } from "./lib/ab";
+import { captureServerEvent, detectAICrawler } from "./lib/posthog-server";
 
 const isProtected = createRouteMatcher([
   "/dashboard(.*)",
@@ -22,6 +23,19 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   const { pathname } = request.nextUrl;
+
+  // ── Agent / crawler signal ─────────────────────────────────────────────────
+  const ua = request.headers.get("user-agent") || "";
+  const crawler = detectAICrawler(ua);
+
+  if (pathname === "/llms.txt") {
+    captureServerEvent(`bot:${crawler ?? "unknown"}`, "llms_txt_fetch", {
+      crawler,
+      ua,
+      is_known_ai_crawler: crawler !== null,
+    });
+  }
+  // ─────────────────────────────────────────────────────────────────────────
   const slugMatch = pathname.match(/^\/lp\/([^/]+)/);
   const slug = slugMatch?.[1];
 

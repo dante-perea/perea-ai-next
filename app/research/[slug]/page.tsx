@@ -4,6 +4,7 @@ import Link from "next/link";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { headers } from "next/headers";
 import { getResearch, listResearch } from "@/lib/research";
 import { getTranslation } from "@/lib/research-translations";
 import { extractReferences } from "@/lib/research-claims";
@@ -12,6 +13,9 @@ import { StickyTOC } from "@/components/research/StickyTOC";
 import { ShareRow } from "@/components/research/ShareRow";
 import { SubscribeBlock } from "@/components/research/SubscribeBlock";
 import { LangToggle } from "@/components/research/LangToggle";
+import { ArticleAnalytics } from "@/components/research/ArticleAnalytics";
+import { ArticleBody } from "@/components/research/ArticleBody";
+import { captureServerEvent, detectAICrawler } from "@/lib/posthog-server";
 import styles from "@/components/research/research.module.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
@@ -103,6 +107,19 @@ export default async function ResearchArticlePage(
   const dateStr = formatDate(frontmatter.date);
   const spanishExists = esTranslation !== null;
 
+  // Server-side AI crawler detection — fires before any JS loads
+  const headersList = await headers();
+  const ua = headersList.get("user-agent") || "";
+  const crawler = detectAICrawler(ua);
+  if (crawler) {
+    captureServerEvent(`bot:${crawler}`, "research_crawler_fetch", {
+      slug,
+      title: frontmatter.title,
+      crawler,
+      locale: "en",
+    });
+  }
+
   // Parse references from the raw markdown for the schema.org `citation` array.
   // We re-read the file (small) rather than threading refs through getResearch's
   // public surface — keeps the lib API stable.
@@ -186,6 +203,7 @@ export default async function ResearchArticlePage(
   return (
     <div className={styles.shell}>
       <ReadingProgress />
+      <ArticleAnalytics slug={slug} title={frontmatter.title} />
 
       {/* Hero — logo + toggle row at hero level, content inside heroInner */}
       <header className={styles.hero}>
@@ -251,15 +269,12 @@ export default async function ResearchArticlePage(
 
       {/* Article */}
       <main className={styles.layout}>
-        <StickyTOC items={toc} />
+        <StickyTOC items={toc} slug={slug} title={frontmatter.title} />
         <div>
-          <article
-            className={styles.article}
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          <ArticleBody html={html} slug={slug} title={frontmatter.title} />
           <footer className={styles.afterArticle}>
-            <ShareRow url={url} title={frontmatter.title} />
-            <SubscribeBlock />
+            <ShareRow url={url} title={frontmatter.title} slug={slug} />
+            <SubscribeBlock slug={slug} title={frontmatter.title} />
           </footer>
         </div>
       </main>

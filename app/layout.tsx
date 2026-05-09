@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
+import { PostHogPageview } from "@/components/posthog-pageview";
+import { PostHogProvider } from "./providers";
 
 const SITE_URL = "https://perea.ai";
 
@@ -92,6 +95,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <PostHogProvider>
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -106,6 +110,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Suspense>
+          <PostHogPageview />
+        </Suspense>
         {children}
         <script
           type="application/ld+json"
@@ -113,5 +120,6 @@ export default function RootLayout({
         />
       </body>
     </html>
+    </PostHogProvider>
   );
 }
