@@ -207,7 +207,6 @@ What follows is a working twelve-clause structure for an AI Addendum that incorp
 
 - [Article 27 FRIA: A Methodology Field Manual for Public-Service Deployers](https://www.perea.ai/research/article-27-fria-methodology-field-manual) — the FRIA cooperation duty in Clause 9 anchors on this paper's deployer obligations.
 - [MCP OAuth 2.1 and the Enterprise SSO Reality Check](https://www.perea.ai/research/mcp-oauth-2-1-enterprise-sso) — adjacent vendor-procurement pattern for MCP server enterprise integrations and ID-JAG authority delegation clauses.
-- [AI Bill of Materials and Agent Supply-Chain Compliance](https://www.perea.ai/research/ai-bom-agent-supply-chain) — Article 11 + Annex IV technical-documentation flow that pairs with the GPAI Code Model Documentation Form.
 
 ## References
 

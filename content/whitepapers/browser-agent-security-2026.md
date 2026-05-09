@@ -205,7 +205,7 @@ A twelfth item from the OpenAI Atlas playbook is operational rather than archite
 
 ## Related Research
 
-This paper closes the "browser-specific defenses" thread from `prompt-injection-defense-2026` and `capability-based-agent-security`. Threads it opens for follow-on:
+This paper closes the "browser-specific defenses" thread complementing `capability-based-agent-security`. Threads it opens for follow-on:
 
 - **agent-runtime-observability-stack** — what monitoring + tracing architectures detect the Defense-Funnel-Layer-2-bypass attacks that Origin Guard catches.
 - **mcp-browser-agent-policy-language** — the policy-language layer (YAML/Rego/Cedar style) that production agent runtimes will need to encode the eleven-item engineering checklist.

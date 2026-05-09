@@ -17,7 +17,7 @@ profile: "field-manual"
 
 ## Foreword
 
-This is the third healthcare vertical-deep-dive in the perea.ai/research canon, following healthcare State of Vertical Agents #19 + Polaris validation panel methodology #28 + Five-Framework compliance methodology #29. Derived from agent-incident-postmortem-anthology #15, EU AI Act 2026 Procurement Compliance #12, prompt-injection-defense-2026 #14, and tightened by the just-shipped agent-inference-unit-economics #34, this paper documents the canonical 2026 healthcare-AI incident pattern — the published failure modes that shape regulatory + litigation + customer-trust dynamics for every healthcare-AI vendor and every health-system AI deployment program.
+This is the third healthcare vertical-deep-dive in the perea.ai/research canon, following healthcare State of Vertical Agents #19 + Polaris validation panel methodology #28 + Five-Framework compliance methodology #29. Derived from prior incident-postmortem and prompt-injection-defense work + EU AI Act 2026 Procurement Compliance #12, and tightened by the just-shipped agent-inference-unit-economics #34, this paper documents the canonical 2026 healthcare-AI incident pattern — the published failure modes that shape regulatory + litigation + customer-trust dynamics for every healthcare-AI vendor and every health-system AI deployment program.
 
 **The frame this paper holds: the 2026 healthcare-AI canon now contains three canonical published incidents — ChatGPT Health 52% emergency undertriage (Nature Medicine February 2026)[^1][^3], UnitedHealth nH Predict 90% error rate (Minnesota federal court March 9, 2026)[^6][^7], and Medicare WISeR 4-8-week prior-auth delays (Senator Cantwell April 22-27, 2026)[^11][^12]. Each represents a structurally distinct failure mode, with structurally distinct operator implications.** Founders building healthcare AI must understand all three as the published baseline for what NOT to ship, what NOT to deploy, and what NOT to pilot — and structure their products + GTM + compliance posture explicitly against the three.
 
@@ -103,7 +103,7 @@ The Nature Medicine February 2026 ChatGPT Health study is the canonical publishe
 
 **Founder-implication: avoid consumer-direct medical triage until proven safe.** Vendors building consumer-direct medical AI must demonstrate a low published undertriage rate via independent validation methodology before commercial deployment. The Polaris-style validation panel methodology (paper #28) extended to consumer-triage scenarios is the canonical viable path[^23][^24][^25]. **The structural problem is unsupervised consumer use** — patients cannot evaluate the quality of the triage recommendation, family-minimization context distorts model output, and there is no licensed clinician in the loop to catch the 52%[^1] undertriage[^1][^3].
 
-**Bridges to existing canon**: paper #28 Polaris validation panel methodology (the 6,234-clinician panel + 307,038 evaluation calls + 99.38%[^24] Polaris 3.0 accuracy + 0.00%[^24] severe-harm rate benchmark is the antithesis of ChatGPT Health's 52%[^1] undertriage)[^23][^24]; paper #29 Five-Framework Test (FDA SaMD compliance applies to consumer-medical-triage products as Class II via 510(k) or De Novo); paper #14 prompt-injection-defense-2026 (anchoring bias is a form of prompt-context manipulation requiring defense)[^1].
+**Bridges to existing canon**: paper #28 Polaris validation panel methodology (the 6,234-clinician panel + 307,038 evaluation calls + 99.38%[^24] Polaris 3.0 accuracy + 0.00%[^24] severe-harm rate benchmark is the antithesis of ChatGPT Health's 52%[^1] undertriage)[^23][^24]; paper #29 Five-Framework Test (FDA SaMD compliance applies to consumer-medical-triage products as Class II via 510(k) or De Novo); prior prompt-injection-defense work (anchoring bias is a form of prompt-context manipulation requiring defense)[^1].
 
 ## Part II — The UnitedHealth nH Predict Federal Discovery Order Failure Mode
 
@@ -133,7 +133,7 @@ The Minnesota federal court's March 9, 2026 discovery order is the canonical pub
 - **Auditable decision trail** — every decision must be reviewable by external auditors (court, regulator, internal compliance)[^16][^18].
 - **Article 9-style risk management** (paper #29 Five-Framework Test): mandatory for prior-auth-AI products; the EU AI Act high-risk-AI-system framework provides the operational template.
 
-**Bridges to existing canon**: paper #29 Five-Framework Test (Article 9 risk management is mandatory for prior-auth AI); paper #25 acquired-by-platform exit (CCC/EvolutionIQ $730 million[^10] precedent applies — but EvolutionIQ's reversal-rate-management was core to its acquisition rationale); paper #15 agent-incident-postmortem-anthology (nH Predict and ChatGPT Health become the canonical 2026 incident references)[^6][^10].
+**Bridges to existing canon**: paper #29 Five-Framework Test (Article 9 risk management is mandatory for prior-auth AI); paper #25 acquired-by-platform exit (CCC/EvolutionIQ $730 million[^10] precedent applies — but EvolutionIQ's reversal-rate-management was core to its acquisition rationale); nH Predict and ChatGPT Health now stand as the canonical 2026 healthcare-AI incident references[^6][^10].
 
 ## Part III — The Medicare WISeR 4-8 Week Delay Failure Mode
 
@@ -241,7 +241,7 @@ The bridges between this paper and the surrounding perea.ai/research healthcare 
 
 **To paper #29 Five-Framework Compliance Methodology Healthcare**: Article 9 EU AI Act risk management framework provides the operational template for prior-auth + claims-decisioning AI products. The federal-discovery-order-as-regulatory-tripwire framing extends paper #29's compliance-as-marketed-feature pricing premium into prior-auth-specific risk-management posture[^6][^7].
 
-**To paper #15 agent-incident-postmortem-anthology**: ChatGPT Health[^1][^3], nH Predict[^6][^10], and WISeR[^11][^12] become the canonical 2026 healthcare-incident references in the industry-wide incident-postmortem corpus. Future incident analyses reference this paper as the canonical source-of-record.
+**As 2026 healthcare-AI canon**: ChatGPT Health[^1][^3], nH Predict[^6][^10], and WISeR[^11][^12] now stand as the canonical incident references in the industry-wide postmortem corpus. Future incident analyses reference this paper as the canonical source-of-record.
 
 **To paper #25 acquired-by-platform exit playbook**: EvolutionIQ's $730 million[^10] January 2025 acquisition by CCC (paper #25) was anchored partially on EvolutionIQ's documented reversal-rate-management methodology — a direct counter-position to the high-reversal failure mode that drove the Lokken discovery order[^6][^10]. Vendors that document compliance-as-M&A-asset positioning in this space command 3-6x EV/Revenue acquisition multiples[^55].
 

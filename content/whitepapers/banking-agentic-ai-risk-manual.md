@@ -128,7 +128,7 @@ Deloitte's March 2026 analysis of the MIT AI Risk Database surfaces 350+ autonom
 
 **Category 4 — Inconsistent Output Quality (~50 risks).** Agent produces outputs with variable quality across customer cohorts + scenarios + edge cases. **Defense**: continuous-evaluation infrastructure (paper #28 Polaris-style validation); multi-judge calibration; output-quality drift detection + automated re-validation triggers.
 
-**Category 5 — Adversarial-Prompt Vulnerability (~50 risks).** Agent susceptible to prompt-injection + jailbreaking + indirect-prompt-injection via tool-fetched content (paper #14 prompt-injection-defense-2026 covers this in depth). **Defense**: Rule of Two; CaMeL; FIDES; two-tier scanning; OWASP MCP Top 10 alignment.
+**Category 5 — Adversarial-Prompt Vulnerability (~50 risks).** Agent susceptible to prompt-injection + jailbreaking + indirect-prompt-injection via tool-fetched content. **Defense**: Rule of Two; CaMeL; FIDES; two-tier scanning; OWASP MCP Top 10 alignment.
 
 **Category 6 — Supply-Chain Integration Failures (~40 risks).** Agent dependent on third-party tools + APIs + foundation models that fail or produce inconsistent outputs. **Defense**: AI-BOM (paper A-11); dependency-version pinning; failover routing; multi-foundation-model BAA-validated routing.
 

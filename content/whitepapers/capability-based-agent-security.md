@@ -206,7 +206,7 @@ Three open problems remain unsolved as of mid-2026. **Workflow-level policy** �
 
 ## Related Research
 
-This paper closes the "how do I get the architectural defense without using a research artifact" thread from `prompt-injection-defense-2026`. Threads it opens for follow-on research:
+This paper closes the "how do I get the architectural defense without using a research artifact" thread on prompt-injection defense. Threads it opens for follow-on research:
 
 - **5-agent-trust-boundary-protocols** — agent-to-agent capability handoff over CapTP / OCapN; how the Spritely Goblins distributed transactional model carries into multi-vendor agent meshes.
 - **formal-verification-tooling-for-saas** — Verus / Lean 4 / Kani / hax adoption curve in production startups; the gap between research artifacts and shippable proof gates.

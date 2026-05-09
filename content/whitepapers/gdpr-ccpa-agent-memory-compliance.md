@@ -264,7 +264,7 @@ A twelfth operational practice: **dry-run deletion against the full nine-surface
 
 ## Related Research
 
-This paper closes the deletion-architecture thread from the agent-memory paper and the procurement-field-manual thread from `ai-bom-agent-supply-chain`. Threads it opens for follow-on:
+This paper closes the deletion-architecture thread from the agent-memory paper and the AI-supply-chain procurement-documentation thread. Threads it opens for follow-on:
 
 - **annex-iv-procurement-field-manual** — the full nine-section Annex IV walkthrough.
 - **machine-unlearning-2027-state-of-the-art** — when (if) regulators accept SimNPO / RMU / LoRA-based unlearning as compliant deletion equivalent.

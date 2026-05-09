@@ -211,7 +211,6 @@ For EU-in-scope deployers, prepare for the 2 August 2026 deadline (or December 2
 
 - [Article 27 FRIA: A Methodology Field Manual for Public-Service Deployers](https://www.perea.ai/research/article-27-fria-methodology-field-manual) — the FRIA layer of the EU AI Act compliance program.
 - [EU AI Act Vendor Contract Clause Library: The 2026 Procurement Playbook](https://www.perea.ai/research/eu-ai-act-vendor-contract-clauses) — the vendor-side procurement contracts that anchor the supplier-management evidence in this stack.
-- [AI Bill of Materials and Agent Supply-Chain Compliance](https://www.perea.ai/research/ai-bom-agent-supply-chain) — the Article 11 + Annex IV technical-documentation flow that pairs with the ISO 42001 Clause 7.5 documentation requirement.
 
 ## References
 
