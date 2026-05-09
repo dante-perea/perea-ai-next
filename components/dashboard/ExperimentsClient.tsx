@@ -123,11 +123,6 @@ export function ExperimentCard({ exp, initialSignals = [], onAction }: { exp: Ex
   }
 
   function reclassifyAsL0() {
-    if (!confirm(
-      `Reclassify "${exp.id}" as L0 (ops fix)?\n\n` +
-      `Use this when the hypothesis isn't really a falsifiable user-behavior test (e.g. the extractor force-generated it from a code-refactor session).\n\n` +
-      `The L1 fields will be preserved silently — you can promote back later from the Operations log.`
-    )) return;
     startTransition(async () => { await patch("demote"); });
   }
 
