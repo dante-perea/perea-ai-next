@@ -9,6 +9,7 @@ const SITE_URL = "https://perea.ai";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  alternates: { types: { "application/rss+xml": `${SITE_URL}/feed.xml` } },
   title: {
     default: "perea.ai Research",
     template: "%s | Perea.AI",
