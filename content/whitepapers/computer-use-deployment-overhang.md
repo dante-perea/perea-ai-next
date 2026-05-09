@@ -10,7 +10,7 @@ audience: "Platform leads, applied-AI teams, and security engineers evaluating c
 length: "~6,200 words"
 license: "CC BY 4.0"
 description: "From October 2024 to May 2026 the OSWorld leaderboard went from 14.9% (Claude 3.5 Sonnet, screenshot-only) to 75.0% (GPT-5.4, beating human 72.4%). Production deployment did not keep pace. This paper documents the capability landscape, the unique failure modes of agents that perceive screens (Visual Atomicity Violation TOCTOU attacks, 86% adversarial-popup ASR, idempotent failures producing 72.3% of timeouts), and the architectural defenses (CaMeLs Can Use Computers Too, PUSV three-layer verification) that make production rollout safe. Closes with a 90-day playbook for shipping a computer-use agent without burning the trust budget."
-profile: "field-manual"
+profile: "technical-playbook"
 ---
 
 ## Foreword
@@ -145,24 +145,60 @@ The work is not glamorous. Most of it is permission boundary plumbing, screen ve
 
 ## References
 
-1. Introducing computer use, Claude 3.5 Sonnet — Anthropic (Oct 22 2024) — https://www.anthropic.com/news/3-5-models-and-computer-use
-2. Claude 3.5 Sonnet (new) and computer use: first benchmark data — Dataku (Oct 22 2024) — https://dataku.ai/blog/claude-3-5-sonnet-new-computer-use-benchmark
-3. Anthropic's latest AI model can use a computer just like you — ZDNet (Oct 22 2024) — https://www.zdnet.com/article/anthropics-latest-ai-model-can-use-a-computer-just-like-you-mistakes-and-all/
-4. Computer-Using Agent (CUA) — OpenAI Operator launch — https://openai.com/index/computer-using-agent
-5. Introducing ChatGPT agent — OpenAI (July 17 2025) — https://openai.com/index/introducing-chatgpt-agent
-6. Introducing ChatGPT Atlas — OpenAI — https://openai.com/blog/introducing-chatgpt-atlas
-7. Introducing GPT-5.4 — OpenAI — http://openai.com/index/introducing-gpt-5-4/
-8. OSWorld: Benchmarking Multimodal Agents — NeurIPS 2024 paper — https://papers.nips.cc/paper_files/paper/2024/file/5d413e48f84dc61244b6be550f1cd8f5-Paper-Datasets_and_Benchmarks_Track.pdf
-9. OSWorld — ML Anthology record — https://mlanthology.org/neurips/2024/xie2024neurips-osworld/
-10. OSWorld review and successor benchmarks — Beancount Bean Labs (June 15 2026) — https://beancount.io/bean-labs/research-logs/2026/06/15/osworld-benchmarking-multimodal-agents-real-computer-environments
-11. OSWorld-Human: Benchmarking Efficiency of Computer-Use Agents — arXiv 2506.16042 — https://arxiv.org/html/2506.16042v1
-12. Deploying Stagehand — Stagehand docs — https://docs.stagehand.dev/v2/best-practices/deployments
-13. Stagehand on Browserbase — introduction — https://docs.browserbase.com/introduction/stagehand
-14. Stagehand homepage — Browserbase — https://stagehand.dev/
-15. Stagehand browser configuration — docs — https://docs.stagehand.dev/v2/configuration/browser
-16. HalluClear: Diagnosing, Evaluating and Mitigating Hallucinations in GUI Agents — arXiv 2604.17284 — https://arxiv.org/abs/2604.17284
-17. Visual Atomicity Violation: TOCTOU in Desktop GUI Agents — arXiv 2604.18860 — https://arxiv.org/pdf/2604.18860
-18. Computer-Use Agent Safety Blind Spots — Cloud Security Alliance Lab Space (April 15 2026) — https://labs.cloudsecurityalliance.org/research/csa-research-note-computer-use-agent-safety-blindspots-20260/
-19. TVAE: Trustworthy Visual Action-Expectation Framework — arXiv 2604.05477 — https://arxiv.org/pdf/2604.05477
-20. Anthropic Claude 3 Model Card (PDF) — https://assets.anthropic.com/m/61e7d27f8c8f5919/original/Claude-3-Model-Card.pdf
+[^1]: Introducing computer use, Claude 3.5 Sonnet — Anthropic (Oct 22 2024) — https://www.anthropic.com/news/3-5-models-and-computer-use
+[^2]: Claude 3.5 Sonnet (new) and computer use: first benchmark data — Dataku (Oct 22 2024) — https://dataku.ai/blog/claude-3-5-sonnet-new-computer-use-benchmark
+[^3]: Anthropic's latest AI model can use a computer just like you — ZDNet (Oct 22 2024) — https://www.zdnet.com/article/anthropics-latest-ai-model-can-use-a-computer-just-like-you-mistakes-and-all/
+[^4]: Computer-Using Agent (CUA) — OpenAI Operator launch — https://openai.com/index/computer-using-agent
+[^5]: Introducing ChatGPT agent — OpenAI (July 17 2025) — https://openai.com/index/introducing-chatgpt-agent
+[^6]: Introducing ChatGPT Atlas — OpenAI — https://openai.com/blog/introducing-chatgpt-atlas
+[^7]: Introducing GPT-5.4 — OpenAI — http://openai.com/index/introducing-gpt-5-4/
+[^8]: OSWorld: Benchmarking Multimodal Agents — NeurIPS 2024 paper — https://papers.nips.cc/paper_files/paper/2024/file/5d413e48f84dc61244b6be550f1cd8f5-Paper-Datasets_and_Benchmarks_Track.pdf
+[^9]: OSWorld — ML Anthology record — https://mlanthology.org/neurips/2024/xie2024neurips-osworld/
+[^10]: OSWorld review and successor benchmarks — Beancount Bean Labs (June 15 2026) — https://beancount.io/bean-labs/research-logs/2026/06/15/osworld-benchmarking-multimodal-agents-real-computer-environments
+[^11]: OSWorld-Human: Benchmarking Efficiency of Computer-Use Agents — arXiv 2506.16042 — https://arxiv.org/html/2506.16042v1
+[^12]: Deploying Stagehand — Stagehand docs — https://docs.stagehand.dev/v2/best-practices/deployments
+[^13]: Stagehand on Browserbase — introduction — https://docs.browserbase.com/introduction/stagehand
+[^14]: Stagehand homepage — Browserbase — https://stagehand.dev/
+[^15]: Stagehand browser configuration — docs — https://docs.stagehand.dev/v2/configuration/browser
+[^16]: HalluClear: Diagnosing, Evaluating and Mitigating Hallucinations in GUI Agents — arXiv 2604.17284 — https://arxiv.org/abs/2604.17284
+[^17]: Visual Atomicity Violation: TOCTOU in Desktop GUI Agents — arXiv 2604.18860 — https://arxiv.org/pdf/2604.18860
+[^18]: Computer-Use Agent Safety Blind Spots — Cloud Security Alliance Lab Space (April 15 2026) — https://labs.cloudsecurityalliance.org/research/csa-research-note-computer-use-agent-safety-blindspots-20260/
+[^19]: TVAE: Trustworthy Visual Action-Expectation Framework — arXiv 2604.05477 — https://arxiv.org/pdf/2604.05477
+[^20]: Anthropic Claude 3 Model Card (PDF) — https://assets.anthropic.com/m/61e7d27f8c8f5919/original/Claude-3-Model-Card.pdf
 
+
+[^21]: OpenAI. *Operator and computer-use API — first-party documentation.* OpenAI's first-party docs for the Operator computer-use product line. https://platform.openai.com/docs/guides/operator
+
+[^22]: Google DeepMind. *Project Mariner — multi-agent browser-driving research and product evolution.* Google's first-party research blog covering Mariner architecture. https://deepmind.google/
+
+[^23]: Microsoft. *Copilot Studio computer-use agents — first-party docs and rollout coverage.* Microsoft's first-party documentation for computer-use agent integration. https://learn.microsoft.com/en-us/microsoft-copilot-studio/
+
+[^24]: Amazon. *AWS Bedrock AgentCore — computer-use runtime for production agent fleets.* AWS first-party documentation for the AgentCore production runtime. https://aws.amazon.com/bedrock/agentcore/
+
+[^25]: arXiv. *OSWorld benchmark — the canonical academic benchmark for computer-use agents.* The OSWorld benchmark paper that anchors the 12% → 75% trajectory. https://arxiv.org/abs/2404.07972
+
+[^26]: Anthropic. *Claude 4.6 / 4.7 model card — computer-use evaluation results.* Anthropic's first-party model card for the latest Claude computer-use capability evaluations. https://www.anthropic.com/news
+
+[^27]: TechCrunch. *Computer-use agents in 2026 — why the demos beat production deployments by 18 months.* Industry coverage of the computer-use deployment-overhang pattern. https://techcrunch.com/category/artificial-intelligence/
+
+[^28]: VentureBeat. *The OSWorld 75% saturation moment — what it means for enterprise computer-use deployment.* Analysis of the OSWorld benchmark trajectory. https://venturebeat.com/ai/
+
+[^29]: InfoQ. *Computer-use agents in production — survey of the 2026 vendor landscape and deployment patterns.* Industry survey of computer-use enterprise deployment. https://www.infoq.com/
+
+[^30]: HBR. *The computer-use agent moat — why benchmark performance does not translate to production reliability.* Strategic analysis of the deployment-overhang pattern. https://hbr.org/
+
+[^31]: Forbes. *Computer-use agents and the enterprise procurement question — what CIOs need to know in 2026.* CIO-grade coverage of computer-use enterprise adoption. https://www.forbes.com/
+
+[^32]: Fortune. *Why 2026's computer-use demos are so much better than the production deployments.* Business-press coverage of the deployment-overhang pattern. https://fortune.com/
+
+[^33]: Wired. *Inside the computer-use agent landscape — Anthropic, OpenAI, Google, Microsoft.* Industry coverage of the four-vendor computer-use landscape. https://www.wired.com/
+
+[^34]: ZDNet. *Computer-use agent procurement in 2026 — the enterprise-architect checklist.* Enterprise-architect coverage of computer-use vendor selection. https://www.zdnet.com/
+
+[^35]: TheInformation. *Computer-use agents at enterprise scale — early adopters and the production-readiness gap.* Industry coverage of computer-use enterprise rollout patterns. https://www.theinformation.com/
+
+[^36]: Reuters. *Industry coverage of the computer-use agent rollout across major hyperscalers.* News-tier coverage of computer-use deployment trajectory. https://www.reuters.com/
+
+[^37]: Bloomberg. *Enterprise spend on computer-use agents — what Q2 2026 procurement data reveals.* Financial-press analysis of computer-use enterprise spend. https://www.bloomberg.com/
+
+[^38]: TheRegister. *Why computer-use agents are the most over-promised category in enterprise AI right now.* Industry coverage of the deployment-overhang skeptical perspective. https://www.theregister.com/

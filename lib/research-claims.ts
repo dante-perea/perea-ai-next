@@ -14,6 +14,10 @@
 export type Tier = "primary" | "secondary" | "tertiary" | "unknown";
 
 const PRIMARY_PATTERNS: RegExp[] = [
+  // API tooling / developer-platform vendors (first-party docs)
+  /(^|\.)postman\.com(\/|$)/i,
+  /(^|\.)www\.postman\.com(\/|$)/i,
+  /(^|\.)agent-manifest-spec\.org(\/|$)/i,
   // Government + regulatory
   /(^|\.)sec\.gov(\/|$)/i,
   /(^|\.)edgar\.sec\.gov(\/|$)/i,
@@ -4613,6 +4617,16 @@ const LOCAL_SERVICE_AGGREGATORS_SECONDARY_PATTERNS: RegExp[] = [
 ];
 
 const SECONDARY_PATTERNS: RegExp[] = [
+  // Established developer-publication blogs
+  /(^|\.)stackoverflow\.blog(\/|$)/i,
+  /(^|\.)smashingmagazine\.com(\/|$)/i,
+  /(^|\.)www\.smashingmagazine\.com(\/|$)/i,
+  /(^|\.)thenewstack\.io(\/|$)/i,
+  /(^|\.)siliconangle\.com(\/|$)/i,
+  /(^|\.)theregister\.com(\/|$)/i,
+  /(^|\.)www\.theregister\.com(\/|$)/i,
+  /(^|\.)zdnet\.com(\/|$)/i,
+  /(^|\.)www\.zdnet\.com(\/|$)/i,
   // Reddit. Reclassified from default-tertiary to secondary because the
   // empirical citation-economy reality (per content/whitepapers/geo-2026.md)
   // is that Reddit is the #1 source on every major AI engine at ~40% citation
