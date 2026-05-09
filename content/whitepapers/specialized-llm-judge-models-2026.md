@@ -243,7 +243,6 @@ A short list of operational pitfalls that derail teams:
 
 - [The Multi-Judge Calibration Playbook](https://www.perea.ai/research/multi-judge-calibration-playbook) — calibration recipes and CalibraEval/CJE deep-dive.
 - [The Agent Observability Stack](https://www.perea.ai/research/agent-observability-stack) — six-stage eval pipeline (instrument → trace → dataset → evaluator → score → CI gate); judge models are the *evaluator* layer.
-- [Polaris Clinical Validation Panel Methodology](https://www.perea.ai/research/polaris-clinical-validation-panel-methodology) — multi-judge methodology in regulated-domain evaluation.
 - [The MCP Server Playbook for SaaS Founders](https://www.perea.ai/research/mcp-server-playbook) — context for judge-model deployment in MCP-mediated workflows.
 
 ## References
