@@ -79,7 +79,7 @@ export async function POST(req: Request) {
   if (parsed.cmd === "velocity") {
     try {
       const stats = await getVelocityStats();
-      const valRate = stats.validation_rate != null ? `${(stats.validation_rate * 100).toFixed(0)}%` : "—";
+      const valRate = stats.strong_validation_rate != null ? `${(stats.strong_validation_rate * 100).toFixed(0)}%` : "—";
       const avgHours = stats.avg_cycle_hours != null ? `${stats.avg_cycle_hours}h` : "—";
       await sendTelegram(
         chatId,

@@ -678,14 +678,14 @@ Unless implication=KILL, the system auto-spawns a draft "next bet" L1 experiment
     async () => {
       try {
         const stats = await getVelocityStats();
-        const valRate = stats.validation_rate != null ? `${(stats.validation_rate * 100).toFixed(0)}%` : "—";
+        const valRate = stats.strong_validation_rate != null ? `${(stats.strong_validation_rate * 100).toFixed(0)}%` : "—";
         const avgHours = stats.avg_cycle_hours != null ? `${stats.avg_cycle_hours}h` : "—";
         return {
           content: [{ type: "text" as const, text: JSON.stringify({
             velocity_today: stats.velocity_today,
             velocity_week: stats.velocity_week,
             avg_cycle_hours: stats.avg_cycle_hours,
-            validation_rate: stats.validation_rate,
+            validation_rate: stats.strong_validation_rate,
             summary: `This week: ${stats.velocity_week} experiments · ${avgHours} avg cycle · ${valRate} validated`,
           }) }],
         };

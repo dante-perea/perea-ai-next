@@ -86,7 +86,14 @@ export interface VelocityStats {
   velocity_today: number;
   velocity_week: number;
   avg_cycle_hours: number | null;
-  validation_rate: number | null;
+  // strong_validation_rate: validated / (validated + refuted + pivoted). The metric
+  // for "how often does my literal hypothesis survive contact with reality?" — pivots
+  // count against this because the original hypothesis was wrong as written.
+  strong_validation_rate: number | null;
+  // learning_rate: (validated + pivoted) / (validated + refuted + pivoted). The metric
+  // for "how often do I produce something useful from a closed experiment?" — KILL is
+  // the only thing that drops it. Productive pivots count as learning.
+  learning_rate: number | null;
 }
 
 export function ghostDb() {
@@ -437,7 +444,14 @@ export interface StructuredCloseInput {
 }
 
 export async function closeWithStructure(input: StructuredCloseInput): Promise<Experiment | null> {
-  const outcome = input.verdict === "win" ? "validated" : "refuted";
+  // PIVOT is its own outcome bucket — a productive pivot is validated learning,
+  // not a refutation. Keeps strong_validation_rate honest (only literal-hypothesis
+  // wins count) while learning_rate captures pivots as productive (validated +
+  // pivoted ÷ total closed, KILL is the only thing that drops it).
+  const outcome =
+    input.implication === "PIVOT" ? "pivoted" :
+    input.verdict === "win" ? "validated" :
+    "refuted";
   const db = ghostDb();
   try {
     const rows = await db<Experiment[]>`
@@ -548,13 +562,19 @@ export async function getVelocityStats(): Promise<VelocityStats> {
     const [weekRow] = await db<{
       hypotheses: string;
       avg_hours: string | null;
-      val_rate: string | null;
+      strong_val_rate: string | null;
+      learning_rate: string | null;
     }[]>`
       SELECT
         COUNT(*) AS hypotheses,
         ROUND(AVG(EXTRACT(EPOCH FROM (shipped_at - started_at))/3600)::numeric, 1) AS avg_hours,
+        -- Denominator includes only closed L1/L2-style outcomes (validated/refuted/pivoted).
+        -- "inconclusive" is excluded because it represents experiments that didn't get a real
+        -- verdict; counting them in the rate would dilute both metrics with non-decisions.
         ROUND((COUNT(CASE WHEN outcome = 'validated' THEN 1 END)::float
-               / NULLIF(COUNT(CASE WHEN outcome != 'in_progress' THEN 1 END), 0))::numeric, 2) AS val_rate
+               / NULLIF(COUNT(CASE WHEN outcome IN ('validated','refuted','pivoted') THEN 1 END), 0))::numeric, 2) AS strong_val_rate,
+        ROUND((COUNT(CASE WHEN outcome IN ('validated','pivoted') THEN 1 END)::float
+               / NULLIF(COUNT(CASE WHEN outcome IN ('validated','refuted','pivoted') THEN 1 END), 0))::numeric, 2) AS learning_rate
       FROM experiments
       WHERE started_at >= NOW() - INTERVAL '7 days'
     `;
@@ -562,7 +582,8 @@ export async function getVelocityStats(): Promise<VelocityStats> {
       velocity_today: Number(todayRow?.n ?? 0),
       velocity_week: Number(weekRow?.hypotheses ?? 0),
       avg_cycle_hours: weekRow?.avg_hours != null ? Number(weekRow.avg_hours) : null,
-      validation_rate: weekRow?.val_rate != null ? Number(weekRow.val_rate) : null,
+      strong_validation_rate: weekRow?.strong_val_rate != null ? Number(weekRow.strong_val_rate) : null,
+      learning_rate: weekRow?.learning_rate != null ? Number(weekRow.learning_rate) : null,
     };
   } finally {
     await db.end();

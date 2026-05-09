@@ -116,7 +116,7 @@ async function main() {
       velocity_today: stats.velocity_today,
       velocity_week: stats.velocity_week,
       avg_cycle_hours: stats.avg_cycle_hours,
-      validation_rate: stats.validation_rate,
+      validation_rate: stats.strong_validation_rate,
       next_implied_hypothesis: primaryNextHypothesis,
       raw_synthesis: primarySynthesis,
     });

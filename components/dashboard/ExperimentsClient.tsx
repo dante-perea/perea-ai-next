@@ -40,6 +40,10 @@ interface BacklogItem { title: string; project: string; type: string; priority: 
 interface ScrumReport { yesterday: string[]; today: string[]; blockers: string[]; backlog: BacklogItem[]; }
 
 function verdictColor(verdict: string | null, outcome: string): string {
+  // Outcome takes precedence over verdict when classifying — a closure with
+  // verdict=kill but outcome=pivoted should render purple (productive pivot),
+  // not red (dead refutation).
+  if (outcome === "pivoted") return "text-purple-600";
   const v = verdict ?? outcome;
   if (v === "win" || v === "validated") return "text-green-600";
   if (v === "kill" || v === "refuted") return "text-red-500";
@@ -48,6 +52,7 @@ function verdictColor(verdict: string | null, outcome: string): string {
 }
 
 function verdictLabel(verdict: string | null, outcome: string, shippedAt: Date | null): string {
+  if (outcome === "pivoted") return "PIVOTED";
   const v = verdict ?? outcome;
   if (v === "win") return "WIN";
   if (v === "kill") return "KILL";
@@ -574,9 +579,9 @@ function fmtDueDelta(due: Date): string {
   return `due ${Math.round(hoursAgo / 24)}d ago`;
 }
 
-function Stat({ label, value, alarm }: { label: string; value: string; alarm?: boolean }) {
+function Stat({ label, value, alarm, hint }: { label: string; value: string; alarm?: boolean; hint?: string }) {
   return (
-    <div>
+    <div title={hint}>
       <div className="text-gray-400 uppercase tracking-wide text-[10px]">{label}</div>
       <div className={`text-lg font-semibold ${alarm ? "text-red-600" : "text-gray-900"}`}>{value}</div>
     </div>
@@ -593,7 +598,8 @@ export function ExperimentsClient({
   velocityToday,
   velocityWeek,
   avgCycleHours,
-  validationRate,
+  strongValidationRate,
+  learningRate,
 }: {
   initialActive: Experiment[];
   initialClosed: Experiment[];
@@ -604,7 +610,8 @@ export function ExperimentsClient({
   velocityToday: number;
   velocityWeek: number;
   avgCycleHours: number | null;
-  validationRate: number | null;
+  strongValidationRate: number | null;
+  learningRate: number | null;
 }) {
   const router = useRouter();
   const [active, setActive] = useState(initialActive);
@@ -1128,11 +1135,20 @@ export function ExperimentsClient({
               </p>
             )}
 
-            <section className="border-t border-gray-200 pt-4 grid grid-cols-4 gap-2 text-xs">
+            <section className="border-t border-gray-200 pt-4 grid grid-cols-5 gap-2 text-xs">
               <Stat label="Today" value={`${velocityToday} started`} />
               <Stat label="7d velocity" value={String(velocityWeek)} />
               <Stat label="Avg cycle" value={formatHours(avgCycleHours)} alarm={avgCycleHours != null && avgCycleHours > 48} />
-              <Stat label="Validation rate" value={formatRate(validationRate)} />
+              <Stat
+                label="Strong validation"
+                value={formatRate(strongValidationRate)}
+                hint="literal hypothesis survived (validated only)"
+              />
+              <Stat
+                label="Learning rate"
+                value={formatRate(learningRate)}
+                hint="produced something useful (validated + pivoted)"
+              />
             </section>
           </div>
         </article>
@@ -1167,15 +1183,25 @@ export function ExperimentsClient({
                         <div>
                           <p className="text-[11px] uppercase tracking-wide text-emerald-700 font-sans font-semibold mb-1">Closed</p>
                           <ul className="space-y-1">
-                            {activity.closed.map((e) => (
-                              <li key={e.id} onClick={() => setSelected(e)} className="cursor-pointer hover:bg-amber-100/60 -mx-2 px-2 py-1 rounded">
-                                <span className={e.outcome === "validated" ? "text-emerald-700" : "text-red-600"}>
-                                  {e.outcome === "validated" ? "✓ Validated" : e.outcome === "refuted" ? "✗ Refuted" : "? Inconclusive"}
-                                </span>{" "}
-                                — <span className="text-gray-800">{e.hypothesis.slice(0, 200)}</span>
-                                {e.learning && <p className="text-xs text-gray-600 italic mt-0.5">&ldquo;{e.learning}&rdquo;</p>}
-                              </li>
-                            ))}
+                            {activity.closed.map((e) => {
+                              const tone =
+                                e.outcome === "validated" ? "text-emerald-700"
+                                : e.outcome === "pivoted" ? "text-purple-700"
+                                : e.outcome === "refuted" ? "text-red-600"
+                                : "text-gray-500";
+                              const label =
+                                e.outcome === "validated" ? "✓ Validated"
+                                : e.outcome === "pivoted" ? "↻ Pivoted"
+                                : e.outcome === "refuted" ? "✗ Refuted"
+                                : "? Inconclusive";
+                              return (
+                                <li key={e.id} onClick={() => setSelected(e)} className="cursor-pointer hover:bg-amber-100/60 -mx-2 px-2 py-1 rounded">
+                                  <span className={tone}>{label}</span>{" "}
+                                  — <span className="text-gray-800">{e.hypothesis.slice(0, 200)}</span>
+                                  {e.learning && <p className="text-xs text-gray-600 italic mt-0.5">&ldquo;{e.learning}&rdquo;</p>}
+                                </li>
+                              );
+                            })}
                           </ul>
                         </div>
                       )}

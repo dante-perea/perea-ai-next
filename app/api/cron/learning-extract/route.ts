@@ -53,14 +53,14 @@ export async function GET(req: Request) {
         velocity_today: stats.velocity_today,
         velocity_week: stats.velocity_week,
         avg_cycle_hours: stats.avg_cycle_hours,
-        validation_rate: stats.validation_rate,
+        validation_rate: stats.strong_validation_rate,
         next_implied_hypothesis: next_hypothesis,
         raw_synthesis: synthesis,
       }),
       writeSignalsFromLearnings(validated, refuted, inconclusive),
     ]);
 
-    const valRate = stats.validation_rate != null ? `${(stats.validation_rate * 100).toFixed(0)}%` : "—";
+    const valRate = stats.strong_validation_rate != null ? `${(stats.strong_validation_rate * 100).toFixed(0)}%` : "—";
     const avgHours = stats.avg_cycle_hours != null ? `${stats.avg_cycle_hours}h` : "—";
 
     const lines: string[] = [

@@ -10,7 +10,7 @@ export default async function ExperimentsPage() {
     getDraftExperiments().catch(() => []),
     getAllExperiments().catch(() => []),
     getSignalsByExperimentMap().catch(() => ({})),
-    getVelocityStats().catch(() => ({ velocity_today: 0, velocity_week: 0, avg_cycle_hours: null, validation_rate: null })),
+    getVelocityStats().catch(() => ({ velocity_today: 0, velocity_week: 0, avg_cycle_hours: null, strong_validation_rate: null, learning_rate: null })),
     getRecentLearnings(7).catch(() => []),
   ]);
 
@@ -33,7 +33,8 @@ export default async function ExperimentsPage() {
       velocityToday={stats.velocity_today}
       velocityWeek={stats.velocity_week}
       avgCycleHours={stats.avg_cycle_hours}
-      validationRate={stats.validation_rate}
+      strongValidationRate={stats.strong_validation_rate}
+      learningRate={stats.learning_rate}
     />
   );
 }

@@ -40,7 +40,7 @@ ${
     .join("\n") || "none"
 }
 
-## Velocity (7d): ${stats.velocity_week} experiments | avg cycle: ${stats.avg_cycle_hours != null ? stats.avg_cycle_hours + "h" : "?"} | validation rate: ${stats.validation_rate != null ? (stats.validation_rate * 100).toFixed(0) + "%" : "?"}
+## Velocity (7d): ${stats.velocity_week} experiments | avg cycle: ${stats.avg_cycle_hours != null ? stats.avg_cycle_hours + "h" : "?"} | validation rate: ${stats.strong_validation_rate != null ? (stats.strong_validation_rate * 100).toFixed(0) + "%" : "?"}
 
 Return ONLY valid JSON (no markdown):
 {
