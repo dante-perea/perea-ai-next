@@ -3589,6 +3589,107 @@ const HEALTH_HIPAA_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)www\.netguardia\.com(\/|$)/i,
 ];
 
+const PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS: RegExp[] = [
+  // AI-discovery platform companies (first-party corporate announcements)
+  /(^|\.)insilico\.com(\/|$)/i,
+  /(^|\.)www\.insilico\.com(\/|$)/i,
+  /(^|\.)generatebiomedicines\.com(\/|$)/i,
+  /(^|\.)www\.generatebiomedicines\.com(\/|$)/i,
+  /(^|\.)isomorphiclabs\.com(\/|$)/i,
+  /(^|\.)www\.isomorphiclabs\.com(\/|$)/i,
+  /(^|\.)insitro\.com(\/|$)/i,
+  /(^|\.)www\.insitro\.com(\/|$)/i,
+  /(^|\.)recursionpharma\.com(\/|$)/i,
+  /(^|\.)www\.recursionpharma\.com(\/|$)/i,
+  /(^|\.)investors\.exscientia\.ai(\/|$)/i,
+  /(^|\.)exscientia\.ai(\/|$)/i,
+  // First-party corporate press kits (Google Cloud Storage, etc.)
+  /(^|\.)storage\.googleapis\.com\/isomorphiclabs/i,
+  // EU regulatory + pharma authority surfaces
+  /(^|\.)health\.ec\.europa\.eu(\/|$)/i,
+  /(^|\.)ec\.europa\.eu(\/|$)/i,
+  // Big Pharma corporate press surfaces
+  /(^|\.)news\.lilly\.com(\/|$)/i,
+  /(^|\.)novartis\.com(\/|$)/i,
+  /(^|\.)www\.novartis\.com(\/|$)/i,
+  /(^|\.)bms\.com(\/|$)/i,
+  /(^|\.)www\.bms\.com(\/|$)/i,
+  /(^|\.)news\.bms\.com(\/|$)/i,
+  /(^|\.)roche\.com(\/|$)/i,
+  /(^|\.)www\.roche\.com(\/|$)/i,
+  /(^|\.)astrazeneca\.com(\/|$)/i,
+  /(^|\.)www\.astrazeneca\.com(\/|$)/i,
+];
+
+const PHARMA_DRUG_DISCOVERY_SECONDARY_PATTERNS: RegExp[] = [
+  // Biotech / pharma trade press
+  /(^|\.)biospace\.com(\/|$)/i,
+  /(^|\.)www\.biospace\.com(\/|$)/i,
+  /(^|\.)fiercebiotech\.com(\/|$)/i,
+  /(^|\.)www\.fiercebiotech\.com(\/|$)/i,
+  /(^|\.)biopharmadive\.com(\/|$)/i,
+  /(^|\.)www\.biopharmadive\.com(\/|$)/i,
+  /(^|\.)pharmaphorum\.com(\/|$)/i,
+  /(^|\.)www\.pharmaphorum\.com(\/|$)/i,
+  /(^|\.)pharmaceutical-technology\.com(\/|$)/i,
+  /(^|\.)www\.pharmaceutical-technology\.com(\/|$)/i,
+  /(^|\.)endpoints\.news(\/|$)/i,
+  /(^|\.)www\.endpoints\.news(\/|$)/i,
+  /(^|\.)biopharmatrend\.com(\/|$)/i,
+  /(^|\.)www\.biopharmatrend\.com(\/|$)/i,
+  /(^|\.)biopharmaapac\.com(\/|$)/i,
+  /(^|\.)allsci\.com(\/|$)/i,
+  /(^|\.)medpath\.com(\/|$)/i,
+  /(^|\.)trial\.medpath\.com(\/|$)/i,
+  /(^|\.)medcentral\.com(\/|$)/i,
+  /(^|\.)www\.medcentral\.com(\/|$)/i,
+  /(^|\.)alsnewstoday\.com(\/|$)/i,
+  /(^|\.)geneonline\.com(\/|$)/i,
+  /(^|\.)www\.geneonline\.com(\/|$)/i,
+  /(^|\.)pulmonaryfibrosis\.org(\/|$)/i,
+  /(^|\.)www\.pulmonaryfibrosis\.org(\/|$)/i,
+  /(^|\.)eurekalert\.org(\/|$)/i,
+  /(^|\.)www\.eurekalert\.org(\/|$)/i,
+  // European pharma trade press + EU regulators commentary
+  /(^|\.)europeanpharmaceuticalreview\.com(\/|$)/i,
+  /(^|\.)www\.europeanpharmaceuticalreview\.com(\/|$)/i,
+  /(^|\.)pharmasource\.global(\/|$)/i,
+  /(^|\.)thepharmaletter\.com(\/|$)/i,
+  /(^|\.)www\.thepharmaletter\.com(\/|$)/i,
+  // Big-Law pharma analysis
+  /(^|\.)orrick\.com(\/|$)/i,
+  /(^|\.)www\.orrick\.com(\/|$)/i,
+  /(^|\.)troutman\.com(\/|$)/i,
+  /(^|\.)www\.troutman\.com(\/|$)/i,
+  /(^|\.)jonesday90\.pilot\.onenorth\.com(\/|$)/i,
+  /(^|\.)jonesday\.com(\/|$)/i,
+  /(^|\.)www\.jonesday\.com(\/|$)/i,
+  // Big-4 / consulting pharma analysis
+  /(^|\.)pwc\.be(\/|$)/i,
+  /(^|\.)www\.pwc\.be(\/|$)/i,
+  /(^|\.)pwc\.com(\/|$)/i,
+  /(^|\.)www\.pwc\.com(\/|$)/i,
+  // GMP / regulatory affairs trade press
+  /(^|\.)gmp-compliance\.org(\/|$)/i,
+  /(^|\.)www\.gmp-compliance\.org(\/|$)/i,
+  /(^|\.)gmp-publishing\.com(\/|$)/i,
+  /(^|\.)www\.gmp-publishing\.com(\/|$)/i,
+  /(^|\.)gxpvigilance\.com\.au(\/|$)/i,
+  /(^|\.)regask\.com(\/|$)/i,
+  /(^|\.)www\.regask\.com(\/|$)/i,
+  /(^|\.)regulatoryrapporteur\.org(\/|$)/i,
+  /(^|\.)www\.regulatoryrapporteur\.org(\/|$)/i,
+  // Market research firms (analyst reports)
+  /(^|\.)grandviewresearch\.com(\/|$)/i,
+  /(^|\.)www\.grandviewresearch\.com(\/|$)/i,
+  /(^|\.)precedenceresearch\.com(\/|$)/i,
+  /(^|\.)www\.precedenceresearch\.com(\/|$)/i,
+  /(^|\.)globenewswire\.com(\/|$)/i,
+  /(^|\.)www\.globenewswire\.com(\/|$)/i,
+  /(^|\.)giiresearch\.com(\/|$)/i,
+  /(^|\.)www\.giiresearch\.com(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4847,6 +4948,12 @@ export function classifyTier(
   }
   for (const re of HEALTH_HIPAA_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:health-hipaa-secondary" };
+  }
+  for (const re of PHARMA_DRUG_DISCOVERY_PRIMARY_PATTERNS) {
+    if (re.test(domain) || re.test(url)) return { tier: "primary", reason: "domain:pharma-drug-discovery-primary" };
+  }
+  for (const re of PHARMA_DRUG_DISCOVERY_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:pharma-drug-discovery-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
