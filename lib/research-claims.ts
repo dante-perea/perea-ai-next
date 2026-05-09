@@ -3166,6 +3166,92 @@ const AGENT_PAYMENT_STACK_PRIMARY_PATTERNS: RegExp[] = [
   /(^|\.)developer\.paypal\.com(\/|$)/i,
 ];
 
+// Agent-wallet architecture primary surfaces. Authoritative sources are
+// Ethereum Improvement Proposals (eips.ethereum.org), the canonical ERC
+// repository (github.com/ethereum/ERCs), threshold-signing research papers
+// (eprint.iacr.org), and the production wallet platforms publishing their own
+// architecture documentation (Fireblocks, Squads, Safe, Coinbase Developer
+// Platform on AWS, Anchorage, BitGo, Blockdaemon, Silence Laboratories, Lit
+// Protocol, Privy, Crossmint, Vultisig, Utila, Openfort, Lux Network).
+const AGENT_WALLET_PRIMARY_PATTERNS: RegExp[] = [
+  // Canonical Ethereum specs + EIP repository
+  /(^|\.)eips\.ethereum\.org(\/|$)/i,
+  /(^|\.)ethereum\.org(\/|$)/i,
+  /(^|\.)ethereum-magicians\.org(\/|$)/i,
+  // Threshold-signing academic research
+  /(^|\.)eprint\.iacr\.org(\/|$)/i,
+  /(^|\.)iacr\.org(\/|$)/i,
+  // Wallet platforms publishing their own protocol/architecture docs
+  /(^|\.)fireblocks\.com(\/|$)/i,
+  /(^|\.)developers\.fireblocks\.com(\/|$)/i,
+  /(^|\.)squads\.xyz(\/|$)/i,
+  /(^|\.)squads\.so(\/|$)/i,
+  /(^|\.)docs\.squads\.so(\/|$)/i,
+  /(^|\.)app\.squads\.so(\/|$)/i,
+  /(^|\.)safe\.global(\/|$)/i,
+  /(^|\.)docs\.safe\.global(\/|$)/i,
+  /(^|\.)app\.safe\.global(\/|$)/i,
+  /(^|\.)anchorage\.com(\/|$)/i,
+  /(^|\.)bitgo\.com(\/|$)/i,
+  /(^|\.)blockdaemon\.com(\/|$)/i,
+  /(^|\.)docs\.blockdaemon\.com(\/|$)/i,
+  /(^|\.)silencelaboratories\.com(\/|$)/i,
+  /(^|\.)www\.silencelaboratories\.com(\/|$)/i,
+  /(^|\.)litprotocol\.com(\/|$)/i,
+  /(^|\.)privy\.io(\/|$)/i,
+  /(^|\.)crossmint\.com(\/|$)/i,
+  /(^|\.)vultisig\.com(\/|$)/i,
+  /(^|\.)docs\.vultisig\.com(\/|$)/i,
+  /(^|\.)utila\.io(\/|$)/i,
+  /(^|\.)openfort\.io(\/|$)/i,
+  /(^|\.)dynamic\.xyz(\/|$)/i,
+  /(^|\.)turnkey\.com(\/|$)/i,
+  /(^|\.)dfns\.co(\/|$)/i,
+  /(^|\.)ika\.xyz(\/|$)/i,
+  /(^|\.)dwallet\.io(\/|$)/i,
+  /(^|\.)sui\.io(\/|$)/i,
+  /(^|\.)blog\.sui\.io(\/|$)/i,
+  // AWS Web3 architecture publications (primary on customer architecture deep-dives)
+  /(^|\.)aws\.amazon\.com(\/|$)/i,
+  // Lux Network protocol proposals + canonical Solana Agent Kit docs
+  /(^|\.)lux\.network(\/|$)/i,
+  /(^|\.)solanaagentkit\.xyz(\/|$)/i,
+  // Open-source MPC libraries (canonical repos and project sites)
+  /(^|\.)kazopl\.com(\/|$)/i,
+  // Crypto.com Research (corporate research division publishing on own work)
+  /(^|\.)crypto\.com(\/|$)/i,
+];
+
+// Agent-wallet secondary surfaces: tier-1 trade press covering crypto/wallet
+// architecture, named-author analyst publications, security research firms
+// (NCC Group, Sygnia, Verichains, DARKNAVY, WalletWitness), and agentic-AI
+// security analyst research (Forrester AEGIS, Gartner via re-publishers).
+const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
+  // Crypto/wallet trade press
+  /(^|\.)cryptobriefing\.com(\/|$)/i,
+  /(^|\.)cointelegraph\.com(\/|$)/i,
+  /(^|\.)coincentral\.com(\/|$)/i,
+  /(^|\.)blockchain\.news(\/|$)/i,
+  // Bybit/Safe forensic + security research firms
+  /(^|\.)nccgroup\.com(\/|$)/i,
+  /(^|\.)sygnia\.co(\/|$)/i,
+  /(^|\.)verichains\.io(\/|$)/i,
+  /(^|\.)darknavy\.org(\/|$)/i,
+  /(^|\.)www\.darknavy\.org(\/|$)/i,
+  /(^|\.)walletwitness\.com(\/|$)/i,
+  /(^|\.)hydnsec\.com(\/|$)/i,
+  // Analyst + market commentary
+  /(^|\.)delphidigital\.io(\/|$)/i,
+  /(^|\.)members\.delphidigital\.io(\/|$)/i,
+  /(^|\.)blockeden\.xyz(\/|$)/i,
+  /(^|\.)stablecoinbeat\.com(\/|$)/i,
+  /(^|\.)armorcode\.com(\/|$)/i,
+  /(^|\.)eco\.com(\/|$)/i,
+  /(^|\.)www\.eco\.com(\/|$)/i,
+  /(^|\.)financialit\.net(\/|$)/i,
+  /(^|\.)consensus\.coindesk\.com(\/|$)/i,
+];
+
 const AGENT_PAYMENT_STACK_SECONDARY_PATTERNS: RegExp[] = [
   // Reference-implementation hosts
   /(^|\.)x402\.browserbase\.com(\/|$)/i,
@@ -4353,6 +4439,12 @@ export function classifyTier(
   }
   for (const re of AGENT_PAYMENT_STACK_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-payment-stack-secondary" };
+  }
+  for (const re of AGENT_WALLET_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:agent-wallet-primary" };
+  }
+  for (const re of AGENT_WALLET_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:agent-wallet-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
