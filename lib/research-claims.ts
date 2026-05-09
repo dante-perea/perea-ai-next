@@ -3449,6 +3449,79 @@ const MAESTRO_SECONDARY_PATTERNS: RegExp[] = [
   /(^|\.)az365\.ai(\/|$)/i,
 ];
 
+// Agent-fleet incident response paper: security firms, canonical SDK docs,
+// onchain analytics, hardware-wallet vendor analysis, investigative journalism,
+// crypto trade media used for the 2025–26 incident-corpus paper.
+const INCIDENT_RESPONSE_PRIMARY_PATTERNS: RegExp[] = [
+  /(^|\.)docs\.erc4337\.io(\/|$)/i,
+  /(^|\.)governance\.aave\.com(\/|$)/i,
+  /(^|\.)eips\.exposed(\/|$)/i,
+  /(^|\.)docs\.abbababa\.com(\/|$)/i,
+  /(^|\.)portal\.thirdweb\.com(\/|$)/i,
+  /(^|\.)arkhamintelligence\.com(\/|$)/i,
+  /(^|\.)www\.arkhamintelligence\.com(\/|$)/i,
+  /(^|\.)ledger\.com(\/|$)/i,
+  /(^|\.)www\.ledger\.com(\/|$)/i,
+  /(^|\.)curvegrid\.com(\/|$)/i,
+  /(^|\.)www\.curvegrid\.com(\/|$)/i,
+  /(^|\.)insights\.glassnode\.com(\/|$)/i,
+  /(^|\.)glassnode\.com(\/|$)/i,
+  /(^|\.)certik\.com(\/|$)/i,
+  /(^|\.)www\.certik\.com(\/|$)/i,
+  /(^|\.)blocksec\.ai(\/|$)/i,
+  /(^|\.)blocksec\.com(\/|$)/i,
+  /(^|\.)blocksecteam\.medium\.com(\/|$)/i,
+  /(^|\.)icij\.org(\/|$)/i,
+  /(^|\.)www\.icij\.org(\/|$)/i,
+  /(^|\.)orrick\.com(\/|$)/i,
+  /(^|\.)www\.orrick\.com(\/|$)/i,
+  /(^|\.)ape\.law(\/|$)/i,
+  /(^|\.)blog\.newton\.xyz(\/|$)/i,
+  /(^|\.)newton\.xyz(\/|$)/i,
+  /(^|\.)docs\.privy\.io(\/|$)/i,
+  /(^|\.)blog\.privy\.io(\/|$)/i,
+  /(^|\.)www\.privy\.io(\/|$)/i,
+  /(^|\.)privy\.io(\/|$)/i,
+  /(^|\.)openfort\.io(\/|$)/i,
+  /(^|\.)www\.openfort\.io(\/|$)/i,
+  /(^|\.)tether\.io(\/|$)/i,
+  /(^|\.)thedefiant\.io(\/|$)/i,
+  /(^|\.)bankless\.com(\/|$)/i,
+  /(^|\.)www\.bankless\.com(\/|$)/i,
+];
+
+const INCIDENT_RESPONSE_SECONDARY_PATTERNS: RegExp[] = [
+  /(^|\.)bitlet\.ai(\/|$)/i,
+  /(^|\.)kyc-chain\.com(\/|$)/i,
+  /(^|\.)btcc\.com(\/|$)/i,
+  /(^|\.)www\.btcc\.com(\/|$)/i,
+  /(^|\.)cryptowinrate\.com(\/|$)/i,
+  /(^|\.)www\.cryptowinrate\.com(\/|$)/i,
+  /(^|\.)bitcoinethereumnews\.com(\/|$)/i,
+  /(^|\.)defisaver\.com(\/|$)/i,
+  /(^|\.)help\.defisaver\.com(\/|$)/i,
+  /(^|\.)xt\.com(\/|$)/i,
+  /(^|\.)www\.xt\.com(\/|$)/i,
+  /(^|\.)switchstable\.xyz(\/|$)/i,
+  /(^|\.)freeze\.watch(\/|$)/i,
+  /(^|\.)walletwitness\.com(\/|$)/i,
+  /(^|\.)banklesstimes\.com(\/|$)/i,
+  /(^|\.)www\.banklesstimes\.com(\/|$)/i,
+  /(^|\.)cryptoninjas\.net(\/|$)/i,
+  /(^|\.)www\.cryptoninjas\.net(\/|$)/i,
+  /(^|\.)blockeden\.xyz(\/|$)/i,
+  /(^|\.)smartagentkeys\.com(\/|$)/i,
+  /(^|\.)ainvest\.com(\/|$)/i,
+  /(^|\.)www\.ainvest\.com(\/|$)/i,
+  /(^|\.)coinlive\.com(\/|$)/i,
+  /(^|\.)www\.coinlive\.com(\/|$)/i,
+  /(^|\.)coingo\.net(\/|$)/i,
+  /(^|\.)panewslab\.com(\/|$)/i,
+  /(^|\.)www\.panewslab\.com(\/|$)/i,
+  /(^|\.)gate\.ac(\/|$)/i,
+  /(^|\.)bitcoinethereumnews\.com(\/|$)/i,
+];
+
 const AGENT_WALLET_SECONDARY_PATTERNS: RegExp[] = [
   // Crypto/wallet trade press
   /(^|\.)cryptobriefing\.com(\/|$)/i,
@@ -4695,6 +4768,12 @@ export function classifyTier(
   }
   for (const re of MAESTRO_SECONDARY_PATTERNS) {
     if (re.test(domain)) return { tier: "secondary", reason: "domain:maestro-secondary" };
+  }
+  for (const re of INCIDENT_RESPONSE_PRIMARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "primary", reason: "domain:incident-response-primary" };
+  }
+  for (const re of INCIDENT_RESPONSE_SECONDARY_PATTERNS) {
+    if (re.test(domain)) return { tier: "secondary", reason: "domain:incident-response-secondary" };
   }
   for (const fragment of PRIMARY_PATH_FRAGMENTS) {
     if (url.toLowerCase().includes(fragment)) {
