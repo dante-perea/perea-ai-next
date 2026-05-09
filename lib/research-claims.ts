@@ -5494,11 +5494,26 @@ function scanInlineCitation(ctx: string): {
   return { hasInlineCitation: ids.size > 0, citationIds: [...ids] };
 }
 
+/**
+ * Replaces YAML frontmatter (`---\n…\n---\n` at file start) with same-length
+ * whitespace so claim regex doesn't fire on `description`/`subtitle` stats
+ * that live in YAML and can never carry inline citations. Preserves byte
+ * offsets so downstream offset math (detectSaltShaker, etc.) stays accurate.
+ */
+function blankFrontmatter(body: string): string {
+  if (!body.startsWith("---\n")) return body;
+  const end = body.indexOf("\n---\n", 4);
+  if (end < 0) return body;
+  const cutoff = end + 5;
+  const blanked = body.slice(0, cutoff).replace(/[^\n]/g, " ");
+  return blanked + body.slice(cutoff);
+}
+
 export function extractClaims(body: string, refsSectionStart: number): ClaimSpan[] {
   const lines = body.split("\n");
   const preRefs =
     refsSectionStart >= 0 ? lines.slice(0, refsSectionStart).join("\n") : body;
-  const bodyOnly = stripQuotableFindingsSection(preRefs);
+  const bodyOnly = blankFrontmatter(stripQuotableFindingsSection(preRefs));
   const claims: ClaimSpan[] = [];
   const seen = new Set<string>();
   for (const { type, pattern } of CLAIM_PATTERNS) {
