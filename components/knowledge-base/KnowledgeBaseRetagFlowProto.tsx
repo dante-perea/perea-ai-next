@@ -130,6 +130,23 @@ function TagDiff({ before, after }: { before: string[]; after: string[] }) {
   );
 }
 
+function DownloadLink({ fileId, filename }: { fileId: string; filename: string }) {
+  return (
+    <a
+      href={`/api/knowledge-base/files/${fileId}/download`}
+      download={filename}
+      onClick={(e) => e.stopPropagation()}
+      title={`Download ${filename}`}
+      aria-label={`Download ${filename}`}
+      className="shrink-0 rounded px-1.5 py-1 text-[var(--color-ink-faint)] hover:bg-[var(--color-accent-bg)] hover:text-[var(--color-accent)] transition-colors"
+    >
+      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+      </svg>
+    </a>
+  );
+}
+
 function FileStatusRow({ file, status, before, after }: {
   file: FileMetadata;
   status: FileStatus;
@@ -329,6 +346,7 @@ function VariantA({ files, selectedTags, canWrite, ops }: VariantProps) {
                 </div>
                 <p className="mt-0.5 truncate text-xs text-[var(--color-ink-faint)]">{file.filename}</p>
               </div>
+              <DownloadLink fileId={file.id} filename={file.filename} />
             </div>
           ))}
         </div>
@@ -470,6 +488,7 @@ function VariantB({ files, selectedTags, canWrite, ops }: VariantProps) {
                     </div>
                     <p className="mt-0.5 truncate text-xs text-[var(--color-ink-faint)]">{file.filename}</p>
                   </div>
+                  <DownloadLink fileId={file.id} filename={file.filename} />
                   {fileStatuses[file.id] === "running" && <svg className="mt-1 h-3.5 w-3.5 animate-spin shrink-0 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>}
                   {fileStatuses[file.id] === "done"    && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-400" />}
                 </div>
@@ -620,7 +639,8 @@ function VariantC({ files, selectedTags, canWrite, ops }: VariantProps) {
                 )}
                 <p className="mt-0.5 truncate text-xs text-[var(--color-ink-faint)]">{file.filename}</p>
               </div>
-              <div className="shrink-0">
+              <div className="flex shrink-0 items-center gap-2">
+                <DownloadLink fileId={file.id} filename={file.filename} />
                 {fileStatuses[file.id] === "running" && <svg className="h-3.5 w-3.5 animate-spin text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>}
                 {fileStatuses[file.id] === "done"    && <span className="h-2 w-2 rounded-full bg-emerald-400 block" />}
                 {fileStatuses[file.id] === "error"   && <span className="h-2 w-2 rounded-full bg-red-400 block" />}
