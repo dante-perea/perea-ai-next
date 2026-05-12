@@ -38,3 +38,18 @@ The five flagship papers that anchor the perea.ai/research brand identity:
 3. mcp-server-playbook — MCP Server Playbook for SaaS Founders
 4. geo-2026 — GEO/AEO 2026: The Citation Economy
 5. agent-payment-stack-2026 — The Agent Payment Stack 2026
+
+### Reel
+A 30–90s vertical (9:16) MP4 derived from a single paper's `### Quotable findings`, voiced via Fish Audio (Clear Narrator) and rendered as kinetic typography on black via mcp-video. One Reel per paper. Uploaded to the perea KB tagged `reel,<paper-slug>`. Produced by the `kinetic-podcast-engine` skill. See [ADR-0001](./docs/adr/0001-quotables-first-reels.md).
+
+### Reel-worthy Quotable
+A [Quotable fact](#quotable-fact-strict) additionally judged (Sonnet 4.6) to punch on social. Priority criteria, in order: (1) numeric mic-drop — number, %, $, ×, time; (2) names a regulation / protocol / company / person; (3) reads as a standalone punchline, not a date or setup sentence; (4) ≤30 words preferred (shorter = louder). Selection is **judgment, never generation** — same posture as the Quotable extraction faithfulness gate. The model selects 3–5 from the existing Quotables; it never writes new ones.
+
+### Reel card
+One on-screen text unit in a Reel. Produced by splitting a Reel-worthy Quotable on punctuation (`. , ; :` and `—`) with min 3 / max 9 words per card. Mounted in temporal order; per-card duration is proportional to character count, summing to the parent Quotable's TTS audio duration. **Faithfulness invariant:** rejoining all cards from one Quotable (with original punctuation) MUST equal the source Quotable's display text exactly. Violation aborts the render tick.
+
+### Reel beat
+A 400ms silent gap between Quotables in a Reel's audio track. Intentional kinetic pacing, not a TTS limitation. Reel audio duration = Σ(Quotable TTS durations) + (N − 1) × 400ms.
+
+### Reel readiness
+A paper is reel-ready when (1) it has a `### Quotable findings` (or `## Quotable`) section AND (2) no file tagged `reel,<slug>` exists in the perea KB. The `kinetic-podcast-engine pick` tick selects the first reel-ready paper per run (alphabetical), producing one reel and marking idempotency via the KB tag.
