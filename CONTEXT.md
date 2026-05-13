@@ -38,3 +38,20 @@ The five flagship papers that anchor the perea.ai/research brand identity:
 3. mcp-server-playbook — MCP Server Playbook for SaaS Founders
 4. geo-2026 — GEO/AEO 2026: The Citation Economy
 5. agent-payment-stack-2026 — The Agent Payment Stack 2026
+
+### Reel
+A 30–90s vertical (9:16) MP4 derived from a single paper's `### Quotable findings`, voiced via Fish Audio (Clear Narrator) and rendered as kinetic typography on black via mcp-video. One Reel per paper. Uploaded to the perea KB tagged `reel,<paper-slug>`. Produced by the `kinetic-podcast-engine` skill. See [ADR-0001](./docs/adr/0001-quotables-first-reels.md).
+
+### Reel-worthy Quotable
+A [Quotable fact](#quotable-fact-strict) additionally judged (Sonnet 4.6) to punch on social. Priority criteria, in order: (1) numeric mic-drop — number, %, $, ×, time; (2) names a regulation / protocol / company / person; (3) reads as a standalone punchline, not a date or setup sentence; (4) ≤30 words preferred (shorter = louder). Selection is **judgment, never generation** — same posture as the Quotable extraction faithfulness gate. The model selects 3–5 from the existing Quotables; it never writes new ones.
+
+### Reel card
+One on-screen text unit in a Reel. Produced by grouping 2–3 display tokens from a Reel-worthy Quotable, with a character-count budget per card to fit the 9:16 canvas. Long compound tokens (e.g. `Llama-3.1-8B-Instruct`) are auto-broken at hyphens for display only — the breaks are reversed during faithfulness verification. **Card timing comes from Whisper word-level transcription of our own TTS output**, with expansion-factor-aware proportional allocation (so a token like `$141` that Fish expands to "one hundred forty one dollars" is allocated proportionally more whisper-word time than a plain word). Mounted in temporal order; cards switch in rhythm with the spoken audio.
+
+**Faithfulness invariant:** rejoining all cards from one Quotable (collapsing whitespace and re-gluing hyphen-tail fragments) MUST equal the source Quotable's display text exactly. Violation aborts the render tick. Whisper output never appears on screen — only its word boundaries are consumed.
+
+### Reel beat
+A 400ms silent gap between Quotables in a Reel's audio track. Intentional kinetic pacing, not a TTS limitation. Reel audio duration = Σ(Quotable TTS durations) + (N − 1) × 400ms.
+
+### Reel readiness
+A paper is reel-ready when (1) it has a `### Quotable findings` (or `## Quotable`) section AND (2) no file tagged `reel,<slug>` exists in the perea KB. The `kinetic-podcast-engine pick` tick selects the first reel-ready paper per run (alphabetical), producing one reel and marking idempotency via the KB tag.
