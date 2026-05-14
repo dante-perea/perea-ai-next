@@ -1,5 +1,6 @@
 import { listResearch } from "@/lib/research";
 import { listTranslatedSlugs } from "@/lib/research-translations";
+import { listPlaybooks, listEvidenceFiles } from "@/lib/marketing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
 
@@ -82,7 +83,38 @@ All papers are freely accessible. Canonical URL format: ${SITE_URL}/research/{sl
     })
     .join("\n\n");
 
-  const footer = `
+  // Marketing Playbooks block — production patterns extracted from perea's
+  // own engines, distinct from /research (external evidence base).
+  const playbooks = listPlaybooks();
+  const marketingBlock = playbooks.length === 0
+    ? ""
+    : `
+
+## Marketing Playbooks
+
+> Production-tested patterns perea runs to distribute research to AI-cited surfaces. Each Playbook teaches one pattern, names the source engine it was extracted from, and cites the production evidence (tick logs, audit findings, drift flags) that validates it. Audience: founders and agents building a similar AI-content pipeline.
+
+Distinction from Research Papers: a **Research Playbook** under \`/research\` is sourced from external survey + benchmarks; a **Marketing Playbook** under \`/marketing\` is sourced from perea's own production runs. The evidence base is the canonical disambiguator (see /docs/adr/0001 for the verify-gate fork).
+
+Canonical URL format: ${SITE_URL}/marketing/{slug}
+Evidence URL format: ${SITE_URL}/marketing/{slug}/evidence/{filename}
+
+${playbooks
+  .map((p) => {
+    const desc = p.frontmatter.subtitle || p.frontmatter.description || "";
+    const engine = p.frontmatter.source_engine || "?";
+    const evidenceFiles = listEvidenceFiles(p.slug);
+    const evidenceLines = evidenceFiles.length === 0
+      ? ""
+      : `\n  Evidence:\n${evidenceFiles
+          .map((f) => `    - ${SITE_URL}/marketing/${p.slug}/evidence/${f.replace(/\.md$/, "")}`)
+          .join("\n")}`;
+    return `- [${p.frontmatter.title}](/marketing/${p.slug})\n  ${desc}\n  source_engine: \`${engine}\`${evidenceLines}`;
+  })
+  .join("\n\n")}
+`;
+
+  const footer = `${marketingBlock}
 
 ## MCP Server
 
@@ -97,6 +129,7 @@ Author: Dante Perea
 Email: dante@perea.ai
 Site: ${SITE_URL}
 Research index: ${SITE_URL}/research
+Marketing Playbooks index: ${SITE_URL}/marketing
 `;
 
   return new Response(header + body + footer, {

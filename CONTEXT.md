@@ -38,3 +38,27 @@ The five flagship papers that anchor the perea.ai/research brand identity:
 3. mcp-server-playbook — MCP Server Playbook for SaaS Founders
 4. geo-2026 — GEO/AEO 2026: The Citation Economy
 5. agent-payment-stack-2026 — The Agent Payment Stack 2026
+
+## /marketing — Glossary
+
+### Marketing Playbook
+A document published at `/marketing/<slug>` that teaches **one internal pattern perea has run in production** for distributing research to AI-cited surfaces (X, video, search). Sourced from perea's own operating history — not external survey. Always names the perea engine (e.g. `tick-X-post-from-research`, `kinetic-podcast-engine`, `perea-research-engine`) from which the pattern was extracted, plus the production evidence (tick count, drift findings, post-hoc audits) that validates it. Audience: external founders/agents building a similar AI-content pipeline. Format: same MDX shape as Research Playbooks but stored in a separate `content/marketing/` directory. _Avoid_: Marketing essay, operating note, pipeline doc.
+
+### Research Playbook
+A paper published at `/research/<slug>` that uses the `technical-playbook` profile in the perea-research-engine. Teaches a class of systems from **external evidence** — protocol specs, vendor announcements, benchmarks, third-party audits — surveyed via Exa. Distinguishes from a Marketing Playbook by source-of-truth (external evidence vs. perea's own operating history). _Avoid_: Marketing Playbook (different vertical, different evidence base).
+
+### Distinction rule (vertical assignment)
+When a pattern is teachable, decide its vertical by **evidence base**, not topic:
+- Sourced from external survey + benchmarks → Research Playbook under `/research`
+- Sourced from perea's own production runs + tick logs → Marketing Playbook under `/marketing`
+
+Topics may overlap (a Research Playbook on GEO and a Marketing Playbook on the Hybrid Contract both touch citation magnetism); the evidence base is the canonical disambiguator.
+
+### `source_engine`
+Required frontmatter field on every Marketing Playbook. Names the SKILL.md under `~/.claude/skills/` from which the pattern was extracted (`perea-research-engine`, `tick-X-post-from-research`, `kinetic-podcast-engine`). The provenance claim that makes the Playbook falsifiable — without it, "perea ran this in production" cannot be checked. _Avoid_: source, engine, origin.
+
+### `[^prod-N]` (production-evidence marker)
+Citation marker namespace used exclusively inside Marketing Playbooks for production-sourced evidence: tick-log line entries, audit-pass findings (e.g. `drift-flags.md`), blocklist hit counts, omnisocials analytics, post-hoc Sonnet 4.6 critiques. Distinct from `[^N]` external-source markers. The `verify-research.ts` `marketing-playbook` dispatch requires at least one `[^prod-N]` citation; without it, the Playbook is not validated by perea's own operating history. See ADR-0001. _Avoid_: footnote, source-ref (those are the external-marker terms).
+
+### Evidence bundle
+Redacted log excerpts and audit snippets committed alongside a Marketing Playbook at `content/marketing/_evidence/<slug>/<filename>.md`. Each `[^prod-N]` citation in a Playbook body resolves to a file in that directory. The author manually curates the excerpts (redacting in-progress slugs, omnisocials post-IDs, account secrets, lock-file paths) before commit; redaction is the friction that keeps private operator state out of public content. The bundle is publicly served at `perea.ai/marketing/_evidence/<slug>/<filename>` so external agents can verify the provenance claims. Minimum one evidence file per Playbook. _Avoid_: sources directory, evidence dump.
