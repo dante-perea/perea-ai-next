@@ -4,7 +4,7 @@ subtitle: "Cerulli's Million-Plan Forecast, JP Morgan's July 2025 Entry, and the
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Solo entrepreneurs, fractional CFOs, retirement-plan founders, RIA wealth advisors, recordkeeper product teams, freelance-finance investors, payroll vendor strategy leads"
 length: "~5,500 words"

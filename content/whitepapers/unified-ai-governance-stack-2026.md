@@ -4,7 +4,7 @@ subtitle: "70–80% control overlap, the official NIST↔ISO 42001 crosswalk, Si
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "AI governance leads, GRC managers, CISOs, DPOs, and procurement officers building one compliance program against NIST AI RMF + ISO/IEC 42001 + the EU AI Act 2 August 2026 high-risk regime"
 length: "~5,500 words"

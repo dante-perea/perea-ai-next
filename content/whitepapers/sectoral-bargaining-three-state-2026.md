@@ -4,7 +4,7 @@ subtitle: "How three states built parallel paths to rideshare-driver unionizatio
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Labor lawyers, gig-economy founders, rideshare and delivery operators, state labor relations boards, antitrust counsel, SEIU + IAM organizing leads, NLRA + Sherman Act litigators, federal preemption practitioners"
 length: "~5,500 words"

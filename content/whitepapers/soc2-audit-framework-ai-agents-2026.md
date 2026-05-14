@@ -4,7 +4,7 @@ subtitle: "How the AICPA Trust Service Criteria Map to Agent Identity, Behavior 
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Compliance leaders, CISOs, audit partners at Big-4 / national CPA firms, AI platform engineers preparing for SOC 2 Type II examinations of agent products, vCISO consultants, security automation buyers"
 length: "~8,500 words"

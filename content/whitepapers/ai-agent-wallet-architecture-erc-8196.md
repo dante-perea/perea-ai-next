@@ -4,7 +4,7 @@ subtitle: "Cryptographically enforced policy compliance, MPC threshold signing, 
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "CISOs, blockchain protocol engineers, AI agent platform architects, custody compliance teams, AICPA auditors evaluating SOC 2 controls for agent-initiated on-chain transactions, and founders building agentic commerce infrastructure who need to make architectural choices in 2026 that will not implode under SEC and CFTC guidance arriving 2027-2028."
 length: "~8,000 words"

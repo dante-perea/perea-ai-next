@@ -4,7 +4,7 @@ subtitle: "Mandates, Identity, and the Cryptographic Stack of B2A — the Asymme
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Security and platform engineers building agent payment surfaces; identity architects designing mandate flows; compliance leads writing audit pipelines for autonomous commerce; founders mapping cryptographic assumptions in B2A protocols"
 length: "~3,400 words"

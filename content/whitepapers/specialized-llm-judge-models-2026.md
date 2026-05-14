@@ -4,7 +4,7 @@ subtitle: "Prometheus 2, SFR-Judge, Self-Taught Evaluator, Skywork-Critic — wh
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Eval engineers, ML platform leads, and applied-AI teams running model-as-judge in CI gates, RLHF data pipelines, agentic-AI verification, and production scoring loops"
 length: "~5,500 words"

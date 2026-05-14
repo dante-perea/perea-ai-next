@@ -4,7 +4,7 @@ subtitle: "How agentic field-doc, subcontractor compliance, and AI-native quotin
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05-07T23:09"
 audience: "Founders building AI-native software for HVAC, plumbing, electrical, landscaping, and pest-control trades; PE operators rolling up local service brands; product leaders at ServiceTitan / Jobber / Housecall Pro / Workiz / BuildOps / ServiceTrade considering Agentforce-style native AI; venture investors underwriting vertical-AI seed and Series A rounds."
 length: "~10,500 words"

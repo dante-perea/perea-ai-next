@@ -4,7 +4,7 @@ subtitle: "Amazon's $175B 3P engine, Shopify's $378B GMV, Pattern's IPO, the UCP
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05-08"
 audience: "Founders, investors, marketplace agency operators, brand DTC executives, and policy observers building or selling into the U.S. marketplace-seller-operations stack."
 length: "~12,500 words"

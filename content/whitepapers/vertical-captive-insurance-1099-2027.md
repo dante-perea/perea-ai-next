@@ -4,7 +4,7 @@ subtitle: "Vault Health's NC Domicile, IRS T.D. 10029 Listed Transactions, Vermo
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Captive insurance founders, freelance-finance vendor leads, 1099 health-benefits buyers, RIA tax practitioners, insurance commissioners, micro-captive material advisors, Form 8886 compliance teams, captive-domicile economic-development directors"
 length: "~5,500 words"

@@ -4,7 +4,7 @@ subtitle: "Three-stage filter, shadow deployment, agentic distillation — how t
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "ML platform leads, applied-AI engineers, and SRE-adjacent teams shipping fine-tuned student models in production — including agent teams using ReAct-style trajectories and teams paying frontier API bills above $50K/month"
 length: "~5,500 words"

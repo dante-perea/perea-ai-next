@@ -4,7 +4,7 @@ subtitle: "How `navigator.modelContext`, the W3C Community Group spec, and Chrom
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Founders and engineers shipping web applications who want their site to be the one AI agents can actually call — not the one they have to scrape, screenshot, and guess at."
 length: "~6,800 words"

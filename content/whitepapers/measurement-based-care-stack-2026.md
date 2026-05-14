@@ -4,7 +4,7 @@ subtitle: "How validated instruments, the CY 2026 CMS Physician Fee Schedule, HE
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Behavioral-health founders, MBC platform builders, payer + ACO contracting teams, EHR integration leads, value-based-care strategists, digital-mental-health investors"
 length: "~5,500 words"

@@ -4,7 +4,7 @@ subtitle: "PHI handling, BAA-covered subcontracting paths, de-identification evi
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Compliance leads, security architects, AI governance officers, and procurement teams at covered entities and business associates deploying AI agents in 2026."
 length: "~7,500 words"

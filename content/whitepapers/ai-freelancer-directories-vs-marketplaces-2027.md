@@ -4,7 +4,7 @@ subtitle: "Braintrust AIR's 62% AI-Interview Penetration, Toptal's Acquisition S
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Freelance-platform founders, marketplace product leaders, B2B agency operators, talent-network investors, RIA advisors covering 1099 finance, GigRadar-class agency operators, Upwork/Fiverr/Toptal sellers"
 length: "~5,500 words"

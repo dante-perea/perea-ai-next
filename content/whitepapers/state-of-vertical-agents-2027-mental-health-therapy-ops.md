@@ -4,7 +4,7 @@ subtitle: "AI scribes, treatment-plan generators, and outcome measurement for th
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Published"
 date: "2026-05-08T01:13"
 audience: "Founders building vertical AI for mental health and therapy operations; solo therapists, group practices, community mental health centers, and PE-backed enterprise EAP platforms; investors mapping the SimplePractice / TherapyNotes / Spring Health / Lyra / Headway / Grow Therapy / EliseAI-of-mental-health cohort"
 length: "~10,500 words"

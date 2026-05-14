@@ -4,7 +4,7 @@ subtitle: "The post-February-2026 substance-use-disorder confidentiality landsca
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "SUD-treatment program compliance leads, EHR product managers shipping behavioral-health features, healthtech founders building consent-vault and DS4P tooling, and HIPAA covered entities that ingest SUD records"
 length: "~5,500 words"

@@ -4,7 +4,7 @@ subtitle: "ECNL+DIHR five-phase methodology, six statutory elements, Charter rig
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "AI governance leads, DPOs, in-house counsel, and procurement officers at public authorities, private operators of public services, banks, and insurers preparing for the 2 August 2026 Article 27 deadline"
 length: "~5,500 words"

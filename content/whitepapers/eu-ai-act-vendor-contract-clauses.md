@@ -4,7 +4,7 @@ subtitle: "MCC-AI High-Risk + Light, Article 25 deployer-to-provider boundary, A
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "In-house counsel, procurement leads, AI-governance officers, and DPOs negotiating vendor contracts for AI systems subject to the EU AI Act 2 August 2026 high-risk regime"
 length: "~6,000 words"

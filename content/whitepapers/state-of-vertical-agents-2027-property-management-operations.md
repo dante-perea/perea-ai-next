@@ -4,7 +4,7 @@ subtitle: "How agentic tenant communication, vendor compliance, and listing-sync
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05-08T00:09"
 audience: "Founders building vertical AI for residential property management; multifamily and SFR operators; PE-backed PM platforms; investors mapping the AppFolio / RealPage / Yardi / Entrata cohort"
 length: "~10,800 words"

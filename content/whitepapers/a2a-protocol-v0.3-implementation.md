@@ -4,7 +4,7 @@ subtitle: "How the Agent-to-Agent Protocol Became the Linux Foundation's Horizon
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "AI platform engineers, agent infrastructure teams, enterprise architects evaluating multi-agent interoperability, technical buyers comparing A2A vs MCP for production deployments"
 length: "~8,200 words"

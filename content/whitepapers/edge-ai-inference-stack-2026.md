@@ -4,7 +4,7 @@ subtitle: "On-device reasoning under 200ms, 64K context, INT4 NPU acceleration â
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Mobile + edge ML engineers, embedded-AI product leads, on-device-LLM platform teams, and any team paying frontier API bills above $10K/month for tasks that fit a 3.8B model"
 length: "~5,500 words"
