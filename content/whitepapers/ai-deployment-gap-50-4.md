@@ -4,7 +4,7 @@ subtitle: "Why engineering is solved, every other white-collar vertical is wide 
 publication: "perea.ai Research"
 authors: ["Dante Perea"]
 version: "1.0"
-status: "Public draft"
+status: "Scheduled"
 date: "2026-05"
 audience: "Founders, operators, and engineering leads deploying AI agents into non-engineering workflows in mid-market and enterprise companies."
 length: "~5,500 words"
