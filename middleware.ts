@@ -11,11 +11,57 @@ const isProtected = createRouteMatcher([
 
 export const config = {
   matcher: [
-    // Exclude /research/* — public research/whitepaper routes do not pass through Clerk
-    "/((?!_next|research(?:/|$)|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // /research/* and /marketing/* are now included so we can route .md
+    // mirrors and apply Accept-based content negotiation. Clerk only protects
+    // the routes named in isProtected; everything else passes through.
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };
+
+// Routes that mirror their HTML page as markdown when:
+//   - the URL ends in `.md`, OR
+//   - the `Accept` header prefers `text/markdown` over `text/html`.
+const MD_MIRROR_PREFIXES = ["/research/", "/marketing/"] as const;
+
+function wantsMarkdown(acceptHeader: string | null): boolean {
+  if (!acceptHeader) return false;
+  const lc = acceptHeader.toLowerCase();
+  if (!lc.includes("text/markdown")) return false;
+  // If text/html appears earlier than text/markdown, assume html-first (browser).
+  // Agents that want markdown either send just `text/markdown` or list it first.
+  const mdIdx = lc.indexOf("text/markdown");
+  const htmlIdx = lc.indexOf("text/html");
+  if (htmlIdx >= 0 && htmlIdx < mdIdx) return false;
+  return true;
+}
+
+function isMdMirrorPath(
+  pathname: string,
+): { kind: "research" | "marketing"; slug: string } | null {
+  for (const prefix of MD_MIRROR_PREFIXES) {
+    if (!pathname.startsWith(prefix)) continue;
+    const tail = pathname.slice(prefix.length);
+    if (tail.includes("/")) return null; // sub-route like /marketing/<slug>/evidence/...
+    const kind = prefix === "/research/" ? "research" : "marketing";
+    const slug = tail.endsWith(".md") ? tail.slice(0, -3) : tail;
+    if (!slug) return null;
+    return { kind, slug };
+  }
+  return null;
+}
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://perea.ai";
+
+function buildSiteLinkHeader(): string {
+  return [
+    `<${SITE_URL}/llms.txt>; rel="llms-txt"; type="text/plain"`,
+    `<${SITE_URL}/llms-full.txt>; rel="llms-full-txt"; type="text/markdown"`,
+    `<${SITE_URL}/sitemap.md>; rel="sitemap"; type="text/markdown"`,
+    `<${SITE_URL}/sitemap.xml>; rel="sitemap"; type="application/xml"`,
+    `<${SITE_URL}/AGENTS.md>; rel="agents"; type="text/markdown"`,
+  ].join(", ");
+}
 
 export default clerkMiddleware(async (auth, request) => {
   if (isProtected(request)) {
@@ -23,6 +69,25 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   const { pathname } = request.nextUrl;
+
+  // ── Markdown mirror routing ────────────────────────────────────────────────
+  // Either explicit `.md` URL OR canonical URL with Accept: text/markdown
+  // rewrites to the route handler that returns the raw markdown.
+  const mdMatch = isMdMirrorPath(pathname);
+  if (mdMatch) {
+    const explicitMd = pathname.endsWith(".md");
+    const negotiatedMd =
+      !explicitMd && wantsMarkdown(request.headers.get("accept"));
+    if (explicitMd || negotiatedMd) {
+      const target = request.nextUrl.clone();
+      target.pathname = `/api/md/${mdMatch.kind}/${mdMatch.slug}`;
+      const rewritten = NextResponse.rewrite(target);
+      rewritten.headers.set("Vary", "Accept");
+      rewritten.headers.set("Link", buildSiteLinkHeader());
+      return rewritten;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   // ── Agent / crawler signal ─────────────────────────────────────────────────
   const ua = request.headers.get("user-agent") || "";
@@ -40,6 +105,17 @@ export default clerkMiddleware(async (auth, request) => {
   const slug = slugMatch?.[1];
 
   const response = NextResponse.next();
+
+  // ── Advertise agent-facing resources via Link header ──────────────────────
+  response.headers.set("Link", buildSiteLinkHeader());
+
+  // Per-page markdown variant: add `alternate` link on the canonical HTML URL.
+  if (mdMatch && !pathname.endsWith(".md")) {
+    const existing = response.headers.get("Link") ?? "";
+    const mdLink = `<${SITE_URL}/${mdMatch.kind}/${mdMatch.slug}.md>; rel="alternate"; type="text/markdown"`;
+    response.headers.set("Link", existing ? `${existing}, ${mdLink}` : mdLink);
+    response.headers.set("Vary", "Accept");
+  }
 
   // ── 1. A/B Variant Assignment ──────────────────────────────────────────────
   if (slug) {

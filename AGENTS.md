@@ -1,111 +1,130 @@
-# Agent Behavior Rules
+# perea.ai — AGENTS.md
 
-## Core Rule: Execute First, Think Later
+> Router document for calling agents and AI crawlers. Identifies perea.ai's
+> agent-facing surfaces, the conventions they follow, and the canonical URLs
+> for each resource.
 
-When given a task, **start executing immediately**. Do not brainstorm alternatives before attempting the direct path. If the first attempt fails, pivot — but only then.
+perea.ai publishes original research on the agent economy (`/research`) and
+production-tested patterns for AI-content distribution (`/marketing`).
+Audience: founders, payments engineers, AI architects, infrastructure leads.
+All content is freely accessible under CC BY 4.0.
 
----
+## Identity
 
-## Forbidden Behaviors
+- **Site:** https://perea.ai
+- **Author:** Dante Perea (`dante@perea.ai`)
+- **License:** CC BY 4.0
+- **Brand verticals:**
+  - `/research` — long-form papers (6,000–12,000 words), sourced from external
+    survey and benchmarks, written under the perea-research-engine.
+  - `/marketing` — Marketing Playbooks (~2,000–5,000 words), sourced from
+    perea's own production runs of its autonomous engines. Each Playbook
+    names the SKILL.md it was extracted from and cites the production
+    evidence that validates it.
 
-### 1. Analysis Paralysis
-**NEVER** spend more than one internal deliberation cycle on "which approach to pick." Pick the most direct approach and run it. If it fails, try the next one.
+## Discovery surfaces
 
-Bad pattern:
-> "Option A would work, but Option B might be better. Actually, Option C has these tradeoffs. Let me reconsider Option A…"
+| Resource | URL | Purpose |
+|---|---|---|
+| Per-page index | https://perea.ai/llms.txt | Short markdown index of every page (~1k tokens). Section-grouped. |
+| Full corpus | https://perea.ai/llms-full.txt | Single-fetch concatenation of every paper + Playbook body. Designed for one-pass LLM ingestion. |
+| Sitemap (markdown) | https://perea.ai/sitemap.md | Semantic sitemap with descriptions and section grouping. |
+| Sitemap (XML) | https://perea.ai/sitemap.xml | For traditional crawlers. |
+| RSS feed | https://perea.ai/feed.xml | Merged research + marketing feed, newest first. |
+| Robots | https://perea.ai/robots.txt | AI crawler access policy. |
 
-Correct pattern:
-> Try Option A. If it fails, try B. Report outcome.
+Every response also carries a `Link:` header advertising these resources, so a
+`HEAD` request against any URL exposes the full discovery surface in one
+round-trip.
 
----
+## Per-page conventions
 
-### 2. Revisiting Dead Ends
-Once an approach has been tried and failed (e.g., "no auth token in env", "shell output truncated"), **do not return to it**. Mark it as ruled out and move on. Do not re-examine it in future turns.
+- **HTML pages:** `/research/<slug>` and `/marketing/<slug>` render the
+  human-readable version with TOC, citations, and JSON-LD structured data.
+- **Markdown mirrors:** append `.md` to any page URL.
+  - `https://perea.ai/research/<slug>.md`
+  - `https://perea.ai/marketing/<slug>.md`
+- **Content negotiation:** the canonical HTML URL returns markdown when the
+  request sends `Accept: text/markdown` (and does not prefer `text/html`).
+  Claude Code sends this header natively.
+- **Evidence bundles** (marketing only): each Marketing Playbook ships with
+  redacted excerpts at `https://perea.ai/marketing/<slug>/evidence/<file>`,
+  served as `text/markdown`. Each `[^prod-N]` citation in a Playbook body
+  resolves to one of these files.
 
----
+## Citation conventions
 
-### 3. Doubting Authenticated Sessions
-If an MCP tool has already been called successfully in this session, it is authenticated. Do not:
-- Search for credentials
-- Look for OAuth tokens in config files
-- Worry about auth headers
-- Try to replicate auth manually via curl or HTTP
+Two distinct citation namespaces are used across the corpus. Both render as
+markdown footnotes.
 
-Just call the tool.
+- `[^N]` — external sources (protocol specs, vendor announcements, benchmarks,
+  third-party audits). Used in Research papers and may appear in Marketing
+  Playbooks when contrasting with external patterns.
+- `[^prod-N]` — perea's own production evidence (tick-log entries, audit
+  findings, drift flags, blocklist hit counts, omnisocials analytics). Used
+  exclusively in Marketing Playbooks. Each `[^prod-N]` resolves to a file
+  under `<canonical>/evidence/<filename>`.
 
----
+The distinction makes it possible to mechanically verify provenance: an
+agent that wants to know "did perea actually run this in production?" follows
+the `[^prod-N]` link to the evidence file.
 
-### 4. Ignoring Explicit User Instructions
-If the user says "do X", do X. Do not:
-- Propose Y because it's theoretically better
-- Ask for permission to do Y instead
-- Start doing Y while thinking about X
+## Structured data
 
-Execute exactly what was asked. If the approach has a real blocker, state the blocker in one sentence and ask which alternative to use.
+Every article ships JSON-LD (`schema.org`) with:
 
----
+- `headline`, `description`, `abstract`
+- `datePublished`, `dateModified`
+- `author` (Person, with stable `@id`)
+- `publisher` (Organization, with stable `@id`)
+- `wordCount`, `timeRequired` (ISO 8601 duration)
+- `inLanguage`, `license`, `isAccessibleForFree: true`
+- `keywords`, `about` (topical entities)
+- `citation[]` — external sources, when present
+- `audience` (audienceType)
+- BreadcrumbList
 
-### 5. Overthinking Bulk Operations
-For repetitive tasks (uploading N files, processing N records), do not:
-- Spend multiple turns calculating turn count
-- Worry about how "tedious" it is
-- Propose consolidation/batching as an excuse to delay
+Marketing Playbooks additionally include `isBasedOn` linking to the source
+SKILL.md by name.
 
-Pick a batch size, start executing, track progress, report when done.
+## Capabilities (programmatic surfaces)
 
----
+- **MCP server.** perea.ai exposes a Model Context Protocol server at
+  `https://perea.ai/api/mcp/server` for agent-native access to research
+  content. Authentication: Bearer token (contact `dante@perea.ai`).
+  Capabilities: `list_papers`, `get_paper`, `search_papers`. Marketing
+  Playbooks coverage is planned for a future revision.
 
-### 6. Excessive Internal Monologue
-Do not write walls of internal reasoning as user-facing text. The user sees your outputs. Keep them to:
-- What you're about to do (1 sentence)
-- What you found/did (1 sentence per batch or milestone)
-- Blockers (1 sentence, specific)
+## Allowed use
 
----
+Content is licensed CC BY 4.0. Attribution requirements:
 
-### 7. Stopping Mid-Task to Re-Evaluate
-Once you commit to an approach, execute it fully. Do not pause partway through to:
-- Question whether a better approach exists
-- Summarize what you've done so far without completing the task
-- Ask for confirmation you didn't ask for at the start
+- Cite by canonical URL.
+- For derivative works that quote substantively, attribute as
+  "Dante Perea, perea.ai" with the canonical URL.
+- AI training: permitted under the license; we treat AI citation as the
+  primary value exchange and welcome it.
 
----
+## Pointer for code-gen agents
 
-### 8. Using Complexity as an Excuse
-"This is complex because X, Y, Z" is not a reason to stop or pivot. Break it into concrete steps and execute each step. The fact that something takes many iterations is not a blocker.
+Calling agents that build content using perea's patterns:
 
----
+- The patterns themselves are documented as Marketing Playbooks at
+  `/marketing`. Each Playbook describes one pattern from perea's own
+  production: the contract, the failure modes, and how to adopt it in your
+  own stack.
+- Open-source reference implementations (the perea-research-engine,
+  tick-X-post-from-research, and kinetic-podcast-engine SKILL.md files) will
+  be published to a public GitHub repository in a future revision. When live,
+  the install verb will be added to this file as a separate section.
 
-## Required Behaviors
+## Contact
 
-### Execute bulk tasks with scripts when N > 50
-For any operation that repeats more than 50 times, write a shell script or Node.js script that loops. Do not make 50+ individual tool calls across 50+ turns unless the tool is the only available interface and cannot be scripted.
+- Author: Dante Perea
+- Email: dante@perea.ai
+- Site: https://perea.ai
+- Research index: https://perea.ai/research
+- Marketing Playbooks index: https://perea.ai/marketing
 
-When the only interface is an MCP tool (e.g., `upload_file`, `get_upload_token`):
-- Batch the maximum number of parallel calls per turn
-- Track which files are done (write to a progress file)
-- Pick up from where you left off if interrupted
-
-### One approach, full execution
-Pick the best available approach, commit to it, and execute it completely before declaring the task done or pivoting.
-
-### Progress tracking
-For long-running tasks, maintain a local progress file (e.g., `/tmp/task_progress.json`) so you can resume without repeating work.
-
-### Respect the boundary between "research" and "execution"
-If the user asks you to do something, you are in execution mode. Save research mode for when the user asks "what should I do?" or "how does X work?"
-
----
-
-## Heuristics for Common Scenarios
-
-| Situation | Correct Action |
-|---|---|
-| MCP tool available and authenticated | Call it. Don't verify auth. |
-| Need to upload N files via MCP | Batch max parallel calls per turn, loop until done |
-| Shell output truncated | Write output to a file, read the file |
-| Env var not in shell | Load from `.env.local` in script with dotenv or manual parse |
-| User says "do X" | Do X |
-| User says "do X, it's tedious but do it" | Do X. Do not propose alternatives. |
-| Previous tokens/results lost to context compaction | Get fresh tokens. Do not try to recover old ones. |
-| Script would be 10x faster than manual tool calls | Propose the script in one sentence. If user says no, do it manually without further comment. |
+This file is served at `https://perea.ai/AGENTS.md` via a route handler that
+reads this committed file at the repository root.
