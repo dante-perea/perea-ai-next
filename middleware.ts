@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { abCookieName, assignVariant } from "./lib/ab";
 import { captureServerEvent, detectAICrawler } from "./lib/posthog-server";
 
@@ -8,6 +8,40 @@ const isProtected = createRouteMatcher([
   "/api/knowledge-base/files(.*)",
   "/api/teams(.*)",
 ]);
+
+// Constant-time string compare, Edge-runtime safe (no Node crypto).
+function timingSafeEqualStr(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+function checkDanteAuth(request: NextRequest): boolean {
+  const expected = process.env.DANTE_PASSWORD;
+  if (!expected) return false; // fail closed if env var missing
+  const header = request.headers.get("authorization") ?? "";
+  if (!header.toLowerCase().startsWith("basic ")) return false;
+  let decoded: string;
+  try {
+    decoded = atob(header.slice(6).trim());
+  } catch {
+    return false;
+  }
+  const idx = decoded.indexOf(":");
+  if (idx < 0) return false;
+  const password = decoded.slice(idx + 1);
+  return timingSafeEqualStr(password, expected);
+}
+
+function denyDante(): NextResponse {
+  return new NextResponse("Authentication required", {
+    status: 401,
+    headers: { "WWW-Authenticate": 'Basic realm="dante", charset="UTF-8"' },
+  });
+}
 
 export const config = {
   matcher: [
@@ -64,6 +98,29 @@ function buildSiteLinkHeader(): string {
 }
 
 export default clerkMiddleware(async (auth, request) => {
+  // ── 0. Detect /dante surface (either subdomain or direct path) ────────────
+  const host = request.headers.get("host") ?? "";
+  const isDanteSubdomain = /^dante\.(perea\.ai|localhost(:\d+)?)$/i.test(host);
+  const isDantePath = request.nextUrl.pathname.startsWith("/dante");
+  const isDanteRequest = isDanteSubdomain || isDantePath;
+
+  // ── 0a. Basic Auth gate for /dante ────────────────────────────────────────
+  // The /dante page is semi-public — gated behind a backend password so
+  // sensitive [protected] context isn't exposed to random crawlers.
+  // Set DANTE_PASSWORD env var (locally and in Vercel project settings).
+  if (isDanteRequest && !checkDanteAuth(request)) {
+    return denyDante();
+  }
+
+  // ── 0b. Subdomain rewrite ─────────────────────────────────────────────────
+  // dante.perea.ai (and dante.localhost:* for local dev) serves the /dante route.
+  // Rewrite after auth so the downstream page only renders for authed callers.
+  if (isDanteSubdomain && !request.nextUrl.pathname.startsWith("/dante")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dante" + (request.nextUrl.pathname === "/" ? "" : request.nextUrl.pathname);
+    return NextResponse.rewrite(url);
+  }
+
   if (isProtected(request)) {
     await auth.protect();
   }
